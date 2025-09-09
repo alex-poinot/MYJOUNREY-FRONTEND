@@ -12,14 +12,8 @@ RUN npm install
 # Copier le reste des fichiers de l'application
 COPY . .
 
-# Vérifier le contenu du répertoire (facultatif, pour le débogage)
-RUN ls -la /app
-
 # Construire l'application en mode staging
 RUN npm run build --staging
-
-# Vérifier le contenu du répertoire dist après la construction (facultatif, pour le débogage)
-RUN ls -la /app/dist/MYJOURNEY-FRONTEND
 
 # Étape 2 : Configuration du conteneur Nginx pour servir l'application
 FROM nginx:alpine
