@@ -95,7 +95,7 @@ import { Module } from '../../models/module.interface';
     }
     .preview-header h2 {
       margin: 0;
-      font-size: 18px;
+      font-size: var(--font-size-lg);
       font-weight: 600;
     }
     .preview-content {
@@ -111,7 +111,7 @@ import { Module } from '../../models/module.interface';
       break-inside: avoid;
     }
     .title-h1 {
-      font-size: 32px;
+      font-size: 1.7vw;
       font-weight: 700;
       color: var(--primary-color);
       margin: 0 0 16px 0;
@@ -119,19 +119,19 @@ import { Module } from '../../models/module.interface';
       padding-bottom: 8px;
     }
     .title-h2 {
-      font-size: 24px;
+      font-size: 1.5vw;
       font-weight: 600;
       color: var(--gray-700);
       margin: 24px 0 12px 0;
     }
     .title-h3 {
-      font-size: 20px;
+      font-size: 1.3vw;
       font-weight: 500;
       color: var(--gray-600);
       margin: 20px 0 10px 0;
     }
     .subtitle {
-      font-size: 18px;
+      font-size: var(--font-size-lg);
       font-weight: 500;
       color: var(--gray-600);
       margin: 16px 0 8px 0;
@@ -158,7 +158,7 @@ import { Module } from '../../models/module.interface';
     .preview-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 14px;
+      font-size: var(--font-size-md);
     }
     .preview-table th,
     .preview-table td {

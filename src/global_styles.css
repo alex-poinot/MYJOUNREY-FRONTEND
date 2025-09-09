@@ -35,6 +35,12 @@
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  /* Font size */
+  --font-size-sm: 0.6vw;
+  --font-size-md: 0.7vw;
+  --font-size-lg: 0.8vw;
+  --font-size-xl: 1vw;
 }
 
 body {
@@ -240,6 +246,30 @@ input:focus, textarea:focus, select:focus {
 .badge-error {
   background: rgba(239, 68, 68, 0.1);
   color: var(--error-color);
+}
+
+.recap-dossier-groupe {
+  width: 2.5vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1vw;
+  opacity: 0.4;
+}
+
+.recap-dossier-groupe.recap-incomplete {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning-color);
+}
+
+.recap-dossier-groupe.recap-complete {
+  background: rgba(100, 206, 199, 0.1);
+  color: var(--success-color);
+}
+
+.recap-dossier-groupe.recap-empty {
+  background: rgb(123 123 123 / 10%);
+  color: #656565;
 }
 
 /* Amélioration de l'accessibilité */

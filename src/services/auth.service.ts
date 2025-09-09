@@ -165,7 +165,7 @@ export class AuthService {
   }
 
   private isAdminUser(email: string): boolean {
-    const adminEmails = ['alexandre.poinot@fr.gt.com'];
+    const adminEmails = ['alexandre.poinot@fr.gt.com', 'rochelle.thevaseelan@fr.gt.com', 'romain.tetillon@fr.gt.com'];
     return adminEmails.includes(email.toLowerCase());
   }
 
@@ -185,7 +185,7 @@ export class AuthService {
 
   isCurrentUserAdmin(): boolean {
     const currentUser = this.userProfileSubject.value;
-    return currentUser?.isAdmin === true || currentUser?.mail === 'alexandre.poinot@fr.gt.com';
+    return currentUser?.isAdmin === true || currentUser?.mail === 'alexandre.poinot@fr.gt.com' || currentUser?.mail === 'rochelle.thevaseelan@fr.gt.com' || currentUser?.mail === 'romain.tetillon@fr.gt.com';
   }
 
   isImpersonating(): boolean {

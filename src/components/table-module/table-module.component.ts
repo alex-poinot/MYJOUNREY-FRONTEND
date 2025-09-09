@@ -85,7 +85,7 @@ import { TableModule } from '../../models/module.interface';
       width: 24px;
       height: 24px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: var(--font-size-lg);
       line-height: 1;
     }
     .delete-btn:hover {
@@ -106,7 +106,7 @@ import { TableModule } from '../../models/module.interface';
       padding: 6px 12px;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: var(--font-size-sm);
     }
     .action-btn:hover {
       background: var(--primary-dark);
@@ -137,7 +137,7 @@ import { TableModule } from '../../models/module.interface';
       border: none;
       padding: 8px;
       background: transparent;
-      font-size: 14px;
+      font-size: var(--font-size-md);
       font-family: inherit;
       line-height: 1.4;
       outline: none;
@@ -155,7 +155,7 @@ import { TableModule } from '../../models/module.interface';
       width: 16px;
       height: 16px;
       cursor: pointer;
-      font-size: 10px;
+      font-size: var(--font-size-sm);
       line-height: 1;
       position: absolute;
       top: 2px;

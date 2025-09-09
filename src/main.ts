@@ -60,13 +60,13 @@ export function initializeMsal(msalService: MsalService): () => Promise<void> {
   `,
   styles: [`
     .app-container {
-      min-height: calc(100vh - 70px);
+      min-height: calc(100vh - 8vh);
     }
     
     .main-content {
-      margin-top: 70px;
+      margin-top: 8vh;
       background: #f8fafc;
-      min-height: calc(100vh - 70px);
+      min-height: calc(100vh - 8vh);
     }
     
     .coming-soon {

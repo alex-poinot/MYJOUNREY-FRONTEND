@@ -87,7 +87,7 @@ import { ImageModule } from '../../models/module.interface';
       width: 24px;
       height: 24px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: var(--font-size-lg);
       line-height: 1;
     }
     .delete-btn:hover {
@@ -117,7 +117,7 @@ import { ImageModule } from '../../models/module.interface';
       padding: 8px 12px;
       border: 1px solid var(--gray-300);
       border-radius: 4px;
-      font-size: 14px;
+      font-size: var(--font-size-md);
     }
     input:focus {
       outline: none;

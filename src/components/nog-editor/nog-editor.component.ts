@@ -212,7 +212,7 @@ import { PreviewComponent } from '../preview/preview.component';
     .toggle-icon {
       color: white;
       font-weight: bold;
-      font-size: 14px;
+      font-size: var(--font-size-md);
     }
     .sidebar-header {
       padding: 24px 20px;
@@ -222,17 +222,17 @@ import { PreviewComponent } from '../preview/preview.component';
     }
     .sidebar-header h1 {
       margin: 0 0 8px 0;
-      font-size: 20px;
+      font-size: var(--font-size-lg);
       font-weight: 700;
     }
     .collapsed-title {
       text-align: center;
-      font-size: 24px;
+      font-size: var(--font-size-xl);
     }
     .sidebar-header p {
       margin: 0;
       opacity: 0.9;
-      font-size: 14px;
+      font-size: var(--font-size-md);
     }
     .modules-list {
       flex: 1;
@@ -241,7 +241,7 @@ import { PreviewComponent } from '../preview/preview.component';
     }
     .modules-list h3 {
       margin: 0 0 16px 0;
-      font-size: 16px;
+      font-size: var(--font-size-md);
       color: var(--gray-700);
       font-weight: 600;
     }
@@ -283,7 +283,7 @@ import { PreviewComponent } from '../preview/preview.component';
       margin-left: 8px;
     }
     .template-icon {
-      font-size: 24px;
+      font-size: var(--font-size-xl);
       width: 40px;
       height: 40px;
       display: flex;
@@ -301,7 +301,7 @@ import { PreviewComponent } from '../preview/preview.component';
       margin-bottom: 2px;
     }
     .template-description {
-      font-size: 12px;
+      font-size: var(--font-size-sm);
       color: var(--gray-600);
     }
     .sidebar-actions {
@@ -369,7 +369,7 @@ import { PreviewComponent } from '../preview/preview.component';
     .editor-header h2 {
       margin: 0;
       color: var(--primary-color);
-      font-size: 20px;
+      font-size: var(--font-size-lg);
       font-weight: 600;
     }
     .module-count {
@@ -377,7 +377,7 @@ import { PreviewComponent } from '../preview/preview.component';
       color: var(--primary-color);
       padding: 4px 12px;
       border-radius: 12px;
-      font-size: 12px;
+      font-size: var(--font-size-sm);
       font-weight: 500;
     }
     .modules-editor {
@@ -434,7 +434,7 @@ import { PreviewComponent } from '../preview/preview.component';
       color: var(--gray-600);
     }
     .empty-icon {
-      font-size: 48px;
+      font-size: 1.8vw;
       margin-bottom: 16px;
     }
     .empty-state h3 {
@@ -443,7 +443,7 @@ import { PreviewComponent } from '../preview/preview.component';
     }
     .empty-state p {
       margin: 0;
-      font-size: 14px;
+      font-size: var(--font-size-md);
     }
 
     /* Loading Overlay */

@@ -84,7 +84,8 @@ export interface TabGroup {
         <img [src]="currentUser?.photoUrl || defaultPhoto" [alt]="currentUser?.displayName || 'Utilisateur'" class="profile-photo">
         <div class="profile-info">
           <span class="profile-name">{{ currentUser?.displayName || 'Utilisateur' }}</span>
-          <span class="profile-email">{{ isImpersonating ? impersonatedEmail : (currentUser?.mail || '') }}</span>
+          <!-- <span class="profile-email">{{ isImpersonating ? impersonatedEmail : (currentUser?.mail || '') }}</span> -->
+          <span class="profile-email">{{ currentUser?.mail || '' }}</span>
         </div>
         
         <!-- Bouton d'impersonation pour les admins -->
@@ -166,7 +167,7 @@ export interface TabGroup {
       top: 0;
       left: 0;
       right: 0;
-      height: 70px;
+      height: 8vh;
       background: white;
       color: var(--gray-800);
       box-shadow: var(--shadow-md);
@@ -193,17 +194,17 @@ export interface TabGroup {
     }
 
     .logo {
-      font-size: 28px;
+      font-size: 1.4vw;
     }
 
     .logo-robot {
-      font-size: 32px;
+      font-size: 1.5vw;
       filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
     }
 
     .brand-title {
       font-family: 'Inter', system-ui, sans-serif;
-      font-size: 20px;
+      font-size: var(--font-size-xl);
       font-weight: 700;
       margin: 0;
       background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
@@ -245,11 +246,11 @@ export interface TabGroup {
 
     .group-name {
       font-weight: 500;
-      font-size: 14px;
+      font-size: var(--font-size-md);
     }
 
     .expand-icon {
-      font-size: 10px;
+      font-size: var(--font-size-sm);
       color: var(--primary-color);
       transition: transform 0.2s ease;
     }
@@ -283,7 +284,7 @@ export interface TabGroup {
       transition: all 0.2s ease;
       border-radius: 6px;
       margin: 4px;
-      font-size: 14px;
+      font-size: var(--font-size-md);
     }
 
     .dropdown-item:hover {
@@ -326,12 +327,12 @@ export interface TabGroup {
     .profile-name {
       font-weight: 500;
       color: var(--gray-700);
-      font-size: 14px;
+      font-size: var(--font-size-md);
       line-height: 1.2;
     }
     
     .profile-email {
-      font-size: 12px;
+      font-size: var(--font-size-sm);
       color: var(--gray-500);
       line-height: 1.2;
     }
@@ -344,7 +345,7 @@ export interface TabGroup {
       color: white;
       padding: 4px 8px;
       border-radius: 12px;
-      font-size: 12px;
+      font-size: var(--font-size-sm);
       font-weight: 600;
       margin-right: 12px;
     }
@@ -357,7 +358,7 @@ export interface TabGroup {
       width: 16px;
       height: 16px;
       cursor: pointer;
-      font-size: 10px;
+      font-size: var(--font-size-sm);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -436,7 +437,7 @@ export interface TabGroup {
 
     .modal-header h3 {
       margin: 0;
-      font-size: 18px;
+      font-size: var(--font-size-lg);
       font-weight: 600;
     }
 
@@ -444,7 +445,7 @@ export interface TabGroup {
       background: none;
       border: none;
       color: white;
-      font-size: 24px;
+      font-size: var(--font-size-xl);
       cursor: pointer;
       padding: 0;
       width: 30px;
@@ -480,7 +481,7 @@ export interface TabGroup {
       padding: 12px 16px;
       border: 2px solid var(--gray-300);
       border-radius: 8px;
-      font-size: 14px;
+      font-size: var(--font-size-md);
       transition: all 0.2s;
     }
 
@@ -533,18 +534,18 @@ export interface TabGroup {
     .user-name {
       font-weight: 500;
       color: var(--gray-800);
-      font-size: 14px;
+      font-size: var(--font-size-md);
     }
 
     .user-email {
-      font-size: 12px;
+      font-size: var(--font-size-sm);
       color: var(--gray-600);
     }
 
     .loading-item {
       padding: 12px 16px;
       color: var(--gray-600);
-      font-size: 14px;
+      font-size: var(--font-size-md);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -553,7 +554,7 @@ export interface TabGroup {
     .no-results {
       padding: 12px 16px;
       color: var(--gray-500);
-      font-size: 14px;
+      font-size: var(--font-size-md);
       font-style: italic;
       text-align: center;
     }
@@ -567,7 +568,7 @@ export interface TabGroup {
       border: 1px solid var(--warning-color);
       border-radius: 8px;
       color: var(--warning-color);
-      font-size: 14px;
+      font-size: var(--font-size-md);
     }
 
     .warning-message i {
@@ -648,11 +649,11 @@ export interface TabGroup {
       }
       
       .brand-title {
-        font-size: 16px;
+        font-size: var(--font-size-md);
       }
       
       .logo {
-        font-size: 24px;
+        font-size: var(--font-size-xl);
         padding: 4px;
       }
     }
@@ -745,32 +746,7 @@ export class NavbarComponent {
     
     this.isLoadingAllUsers = true;
     console.log('Chargement des utilisateurs...');
-    
-    if (environment.features.enableMockData) {
-      console.log('Mode Bolt: utilisation des données de test');
-      // Données de test pour le mode Bolt
-      const mockUsers: ApiUser[] = [
-        { USR_ID: 1, USR_NOM: "GIANG", USR_MAIL: "thomas.giang@fr.gt.com", USR_DATE_DEBUT: "2017-09-04T00:00:00.000Z", USR_UPDATE_DATE: "2025-07-28T12:30:09.820Z" },
-        { USR_ID: 2, USR_NOM: "WODLING", USR_MAIL: "terence.wodling@fr.gt.com", USR_DATE_DEBUT: "2021-10-01T00:00:00.000Z", USR_UPDATE_DATE: "2025-07-28T12:30:12.203Z" },
-        { USR_ID: 3, USR_NOM: "KURKDJIAN", USR_MAIL: "daniel.kurkdjian@fr.gt.com", USR_DATE_DEBUT: "1976-11-02T00:00:00.000Z", USR_UPDATE_DATE: "2025-07-28T12:30:09.820Z" },
-        { USR_ID: 4, USR_NOM: "DE OLIVEIRA", USR_MAIL: "daniel.deoliveira@fr.gt.com", USR_DATE_DEBUT: "2016-11-14T00:00:00.000Z", USR_UPDATE_DATE: "2025-07-28T12:30:12.203Z" },
-        { USR_ID: 5, USR_NOM: "CIVIT", USR_MAIL: "daniel.civit@fr.gt.com", USR_DATE_DEBUT: "2016-11-03T00:00:00.000Z", USR_UPDATE_DATE: "2025-07-28T12:30:12.203Z" },
-        { USR_ID: 6, USR_NOM: "BIERNAT", USR_MAIL: "daniel.biernat@fr.gt.com", USR_DATE_DEBUT: "2016-06-06T00:00:00.000Z", USR_UPDATE_DATE: "2025-07-28T12:30:09.820Z" },
-        { USR_ID: 7, USR_NOM: "SIMPSON", USR_MAIL: "dana.simpson@fr.gt.com", USR_DATE_DEBUT: "2015-09-28T00:00:00.000Z", USR_UPDATE_DATE: "2025-07-28T12:30:12.587Z" },
-        { USR_ID: 8, USR_NOM: "WACHOWIAK", USR_MAIL: "damien.wachowiak@fr.gt.com", USR_DATE_DEBUT: "2016-06-06T00:00:00.000Z", USR_UPDATE_DATE: "2025-07-28T12:30:12.203Z" },
-        { USR_ID: 10, USR_NOM: "TETILLON", USR_MAIL: "romain.tetillon@fr.gt.com", USR_DATE_DEBUT: "2016-06-13T00:00:00.000Z", USR_UPDATE_DATE: "2025-07-28T12:30:12.203Z" },
-        { USR_ID: 11, USR_NOM: "MORON", USR_MAIL: "Damien.Moron@fr.gt.com", USR_DATE_DEBUT: null, USR_UPDATE_DATE: "2023-09-01T12:00:00.507Z" },
-        { USR_ID: 12, USR_NOM: "MAES", USR_MAIL: "damien.maes@fr.gt.com", USR_DATE_DEBUT: "2017-12-04T00:00:00.000Z", USR_UPDATE_DATE: "2025-07-28T12:30:12.203Z" }
-      ];
-      
-      // Filtrer les utilisateurs avec un email valide
-      this.allUsers = mockUsers.filter(user => user.USR_MAIL && user.USR_MAIL.trim() !== '');
-      this.usersLoaded = true;
-      this.isLoadingAllUsers = false;
-      console.log(`${this.allUsers.length} utilisateurs chargés en mode Bolt`);
-      return;
-    }
-    
+       
     try {
       console.log(`Appel API: ${environment.apiUrl}/api/users/`);
       const response = await this.http.get<ApiResponse>(`${environment.apiUrl}/api/users/`).toPromise();

@@ -13,7 +13,8 @@ interface MissionData {
   mission: string;
   avantMission: {
     percentage: number;
-    lab: boolean;
+    labGroupe: boolean;
+    labDossier: boolean;
     conflitCheck: boolean;
     qac: boolean;
     qam: boolean;
@@ -64,7 +65,7 @@ interface ModalData {
   template: `
     <div class="dashboard-container">
       <div class="dashboard-header">
-        <h1>Tableau de bord des missions</h1>
+        <h1>Vue listing</h1>
         <div class="header-controls">
           <button class="expand-all-btn" (click)="toggleAllGroups()">
             <i class="fas" [ngClass]="allGroupsExpanded ? 'fa-folder-minus' : 'fa-folder-plus'"></i>
@@ -142,14 +143,14 @@ interface ModalData {
           <tbody>
             <ng-container *ngFor="let group of paginatedData; let groupIndex = index">
               <!-- Ligne de groupe -->
-              <tr class="group-row main-group" (click)="toggleMainGroup(groupIndex)">
+              <tr class="group-row main-group" (click)="toggleMainGroup($event, groupIndex)">
                 <!--<td class="group-cell">
                   <button class="collapse-btn">
                     {{ group.expanded ? '▼' : '▶' }}
                   </button>
                   <strong>{{ group.numeroGroupe }} - {{ group.nomGroupe }}</strong>
                 </td>-->
-                <td colspan="100%" class="group-summary">
+                <td colspan="5" class="group-summary">
                   <div class="group-cell">
                     <div class="collapse-btn-container">
                       <button class="collapse-btn">
@@ -157,11 +158,88 @@ interface ModalData {
                       </button>
                     </div>
                     <div class="group-info">
-                      <strong>{{ group.numeroGroupe }} - {{ group.nomGroupe }}</strong>
-                      <i class="fas fa-tasks"></i> {{ getTotalMissionsInGroup(group) }} mission(s) - 
-                      <i class="fas fa-users"></i> {{ getTotalClientsInGroup(group) }} client(s) - 
-                      <i class="fas fa-chart-line"></i> Avancement moyen: {{ getMainGroupAverage(group) }}%
+                      <strong class="groupe-libelle">{{ group.numeroGroupe }} - {{ group.nomGroupe }}</strong>
+                      <i class="fas fa-users"></i> {{ getTotalClientsInGroup(group) }} client(s) -
+                      <i class="fas fa-briefcase"></i> {{ getTotalMissionsInGroup(group) }} mission(s)
                     </div>
+                  </div>
+                </td>
+                <td class="percentage-cell">
+                  <div class="progress-circle" [attr.data-percentage]="getGroupeAverage(group, 'avantMission')">
+                    {{ getGroupeAverage(group, 'avantMission') }}%
+                  </div>
+                </td>
+                <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.labGroupe)">
+                  <i class="fas status-icon" 
+                      [ngClass]="group.clients[0].missions[0].avantMission.labGroupe ? 'fa-check-circle' : 'fa-clock'"
+                      [class.completed]="group.clients[0].missions[0].avantMission.labGroupe"></i>
+                </td>
+                <td *ngIf="!avantMissionCollapsed">
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'checklist')"></div>
+                </td>
+                <td *ngIf="!avantMissionCollapsed">
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'qac')"></div>
+                </td>
+                <td *ngIf="!avantMissionCollapsed">
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'qam')">
+                    {{ getGroupeRecap(group, 'avantMission', 'qam') }}
+                  </div>
+                </td>
+                <td *ngIf="!avantMissionCollapsed">
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'ldm')">
+                    {{ getGroupeRecap(group, 'avantMission', 'ldm') }}
+                  </div>
+                </td>
+
+                <td class="percentage-cell">
+                  <div class="progress-circle" [attr.data-percentage]="getGroupeAverage(group, 'pendantMission')">
+                    {{ getGroupeAverage(group, 'pendantMission') }}%
+                  </div>
+                </td>
+                <td *ngIf="!pendantMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'pendantMission', 'nog')">
+                      {{ getGroupeRecap(group, 'pendantMission', 'nog') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!pendantMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'pendantMission', 'checklist')">
+                      {{ getGroupeRecap(group, 'pendantMission', 'checklist') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!pendantMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'pendantMission', 'revision')">
+                      {{ getGroupeRecap(group, 'pendantMission', 'revision') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!pendantMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'pendantMission', 'supervision')">
+                      {{ getGroupeRecap(group, 'pendantMission', 'supervision') }}
+                    </div>
+                  </td>
+
+                <td class="percentage-cell">
+                  <div class="progress-circle" [attr.data-percentage]="getGroupeAverage(group, 'finMission')">
+                    {{ getGroupeAverage(group, 'finMission') }}%
+                  </div>
+                </td>
+                <td *ngIf="!finMissionCollapsed">
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'finMission', 'ndsCr')">
+                    {{ getGroupeRecap(group, 'finMission', 'ndsCr') }}
+                  </div>
+                </td>
+                <td *ngIf="!finMissionCollapsed">
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'finMission', 'qmm')">
+                    {{ getGroupeRecap(group, 'finMission', 'qmm') }}
+                  </div>
+                </td>
+                <td *ngIf="!finMissionCollapsed">
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'finMission', 'plaquette')">
+                    {{ getGroupeRecap(group, 'finMission', 'plaquette') }}
+                  </div>
+                </td>
+                <td *ngIf="!finMissionCollapsed">
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'finMission', 'restitution')">
+                    {{ getGroupeRecap(group, 'finMission', 'restitution') }}
                   </div>
                 </td>
               </tr>
@@ -171,7 +249,7 @@ interface ModalData {
                 <!-- Ligne de sous-groupe (client) -->
                 <tr class="group-row client-group" 
                     [class.hidden]="!group.expanded"
-                    (click)="toggleClientGroup(groupIndex, clientIndex)">
+                    (click)="toggleClientGroup($event, groupIndex, clientIndex)">
                   <!--<td class="client-indent"></td>-->
                   <td class="client-cell" colspan="5">
                     <div class="client-row">
@@ -180,7 +258,7 @@ interface ModalData {
                       </button>
                       <strong>{{ client.numeroClient }} - {{ client.nomClient }}</strong>
                       <span class="client-summary">
-                        <i class="fas fa-briefcase"></i> ({{ getTotalMissionsInClient(group, client) }} mission(s))
+                        <i class="fas fa-briefcase"></i> {{ getTotalMissionsInClient(group, client) }} mission(s)
                       </span>
                     </div>
                   </td>
@@ -191,21 +269,83 @@ interface ModalData {
                       {{ getClientAverage(client, 'avantMission') }}%
                     </div>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" [attr.colspan]="avantMissionCollapsed ? 0 : 5"></td>
-                  
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.labDossier)">
+                    <i class="fas status-icon" 
+                       [ngClass]="client.missions[0].avantMission.labDossier ? 'fa-check-circle' : 'fa-clock'"
+                       [class.completed]="client.missions[0].avantMission.labDossier"></i>
+                  </td>
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Conflit Check', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.conflitCheck)">
+                    <i class="fas status-icon" 
+                       [ngClass]="client.missions[0].avantMission.conflitCheck ? 'fa-check-circle' : 'fa-clock'"
+                       [class.completed]="client.missions[0].avantMission.conflitCheck"></i>
+                  </td>
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAC', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.qac)">
+                    <i class="fas status-icon" 
+                       [ngClass]="client.missions[0].avantMission.qac ? 'fa-check-circle' : 'fa-clock'"
+                       [class.completed]="client.missions[0].avantMission.qac"></i>
+                  </td>
+                  <td *ngIf="!avantMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'avantMission', 'qam')">
+                      {{ getClientRecap(client, 'avantMission', 'qam') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!avantMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'avantMission', 'ldm')">
+                      {{ getClientRecap(client, 'avantMission', 'ldm') }}
+                    </div>
+                  </td>
+
                   <td class="percentage-cell">
                     <div class="progress-circle" [attr.data-percentage]="getClientAverage(client, 'pendantMission')">
                       {{ getClientAverage(client, 'pendantMission') }}%
                     </div>
                   </td>
-                  <td *ngIf="!pendantMissionCollapsed" [attr.colspan]="pendantMissionCollapsed ? 0 : 4"></td>
+                  <td *ngIf="!pendantMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'pendantMission', 'nog')">
+                      {{ getClientRecap(client, 'pendantMission', 'nog') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!pendantMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'pendantMission', 'checklist')">
+                      {{ getClientRecap(client, 'pendantMission', 'checklist') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!pendantMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'pendantMission', 'revision')">
+                      {{ getClientRecap(client, 'pendantMission', 'revision') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!pendantMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'pendantMission', 'supervision')">
+                      {{ getClientRecap(client, 'pendantMission', 'supervision') }}
+                    </div>
+                  </td>
                   
                   <td class="percentage-cell">
                     <div class="progress-circle" [attr.data-percentage]="getClientAverage(client, 'finMission')">
                       {{ getClientAverage(client, 'finMission') }}%
                     </div>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" [attr.colspan]="finMissionCollapsed ? 0 : 4"></td>
+                  <td *ngIf="!finMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'finMission', 'ndsCr')">
+                      {{ getClientRecap(client, 'finMission', 'ndsCr') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!finMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'finMission', 'qmm')">
+                      {{ getClientRecap(client, 'finMission', 'qmm') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!finMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'finMission', 'plaquette')">
+                      {{ getClientRecap(client, 'finMission', 'plaquette') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!finMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'finMission', 'restitution')">
+                      {{ getClientRecap(client, 'finMission', 'restitution') }}
+                    </div>
+                  </td>
                 </tr>
                 
                 <!-- Missions du client -->
@@ -227,21 +367,9 @@ interface ModalData {
                       {{ mission.avantMission.percentage }}%
                     </div>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.lab)">
-                    <i class="fas status-icon" 
-                       [ngClass]="mission.avantMission.lab ? 'fa-check-circle' : 'fa-clock'"
-                       [class.completed]="mission.avantMission.lab"></i>
-                  </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Conflit Check', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.conflitCheck)">
-                    <i class="fas status-icon" 
-                       [ngClass]="mission.avantMission.conflitCheck ? 'fa-check-circle' : 'fa-clock'"
-                       [class.completed]="mission.avantMission.conflitCheck"></i>
-                  </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAC', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.qac)">
-                    <i class="fas status-icon" 
-                       [ngClass]="mission.avantMission.qac ? 'fa-check-circle' : 'fa-clock'"
-                       [class.completed]="mission.avantMission.qac"></i>
-                  </td>
+                  <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
+                  <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
+                  <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.qam)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.avantMission.qam ? 'fa-check-circle' : 'fa-clock'"
@@ -407,7 +535,7 @@ interface ModalData {
 
     .dashboard-header {
       flex-shrink: 0;
-      padding: 24px 24px 0 24px;
+      padding: 12px 24px 0 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -416,14 +544,14 @@ interface ModalData {
     .dashboard-header h1 {
       margin: 0 0 8px 0;
       color: var(--primary-color);
-      font-size: 28px;
+      font-size: 1.4vw;
       font-weight: 700;
     }
 
     .dashboard-header p {
       margin: 0;
       color: var(--gray-600);
-      font-size: 16px;
+      font-size: var(--font-size-md);
     }
 
     .header-controls {
@@ -441,7 +569,7 @@ interface ModalData {
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
-      font-size: 14px;
+      font-size: var(--font-size-md);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -464,7 +592,7 @@ interface ModalData {
     }
 
     .pagination-info {
-      font-size: 14px;
+      font-size: var(--font-size-md);
       color: var(--gray-600);
     }
 
@@ -481,7 +609,7 @@ interface ModalData {
       background: white;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: var(--font-size-md);
       transition: all 0.2s;
     }
 
@@ -496,7 +624,7 @@ interface ModalData {
     }
 
     .page-info {
-      font-size: 14px;
+      font-size: var(--font-size-sm);
       color: var(--gray-700);
       font-weight: 500;
     }
@@ -514,14 +642,28 @@ interface ModalData {
     .mission-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 14px;
+      font-size: var(--font-size-md);
       min-width: 100%;
+    }
+
+    .group-row {
+      text-align: center;
+    }
+
+    span.tiret-no-data {
+      color: #bbbbbb;
+    }
+
+    .recap-dossier {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .column-group-header {
       background: var(--primary-color);
       color: white;
-      padding: 12px 16px;
+      padding: 1vh 0.3vw;
       font-weight: 600;
       text-align: center;
       border-bottom: 2px solid var(--secondary-color);
@@ -564,18 +706,18 @@ interface ModalData {
     .column-header {
       background: var(--gray-100);
       color: var(--gray-700);
-      padding: 10px 12px;
+      padding: 1vh 0.3vw;
       font-weight: 600;
       text-align: center;
       border-bottom: 1px solid var(--gray-200);
       white-space: nowrap;
       position: sticky;
-      top: 49px;
+      top: 4.6vh;
       z-index: 10;
     }
 
     .column-header.percentage {
-      background: rgba(34, 109, 104, 0.1);
+      background: rgb(232 240 240);
       color: var(--primary-color);
       min-width: 60px;
     }
@@ -589,6 +731,10 @@ interface ModalData {
 
     .group-row.main-group:hover {
       background: var(--gray-100);
+    }
+
+    .mission-count-display {
+      font-size: var(--font-size-md);
     }
 
     .group-row.client-group {
@@ -613,15 +759,22 @@ interface ModalData {
     }
 
     .client-summary {
-      font-size: 12px;
+      font-size: var(--font-size-sm);
       color: var(--gray-600);
       font-weight: normal;
       margin-left: 8px;
     }
     .group-summary {
-      padding: 12px 16px;
+      padding: 1vh 0.3vw;
       color: var(--gray-600);
       font-style: italic;
+    }
+
+    .groupe-libelle {
+      max-width: 19vw;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
 
     .mission-row {
@@ -643,7 +796,7 @@ interface ModalData {
     }
 
     .mission-row td {
-      padding: 10px 12px;
+      padding: 1vh 0.3vw;
       text-align: center;
       vertical-align: middle;
     }
@@ -653,14 +806,14 @@ interface ModalData {
     }
 
     .progress-circle {
-      width: 40px;
-      height: 40px;
+      width: 2.5vw;
+      height: 5vh;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 600;
-      font-size: 11px;
+      font-size: var(--font-size-sm);
       margin: 0 auto;
       position: relative;
     }
@@ -694,6 +847,7 @@ interface ModalData {
       padding: 8px !important;
       cursor: pointer;
       transition: background-color 0.2s;
+      text-align: center;
     }
 
     .status-cell:hover {
@@ -701,7 +855,7 @@ interface ModalData {
     }
 
     .status-icon {
-      font-size: 16px;
+      font-size: var(--font-size-md);
       display: inline-block;
       transition: all 0.2s ease;
     }
@@ -719,7 +873,7 @@ interface ModalData {
       border: none;
       color: inherit;
       cursor: pointer;
-      font-size: 12px;
+      font-size: var(--font-size-sm);
       padding: 4px;
       border-radius: 4px;
       transition: background-color 0.2s;
@@ -742,8 +896,6 @@ interface ModalData {
     .pagination-footer {
       flex-shrink: 0;
       padding: 16px 24px;
-      background: white;
-      border-top: 1px solid var(--gray-200);
     }
 
     .page-numbers {
@@ -757,7 +909,7 @@ interface ModalData {
       background: white;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: var(--font-size-md);
       min-width: 40px;
       transition: all 0.2s;
     }
@@ -800,6 +952,21 @@ interface ModalData {
       width: 100%;
       align-items: center;
       justify-content: space-between;
+    }
+
+    tr.group-row.client-group .progress-circle {
+      height: 27px;
+      border-radius: 1vw;
+    }
+
+    tr.group-row.client-group td {
+        padding: 6px 8px !important;
+        font-style: italic;
+    }
+
+    tr.mission-row .progress-circle {
+        height: 27px;
+        border-radius: 1vw;
     }
 
     /* Responsive */
@@ -876,7 +1043,7 @@ interface ModalData {
 
     .modal-header h3 {
       margin: 0;
-      font-size: 18px;
+      font-size: var(--font-size-lg);
       font-weight: 600;
     }
 
@@ -884,7 +1051,7 @@ interface ModalData {
       background: none;
       border: none;
       color: white;
-      font-size: 24px;
+      font-size: var(--font-size-xl);
       cursor: pointer;
       padding: 0;
       width: 30px;
@@ -913,7 +1080,7 @@ interface ModalData {
       align-items: center;
       gap: 12px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: var(--font-size-md);
       font-weight: 500;
     }
 
@@ -929,7 +1096,7 @@ interface ModalData {
 
     .file-input {
       width: 100%;
-      padding: 10px 12px;
+      padding: 1vh 0.3vw;
       border: 2px dashed var(--gray-300);
       border-radius: 8px;
       background: var(--gray-50);
@@ -953,7 +1120,7 @@ interface ModalData {
     }
 
     .file-name {
-      font-size: 14px;
+      font-size: var(--font-size-md);
       color: var(--gray-700);
     }
 
@@ -965,7 +1132,7 @@ interface ModalData {
       width: 20px;
       height: 20px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: var(--font-size-sm);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1018,7 +1185,7 @@ interface ModalData {
 
     @media (max-width: 1200px) {
       .mission-table {
-        font-size: 12px;
+        font-size: var(--font-size-sm);
       }
       
       .column-header,
@@ -1029,7 +1196,7 @@ interface ModalData {
       .progress-circle {
         width: 35px;
         height: 35px;
-        font-size: 10px;
+        font-size: var(--font-size-sm);
       }
     }
   `]
@@ -1045,7 +1212,7 @@ export class DashboardComponent implements OnInit {
   allMissions: MissionData[] = [];
   completeGroupedData: GroupData[] = [];
   currentPage = 1;
-  itemsPerPage = 50;
+  itemsPerPage = 150;
   totalMissions = 0;
   totalPages = 0;
   startIndex = 0;
@@ -1079,6 +1246,10 @@ export class DashboardComponent implements OnInit {
     // Écouter les changements d'impersonation
     this.authService.impersonatedEmail$.subscribe(() => {
       this.userEmail = this.authService.getEffectiveUserEmail();
+      if(!this.userEmail) {
+        console.error('Aucun email d\'utilisateur effectif trouvé');
+        return;
+      }
       console.log('Email effectif dans dashboard:', this.userEmail);
       // Recharger les données quand l'email change
       this.loadData();
@@ -1093,77 +1264,7 @@ export class DashboardComponent implements OnInit {
         this.processData(response.data);
       }, (error) => {
         console.error('Erreur lors de la récupération des missions :', error);
-        if (environment.features.enableMockData) {
-          console.warn('Utilisation des données de démonstration car l\'API n\'est pas disponible');
-          this.loadDemoData();
-        }
       });
-  }
-
-  private loadDemoData(): void {
-    // Données de démonstration pour le développement
-    const demoData: MissionData[] = [
-      {
-        numeroGroupe: 'G001',
-        nomGroupe: 'Groupe Alpha',
-        numeroClient: 'C001',
-        nomClient: 'Client Demo 1',
-        mission: 'Mission Test 1',
-        avantMission: {
-          percentage: 75,
-          lab: true,
-          conflitCheck: true,
-          qac: false,
-          qam: true,
-          ldm: false
-        },
-        pendantMission: {
-          percentage: 50,
-          nog: true,
-          checklist: false,
-          revision: true,
-          supervision: false
-        },
-        finMission: {
-          percentage: 25,
-          ndsCr: false,
-          qmm: false,
-          plaquette: true,
-          restitution: false
-        }
-      },
-      {
-        numeroGroupe: 'G001',
-        nomGroupe: 'Groupe Alpha',
-        numeroClient: 'C002',
-        nomClient: 'Client Demo 2',
-        mission: 'Mission Test 2',
-        avantMission: {
-          percentage: 100,
-          lab: true,
-          conflitCheck: true,
-          qac: true,
-          qam: true,
-          ldm: true
-        },
-        pendantMission: {
-          percentage: 75,
-          nog: true,
-          checklist: true,
-          revision: true,
-          supervision: false
-        },
-        finMission: {
-          percentage: 50,
-          ndsCr: true,
-          qmm: true,
-          plaquette: false,
-          restitution: false
-        }
-      }
-    ];
-
-    this.processData(demoData);
   }
 
   private processData(data: MissionData[]): void {
@@ -1191,7 +1292,7 @@ export class DashboardComponent implements OnInit {
             numeroClient: mission.numeroClient,
             nomClient: mission.nomClient,
             missions: [],
-            expanded: true
+            expanded: false
           };
         }
         acc[clientKey].missions.push(mission);
@@ -1202,7 +1303,7 @@ export class DashboardComponent implements OnInit {
         numeroGroupe: group.numeroGroupe,
         nomGroupe: group.nomGroupe,
         clients: Object.values(clientGroups),
-        expanded: true
+        expanded: false
       };
     });
 
@@ -1325,7 +1426,13 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  toggleMainGroup(index: number): void {
+  toggleMainGroup(event: MouseEvent, index: number): void {
+    const target = event.target as HTMLElement;
+    
+    if (target.closest('.status-cell')) {
+      return; // On sort sans exécuter le toggle
+    }
+    
     this.paginatedData[index].expanded = !this.paginatedData[index].expanded;
     
     // Synchroniser avec les données complètes
@@ -1334,24 +1441,30 @@ export class DashboardComponent implements OnInit {
       completeGroup.expanded = this.paginatedData[index].expanded;
     }
     
-    // Quand on ouvre/ferme le groupe, synchroniser tous les clients avec l'état du groupe
-    this.paginatedData[index].clients.forEach(client => {
-      client.expanded = this.paginatedData[index].expanded;
+    // // Quand on ouvre/ferme le groupe, synchroniser tous les clients avec l'état du groupe
+    // this.paginatedData[index].clients.forEach(client => {
+    //   client.expanded = this.paginatedData[index].expanded;
       
-      // Synchroniser avec les données complètes
-      if (completeGroup) {
-        const completeClient = completeGroup.clients.find(c => c.numeroClient === client.numeroClient);
-        if (completeClient) {
-          completeClient.expanded = client.expanded;
-        }
-      }
-    });
+    //   // Synchroniser avec les données complètes
+    //   if (completeGroup) {
+    //     const completeClient = completeGroup.clients.find(c => c.numeroClient === client.numeroClient);
+    //     if (completeClient) {
+    //       completeClient.expanded = client.expanded;
+    //     }
+    //   }
+    // });
     
     // Mettre à jour l'état du bouton
     this.updateAllGroupsExpandedState();
   }
 
-  toggleClientGroup(groupIndex: number, clientIndex: number): void {
+  toggleClientGroup(event: MouseEvent, groupIndex: number, clientIndex: number): void {
+    const target = event.target as HTMLElement;
+
+    if (target.closest('.status-cell')) {
+      return; // On sort sans exécuter le toggle
+    }
+
     this.paginatedData[groupIndex].clients[clientIndex].expanded = 
       !this.paginatedData[groupIndex].clients[clientIndex].expanded;
     
@@ -1462,6 +1575,67 @@ export class DashboardComponent implements OnInit {
     }, 0);
     
     return Math.round(total / client.missions.length);
+  }
+
+  getClientRecap(client: ClientGroup, phase: 'avantMission' | 'pendantMission' | 'finMission', colonne: String): String {
+    if (client.missions.length === 0) return '<div class="recap-dossier-groupe recap-empty">0/0</div>';
+    
+    let totalMissions = 0;
+    let nbMissionsValide = 0;
+
+    client.missions.forEach(mission => {
+      totalMissions++;
+      // @ts-ignore
+      if (mission[phase][colonne] == true) {
+        nbMissionsValide++;
+      }
+    });
+  
+    let className = '';
+    if (totalMissions === nbMissionsValide) {
+      className += ' recap-complete';
+    } else {
+      className += ' recap-incomplete';
+    }
+
+    return `<div class="recap-dossier-groupe ${className}">${nbMissionsValide}/${totalMissions}</div>`;
+  }
+
+  getGroupeRecap(group: GroupData, phase: 'avantMission' | 'pendantMission' | 'finMission', colonne: String): String {
+    if (group.clients.length === 0) return '<div class="recap-dossier-groupe recap-empty">0/0</div>';
+
+    let totalMissions = 0;
+    let nbMissionsValide = 0;
+
+    group.clients.forEach(client => {
+      client.missions.forEach(mission => {
+        totalMissions++;
+        // @ts-ignore
+        if (mission[phase][colonne] == true) {
+          nbMissionsValide++;
+        }
+      });
+    });
+  
+    let className = '';
+    if (totalMissions === nbMissionsValide) {
+      className += ' recap-complete';
+    } else {
+      className += ' recap-incomplete';
+    }
+
+    return `<div class="recap-dossier-groupe ${className}">${nbMissionsValide}/${totalMissions}</div>`;
+  }
+
+  getGroupeAverage(group: GroupData, phase: 'avantMission' | 'pendantMission' | 'finMission'): number {
+    const allMissions = group.clients.flatMap(client => client.missions);
+    if (allMissions.length === 0) return 0;
+    
+    const total = allMissions.reduce((sum, mission) => {
+      return sum + mission[phase].percentage;
+    }, 0);
+    
+    return Math.round(total / allMissions.length);
   }
 
   public openStatusModal(columnName: string, missionId: string, currentStatus: boolean): void {
