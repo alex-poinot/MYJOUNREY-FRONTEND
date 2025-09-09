@@ -19,7 +19,7 @@ RUN npm run build --staging
 FROM nginx:alpine
 
 # Copier les artefacts construits depuis le premier conteneur (stade de build)
-COPY --from=build /app/dist/MYJOURNEY-FRONTEND /usr/share/nginx/html
+COPY --from=build /app/dist/demo /usr/share/nginx/html
 
 # Exposer le port sur lequel Nginx servira l'application
 EXPOSE 80
