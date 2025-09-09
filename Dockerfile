@@ -25,4 +25,4 @@ COPY --from=build /app/dist/demo /usr/share/nginx/html
 EXPOSE 80
 
 # Démarrer Nginx
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;","npm", "run", "serve:staging;"]
