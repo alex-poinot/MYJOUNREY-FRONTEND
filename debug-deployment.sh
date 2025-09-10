@@ -20,7 +20,17 @@ docker exec myjourney-staging find /usr/share/nginx/html -name "index.html" 2>/d
 # Vérifier le contenu d'index.html
 echo ""
 echo "📄 Contenu d'index.html (premières lignes):"
-docker exec myjourney-staging head -10 /usr/share/nginx/html/index.html 2>/dev/null || echo "❌ Impossible de lire index.html"
+docker exec myjourney-staging head -20 /usr/share/nginx/html/index.html 2>/dev/null || echo "❌ Impossible de lire index.html"
+
+# Vérifier les erreurs JavaScript dans les logs du navigateur
+echo ""
+echo "🔍 Test de chargement des assets JavaScript:"
+docker exec myjourney-staging find /usr/share/nginx/html -name "*.js" | head -5
+
+# Vérifier les permissions des fichiers
+echo ""
+echo "🔐 Permissions des fichiers:"
+docker exec myjourney-staging ls -la /usr/share/nginx/html/ | head -10
 
 # Vérifier la configuration Nginx
 echo ""

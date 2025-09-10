@@ -17,7 +17,12 @@ RUN npm install -g @angular/cli@20
 COPY . .
 
 # Build de l'application pour l\'environnement staging
-RUN npm run build:staging
+RUN npm run build:staging -- --verbose
+
+# Vérifier que les fichiers ont été générés correctement
+RUN ls -la /app/dist/demo/browser/ && \
+    echo "=== Contenu d'index.html ===" && \
+    head -20 /app/dist/demo/browser/index.html
 
 # Étape 2: Serveur de production avec Nginx
 FROM nginx:alpine

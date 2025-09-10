@@ -15,6 +15,7 @@
               "namedChunks": true,
               "optimization": false,
               "sourceMap": true,
+              "baseHref": "/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -28,6 +29,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
+              "baseHref": "/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -42,6 +44,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
+              "baseHref": "/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -54,6 +57,7 @@
               "namedChunks": true,
               "optimization": false,
               "sourceMap": true,
+              "baseHref": "/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
