@@ -13,6 +13,6 @@ export const environment = {
     enableLogging: true,
     enableDebugMode: true,
     enableMockData: true,
-    skipAuthentication: false
+    skipAuthentication: true  // Activer le mode sans authentification pour staging
   }
 };
