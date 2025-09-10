@@ -13,19 +13,29 @@ import { NogEditorComponent } from './components/nog-editor/nog-editor.component
 import { LoginComponent } from './components/login/login.component';
 import { environment } from './environments/environment';
 
+// Ajout de logs pour le diagnostic
+console.log('🚀 Démarrage de l\'application MyJourney');
+console.log('📊 Environnement:', environment.name);
+console.log('🔧 Configuration:', environment);
+
 export function MSALInstanceFactory(): PublicClientApplication {
+  console.log('🔑 Initialisation MSAL...');
   return new PublicClientApplication(msalConfig);
 }
 
 export function initializeMsal(msalService: MsalService): () => Promise<void> {
   return () => {
+    console.log('🔐 Configuration MSAL...');
     return new Promise<void>((resolve) => {
       if (environment.features.skipAuthentication) {
         // Mode Bolt : pas d'initialisation MSAL
+        console.log('⚠️ Mode sans authentification activé');
         resolve();
       } else {
+        console.log('🔒 Initialisation authentification Azure AD...');
         msalService.instance.initialize().then(() => {
           msalService.handleRedirectObservable().subscribe(() => {
+            console.log('✅ MSAL initialisé avec succès');
             resolve();
           });
         });

@@ -210,11 +210,13 @@ export class LoginComponent {
   constructor(private authService: AuthService) {}
 
   async login(): Promise<void> {
+    console.log('🔐 Tentative de connexion...');
     this.isLoading = true;
     try {
       await this.authService.login();
+      console.log('✅ Connexion réussie');
     } catch (error) {
-      console.error('Erreur de connexion:', error);
+      console.error('❌ Erreur de connexion:', error);
       alert('Erreur lors de la connexion. Veuillez réessayer.');
     } finally {
       this.isLoading = false;
