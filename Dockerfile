@@ -32,6 +32,9 @@ COPY --from=build /app/dist/demo /usr/share/nginx/html
 # Copier la configuration Nginx personnalisée
 COPY nginx.conf /etc/nginx/nginx.conf
 
+# Tester la configuration Nginx
+RUN nginx -t
+
 # Vérifier que les fichiers sont bien copiés et afficher le contenu
 RUN ls -la /usr/share/nginx/html/
 RUN echo "=== Contenu du répertoire HTML ===" && find /usr/share/nginx/html -type f -name "*.html" -exec echo "Found: {}" \;

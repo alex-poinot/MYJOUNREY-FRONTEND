@@ -25,13 +25,27 @@ docker exec myjourney-staging head -10 /usr/share/nginx/html/index.html 2>/dev/n
 # Vérifier la configuration Nginx
 echo ""
 echo "⚙️ Configuration Nginx active:"
-docker exec myjourney-staging nginx -t 2>/dev/null && echo "✅ Configuration Nginx valide" || echo "❌ Configuration Nginx invalide"
+if docker exec myjourney-staging nginx -t 2>/dev/null; then
+    echo "✅ Configuration Nginx valide"
+else
+    echo "❌ Configuration Nginx invalide"
+    echo "📋 Erreurs de configuration:"
+    docker exec myjourney-staging nginx -t
+fi
 
+# Vérifier si Nginx écoute sur le port 80
+echo ""
+echo "🔌 Ports en écoute dans le conteneur:"
+docker exec myjourney-staging netstat -tlnp 2>/dev/null | grep :80 || echo "❌ Nginx n'écoute pas sur le port 80"
 # Vérifier les logs Nginx
 echo ""
-echo "📋 Logs Nginx (dernières lignes):"
-docker logs myjourney-staging --tail 10 2>/dev/null || echo "❌ Impossible de lire les logs"
+echo "📋 Logs du conteneur (dernières lignes):"
+docker logs myjourney-staging --tail 20 2>/dev/null || echo "❌ Impossible de lire les logs"
 
+# Vérifier les logs d'erreur Nginx spécifiquement
+echo ""
+echo "🚨 Logs d'erreur Nginx:"
+docker exec myjourney-staging cat /var/log/nginx/error.log 2>/dev/null | tail -10 || echo "❌ Pas de logs d'erreur ou fichier inaccessible"
 # Test de connectivité
 echo ""
 echo "🌐 Test de connectivité:"
