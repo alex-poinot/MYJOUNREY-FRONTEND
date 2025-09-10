@@ -32,6 +32,9 @@ COPY --from=build /app/dist/demo /usr/share/nginx/html
 # Copier la configuration Nginx personnalisée
 COPY nginx.conf /etc/nginx/nginx.conf
 
+# Créer un fichier de configuration dans conf.d pour éviter les conflits
+RUN echo 'server { listen 80; server_name _; root /usr/share/nginx/html; index index.html; location / { try_files $uri $uri/ /index.html; } }' > /etc/nginx/conf.d/default.conf
+
 # Tester la configuration Nginx
 RUN nginx -t
 
@@ -39,8 +42,8 @@ RUN nginx -t
 RUN ls -la /usr/share/nginx/html/
 RUN echo "=== Contenu du répertoire HTML ===" && find /usr/share/nginx/html -type f -name "*.html" -exec echo "Found: {}" \;
 
+# Vérifier que nginx peut démarrer
+RUN nginx -t && echo "Configuration Nginx OK"
+
 # Exposer le port 80
 EXPOSE 80
-
-# Démarrer Nginx
-CMD ["nginx", "-g", "daemon off;"]
