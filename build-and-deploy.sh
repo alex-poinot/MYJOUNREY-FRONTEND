@@ -5,6 +5,19 @@ set -e
 
 echo "🚀 Démarrage du build et déploiement MyJourney - Staging"
 
+# Vérifier les permissions Docker
+echo "🔐 Vérification des permissions Docker..."
+if ! docker info > /dev/null 2>&1; then
+    echo "❌ Erreur: Permissions Docker insuffisantes"
+    echo "💡 Solutions possibles:"
+    echo "   1. Ajouter votre utilisateur au groupe docker:"
+    echo "      sudo usermod -aG docker $USER"
+    echo "      newgrp docker"
+    echo "   2. Ou exécuter avec sudo:"
+    echo "      sudo ./build-and-deploy.sh"
+    exit 1
+fi
+
 # Arrêter les conteneurs existants
 echo "📦 Arrêt des conteneurs existants..."
 docker compose down --remove-orphans
