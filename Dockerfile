@@ -43,8 +43,10 @@ RUN echo 'server { \
         expires 1y; \
         add_header Cache-Control "public, immutable"; \
     } \
-RUN echo "=== Test de la configuration Nginx ===" && nginx -T
 }' > /etc/nginx/conf.d/default.conf
+
+# Vérifier la configuration Nginx
+RUN echo "=== Test de la configuration Nginx ===" && nginx -T
 # Vérifier que nginx peut démarrer en mode test
 RUN nginx -t && echo "Configuration Nginx OK" && \
     echo "=== Configuration finale ===" && \
