@@ -22,11 +22,17 @@ RUN npm run build:staging
 # Étape 2: Serveur de production avec Nginx
 FROM nginx:alpine
 
+# Supprimer la configuration par défaut de Nginx
+RUN rm /etc/nginx/conf.d/default.conf
+
 # Copier les fichiers buildés vers Nginx
 COPY --from=build /app/dist/demo /usr/share/nginx/html
 
 # Copier la configuration Nginx personnalisée
 COPY nginx.conf /etc/nginx/nginx.conf
+
+# Vérifier que les fichiers sont bien copiés
+RUN ls -la /usr/share/nginx/html/
 
 # Exposer le port 80
 EXPOSE 80
