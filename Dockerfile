@@ -7,13 +7,16 @@ WORKDIR /app
 # Copier les fichiers de dépendances
 COPY package.json package-lock.json ./
 
-# Installer les dépendances
-RUN npm ci --only=production
+# Installer les dépendances (incluant les devDependencies pour le build)
+RUN npm ci
+
+# Installer Angular CLI globalement
+RUN npm install -g @angular/cli@20
 
 # Copier le code source
 COPY . .
 
-# Build de l'application pour l\'environnement staging
+# Build de l'application pour l'environnement staging
 RUN npm run build:staging
 
 # Étape 2: Serveur de production avec Nginx
