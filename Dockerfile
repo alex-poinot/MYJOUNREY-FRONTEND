@@ -27,7 +27,7 @@ RUN rm -rf /etc/nginx/conf.d/*
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copier les fichiers buildés vers Nginx
-COPY --from=build /app/dist/demo /usr/share/nginx/html
+COPY --from=build /app/dist/demo/browser /usr/share/nginx/html
 
 # Créer une configuration Nginx simple et fonctionnelle
 RUN echo 'server { \
