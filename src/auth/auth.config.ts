@@ -13,7 +13,6 @@ export const msalConfig: Configuration = {
     storeAuthStateInCookie: false
   },
   system: {
-    allowNativeBroker: false, // Désactiver le broker natif pour éviter les problèmes crypto
     windowHashTimeout: 60000,
     iframeHashTimeout: 6000,
     loadFrameTimeout: 0,
