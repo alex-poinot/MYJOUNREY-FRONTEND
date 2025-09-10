@@ -49,7 +49,11 @@ export class AuthService {
 
   private isCryptoAvailable(): boolean {
     try {
-      return !!(window.crypto && window.crypto.subtle);
+      // Vérification complète pour MSAL
+      return !!(window.crypto && 
+                window.crypto.subtle && 
+                typeof window.crypto.subtle.digest === 'function' &&
+                window.isSecureContext);
     } catch (e) {
       return false;
     }

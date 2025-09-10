@@ -13,6 +13,6 @@ export const environment = {
     enableLogging: true,
     enableDebugMode: true,
     enableMockData: true,
-    skipAuthentication: false  // Réactiver l'authentification Azure AD
+    skipAuthentication: false  // Authentification Azure AD activée
   }
 };

@@ -16,21 +16,27 @@ import { environment } from './environments/environment';
 // Ajout de logs pour le diagnostic
 console.log('🚀 Démarrage de l\'application MyJourney');
 console.log('📊 Environnement:', environment.name);
-console.log('🔧 Skip Auth:', environment.features.skipAuthentication);
 
-// Vérifier si l'API crypto est disponible
+// Vérifier si l'API crypto est disponible (requis pour MSAL)
 const isCryptoAvailable = () => {
   try {
-    return !!(window.crypto && window.crypto.subtle);
+    // Vérification complète de l'API crypto
+    return !!(window.crypto && 
+              window.crypto.subtle && 
+              typeof window.crypto.subtle.digest === 'function' &&
+              window.isSecureContext);
   } catch (e) {
+    console.error('🚨 Erreur lors de la vérification crypto:', e);
     return false;
   }
 };
 
 const cryptoAvailable = isCryptoAvailable();
 console.log('🔐 Crypto API disponible:', cryptoAvailable);
+console.log('🔒 Contexte sécurisé:', window.isSecureContext);
+console.log('🌐 Protocole:', window.location.protocol);
 
-// Forcer le mode sans authentification si crypto n'est pas disponible
+// Utiliser l'authentification Azure AD seulement si crypto est disponible
 const shouldSkipAuth = environment.features.skipAuthentication || !cryptoAvailable;
 console.log('⚠️ Mode sans authentification:', shouldSkipAuth);
 
@@ -52,9 +58,9 @@ export function initializeMsal(msalService: MsalService): () => Promise<void> {
   return () => {
     console.log('🔐 Configuration MSAL...');
     return new Promise<void>((resolve) => {
-      const shouldSkipAuth = environment.features.skipAuthentication || !isCryptoAvailable();
+      const shouldSkipAuth = environment.features.skipAuthentication || !cryptoAvailable;
       if (shouldSkipAuth) {
-        console.log('⚠️ Mode sans authentification activé (crypto:', isCryptoAvailable(), ')');
+        console.log('⚠️ Mode sans authentification activé (crypto:', cryptoAvailable, ')');
         resolve();
       } else {
         console.log('🔒 Initialisation authentification Azure AD...');
@@ -128,7 +134,7 @@ export function initializeMsal(msalService: MsalService): () => Promise<void> {
 export class AppComponent {
   currentTab = 'dashboard';
   isAuthenticated = false;
-  shouldSkipAuth = environment.features.skipAuthentication || !this.isCryptoAvailable();
+  shouldSkipAuth = environment.features.skipAuthentication || !cryptoAvailable;
 
   constructor(private authService: AuthService) {
     console.log('🎯 AppComponent - shouldSkipAuth:', this.shouldSkipAuth);
@@ -144,14 +150,6 @@ export class AppComponent {
     }
   }
 
-  private isCryptoAvailable(): boolean {
-    try {
-      return !!(window.crypto && window.crypto.subtle);
-    } catch (e) {
-      return false;
-    }
-  }
-
   onTabSelected(tab: string) {
     this.currentTab = tab;
   }
@@ -160,7 +158,7 @@ export class AppComponent {
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(),
-    ...(environment.features.skipAuthentication || !isCryptoAvailable() ? [] : [
+    ...(environment.features.skipAuthentication || !cryptoAvailable ? [] : [
       {
         provide: MSAL_INSTANCE,
         useFactory: MSALInstanceFactory
