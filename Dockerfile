@@ -24,7 +24,6 @@ FROM nginx:alpine
 
 # Supprimer complètement la configuration et les fichiers par défaut de Nginx
 RUN rm -rf /etc/nginx/conf.d/*
-RUN rm /etc/nginx/conf.d/default.conf
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copier les fichiers buildés vers Nginx
