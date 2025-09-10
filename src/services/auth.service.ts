@@ -36,20 +36,31 @@ export class AuthService {
     @Optional() private msalService: MsalService,
     private http: HttpClient
   ) {
-    if (environment.features.skipAuthentication) {
-      // Mode Bolt : simuler un utilisateur connecté
+    const shouldSkipAuth = environment.features.skipAuthentication || !this.isCryptoAvailable();
+    console.log('🔐 AuthService - shouldSkipAuth:', shouldSkipAuth);
+    
+    if (shouldSkipAuth) {
+      // Mode sans authentification : simuler un utilisateur connecté
       this.simulateBoltUser();
     } else {
       this.checkAuthenticationStatus();
     }
   }
 
+  private isCryptoAvailable(): boolean {
+    try {
+      return !!(window.crypto && window.crypto.subtle);
+    } catch (e) {
+      return false;
+    }
+  }
+
   private simulateBoltUser(): void {
-    // Simuler un utilisateur pour Bolt
+    // Simuler un utilisateur quand l'authentification est désactivée
     const mockUser: UserProfile = {
-      displayName: 'Utilisateur Bolt',
-      mail: 'bolt.user@demo.com',
-      userPrincipalName: 'bolt.user@demo.com',
+      displayName: 'Utilisateur Demo',
+      mail: 'demo.user@gt.com',
+      userPrincipalName: 'demo.user@gt.com',
       jobTitle: 'Développeur',
       department: 'IT',
       photoUrl: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100'
@@ -74,8 +85,9 @@ export class AuthService {
   }
 
   async login(): Promise<void> {
-    if (environment.features.skipAuthentication) {
-      // Mode Bolt : déjà connecté
+    const shouldSkipAuth = environment.features.skipAuthentication || !this.isCryptoAvailable();
+    if (shouldSkipAuth) {
+      // Mode sans authentification : déjà connecté
       return;
     }
     
@@ -97,7 +109,8 @@ export class AuthService {
   }
 
   logout(): void {
-    if (!environment.features.skipAuthentication && this.msalService) {
+    const shouldSkipAuth = environment.features.skipAuthentication || !this.isCryptoAvailable();
+    if (!shouldSkipAuth && this.msalService) {
       this.msalService.logout();
     }
     this.isAuthenticatedSubject.next(false);
@@ -105,8 +118,9 @@ export class AuthService {
   }
 
   private async loadUserProfile(): Promise<void> {
-    if (environment.features.skipAuthentication) {
-      // Mode Bolt : profil déjà chargé
+    const shouldSkipAuth = environment.features.skipAuthentication || !this.isCryptoAvailable();
+    if (shouldSkipAuth) {
+      // Mode sans authentification : profil déjà chargé
       return;
     }
     

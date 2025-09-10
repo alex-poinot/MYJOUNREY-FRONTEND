@@ -16,7 +16,23 @@ import { environment } from './environments/environment';
 // Ajout de logs pour le diagnostic
 console.log('🚀 Démarrage de l\'application MyJourney');
 console.log('📊 Environnement:', environment.name);
-console.log('🔧 Configuration:', environment);
+console.log('🔧 Skip Auth:', environment.features.skipAuthentication);
+
+// Vérifier si l'API crypto est disponible
+const isCryptoAvailable = () => {
+  try {
+    return !!(window.crypto && window.crypto.subtle);
+  } catch (e) {
+    return false;
+  }
+};
+
+const cryptoAvailable = isCryptoAvailable();
+console.log('🔐 Crypto API disponible:', cryptoAvailable);
+
+// Forcer le mode sans authentification si crypto n'est pas disponible
+const shouldSkipAuth = environment.features.skipAuthentication || !cryptoAvailable;
+console.log('⚠️ Mode sans authentification:', shouldSkipAuth);
 
 export function MSALInstanceFactory(): PublicClientApplication {
   console.log('🔑 Initialisation MSAL...');
@@ -36,9 +52,9 @@ export function initializeMsal(msalService: MsalService): () => Promise<void> {
   return () => {
     console.log('🔐 Configuration MSAL...');
     return new Promise<void>((resolve) => {
-      if (environment.features.skipAuthentication) {
-        // Mode Bolt : pas d'initialisation MSAL
-        console.log('⚠️ Mode sans authentification activé');
+      const shouldSkipAuth = environment.features.skipAuthentication || !isCryptoAvailable();
+      if (shouldSkipAuth) {
+        console.log('⚠️ Mode sans authentification activé (crypto:', isCryptoAvailable(), ')');
         resolve();
       } else {
         console.log('🔒 Initialisation authentification Azure AD...');
@@ -59,10 +75,10 @@ export function initializeMsal(msalService: MsalService): () => Promise<void> {
   imports: [CommonModule, NavbarComponent, DashboardComponent, NogEditorComponent, LoginComponent],
   template: `
     <!-- Page de connexion si non authentifié -->
-    <app-login *ngIf="!isAuthenticated && !isBoltMode"></app-login>
+    <app-login *ngIf="!isAuthenticated && !shouldSkipAuth"></app-login>
     
     <!-- Application principale si authentifié -->
-    <div class="app-container" *ngIf="isAuthenticated || isBoltMode">
+    <div class="app-container" *ngIf="isAuthenticated || shouldSkipAuth">
       <app-navbar 
         [activeTab]="currentTab"
         (tabChange)="onTabSelected($event)">
@@ -112,17 +128,27 @@ export function initializeMsal(msalService: MsalService): () => Promise<void> {
 export class AppComponent {
   currentTab = 'dashboard';
   isAuthenticated = false;
-  isBoltMode = environment.features.skipAuthentication;
+  shouldSkipAuth = environment.features.skipAuthentication || !this.isCryptoAvailable();
 
   constructor(private authService: AuthService) {
-    if (this.isBoltMode) {
-      // Mode Bolt : toujours authentifié
+    console.log('🎯 AppComponent - shouldSkipAuth:', this.shouldSkipAuth);
+    
+    if (this.shouldSkipAuth) {
+      // Mode sans authentification : toujours authentifié
       this.isAuthenticated = true;
     } else {
       // Mode normal : écouter les changements d'état d'authentification
       this.authService.isAuthenticated$.subscribe(authenticated => {
         this.isAuthenticated = authenticated;
       });
+    }
+  }
+
+  private isCryptoAvailable(): boolean {
+    try {
+      return !!(window.crypto && window.crypto.subtle);
+    } catch (e) {
+      return false;
     }
   }
 
@@ -134,7 +160,7 @@ export class AppComponent {
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(),
-    ...(environment.features.skipAuthentication ? [] : [
+    ...(environment.features.skipAuthentication || !isCryptoAvailable() ? [] : [
       {
         provide: MSAL_INSTANCE,
         useFactory: MSALInstanceFactory
