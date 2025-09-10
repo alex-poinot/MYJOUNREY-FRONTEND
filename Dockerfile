@@ -1,20 +1,32 @@
-# Utiliser une image de base officielle de Node.js
-FROM node:22-alpine
+# Étape 1: Build de l'application Angular
+FROM node:22-alpine AS build
 
 # Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers package.json et package-lock.json dans le répertoire de travail
+# Copier les fichiers de dépendances
 COPY package.json package-lock.json ./
 
-# Installer les dépendances du projet
-RUN npm install
+# Installer les dépendances
+RUN npm ci --only=production
 
-# Copier le reste de l'application dans le répertoire de travail
+# Copier le code source
 COPY . .
 
-# Exposer le port que votre application Angular utilise
-EXPOSE 4200
+# Build de l'application pour l'environnement staging
+RUN npm run build:staging
 
-# Commande à exécuter lors du démarrage du conteneur
-CMD ["npm", "run", "serve:staging"]
+# Étape 2: Serveur de production avec Nginx
+FROM nginx:alpine
+
+# Copier les fichiers buildés vers Nginx
+COPY --from=build /app/dist/demo /usr/share/nginx/html
+
+# Copier la configuration Nginx personnalisée
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Exposer le port 80
+EXPOSE 80
+
+# Démarrer Nginx
+CMD ["nginx", "-g", "daemon off;"]
