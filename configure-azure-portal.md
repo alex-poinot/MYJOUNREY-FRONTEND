@@ -9,25 +9,41 @@
 ### 2. Navigation vers App Registrations
 - Cliquez sur "Azure Active Directory" dans le menu de gauche
 - Cliquez sur "App registrations"
-- Recherchez et cliquez sur "GT-MyJourney-RCT"
+- Recherchez et cliquez sur votre application MyJourney
 
 ### 3. Configuration Authentication
 - Dans le menu de gauche, cliquez sur "Authentication"
 - Dans la section "Redirect URIs", vous devriez voir :
   - Type: Single-page application (SPA)
-  - URI: `http://10.100.9.40/` (à modifier)
+  - URI: anciennes URLs (à modifier)
 
 ### 4. Mise à jour des URLs
 **Modifiez les URLs suivantes :**
 
 **Redirect URIs :**
-- ❌ Supprimez : `http://10.100.9.40/`
-- ✅ Ajoutez : `https://10.100.9.40/`
+- ❌ Supprimez toutes les anciennes URLs
+- ✅ Ajoutez : `https://myjourney-test.grant-thornton.fr/myjourney/`
 
 **Logout URL :**
-- ❌ Supprimez : `http://10.100.9.40/`
-- ✅ Ajoutez : `https://10.100.9.40/`
+- ❌ Supprimez les anciennes URLs
+- ✅ Ajoutez : `https://myjourney-test.grant-thornton.fr/myjourney/`
 
+### 5. URLs exactes à configurer
+
+**Dans la section "Redirect URIs" (Type: Single-page application) :**
+```
+https://myjourney-test.grant-thornton.fr/myjourney/
+```
+
+**Dans la section "Front-channel logout URL" :**
+```
+https://myjourney-test.grant-thornton.fr/myjourney/
+```
+
+**⚠️ IMPORTANT :**
+- L'URL doit se terminer par `/` (slash final obligatoire)
+- Utilisez exactement `https://` (pas http)
+- Le chemin complet `/myjourney/` est requis
 ### 5. Configuration avancée
 Dans la section "Advanced settings" :
 - ✅ Cochez "Allow public client flows" : **Yes**
