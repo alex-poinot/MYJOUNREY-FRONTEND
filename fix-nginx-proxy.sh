@@ -45,7 +45,7 @@ server {
     
     # Page de test
     location /test {
-        return 200 "MyJourney HTTPS Server OK - $(date)\n";
+        return 200 "MyJourney HTTPS Server OK\n";
         add_header Content-Type text/plain;
     }
     
