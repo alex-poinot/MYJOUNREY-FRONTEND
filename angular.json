@@ -29,7 +29,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "baseHref": "/",
+              "baseHref": "/myjourney/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

@@ -5,7 +5,7 @@ server {
     return 301 https://$server_name$request_uri;
 }
 
-# Configuration HTTPS pour MyJourney Test - CORRIGÉE
+# Configuration HTTPS pour MyJourney Test - ASSETS CORRIGÉS
 server {
     listen 443 ssl http2;
     server_name myjourney-test.grant-thornton.fr;
@@ -29,7 +29,7 @@ server {
     
     # Page de test
     location /test {
-        return 200 "MyJourney Test Server OK - Base href fixed\n";
+        return 200 "MyJourney Test Server OK - Assets routing fixed\n";
         add_header Content-Type text/plain;
     }
     
@@ -38,10 +38,28 @@ server {
         return 301 https://$server_name/myjourney/;
     }
     
+    # CORRECTION: Gestion des assets avec le bon chemin /myjourney/
+    location ~ ^/myjourney/(.*\.(js|mjs|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))$ {
+        proxy_pass http://127.0.0.1:8080/$1;
+        proxy_set_header Host $host;
+        
+        # Content-Type correct selon l'extension
+        location ~ \.(js|mjs)$ {
+            add_header Content-Type application/javascript;
+        }
+        location ~ \.css$ {
+            add_header Content-Type text/css;
+        }
+        
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+    
     # Configuration pour l'application MyJourney (/myjourney/)
     location /myjourney/ {
-        # Proxy direct vers Docker - SANS rewrite
-        proxy_pass http://127.0.0.1:8080/;
+        # Proxy vers Docker en supprimant le préfixe /myjourney/
+        rewrite ^/myjourney/(.*)$ /$1 break;
+        proxy_pass http://127.0.0.1:8080;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -68,7 +86,8 @@ server {
     # Configuration pour l'API MyJourney (/api/myjourney/)
     location /api/myjourney/ {
         # Proxy vers l'API Docker sur port 3000
-        proxy_pass http://127.0.0.1:3000/;
+        rewrite ^/api/myjourney/(.*)$ /$1 break;
+        proxy_pass http://127.0.0.1:3000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
