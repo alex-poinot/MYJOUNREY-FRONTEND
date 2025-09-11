@@ -44,12 +44,7 @@ export function MSALInstanceFactory(): PublicClientApplication {
   console.log('🔑 Initialisation MSAL...');
   const msalInstance = new PublicClientApplication(msalConfig);
   
-  // Configuration spéciale pour l'environnement staging (HTTP)
-  if (environment.name === 'staging') {
-    console.log('⚠️ Configuration MSAL pour environnement staging (HTTP)');
-    // Désactiver certaines vérifications crypto pour HTTP
-    (msalInstance as any).config.system.allowNativeBroker = false;
-  }
+  console.log('✅ MSAL configuré pour HTTPS staging');
   
   return msalInstance;
 }
