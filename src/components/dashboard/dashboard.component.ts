@@ -493,28 +493,27 @@ interface ModalData {
                        [class.completed]="mission.finMission.finRelationClient"></i>
                   </td>
                 </tr>
-
-            </ng-container>
-          </tbody>
+            <textarea [(ngModel)]="modalData.questionnaire.question2"
+                     placeholder="Décrivez les mesures de contrôle..."
+                     rows="3"></textarea>
         </table>
       </div>
 
       <div class="pagination-footer">
             <textarea [(ngModel)]="modalData.questionnaire.question3"
-          <div class="mission-count-display">
-            {{ startIndex + 1 }}-{{ endIndex }} sur {{ totalMissions }} missions
+                     placeholder="Décrivez les points d'attention..."
+                     rows="3"></textarea>
           </div>
           
           <div class="pagination-controls">
             <button 
             <textarea [(ngModel)]="modalData.questionnaire.question4"
-              [disabled]="currentPage === 1"
-              (click)="goToPage(currentPage - 1)">
+                     placeholder="Décrivez vos recommandations..."
+                     rows="3"></textarea>
               <i class="fas fa-chevron-left"></i> Précédent
             </button>
             
             <div class="page-numbers">
-            <textarea [(ngModel)]="modalData.questionnaire.question5"
                 <button 
                   *ngIf="page !== '...' && page !== ''"
                   class="page-btn"
@@ -653,9 +652,10 @@ interface ModalData {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn-cancel" (click)="closeModal()">Annuler</button>
-            <button *ngIf="modalData.modalType !== 'coming-soon'" class="btn-save" (click)="saveModal()">Sauvegarder</button>
-          </div>
+            <textarea [(ngModel)]="modalData.questionnaire.question5"
+                     placeholder="Commentaires additionnels..."
+                     rows="3"></textarea>
+          <button class="btn-save" (click)="saveModal()" *ngIf="currentModule !== 'Fin relation client'">Sauvegarder</button>
         </div>
       </div>
     </div>
