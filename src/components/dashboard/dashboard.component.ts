@@ -1694,6 +1694,32 @@ export class DashboardComponent implements OnInit {
     return Math.round(total / allMissions.length);
   }
 
+  getModuleStatus(mission: MissionData, moduleName: string): string {
+    const moduleKey = `${mission.numeroGroupe}-${mission.numeroClient}-${mission.mission}_${moduleName}`;
+    
+    // Logique spécifique par module
+    switch (moduleName) {
+      case 'Carto LAB':
+        // Vérifier si toutes les questions sont remplies
+        const allAnswered = Object.values(this.cartoLabAnswers).every(answer => answer.trim() !== '');
+        return allAnswered ? 'validated' : 'pending';
+      
+      case 'Plaquette':
+        // Vérifier si les 2 documents sont chargés
+        const plaquetteDoc = this.uploadedDocuments[`${moduleKey}_plaquette`];
+        const mailDoc = this.uploadedDocuments[`${moduleKey}_mail`];
+        return (plaquetteDoc && mailDoc) ? 'validated' : 'pending';
+      
+      case 'Fin relation client':
+        return 'pending'; // Toujours en attente pour ce module
+      
+      default:
+        // Pour tous les autres modules, vérifier si un document est chargé
+        const hasDocument = this.uploadedDocuments[moduleKey];
+        return hasDocument ? 'validated' : 'pending';
+    }
+  }
+
   public openStatusModal(columnName: string, missionId: string, currentStatus: boolean): void {
     this.modalData = {
       isOpen: true,
