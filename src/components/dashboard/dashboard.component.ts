@@ -601,18 +601,17 @@ interface ModalData {
                 type="file" 
                 id="file-input"
                 (change)="onFileSelected($event)"
+                [accept]="modalData.acceptedTypes"
                 class="file-input">
               <div *ngIf="modalData.selectedFile" class="file-info">
                 <span class="file-name">{{ modalData.selectedFile.name }}</span>
                 <button class="remove-file" (click)="removeFile()">
-                     [accept]="modalData.acceptedTypes"
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div>
                 <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
               </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn-cancel" (click)="closeModal()">Annuler</button>
-            <button class="btn-save" (click)="saveStatus()">Enregistrer</button>
           </div>
           
           <!-- Modal Upload Double (Plaquette) -->
@@ -688,6 +687,11 @@ interface ModalData {
                 </div>
               </div>
             </div>
+          </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancel" (click)="closeModal()">Annuler</button>
+            <button class="btn-save" (click)="saveStatus()">Enregistrer</button>
           </div>
         </div>
       </div>
@@ -1480,91 +1484,6 @@ interface ModalData {
     .btn-save:hover {
       background: var(--primary-dark);
     }
-    
-    /* Coming Soon Modal */
-    .coming-soon-content {
-      text-align: center;
-      padding: 40px 20px;
-    }
-    
-    .coming-soon-icon {
-      font-size: 4rem;
-      margin-bottom: 20px;
-    }
-    
-    .coming-soon-content h4 {
-      color: var(--gray-700);
-      margin-bottom: 10px;
-    }
-    
-    .coming-soon-content p {
-      color: var(--gray-600);
-      font-style: italic;
-    }
-    
-    /* Questionnaire Modal */
-    .questionnaire-content {
-      padding: 20px 0;
-    }
-    
-    .questionnaire-form {
-      margin-top: 20px;
-    }
-    
-    .question-item {
-      margin-bottom: 20px;
-      padding: 15px;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      background: var(--gray-50);
-    }
-    
-    .question-item label {
-      font-weight: 600;
-      color: var(--gray-800);
-      margin-bottom: 10px;
-      display: block;
-    }
-    
-    .radio-group {
-      display: flex;
-      gap: 20px;
-    }
-    
-    .radio-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: normal;
-      cursor: pointer;
-    }
-    
-    .radio-label input[type="radio"] {
-      margin: 0;
-    }
-    
-    /* Double Upload Modal */
-    .double-upload-section {
-      padding: 20px 0;
-    }
-    
-    .upload-group {
-      margin-bottom: 30px;
-      padding: 20px;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      background: var(--gray-50);
-    }
-    
-    .upload-group h4 {
-      margin: 0 0 15px 0;
-      color: var(--primary-color);
-      font-weight: 600;
-    }
-    
-    .upload-group .file-upload-area {
-      margin-bottom: 15px;
-    }
 
     @media (max-width: 1200px) {
       .mission-table {
@@ -1900,7 +1819,7 @@ export class DashboardComponent implements OnInit {
         paginatedGroup.expanded = completeGroup.expanded;
         
         paginatedGroup.clients.forEach(paginatedClient => {
-          <div *ngIf="modalData.type !== 'coming-soon'" class="status-indicator">
+          const completeClient = completeGroup.clients.find(c => c.numeroClient === paginatedClient.numeroClient);
           if (completeClient) {
             paginatedClient.expanded = completeClient.expanded;
           }
@@ -2159,15 +2078,80 @@ export class DashboardComponent implements OnInit {
     this.modalData.selectedFile = null;
   }
 
-  public onFileSelected(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    if (target.files && target.files.length > 0) {
-      this.modalData.selectedFile = target.files[0];
+  onFileSelected(event: Event, fileNumber?: number): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      if (fileNumber === 1) {
+        this.modalData.selectedFile = input.files[0];
+      } else if (fileNumber === 2) {
+        this.modalData.selectedFile2 = input.files[0];
+      } else {
+        this.modalData.selectedFile = input.files[0];
+      }
+      this.updateModuleStatus();
     }
   }
 
-  public removeFile(): void {
-    this.modalData.selectedFile = null;
+  onFileDrop(event: DragEvent, fileNumber?: number): void {
+    event.preventDefault();
+    this.isDragOver = false;
+    
+    const files = event.dataTransfer?.files;
+    if (files && files[0]) {
+      if (fileNumber === 1) {
+        this.modalData.selectedFile = files[0];
+      } else if (fileNumber === 2) {
+        this.modalData.selectedFile2 = files[0];
+      } else {
+        this.modalData.selectedFile = files[0];
+      }
+      this.updateModuleStatus();
+    }
+  }
+
+  removeFile(fileNumber?: number): void {
+    if (fileNumber === 1) {
+      this.modalData.selectedFile = null;
+    } else if (fileNumber === 2) {
+      this.modalData.selectedFile2 = null;
+    } else {
+      this.modalData.selectedFile = null;
+    }
+    this.updateModuleStatus();
+  }
+
+  updateQuestionnaireStatus(): void {
+    if (this.modalData.questionnaire) {
+      const allAnswered = this.modalData.questionnaire.questions.every(q => q.answer);
+      this.modalData.questionnaire.completed = allAnswered;
+      this.updateModuleStatus();
+    }
+  }
+
+  updateModuleStatus(): void {
+    if (!this.selectedModule) return;
+    
+    let newStatus: 'empty' | 'incomplete' | 'complete' = 'empty';
+    
+    switch (this.modalData.type) {
+      case 'pdf':
+      case 'document':
+        newStatus = this.modalData.selectedFile ? 'complete' : 'incomplete';
+        break;
+      case 'double-document':
+        newStatus = (this.modalData.selectedFile && this.modalData.selectedFile2) ? 'complete' : 'incomplete';
+        break;
+      case 'questionnaire':
+        newStatus = this.modalData.questionnaire?.completed ? 'complete' : 'incomplete';
+        break;
+      case 'coming-soon':
+        newStatus = 'empty';
+        break;
+      default:
+        newStatus = 'empty';
+    }
+    
+    this.selectedModule.status = newStatus;
   }
 
   public saveStatus(): void {
