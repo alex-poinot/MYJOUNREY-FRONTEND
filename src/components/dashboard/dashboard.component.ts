@@ -1276,6 +1276,14 @@ export class DashboardComponent implements OnInit {
     currentStatus: false,
     selectedFile: null
   };
+  uploadedDocuments: { [key: string]: File | null } = {};
+  cartoLabAnswers: { [key: string]: string } = {
+    question1: '',
+    question2: '',
+    question3: '',
+    question4: '',
+    question5: ''
+  };
 
   constructor(
     private http: HttpClient,
