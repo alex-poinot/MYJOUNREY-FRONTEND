@@ -1078,6 +1078,132 @@ interface ModalData {
       overflow-y: auto;
     }
 
+    /* Styles pour les modales spécialisées */
+    .questionnaire {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .question-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .question-group label {
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .question-group textarea {
+      padding: 12px;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      min-height: 80px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .question-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(34, 109, 104, 0.1);
+    }
+
+    .document-section {
+      margin-bottom: 24px;
+      padding: 16px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--gray-50);
+    }
+
+    .document-section h5 {
+      margin: 0 0 12px 0;
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+
+    .file-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px dashed var(--gray-300);
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-input:hover {
+      border-color: var(--primary-color);
+      background: rgba(34, 109, 104, 0.05);
+    }
+
+    .uploaded-file {
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--success-color);
+      border-radius: 6px;
+      color: var(--success-color);
+      font-weight: 500;
+    }
+
+    .file-info {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      font-size: var(--font-size-sm);
+      color: var(--gray-600);
+    }
+
+    .upload-placeholder {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--gray-500);
+      font-style: italic;
+    }
+
+    .status-indicator {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+    }
+
+    .status-badge.validated {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+      border: 1px solid var(--success-color);
+    }
+
+    .status-badge.pending {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+      border: 1px solid var(--warning-color);
+    }
+
+    .coming-soon-modal {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .coming-soon-content h4 {
+      color: var(--gray-600);
+      margin-bottom: 16px;
+    }
+
+    .coming-soon-content p {
+      color: var(--gray-500);
+      font-style: italic;
+    }
+
     .modal-header {
       display: flex;
       justify-content: space-between;
@@ -1692,32 +1818,6 @@ export class DashboardComponent implements OnInit {
     }, 0);
     
     return Math.round(total / allMissions.length);
-  }
-
-  getModuleStatus(mission: MissionData, moduleName: string): string {
-    const moduleKey = `${mission.numeroGroupe}-${mission.numeroClient}-${mission.mission}_${moduleName}`;
-    
-    // Logique spécifique par module
-    switch (moduleName) {
-      case 'Carto LAB':
-        // Vérifier si toutes les questions sont remplies
-        const allAnswered = Object.values(this.cartoLabAnswers).every(answer => answer.trim() !== '');
-        return allAnswered ? 'validated' : 'pending';
-      
-      case 'Plaquette':
-        // Vérifier si les 2 documents sont chargés
-        const plaquetteDoc = this.uploadedDocuments[`${moduleKey}_plaquette`];
-        const mailDoc = this.uploadedDocuments[`${moduleKey}_mail`];
-        return (plaquetteDoc && mailDoc) ? 'validated' : 'pending';
-      
-      case 'Fin relation client':
-        return 'pending'; // Toujours en attente pour ce module
-      
-      default:
-        // Pour tous les autres modules, vérifier si un document est chargé
-        const hasDocument = this.uploadedDocuments[moduleKey];
-        return hasDocument ? 'validated' : 'pending';
-    }
   }
 
   public openStatusModal(columnName: string, missionId: string, currentStatus: boolean): void {
