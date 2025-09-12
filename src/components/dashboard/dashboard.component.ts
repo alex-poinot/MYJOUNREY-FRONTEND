@@ -56,6 +56,19 @@ interface GroupData {
 
 interface ModalData {
   isOpen: boolean;
+  selectedFile2?: File | null;
+  type?: string;
+  title?: string;
+  description?: string;
+  acceptedTypes?: string;
+  questionnaire?: {
+    questions: Array<{
+      id: number;
+      text: string;
+      answer: string;
+    }>;
+    isCompleted: boolean;
+  };
   columnName: string;
   missionId: string;
   currentStatus: boolean;
@@ -71,8 +84,8 @@ interface ModalData {
       <div class="dashboard-header">
         <h1>Vue listing</h1>
         <div class="header-controls">
-          <button class="expand-all-btn" (click)="toggleAllGroups()">
-            <i class="fas" [ngClass]="allGroupsExpanded ? 'fa-folder-minus' : 'fa-folder-plus'"></i>
+          <h3>{{ modalData.title || 'Module' }}</h3>
+          <button *ngIf="modalData.type !== 'coming-soon'" class="btn-save" (click)="updateModuleStatus()">
             {{ allGroupsExpanded ? 'Réduire tout' : 'Développer tout' }}
           </button>
         </div>
@@ -546,12 +559,49 @@ interface ModalData {
                 <span class="checkbox-text">Tâche terminée</span>
               </label>
             </div>
-            <div class="form-group">
-              <label for="file-input">Fichier joint :</label>
+          <!-- Modal "À venir" -->
+          <div *ngIf="modalData.type === 'coming-soon'" class="coming-soon-content">
+            <div class="coming-soon-icon">🚧</div>
+            <h4>Fonctionnalité à venir</h4>
+            <p>Cette fonctionnalité sera bientôt disponible.</p>
+          </div>
+          
+          <!-- Modal Questionnaire (Carto LAB) -->
+          <div *ngIf="modalData.type === 'questionnaire'" class="questionnaire-content">
+            <p>{{ modalData.description }}</p>
+            <div class="questionnaire-form">
+              <div *ngFor="let question of modalData.questionnaire?.questions; let i = index" class="question-item">
+                <label>{{ i + 1 }}. {{ question.text }}</label>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" 
+                           [name]="'question_' + i" 
+                           value="oui"
+                           [(ngModel)]="question.answer"
+                           (change)="updateQuestionnaireStatus()">
+                    Oui
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" 
+                           [name]="'question_' + i" 
+                           value="non"
+                           [(ngModel)]="question.answer"
+                           (change)="updateQuestionnaireStatus()">
+                    Non
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Modal Upload (PDF/Document simple) -->
+          <div *ngIf="modalData.type === 'pdf' || modalData.type === 'document'" class="upload-section">
+            <p>{{ modalData.description }}</p>
               <input 
                 type="file" 
                 id="file-input"
                 (change)="onFileSelected($event)"
+                [accept]="modalData.acceptedTypes"
                 class="file-input">
               <div *ngIf="modalData.selectedFile" class="file-info">
                 <span class="file-name">{{ modalData.selectedFile.name }}</span>
@@ -559,7 +609,75 @@ interface ModalData {
                   <i class="fas fa-times"></i>
                 </button>
               </div>
+              <div>
+                <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+              </div>
+          </div>
+          
+          <!-- Modal Upload Double (Plaquette) -->
+          <div *ngIf="modalData.type === 'double-document'" class="double-upload-section">
+            <p>{{ modalData.description }}</p>
+            
+            <!-- Premier document -->
+            <div class="upload-group">
+              <h4>1. Plaquette</h4>
+              <div class="file-upload-area"
+                   (click)="fileInput1.click()">
+                <div class="upload-content">
+                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                  <p>Glissez-déposez la plaquette ici</p>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+                <input #fileInput1 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 1)"
+                       style="display: none;">
+              </div>
+              
+              <div *ngIf="modalData.selectedFile" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(1)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
             </div>
+            
+            <!-- Deuxième document -->
+            <div class="upload-group">
+              <h4>2. Mail accompagnement de la remise des comptes annuels</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput2.click()">
+                <div class="upload-content">
+                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                  <p>Glissez-déposez le mail d'accompagnement ici</p>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+                <input #fileInput2 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 2)"
+                       style="display: none;">
+              </div>
+              
+              <div *ngIf="modalData.selectedFile2" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(2)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
           </div>
           <div class="modal-footer">
             <button class="btn-cancel" (click)="closeModal()">Annuler</button>
@@ -1821,13 +1939,128 @@ export class DashboardComponent implements OnInit {
   }
 
   public openStatusModal(columnName: string, missionId: string, currentStatus: boolean): void {
+    // Initialiser les données de base
     this.modalData = {
       isOpen: true,
       columnName: columnName,
       missionId: missionId,
       currentStatus: currentStatus,
-      selectedFile: null
+      selectedFile: null,
+      selectedFile2: null
     };
+
+    // Configuration spécifique par module
+    switch (columnName) {
+      case 'Conflit Check':
+        this.modalData.type = 'pdf';
+        this.modalData.title = 'Conflit Check - Dépôt PDF';
+        this.modalData.description = 'Déposez le PDF de vérification des conflits';
+        this.modalData.acceptedTypes = '.pdf';
+        break;
+
+      case 'LAB':
+        this.modalData.type = 'document';
+        this.modalData.title = 'LAB - Dépôt Document';
+        this.modalData.description = 'Déposez le document LAB';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Carto LAB':
+        this.modalData.type = 'questionnaire';
+        this.modalData.title = 'Carto LAB - Questionnaire';
+        this.modalData.description = 'Remplissez le questionnaire de cartographie';
+        break;
+
+      case 'QAC':
+        this.modalData.type = 'document';
+        this.modalData.title = 'QAC - Dépôt Document';
+        this.modalData.description = 'Déposez le document QAC';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'QAM':
+        this.modalData.type = 'document';
+        this.modalData.title = 'QAM - Dépôt Document';
+        this.modalData.description = 'Déposez le document QAM';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'LDM':
+        this.modalData.type = 'document';
+        this.modalData.title = 'LDM - Dépôt Document';
+        this.modalData.description = 'Déposez le document LDM';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'NOG':
+        this.modalData.type = 'document';
+        this.modalData.title = 'NOG - Dépôt Document';
+        this.modalData.description = 'Déposez le document NOG';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Checklist':
+        this.modalData.type = 'document';
+        this.modalData.title = 'Checklist - Dépôt Document';
+        this.modalData.description = 'Déposez le document Checklist';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Révision':
+        this.modalData.type = 'document';
+        this.modalData.title = 'Révision - Dépôt Document';
+        this.modalData.description = 'Déposez le document de révision';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Supervision':
+        this.modalData.type = 'document';
+        this.modalData.title = 'Supervision - Dépôt Document';
+        this.modalData.description = 'Déposez le document de supervision';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'NDS/CR Mission':
+        this.modalData.type = 'document';
+        this.modalData.title = 'NDS/CR Mission - Dépôt Document';
+        this.modalData.description = 'Déposez le document NDS/CR Mission';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'QMM':
+        this.modalData.type = 'document';
+        this.modalData.title = 'QMM - Dépôt Document';
+        this.modalData.description = 'Déposez le document QMM';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Plaquette':
+        this.modalData.type = 'double-document';
+        this.modalData.title = 'Plaquette - Dépôt Documents';
+        this.modalData.description = 'Déposez la plaquette et le mail d\'accompagnement';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Restitution communication client':
+        this.modalData.type = 'document';
+        this.modalData.title = 'Restitution - Dépôt Document';
+        this.modalData.description = 'Déposez le document de restitution';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Fin relation client':
+        this.modalData.type = 'coming-soon';
+        this.modalData.title = 'Fin relation client';
+        this.modalData.description = 'Cette fonctionnalité sera bientôt disponible';
+        break;
+
+      default:
+        this.modalData.type = 'document';
+        this.modalData.title = columnName + ' - Dépôt Document';
+        this.modalData.description = 'Déposez le document requis';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+    }
   }
 
   public closeModal(): void {
@@ -1835,15 +2068,78 @@ export class DashboardComponent implements OnInit {
     this.modalData.selectedFile = null;
   }
 
-  public onFileSelected(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    if (target.files && target.files.length > 0) {
-      this.modalData.selectedFile = target.files[0];
+  onFileSelected(event: Event, fileNumber?: number): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      if (fileNumber === 1) {
+        this.modalData.selectedFile = input.files[0];
+      } else if (fileNumber === 2) {
+        this.modalData.selectedFile2 = input.files[0];
+      } else {
+        this.modalData.selectedFile = input.files[0];
+      }
+      this.updateModuleStatus();
     }
   }
 
-  public removeFile(): void {
-    this.modalData.selectedFile = null;
+  onFileDrop(event: DragEvent, fileNumber?: number): void {
+    event.preventDefault();
+    // this.isDragOver = false;
+    
+    const files = event.dataTransfer?.files;
+    if (files && files[0]) {
+      if (fileNumber === 1) {
+        this.modalData.selectedFile = files[0];
+      } else if (fileNumber === 2) {
+        this.modalData.selectedFile2 = files[0];
+      } else {
+        this.modalData.selectedFile = files[0];
+      }
+      this.updateModuleStatus();
+    }
+  }
+
+  removeFile(fileNumber?: number): void {
+    if (fileNumber === 1) {
+      this.modalData.selectedFile = null;
+    } else if (fileNumber === 2) {
+      this.modalData.selectedFile2 = null;
+    } else {
+      this.modalData.selectedFile = null;
+    }
+    this.updateModuleStatus();
+  }
+
+  updateQuestionnaireStatus(): void {
+    if (this.modalData.questionnaire) {
+      const allAnswered = this.modalData.questionnaire.questions.every(q => q.answer);
+      // this.modalData.questionnaire.completed = allAnswered;
+      this.updateModuleStatus();
+    }
+  }
+
+  updateModuleStatus(): void {
+    // if (!this.selectedModule) return;
+    
+    let newStatus: 'empty' | 'incomplete' | 'complete' = 'empty';
+    
+    switch (this.modalData.type) {
+      case 'pdf':
+      case 'document':
+        newStatus = this.modalData.selectedFile ? 'complete' : 'incomplete';
+        break;
+      case 'double-document':
+        newStatus = (this.modalData.selectedFile && this.modalData.selectedFile2) ? 'complete' : 'incomplete';
+        break;
+      case 'questionnaire':
+        // newStatus = this.modalData.questionnaire?.completed ? 'complete' : 'incomplete';
+        break;
+      case 'coming-soon':
+        newStatus = 'empty';
+        break;
+      default:
+        newStatus = 'empty';
+    }
   }
 
   public saveStatus(): void {

@@ -5,12 +5,12 @@
 
 :root {
   /* Couleurs principales */
-  --primary-color: #226D68;
-  --primary-dark: #143E3B;
-  --primary-light: #64CEC7;
-  --secondary-color: #64CEC7;
-  --secondary-dark: #143E3B;
-  --secondary-light: #7DD3D8;
+  --primary-color: #664a85;
+  --primary-dark: #44266c;
+  --primary-light: #957eaa;
+  --secondary-color: #957eaa;
+  --secondary-dark: #44266c;
+  --secondary-light: #664a85;
   
   /* Couleurs neutres */
   --gray-50: #f9fafb;
