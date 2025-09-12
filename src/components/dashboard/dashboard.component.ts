@@ -1841,14 +1841,7 @@ export class DashboardComponent implements OnInit {
       missionId: missionId,
       currentStatus: currentStatus,
       selectedFile: null,
-      selectedFile2: null,
-      questionnaire: {
-        question1: '',
-        question2: '',
-        question3: '',
-        question4: '',
-        question5: ''
-      }
+      selectedFile2: null
     };
 
     // Configuration spécifique par module
@@ -1963,9 +1956,6 @@ export class DashboardComponent implements OnInit {
         this.modalData.acceptedTypes = '.pdf,.doc,.docx';
         break;
     }
-
-    // Déterminer l'état basé sur les données existantes
-    this.updateModalStatus();
   }
 
   public closeModal(): void {
