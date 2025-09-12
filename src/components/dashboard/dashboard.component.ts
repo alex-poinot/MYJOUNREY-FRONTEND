@@ -59,6 +59,16 @@ interface ModalData {
   selectedFile2?: File | null;
   type?: string;
   title?: string;
+  description?: string;
+  acceptedTypes?: string;
+  questionnaire?: {
+    questions: Array<{
+      id: number;
+      text: string;
+      answer: string;
+    }>;
+    isCompleted: boolean;
+  };
   columnName: string;
   missionId: string;
   currentStatus: boolean;
