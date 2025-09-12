@@ -84,8 +84,8 @@ interface ModalData {
       <div class="dashboard-header">
         <h1>Vue listing</h1>
         <div class="header-controls">
-          <button class="expand-all-btn" (click)="toggleAllGroups()">
-            <i class="fas" [ngClass]="allGroupsExpanded ? 'fa-folder-minus' : 'fa-folder-plus'"></i>
+          <h3>{{ modalData.title || selectedModule?.name || 'Module' }}</h3>
+          <button *ngIf="modalData.type !== 'coming-soon'" class="btn-save" (click)="saveModuleStatus()">
             {{ allGroupsExpanded ? 'Réduire tout' : 'Développer tout' }}
           </button>
         </div>
@@ -559,8 +559,44 @@ interface ModalData {
                 <span class="checkbox-text">Tâche terminée</span>
               </label>
             </div>
-            <div class="form-group">
-              <label for="file-input">Fichier joint :</label>
+          <!-- Modal "À venir" -->
+          <div *ngIf="modalData.type === 'coming-soon'" class="coming-soon-content">
+            <div class="coming-soon-icon">🚧</div>
+            <h4>Fonctionnalité à venir</h4>
+            <p>Cette fonctionnalité sera bientôt disponible.</p>
+          </div>
+          
+          <!-- Modal Questionnaire (Carto LAB) -->
+          <div *ngIf="modalData.type === 'questionnaire'" class="questionnaire-content">
+            <p>{{ modalData.description }}</p>
+            <div class="questionnaire-form">
+              <div *ngFor="let question of modalData.questionnaire?.questions; let i = index" class="question-item">
+                <label>{{ i + 1 }}. {{ question.question }}</label>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" 
+                           [name]="'question_' + i" 
+                           value="oui"
+                           [(ngModel)]="question.answer"
+                           (change)="updateQuestionnaireStatus()">
+                    Oui
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" 
+                           [name]="'question_' + i" 
+                           value="non"
+                           [(ngModel)]="question.answer"
+                           (change)="updateQuestionnaireStatus()">
+                    Non
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Modal Upload (PDF/Document simple) -->
+          <div *ngIf="modalData.type === 'pdf' || modalData.type === 'document'" class="upload-section">
+            <p>{{ modalData.description }}</p>
               <input 
                 type="file" 
                 id="file-input"
@@ -569,14 +605,89 @@ interface ModalData {
               <div *ngIf="modalData.selectedFile" class="file-info">
                 <span class="file-name">{{ modalData.selectedFile.name }}</span>
                 <button class="remove-file" (click)="removeFile()">
-                  <i class="fas fa-times"></i>
-                </button>
+                     [accept]="modalData.acceptedTypes"
+                <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
               </div>
             </div>
           </div>
           <div class="modal-footer">
             <button class="btn-cancel" (click)="closeModal()">Annuler</button>
             <button class="btn-save" (click)="saveStatus()">Enregistrer</button>
+          </div>
+          
+          <!-- Modal Upload Double (Plaquette) -->
+          <div *ngIf="modalData.type === 'double-document'" class="double-upload-section">
+            <p>{{ modalData.description }}</p>
+            
+            <!-- Premier document -->
+            <div class="upload-group">
+              <h4>1. Plaquette</h4>
+              <div class="file-upload-area" 
+                   [class.dragover]="isDragOver"
+                   (dragover)="onDragOver($event)"
+                   (dragleave)="onDragLeave($event)"
+                   (drop)="onFileDrop($event, 1)"
+                   (click)="fileInput1.click()">
+                <div class="upload-content">
+                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                  <p>Glissez-déposez la plaquette ici</p>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+                <input #fileInput1 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 1)"
+                       style="display: none;">
+              </div>
+              
+              <div *ngIf="modalData.selectedFile" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                    <span class="file-size">{{ formatFileSize(modalData.selectedFile.size) }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(1)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Deuxième document -->
+            <div class="upload-group">
+              <h4>2. Mail accompagnement de la remise des comptes annuels</h4>
+              <div class="file-upload-area" 
+                   [class.dragover]="isDragOver"
+                   (dragover)="onDragOver($event)"
+                   (dragleave)="onDragLeave($event)"
+                   (drop)="onFileDrop($event, 2)"
+                   (click)="fileInput2.click()">
+                <div class="upload-content">
+                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                  <p>Glissez-déposez le mail d'accompagnement ici</p>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+                <input #fileInput2 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 2)"
+                       style="display: none;">
+              </div>
+              
+              <div *ngIf="modalData.selectedFile2" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+                    <span class="file-size">{{ formatFileSize(modalData.selectedFile2.size) }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(2)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1369,6 +1480,91 @@ interface ModalData {
     .btn-save:hover {
       background: var(--primary-dark);
     }
+    
+    /* Coming Soon Modal */
+    .coming-soon-content {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .coming-soon-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+    
+    .coming-soon-content h4 {
+      color: var(--gray-700);
+      margin-bottom: 10px;
+    }
+    
+    .coming-soon-content p {
+      color: var(--gray-600);
+      font-style: italic;
+    }
+    
+    /* Questionnaire Modal */
+    .questionnaire-content {
+      padding: 20px 0;
+    }
+    
+    .questionnaire-form {
+      margin-top: 20px;
+    }
+    
+    .question-item {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--gray-50);
+    }
+    
+    .question-item label {
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 10px;
+      display: block;
+    }
+    
+    .radio-group {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: normal;
+      cursor: pointer;
+    }
+    
+    .radio-label input[type="radio"] {
+      margin: 0;
+    }
+    
+    /* Double Upload Modal */
+    .double-upload-section {
+      padding: 20px 0;
+    }
+    
+    .upload-group {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--gray-50);
+    }
+    
+    .upload-group h4 {
+      margin: 0 0 15px 0;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+    
+    .upload-group .file-upload-area {
+      margin-bottom: 15px;
+    }
 
     @media (max-width: 1200px) {
       .mission-table {
@@ -1704,7 +1900,7 @@ export class DashboardComponent implements OnInit {
         paginatedGroup.expanded = completeGroup.expanded;
         
         paginatedGroup.clients.forEach(paginatedClient => {
-          const completeClient = completeGroup.clients.find(c => c.numeroClient === paginatedClient.numeroClient);
+          <div *ngIf="modalData.type !== 'coming-soon'" class="status-indicator">
           if (completeClient) {
             paginatedClient.expanded = completeClient.expanded;
           }
