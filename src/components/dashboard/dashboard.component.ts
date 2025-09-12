@@ -60,6 +60,16 @@ interface ModalData {
   missionId: string;
   currentStatus: boolean;
   selectedFile: File | null;
+  modalType?: string;
+  acceptedFileTypes?: string;
+  selectedFile2?: File | null;
+  questionnaire?: {
+    question1: string;
+    question2: string;
+    question3: string;
+    question4: string;
+    question5: string;
+  };
 }
 
 @Component({
@@ -537,6 +547,87 @@ interface ModalData {
             </button>
           </div>
           <div class="modal-body">
+            <!-- Modal pour Carto LAB - Questionnaire -->
+            <div *ngIf="modalData.modalType === 'questionnaire'" class="questionnaire-section">
+              <h4>📝 Questionnaire Carto LAB</h4>
+              <div class="question-group">
+                <label>1. Quelle est la nature de l'activité du client ?</label>
+                <textarea [(ngModel)]="modalData.questionnaire.question1" 
+                         (input)="updateModalStatus()"
+                         placeholder="Décrivez l'activité principale..."></textarea>
+              </div>
+              <div class="question-group">
+                <label>2. Quels sont les principaux risques identifiés ?</label>
+                <textarea [(ngModel)]="modalData.questionnaire.question2"
+                         (input)="updateModalStatus()"
+                         placeholder="Listez les risques..."></textarea>
+              </div>
+              <div class="question-group">
+                <label>3. Y a-t-il des parties liées significatives ?</label>
+                <textarea [(ngModel)]="modalData.questionnaire.question3"
+                         (input)="updateModalStatus()"
+                         placeholder="Décrivez les parties liées..."></textarea>
+              </div>
+              <div class="question-group">
+                <label>4. Quels sont les systèmes comptables utilisés ?</label>
+                <textarea [(ngModel)]="modalData.questionnaire.question4"
+                         (input)="updateModalStatus()"
+                         placeholder="Décrivez les systèmes..."></textarea>
+              </div>
+              <div class="question-group">
+                <label>5. Observations particulières ?</label>
+                <textarea [(ngModel)]="modalData.questionnaire.question5"
+                         (input)="updateModalStatus()"
+                         placeholder="Ajoutez vos observations..."></textarea>
+              </div>
+            </div>
+
+            <!-- Modal pour Plaquette - Double upload -->
+            <div *ngIf="modalData.modalType === 'double-upload'" class="double-upload-section">
+              <h4>📘 Upload Plaquette</h4>
+              <div class="upload-group">
+                <label>📄 Plaquette :</label>
+                <input type="file" (change)="onFileSelected($event)" [accept]="modalData.acceptedFileTypes">
+                <div *ngIf="modalData.selectedFile" class="file-info">
+                  ✅ {{ modalData.selectedFile.name }}
+                </div>
+              </div>
+              <div class="upload-group">
+                <label>📧 Mail d'accompagnement :</label>
+                <input type="file" (change)="onFile2Selected($event)" [accept]="modalData.acceptedFileTypes">
+                <div *ngIf="modalData.selectedFile2" class="file-info">
+                  ✅ {{ modalData.selectedFile2.name }}
+                </div>
+              </div>
+              <div class="progress-info">
+                📊 Documents chargés : {{ (modalData.selectedFile ? 1 : 0) + (modalData.selectedFile2 ? 1 : 0) }}/2
+              </div>
+            </div>
+
+            <!-- Modal standard - Upload de document -->
+            <div *ngIf="modalData.modalType === 'document' || modalData.modalType === 'pdf'" class="upload-section">
+              <div class="file-upload">
+                <label class="upload-label">
+                  <span *ngIf="modalData.modalType === 'pdf'">📄 Sélectionner un PDF :</span>
+                  <span *ngIf="modalData.modalType === 'document'">📄 Sélectionner un document :</span>
+                </label>
+                <input type="file" (change)="onFileSelected($event)" [accept]="modalData.acceptedFileTypes">
+                <div *ngIf="modalData.selectedFile" class="file-info">
+                  ✅ Fichier sélectionné : {{ modalData.selectedFile.name }}
+                  <br>📏 Taille : {{ (modalData.selectedFile.size / 1024 / 1024).toFixed(2) }} MB
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal "À venir" -->
+            <div *ngIf="modalData.modalType === 'coming-soon'" class="coming-soon-section">
+              <div class="coming-soon-content">
+                <div class="coming-soon-icon">🚧</div>
+                <h4>Fonctionnalité à venir</h4>
+                <p>Cette fonctionnalité sera disponible dans une prochaine version.</p>
+              </div>
+            </div>
+
             <div class="form-group">
               <label class="checkbox-label">
                 <input 
@@ -563,7 +654,7 @@ interface ModalData {
           </div>
           <div class="modal-footer">
             <button class="btn-cancel" (click)="closeModal()">Annuler</button>
-            <button class="btn-save" (click)="saveStatus()">Enregistrer</button>
+            <button *ngIf="modalData.modalType !== 'coming-soon'" class="btn-save" (click)="saveModal()">Sauvegarder</button>
           </div>
         </div>
       </div>
@@ -1864,17 +1955,7 @@ export class DashboardComponent implements OnInit {
       columnName: columnName,
       missionId: missionId,
       currentStatus: currentStatus,
-      selectedFile: null,
-      selectedFile2: null,
-      modalType: 'document',
-      acceptedFileTypes: '',
-      questionnaire: {
-        question1: '',
-        question2: '',
-        question3: '',
-        question4: '',
-        question5: ''
-      }
+      selectedFile: null
     };
   }
 
@@ -2006,8 +2087,37 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  public onFile2Selected(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      this.modalData.selectedFile2 = target.files[0];
+    }
+  }
+
   public removeFile(): void {
     this.modalData.selectedFile = null;
+  }
+
+  public updateModalStatus(): void {
+    // Méthode pour mettre à jour le statut du modal basé sur les réponses du questionnaire
+    if (this.modalData.questionnaire) {
+      const hasAnswers = Object.values(this.modalData.questionnaire).some(answer => answer.trim() !== '');
+      this.modalData.currentStatus = hasAnswers;
+    }
+  }
+
+  public saveModal(): void {
+    // Ici vous pouvez ajouter la logique pour sauvegarder le statut
+    console.log('Sauvegarde:', {
+      columnName: this.modalData.columnName,
+      missionId: this.modalData.missionId,
+      status: this.modalData.currentStatus,
+      file: this.modalData.selectedFile,
+      modalType: this.modalData.modalType
+    });
+    
+    // Fermer le modal après sauvegarde
+    this.closeModal();
   }
 
   public saveStatus(): void {
