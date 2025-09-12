@@ -1821,13 +1821,138 @@ export class DashboardComponent implements OnInit {
   }
 
   public openStatusModal(columnName: string, missionId: string, currentStatus: boolean): void {
+    // Initialiser les données de base
     this.modalData = {
       isOpen: true,
       columnName: columnName,
       missionId: missionId,
       currentStatus: currentStatus,
-      selectedFile: null
+      selectedFile: null,
+      selectedFile2: null,
+      questionnaire: {
+        question1: '',
+        question2: '',
+        question3: '',
+        question4: '',
+        question5: ''
+      }
     };
+
+    // Configuration spécifique par module
+    switch (columnName) {
+      case 'Conflit Check':
+        this.modalData.type = 'pdf';
+        this.modalData.title = 'Conflit Check - Dépôt PDF';
+        this.modalData.description = 'Déposez le PDF de vérification des conflits';
+        this.modalData.acceptedTypes = '.pdf';
+        break;
+
+      case 'LAB':
+        this.modalData.type = 'document';
+        this.modalData.title = 'LAB - Dépôt Document';
+        this.modalData.description = 'Déposez le document LAB';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Carto LAB':
+        this.modalData.type = 'questionnaire';
+        this.modalData.title = 'Carto LAB - Questionnaire';
+        this.modalData.description = 'Remplissez le questionnaire de cartographie';
+        break;
+
+      case 'QAC':
+        this.modalData.type = 'document';
+        this.modalData.title = 'QAC - Dépôt Document';
+        this.modalData.description = 'Déposez le document QAC';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'QAM':
+        this.modalData.type = 'document';
+        this.modalData.title = 'QAM - Dépôt Document';
+        this.modalData.description = 'Déposez le document QAM';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'LDM':
+        this.modalData.type = 'document';
+        this.modalData.title = 'LDM - Dépôt Document';
+        this.modalData.description = 'Déposez le document LDM';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'NOG':
+        this.modalData.type = 'document';
+        this.modalData.title = 'NOG - Dépôt Document';
+        this.modalData.description = 'Déposez le document NOG';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Checklist':
+        this.modalData.type = 'document';
+        this.modalData.title = 'Checklist - Dépôt Document';
+        this.modalData.description = 'Déposez le document Checklist';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Révision':
+        this.modalData.type = 'document';
+        this.modalData.title = 'Révision - Dépôt Document';
+        this.modalData.description = 'Déposez le document de révision';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Supervision':
+        this.modalData.type = 'document';
+        this.modalData.title = 'Supervision - Dépôt Document';
+        this.modalData.description = 'Déposez le document de supervision';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'NDS/CR Mission':
+        this.modalData.type = 'document';
+        this.modalData.title = 'NDS/CR Mission - Dépôt Document';
+        this.modalData.description = 'Déposez le document NDS/CR Mission';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'QMM':
+        this.modalData.type = 'document';
+        this.modalData.title = 'QMM - Dépôt Document';
+        this.modalData.description = 'Déposez le document QMM';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Plaquette':
+        this.modalData.type = 'double-document';
+        this.modalData.title = 'Plaquette - Dépôt Documents';
+        this.modalData.description = 'Déposez la plaquette et le mail d\'accompagnement';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Restitution communication client':
+        this.modalData.type = 'document';
+        this.modalData.title = 'Restitution - Dépôt Document';
+        this.modalData.description = 'Déposez le document de restitution';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Fin relation client':
+        this.modalData.type = 'coming-soon';
+        this.modalData.title = 'Fin relation client';
+        this.modalData.description = 'Cette fonctionnalité sera bientôt disponible';
+        break;
+
+      default:
+        this.modalData.type = 'document';
+        this.modalData.title = columnName + ' - Dépôt Document';
+        this.modalData.description = 'Déposez le document requis';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+    }
+
+    // Déterminer l'état basé sur les données existantes
+    this.updateModalStatus();
   }
 
   public closeModal(): void {
