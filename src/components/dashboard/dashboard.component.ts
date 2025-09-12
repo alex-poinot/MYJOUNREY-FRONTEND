@@ -56,6 +56,9 @@ interface GroupData {
 
 interface ModalData {
   isOpen: boolean;
+  selectedFile2?: File | null;
+  type?: string;
+  title?: string;
   columnName: string;
   missionId: string;
   currentStatus: boolean;
