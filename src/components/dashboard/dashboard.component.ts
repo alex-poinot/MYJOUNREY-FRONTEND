@@ -13,9 +13,11 @@ interface MissionData {
   mission: string;
   avantMission: {
     percentage: number;
+    conflitCheck: boolean;
     labGroupe: boolean;
     labDossier: boolean;
-    conflitCheck: boolean;
+    cartoLabGroupe: boolean;
+    cartoLabDossier: boolean;
     qac: boolean;
     qam: boolean;
     ldm: boolean;
@@ -29,10 +31,12 @@ interface MissionData {
   };
   finMission: {
     percentage: number;
-    ndsCr: boolean;
+    nds: boolean;
+    cr: boolean;
     qmm: boolean;
     plaquette: boolean;
     restitution: boolean;
+    finRelationClient: boolean;
   };
 }
 
@@ -88,7 +92,7 @@ interface ModalData {
                 Information
               </th>
               <!-- Groupe Avant la mission -->
-              <th [attr.colspan]="avantMissionCollapsed ? 1 : 6" class="column-group-header avant-mission">
+              <th [attr.colspan]="avantMissionCollapsed ? 1 : 7" class="column-group-header avant-mission">
                 <button class="collapse-btn" (click)="toggleColumnGroup('avantMission')">
                   <i class="fas" [ngClass]="avantMissionCollapsed ? 'fa-chevron-right' : 'fa-chevron-down'"></i>
                 </button>
@@ -102,7 +106,7 @@ interface ModalData {
                 Pendant la mission
               </th>
               <!-- Groupe Fin de mission -->
-              <th [attr.colspan]="finMissionCollapsed ? 1 : 5" class="column-group-header fin-mission">
+              <th [attr.colspan]="finMissionCollapsed ? 1 : 7" class="column-group-header fin-mission">
                 <button class="collapse-btn" (click)="toggleColumnGroup('finMission')">
                   <i class="fas" [ngClass]="finMissionCollapsed ? 'fa-chevron-right' : 'fa-chevron-down'"></i>
                 </button>
@@ -119,8 +123,9 @@ interface ModalData {
               
               <!-- Avant la mission columns -->
               <th class="column-header percentage">%</th>
-              <th *ngIf="!avantMissionCollapsed" class="column-header">LAB</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">Conflit Check</th>
+              <th *ngIf="!avantMissionCollapsed" class="column-header">LAB</th>
+              <th *ngIf="!avantMissionCollapsed" class="column-header">Carto LAB</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">QAC</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">QAM</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">LDM</th>
@@ -134,10 +139,12 @@ interface ModalData {
               
               <!-- Fin de mission columns -->
               <th class="column-header percentage">%</th>
-              <th *ngIf="!finMissionCollapsed" class="column-header">NDS/CR</th>
+              <th *ngIf="!finMissionCollapsed" class="column-header">NDS</th>
+              <th *ngIf="!finMissionCollapsed" class="column-header">CR</th>
               <th *ngIf="!finMissionCollapsed" class="column-header">QMM</th>
               <th *ngIf="!finMissionCollapsed" class="column-header">Plaquette</th>
               <th *ngIf="!finMissionCollapsed" class="column-header">Restitution</th>
+              <th *ngIf="!finMissionCollapsed" class="column-header">Fin Relation Client</th>
             </tr>
           </thead>
           <tbody>
@@ -169,13 +176,18 @@ interface ModalData {
                     {{ getGroupeAverage(group, 'avantMission') }}%
                   </div>
                 </td>
+                <td *ngIf="!avantMissionCollapsed">
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'checklist')"></div>
+                </td>
                 <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.labGroupe)">
                   <i class="fas status-icon" 
                       [ngClass]="group.clients[0].missions[0].avantMission.labGroupe ? 'fa-check-circle' : 'fa-clock'"
                       [class.completed]="group.clients[0].missions[0].avantMission.labGroupe"></i>
                 </td>
-                <td *ngIf="!avantMissionCollapsed">
-                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'checklist')"></div>
+                <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Carto LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.cartoLabGroupe)">
+                  <i class="fas status-icon" 
+                      [ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe ? 'fa-check-circle' : 'fa-clock'"
+                      [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe"></i>
                 </td>
                 <td *ngIf="!avantMissionCollapsed">
                   <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'qac')"></div>
@@ -223,8 +235,13 @@ interface ModalData {
                   </div>
                 </td>
                 <td *ngIf="!finMissionCollapsed">
-                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'finMission', 'ndsCr')">
-                    {{ getGroupeRecap(group, 'finMission', 'ndsCr') }}
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'finMission', 'nds')">
+                    {{ getGroupeRecap(group, 'finMission', 'nds') }}
+                  </div>
+                </td>
+                <td *ngIf="!finMissionCollapsed">
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'finMission', 'cr')">
+                    {{ getGroupeRecap(group, 'finMission', 'cr') }}
                   </div>
                 </td>
                 <td *ngIf="!finMissionCollapsed">
@@ -240,6 +257,11 @@ interface ModalData {
                 <td *ngIf="!finMissionCollapsed">
                   <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'finMission', 'restitution')">
                     {{ getGroupeRecap(group, 'finMission', 'restitution') }}
+                  </div>
+                </td>
+                <td *ngIf="!finMissionCollapsed">
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'finMission', 'finRelationClient')">
+                    {{ getGroupeRecap(group, 'finMission', 'finRelationClient') }}
                   </div>
                 </td>
               </tr>
@@ -269,15 +291,20 @@ interface ModalData {
                       {{ getClientAverage(client, 'avantMission') }}%
                     </div>
                   </td>
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Conflit Check', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.conflitCheck)">
+                    <i class="fas status-icon" 
+                       [ngClass]="client.missions[0].avantMission.conflitCheck ? 'fa-check-circle' : 'fa-clock'"
+                       [class.completed]="client.missions[0].avantMission.conflitCheck"></i>
+                  </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.labDossier)">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.labDossier ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="client.missions[0].avantMission.labDossier"></i>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Conflit Check', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.conflitCheck)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Carto LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.cartoLabDossier)">
                     <i class="fas status-icon" 
-                       [ngClass]="client.missions[0].avantMission.conflitCheck ? 'fa-check-circle' : 'fa-clock'"
-                       [class.completed]="client.missions[0].avantMission.conflitCheck"></i>
+                       [ngClass]="client.missions[0].avantMission.cartoLabDossier ? 'fa-check-circle' : 'fa-clock'"
+                       [class.completed]="client.missions[0].avantMission.cartoLabDossier"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAC', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.qac)">
                     <i class="fas status-icon" 
@@ -327,8 +354,13 @@ interface ModalData {
                     </div>
                   </td>
                   <td *ngIf="!finMissionCollapsed">
-                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'finMission', 'ndsCr')">
-                      {{ getClientRecap(client, 'finMission', 'ndsCr') }}
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'finMission', 'nds')">
+                      {{ getClientRecap(client, 'finMission', 'nds') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!finMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'finMission', 'cr')">
+                      {{ getClientRecap(client, 'finMission', 'cr') }}
                     </div>
                   </td>
                   <td *ngIf="!finMissionCollapsed">
@@ -344,6 +376,11 @@ interface ModalData {
                   <td *ngIf="!finMissionCollapsed">
                     <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'finMission', 'restitution')">
                       {{ getClientRecap(client, 'finMission', 'restitution') }}
+                    </div>
+                  </td>
+                  <td *ngIf="!finMissionCollapsed">
+                    <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'finMission', 'finRelationClient')">
+                      {{ getClientRecap(client, 'finMission', 'finRelationClient') }}
                     </div>
                   </td>
                 </tr>
@@ -367,6 +404,7 @@ interface ModalData {
                       {{ mission.avantMission.percentage }}%
                     </div>
                   </td>
+                  <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
@@ -414,10 +452,15 @@ interface ModalData {
                       {{ mission.finMission.percentage }}%
                     </div>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('NDS/CR Mission', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.ndsCr)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('NDS', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.nds)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.ndsCr ? 'fa-check-circle' : 'fa-clock'"
-                       [class.completed]="mission.finMission.ndsCr"></i>
+                       [ngClass]="mission.finMission.nds ? 'fa-check-circle' : 'fa-clock'"
+                       [class.completed]="mission.finMission.nds"></i>
+                  </td>
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('CR Mission', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.cr)">
+                    <i class="fas status-icon" 
+                       [ngClass]="mission.finMission.cr ? 'fa-check-circle' : 'fa-clock'"
+                       [class.completed]="mission.finMission.cr"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('QMM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.qmm)">
                     <i class="fas status-icon" 
@@ -433,6 +476,11 @@ interface ModalData {
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.restitution ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.finMission.restitution"></i>
+                  </td>
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Fin relation client', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.finRelationClient)">
+                    <i class="fas status-icon" 
+                       [ngClass]="mission.finMission.finRelationClient ? 'fa-check-circle' : 'fa-clock'"
+                       [class.completed]="mission.finMission.finRelationClient"></i>
                   </td>
                 </tr>
               </ng-container>
@@ -1259,7 +1307,7 @@ export class DashboardComponent implements OnInit {
   private loadData(): void {
     // Récupérer les données des missions depuis l'API
     console.log('Email api:', this.userEmail);
-    this.http.get<{ success: boolean; data: MissionData[]; count: number; timestamp: string }>(`${environment.apiUrl}/api/missions/getAllMissionsDashboard/${this.userEmail}`)
+    this.http.get<{ success: boolean; data: MissionData[]; count: number; timestamp: string }>(`${environment.apiUrl}/missions/getAllMissionsDashboard/${this.userEmail}`)
       .subscribe((response) => {
         this.processData(response.data);
       }, (error) => {
