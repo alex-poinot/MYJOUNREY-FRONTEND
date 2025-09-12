@@ -59,7 +59,7 @@ interface ModalData {
   columnName: string;
   missionId: string;
   currentStatus: boolean;
-  selectedFile: File | null;
+  selectedFile?: File | null;
   selectedFile2?: File | null;
   modalType?: 'pdf' | 'document' | 'questionnaire' | 'double' | 'coming-soon';
   acceptedFileTypes?: string;
@@ -301,22 +301,22 @@ interface ModalData {
                       {{ getClientAverage(client, 'avantMission') }}%
                     </div>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Conflit Check', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.conflitCheck)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openModuleModal('Conflit Check', client.missions[0])">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.conflitCheck ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="client.missions[0].avantMission.conflitCheck"></i>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.labDossier)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openModuleModal('LAB', client.missions[0])">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.labDossier ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="client.missions[0].avantMission.labDossier"></i>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Carto LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.cartoLabDossier)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openModuleModal('Carto LAB', client.missions[0])">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.cartoLabDossier ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="client.missions[0].avantMission.cartoLabDossier"></i>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAC', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.qac)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openModuleModal('QAC', client.missions[0])">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.qac ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="client.missions[0].avantMission.qac"></i>
@@ -418,12 +418,12 @@ interface ModalData {
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.qam)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openModuleModal('QAM', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.avantMission.qam ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.avantMission.qam"></i>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LDM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.ldm)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openModuleModal('LDM', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.avantMission.ldm ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.avantMission.ldm"></i>
@@ -435,22 +435,22 @@ interface ModalData {
                       {{ mission.pendantMission.percentage }}%
                     </div>
                   </td>
-                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('NOG', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.nog)">
+                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openModuleModal('NOG', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.pendantMission.nog ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.pendantMission.nog"></i>
                   </td>
-                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Checklist', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.checklist)">
+                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openModuleModal('Checklist', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.pendantMission.checklist ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.pendantMission.checklist"></i>
                   </td>
-                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Révision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.revision)">
+                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openModuleModal('Révision', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.pendantMission.revision ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.pendantMission.revision"></i>
                   </td>
-                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Supervision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.supervision)">
+                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openModuleModal('Supervision', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.pendantMission.supervision ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.pendantMission.supervision"></i>
@@ -462,32 +462,32 @@ interface ModalData {
                       {{ mission.finMission.percentage }}%
                     </div>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('NDS', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.nds)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openModuleModal('NDS', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.nds ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.finMission.nds"></i>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('CR Mission', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.cr)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openModuleModal('CR Mission', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.cr ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.finMission.cr"></i>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('QMM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.qmm)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openModuleModal('QMM', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.qmm ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.finMission.qmm"></i>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Plaquette', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.plaquette)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openModuleModal('Plaquette', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.plaquette ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.finMission.plaquette"></i>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Restitution communication client', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.restitution)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openModuleModal('Restitution communication client', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.restitution ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.finMission.restitution"></i>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Fin relation client', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.finRelationClient)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openModuleModal('Fin relation client', mission)">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.finRelationClient ? 'fa-check-circle' : 'fa-clock'"
                        [class.completed]="mission.finMission.finRelationClient"></i>
@@ -500,20 +500,21 @@ interface ModalData {
       </div>
 
       <div class="pagination-footer">
+            <textarea [(ngModel)]="modalData.questionnaire.question3"
           <div class="mission-count-display">
             {{ startIndex + 1 }}-{{ endIndex }} sur {{ totalMissions }} missions
           </div>
           
           <div class="pagination-controls">
             <button 
-              class="pagination-btn" 
+            <textarea [(ngModel)]="modalData.questionnaire.question4"
               [disabled]="currentPage === 1"
               (click)="goToPage(currentPage - 1)">
               <i class="fas fa-chevron-left"></i> Précédent
             </button>
             
             <div class="page-numbers">
-              <ng-container *ngFor="let page of getVisiblePages()">
+            <textarea [(ngModel)]="modalData.questionnaire.question5"
                 <button 
                   *ngIf="page !== '...' && page !== ''"
                   class="page-btn"
@@ -1961,9 +1962,6 @@ export class DashboardComponent implements OnInit {
   public openModuleModal(columnName: string, mission: MissionData): void {
     const missionId = mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission;
     
-    // Ouvrir la modal
-    this.showModal = true;
-    
     // Déterminer le type de modal selon le module
     switch (columnName) {
       case 'Conflict Check':
@@ -2052,7 +2050,7 @@ export class DashboardComponent implements OnInit {
       columnName: columnName,
       missionId: missionId,
       currentStatus: existingData?.status || 'en-attente',
-      modalType: 'double-upload',
+      modalType: 'double',
       selectedFile: existingData?.file1 || null,
       selectedFile2: existingData?.file2 || null,
       acceptedFileTypes: '.pdf,.doc,.docx'
@@ -2065,7 +2063,7 @@ export class DashboardComponent implements OnInit {
       isOpen: true,
       columnName: columnName,
       missionId: missionId,
-      currentStatus: 'a-venir',
+      currentStatus: false,
       modalType: 'coming-soon'
     };
   }
