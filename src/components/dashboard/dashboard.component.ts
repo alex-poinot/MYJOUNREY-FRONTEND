@@ -2084,7 +2084,6 @@ export class DashboardComponent implements OnInit {
 
   onFileDrop(event: DragEvent, fileNumber?: number): void {
     event.preventDefault();
-    // this.isDragOver = false;
     
     const files = event.dataTransfer?.files;
     if (files && files[0]) {
@@ -2113,13 +2112,11 @@ export class DashboardComponent implements OnInit {
   updateQuestionnaireStatus(): void {
     if (this.modalData.questionnaire) {
       const allAnswered = this.modalData.questionnaire.questions.every(q => q.answer);
-      // this.modalData.questionnaire.completed = allAnswered;
       this.updateModuleStatus();
     }
   }
 
   updateModuleStatus(): void {
-    // if (!this.selectedModule) return;
     
     let newStatus: 'empty' | 'incomplete' | 'complete' = 'empty';
     
@@ -2132,7 +2129,6 @@ export class DashboardComponent implements OnInit {
         newStatus = (this.modalData.selectedFile && this.modalData.selectedFile2) ? 'complete' : 'incomplete';
         break;
       case 'questionnaire':
-        // newStatus = this.modalData.questionnaire?.completed ? 'complete' : 'incomplete';
         break;
       case 'coming-soon':
         newStatus = 'empty';
