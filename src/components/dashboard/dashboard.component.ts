@@ -63,7 +63,6 @@ interface ModalData {
   selectedFile2?: File | null;
   modalType?: 'pdf' | 'document' | 'questionnaire' | 'double' | 'coming-soon';
   acceptedFileTypes?: string;
-  selectedFile2?: File | null;
   questionnaire?: {
     question1: string;
     question2: string;
