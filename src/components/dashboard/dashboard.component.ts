@@ -62,7 +62,7 @@ interface ModalData {
   selectedFile: File | null;
 }
 
-export @Component({
+@Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
@@ -188,7 +188,5 @@ export @Component({
                   <i class="fas status-icon" 
                       [ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe ? 'fa-check-circle' : 'fa-clock'"
                       [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe"></i>
-}
-)
-}
-)
+})
+export class DashboardComponent implements OnInit {
