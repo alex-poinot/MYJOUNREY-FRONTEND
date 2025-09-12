@@ -62,7 +62,7 @@ interface ModalData {
   selectedFile: File | null;
 }
 
-@Component({
+export @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
@@ -187,4 +187,4 @@ interface ModalData {
                 <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Carto LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.cartoLabGroupe)">
                   <i class="fas status-icon" 
                       [ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe ? 'fa-check-circle' : 'fa-clock'"
-                      [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe"></i
+                      [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe"></i>
