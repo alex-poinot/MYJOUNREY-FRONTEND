@@ -190,3 +190,5 @@ interface ModalData {
                       [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe"></i>
 })
 export class DashboardComponent implements OnInit {
+}
+)
