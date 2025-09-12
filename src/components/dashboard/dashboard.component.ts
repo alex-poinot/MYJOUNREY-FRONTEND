@@ -190,3 +190,5 @@ export @Component({
                       [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe"></i>
 }
 )
+}
+)
