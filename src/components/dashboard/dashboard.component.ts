@@ -494,28 +494,28 @@ interface ModalData {
                        [class.completed]="mission.finMission.finRelationClient"></i>
                   </td>
                 </tr>
-              </ng-container>
+            <textarea [(ngModel)]="modalData.questionnaire.question2"
             </ng-container>
           </tbody>
         </table>
       </div>
 
       <div class="pagination-footer">
-        <div class="pagination-container">
+            <textarea [(ngModel)]="modalData.questionnaire.question3"
           <div class="mission-count-display">
             {{ startIndex + 1 }}-{{ endIndex }} sur {{ totalMissions }} missions
           </div>
           
           <div class="pagination-controls">
             <button 
-              class="pagination-btn" 
+            <textarea [(ngModel)]="modalData.questionnaire.question4"
               [disabled]="currentPage === 1"
               (click)="goToPage(currentPage - 1)">
               <i class="fas fa-chevron-left"></i> Précédent
             </button>
             
             <div class="page-numbers">
-              <ng-container *ngFor="let page of getVisiblePages()">
+            <textarea [(ngModel)]="modalData.questionnaire.question5"
                 <button 
                   *ngIf="page !== '...' && page !== ''"
                   class="page-btn"
