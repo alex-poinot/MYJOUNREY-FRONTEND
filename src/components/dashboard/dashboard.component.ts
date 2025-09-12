@@ -500,21 +500,20 @@ interface ModalData {
       </div>
 
       <div class="pagination-footer">
-            <textarea [(ngModel)]="modalData.questionnaire.question3"
           <div class="mission-count-display">
             {{ startIndex + 1 }}-{{ endIndex }} sur {{ totalMissions }} missions
           </div>
           
           <div class="pagination-controls">
             <button 
-            <textarea [(ngModel)]="modalData.questionnaire.question4"
+              class="pagination-btn" 
               [disabled]="currentPage === 1"
               (click)="goToPage(currentPage - 1)">
               <i class="fas fa-chevron-left"></i> Précédent
             </button>
             
             <div class="page-numbers">
-            <textarea [(ngModel)]="modalData.questionnaire.question5"
+              <ng-container *ngFor="let page of getVisiblePages()">
                 <button 
                   *ngIf="page !== '...' && page !== ''"
                   class="page-btn"
@@ -1961,6 +1960,9 @@ export class DashboardComponent implements OnInit {
 
   public openModuleModal(columnName: string, mission: MissionData): void {
     const missionId = mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission;
+    
+    // Ouvrir la modal
+    this.showModal = true;
     
     // Déterminer le type de modal selon le module
     switch (columnName) {
