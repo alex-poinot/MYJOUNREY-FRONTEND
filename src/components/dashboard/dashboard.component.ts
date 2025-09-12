@@ -601,6 +601,44 @@ interface ModalData {
       color: var(--gray-600);
       font-size: var(--font-size-md);
     }
+    
+    .status-info {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--gray-50);
+      border-radius: 6px;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .status-info p {
+      margin: 4px 0;
+    }
+    
+    .questionnaire-form .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .questionnaire-form label {
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+      display: block;
+    }
+    
+    .questionnaire-form textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      font-family: inherit;
+      resize: vertical;
+    }
+    
+    .questionnaire-form textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(34, 109, 104, 0.1);
+    }
 
     .header-controls {
       display: flex;
