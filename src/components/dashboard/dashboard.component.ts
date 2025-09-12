@@ -1869,13 +1869,119 @@ export class DashboardComponent implements OnInit {
   }
 
   public openModuleModal(columnName: string, mission: MissionData): void {
+    const missionId = mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission;
+    
+    // Déterminer le type de modal selon le module
+    switch (columnName) {
+      case 'Conflict Check':
+        this.openPdfModal(columnName, missionId);
+        break;
+      case 'Carto LAB':
+        this.openQuestionnaireModal(columnName, missionId);
+        break;
+      case 'Plaquette':
+        this.openDoubleUploadModal(columnName, missionId);
+        break;
+      case 'Fin relation client':
+        this.openComingSoonModal(columnName, missionId);
+        break;
+      case 'LAB':
+      case 'QAC':
+      case 'QAM':
+      case 'LDM':
+      case 'NOG':
+      case 'Checklist':
+      case 'Révision':
+      case 'Supervision':
+      case 'NDS':
+      case 'CR':
+      case 'QMM':
+      case 'Restitution':
+        this.openDocumentModal(columnName, missionId);
+        break;
+      default:
+        this.openDocumentModal(columnName, missionId);
+    }
+  }
+
+  // Modal pour PDF uniquement (Conflict Check)
+  private openPdfModal(columnName: string, missionId: string): void {
+    const existingData = this.getModuleData(missionId, columnName);
     this.modalData = {
       isOpen: true,
       columnName: columnName,
-      missionId: mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission,
-      currentStatus: false,
-      selectedFile: null
+      missionId: missionId,
+      currentStatus: existingData?.status || 'en-attente',
+      selectedFile: existingData?.file || null,
+      modalType: 'pdf',
+      acceptedFileTypes: '.pdf'
     };
+  }
+
+  // Modal pour documents (LAB, QAC, QAM, LDM, NOG, etc.)
+  private openDocumentModal(columnName: string, missionId: string): void {
+    const existingData = this.getModuleData(missionId, columnName);
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: existingData?.status || 'en-attente',
+      selectedFile: existingData?.file || null,
+      modalType: 'document',
+      acceptedFileTypes: '.pdf,.doc,.docx,.txt,.odt'
+    };
+  }
+
+  // Modal questionnaire (Carto LAB)
+  private openQuestionnaireModal(columnName: string, missionId: string): void {
+    const existingData = this.getModuleData(missionId, columnName);
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: existingData?.status || 'en-attente',
+      modalType: 'questionnaire',
+      questionnaire: existingData?.questionnaire || {
+        question1: '',
+        question2: '',
+        question3: '',
+        question4: '',
+        question5: ''
+      }
+    };
+  }
+
+  // Modal double upload (Plaquette)
+  private openDoubleUploadModal(columnName: string, missionId: string): void {
+    const existingData = this.getModuleData(missionId, columnName);
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: existingData?.status || 'en-attente',
+      modalType: 'double-upload',
+      selectedFile: existingData?.file1 || null,
+      selectedFile2: existingData?.file2 || null,
+      acceptedFileTypes: '.pdf,.doc,.docx'
+    };
+  }
+
+  // Modal "à venir" (Fin relation client)
+  private openComingSoonModal(columnName: string, missionId: string): void {
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: 'a-venir',
+      modalType: 'coming-soon'
+    };
+  }
+
+  // Récupérer les données existantes d'un module
+  private getModuleData(missionId: string, columnName: string): any {
+    const key = `${missionId}-${columnName}`;
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : null;
   }
 
   public closeModal(): void {
