@@ -1864,7 +1864,17 @@ export class DashboardComponent implements OnInit {
       columnName: columnName,
       missionId: missionId,
       currentStatus: currentStatus,
-      selectedFile: null
+      selectedFile: null,
+      selectedFile2: null,
+      modalType: 'document',
+      acceptedFileTypes: '',
+      questionnaire: {
+        question1: '',
+        question2: '',
+        question3: '',
+        question4: '',
+        question5: ''
+      }
     };
   }
 
@@ -1989,48 +1999,10 @@ export class DashboardComponent implements OnInit {
     this.modalData.selectedFile = null;
   }
 
-  public onFileSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      if (this.modalData.modalType === 'double-upload') {
-        // Pour Plaquette, déterminer quel fichier (1 ou 2)
-        if (!this.modalData.selectedFile) {
-          this.modalData.selectedFile = file;
-        } else if (!this.modalData.selectedFile2) {
-          this.modalData.selectedFile2 = file;
-        }
-      } else {
-        this.modalData.selectedFile = file;
-      }
-      this.updateModalStatus();
-    }
-  }
-
-  // Sélection du deuxième fichier pour Plaquette
-  public onFile2Selected(event: any): void {
-    const file = event.target.files[0];
-    if (file && this.modalData.modalType === 'double-upload') {
-      this.modalData.selectedFile2 = file;
-      this.updateModalStatus();
-    }
-  }
-
-  // Mise à jour automatique du statut selon le type de modal
-  private updateModalStatus(): void {
-    switch (this.modalData.modalType) {
-      case 'pdf':
-      case 'document':
-        this.modalData.currentStatus = this.modalData.selectedFile ? 'valide' : 'en-attente';
-        break;
-      case 'double-upload':
-        this.modalData.currentStatus = (this.modalData.selectedFile && this.modalData.selectedFile2) ? 'valide' : 'en-attente';
-        break;
-      case 'questionnaire':
-        const questionnaire = this.modalData.questionnaire;
-        const allFilled = questionnaire.question1 && questionnaire.question2 && 
-                         questionnaire.question3 && questionnaire.question4 && questionnaire.question5;
-        this.modalData.currentStatus = allFilled ? 'valide' : 'en-attente';
-        break;
+  public onFileSelected(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      this.modalData.selectedFile = target.files[0];
     }
   }
 
