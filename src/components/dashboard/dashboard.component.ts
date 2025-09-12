@@ -63,6 +63,7 @@ interface ModalData {
   selectedFile2?: File | null;
   modalType?: 'pdf' | 'document' | 'questionnaire' | 'double' | 'coming-soon';
   acceptedFileTypes?: string;
+  selectedFile2?: File | null;
   questionnaire?: {
     question1: string;
     question2: string;
@@ -552,31 +553,31 @@ interface ModalData {
               <h4>📝 Questionnaire Carto LAB</h4>
               <div class="question-group">
                 <label>1. Quelle est la nature de l'activité du client ?</label>
-                <textarea [(ngModel)]="modalData.questionnaire.question1" 
+                <textarea [(ngModel)]="modalData.questionnaire?.question1" 
                          (input)="updateModalStatus()"
                          placeholder="Décrivez l'activité principale..."></textarea>
               </div>
               <div class="question-group">
                 <label>2. Quels sont les principaux risques identifiés ?</label>
-                <textarea [(ngModel)]="modalData.questionnaire.question2"
+                <textarea [(ngModel)]="modalData.questionnaire?.question2"
                          (input)="updateModalStatus()"
                          placeholder="Listez les risques..."></textarea>
               </div>
               <div class="question-group">
                 <label>3. Y a-t-il des parties liées significatives ?</label>
-                <textarea [(ngModel)]="modalData.questionnaire.question3"
+                <textarea [(ngModel)]="modalData.questionnaire?.question3"
                          (input)="updateModalStatus()"
                          placeholder="Décrivez les parties liées..."></textarea>
               </div>
               <div class="question-group">
                 <label>4. Quels sont les systèmes comptables utilisés ?</label>
-                <textarea [(ngModel)]="modalData.questionnaire.question4"
+                <textarea [(ngModel)]="modalData.questionnaire?.question4"
                          (input)="updateModalStatus()"
                          placeholder="Décrivez les systèmes..."></textarea>
               </div>
               <div class="question-group">
                 <label>5. Observations particulières ?</label>
-                <textarea [(ngModel)]="modalData.questionnaire.question5"
+                <textarea [(ngModel)]="modalData.questionnaire?.question5"
                          (input)="updateModalStatus()"
                          placeholder="Ajoutez vos observations..."></textarea>
               </div>
