@@ -179,12 +179,12 @@ interface ModalData {
                 <td *ngIf="!avantMissionCollapsed">
                   <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'checklist')"></div>
                 </td>
-                <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.labGroupe)">
+                <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openModuleModal('LAB', group.clients[0].missions[0])">
                   <i class="fas status-icon" 
                       [ngClass]="group.clients[0].missions[0].avantMission.labGroupe ? 'fa-check-circle' : 'fa-clock'"
                       [class.completed]="group.clients[0].missions[0].avantMission.labGroupe"></i>
                 </td>
-                <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Carto LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.cartoLabGroupe)">
+                <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openModuleModal('Carto LAB', group.clients[0].missions[0])">
                   <i class="fas status-icon" 
                       [ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe ? 'fa-check-circle' : 'fa-clock'"
                       [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe"></i>
@@ -1826,6 +1826,16 @@ export class DashboardComponent implements OnInit {
       columnName: columnName,
       missionId: missionId,
       currentStatus: currentStatus,
+      selectedFile: null
+    };
+  }
+
+  public openModuleModal(columnName: string, mission: MissionData): void {
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission,
+      currentStatus: false,
       selectedFile: null
     };
   }
