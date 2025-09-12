@@ -500,21 +500,14 @@ interface ModalData {
       </div>
 
       <div class="pagination-footer">
-        <div class="pagination-container">
-          <div class="pagination-info">
-            Affichage de {{ startIndex + 1 }} à {{ endIndex }} sur {{ totalMissions }} missions
-          </div>
-          
+                   
           <div class="pagination-controls">
-            <button 
-              class="pagination-btn" 
-              [disabled]="currentPage === 1"
-              (click)="goToPage(currentPage - 1)">
+            <button>
               <i class="fas fa-chevron-left"></i> Précédent
             </button>
             
             <div class="page-numbers">
-              <ng-container *ngFor="let page of getVisiblePages()">
+
                 <button 
                   *ngIf="page !== '...' && page !== ''"
                   class="page-btn"
@@ -524,7 +517,6 @@ interface ModalData {
                 </button>
                 <span *ngIf="page === '...'" class="page-btn ellipsis">...</span>
                 <span *ngIf="page === ''" class="page-btn empty"></span>
-              </ng-container>
             </div>
             
             <button 
@@ -536,6 +528,7 @@ interface ModalData {
           </div>         
         </div>
       </div>
+
 
       <!-- Modal pour les statuts -->
       <div *ngIf="modalData.isOpen" class="modal-overlay" (click)="closeModal()">
@@ -608,4 +601,1529 @@ interface ModalData {
             <div *ngIf="modalData.modalType === 'document' || modalData.modalType === 'pdf'" class="upload-section">
               <div class="file-upload">
                 <label class="upload-label">
-                  <span *ngIf="modalData.modalType === 'pdf
+                  <span *ngIf="modalData.modalType === 'pdf'">📄 Sélectionner un PDF :</span>
+                  <span *ngIf="modalData.modalType === 'document'">📄 Sélectionner un document :</span>
+                </label>
+                <input type="file" (change)="onFileSelected($event)" [accept]="modalData.acceptedFileTypes">
+                <div *ngIf="modalData.selectedFile" class="file-info">
+                  ✅ Fichier sélectionné : {{ modalData.selectedFile.name }}
+                  <br>📏 Taille : {{ (modalData.selectedFile.size / 1024 / 1024).toFixed(2) }} MB
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal "À venir" -->
+            <div *ngIf="modalData.modalType === 'coming-soon'" class="coming-soon-section">
+              <div class="coming-soon-content">
+                <div class="coming-soon-icon">🚧</div>
+                <h4>Fonctionnalité à venir</h4>
+                <p>Cette fonctionnalité sera disponible dans une prochaine version.</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  [(ngModel)]="modalData.currentStatus"
+                  class="status-checkbox">
+                <span class="checkbox-text">Tâche terminée</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label for="file-input">Fichier joint :</label>
+              <input 
+                type="file" 
+                id="file-input"
+                (change)="onFileSelected($event)"
+                class="file-input">
+              <div *ngIf="modalData.selectedFile" class="file-info">
+                <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                <button class="remove-file" (click)="removeFile()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <textarea [(ngModel)]="modalData.questionnaire.question5"
+                     placeholder="Commentaires additionnels..."
+                     rows="3"></textarea>
+          <button class="btn-save" (click)="saveModal()" *ngIf="currentModule !== 'Fin relation client'">Sauvegarder</button>
+        </div>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .hidden {
+      display: none;
+    }
+    .dashboard-container {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 70px);
+      background: var(--gray-50);
+      overflow: hidden;
+    }
+
+    .dashboard-header {
+      flex-shrink: 0;
+      padding: 12px 24px 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dashboard-header h1 {
+      margin: 0 0 8px 0;
+      color: var(--primary-color);
+      font-size: 1.4vw;
+      font-weight: 700;
+    }
+
+    .dashboard-header p {
+      margin: 0;
+      color: var(--gray-600);
+      font-size: var(--font-size-md);
+    }
+    
+    .status-info {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--gray-50);
+      border-radius: 6px;
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .status-info p {
+      margin: 4px 0;
+    }
+    
+    .questionnaire-form .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .questionnaire-form label {
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+      display: block;
+    }
+    
+    .questionnaire-form textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      font-family: inherit;
+      resize: vertical;
+    }
+    
+    .questionnaire-form textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(34, 109, 104, 0.1);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .expand-all-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: var(--font-size-md);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .expand-all-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .table-controls {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .pagination-info {
+      font-size: var(--font-size-md);
+      color: var(--gray-600);
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .pagination-btn {
+      padding: 8px 12px;
+      border: 1px solid var(--gray-300);
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      transition: all 0.2s;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background: var(--gray-50);
+      border-color: var(--primary-color);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      font-size: var(--font-size-sm);
+      color: var(--gray-700);
+      font-weight: 500;
+    }
+
+    .table-wrapper {
+      flex: 1;
+      overflow: auto;
+      margin: 0 24px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--gray-200);
+    }
+
+    .mission-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-size-md);
+      min-width: 100%;
+    }
+
+    .group-row {
+      text-align: center;
+    }
+
+    span.tiret-no-data {
+      color: #bbbbbb;
+    }
+
+    .recap-dossier {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .column-group-header {
+      background: var(--primary-color);
+      color: white;
+      padding: 1vh 0.3vw;
+      font-weight: 600;
+      text-align: center;
+      border-bottom: 2px solid var(--secondary-color);
+      position: relative;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .group-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.5vw;
+    }
+
+    .client-row {
+      padding-left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 0.5vw;
+    }
+    
+    .column-group-header.information {
+      background: var(--primary-dark);
+    }
+
+    .column-group-header.avant-mission {
+      background: var(--primary-color);
+    }
+
+    .column-group-header.pendant-mission {
+      background: var(--secondary-color);
+      color: var(--primary-color);
+    }
+
+    .column-group-header.fin-mission {
+      background: var(--primary-color);
+    }
+
+    .column-header {
+      background: var(--gray-100);
+      color: var(--gray-700);
+      padding: 1vh 0.3vw;
+      font-weight: 600;
+      text-align: center;
+      border-bottom: 1px solid var(--gray-200);
+      white-space: nowrap;
+      position: sticky;
+      top: 4.6vh;
+      z-index: 10;
+    }
+
+    .column-header.percentage {
+      background: rgb(232 240 240);
+      color: var(--primary-color);
+      min-width: 60px;
+    }
+
+    .group-row.main-group {
+      background: var(--gray-50);
+      cursor: pointer;
+      transition: background-color 0.2s;
+      font-weight: 600;
+    }
+
+    .group-row.main-group:hover {
+      background: var(--gray-100);
+    }
+
+    .mission-count-display {
+      font-size: var(--font-size-md);
+    }
+
+    .group-row.client-group {
+      background: rgba(100, 206, 199, 0.1);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .group-row.client-group:hover {
+      background: rgba(100, 206, 199, 0.2);
+    }
+
+    .client-indent {
+      width: 40px;
+      background: rgba(100, 206, 199, 0.1);
+    }
+
+    .client-cell {
+      padding: 10px 16px;
+      font-weight: 500;
+      color: var(--secondary-color);
+    }
+
+    .client-summary {
+      font-size: var(--font-size-sm);
+      color: var(--gray-600);
+      font-weight: normal;
+      margin-left: 8px;
+    }
+    .group-summary {
+      padding: 1vh 0.3vw;
+      color: var(--gray-600);
+      font-style: italic;
+    }
+
+    .groupe-libelle {
+      max-width: 19vw;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .mission-row {
+      border-bottom: 1px solid var(--gray-100);
+      transition: all 0.2s;
+    }
+
+    .mission-row:hover {
+      background: var(--gray-50);
+    }
+
+    .mission-row.hidden {
+      display: none;
+    }
+
+    .mission-indent {
+      width: 60px;
+      background: var(--gray-50);
+    }
+
+    .mission-row td {
+      padding: 1vh 0.3vw;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .percentage-cell {
+      padding: 8px !important;
+    }
+
+    .progress-circle {
+      width: 2.5vw;
+      height: 5vh;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .progress-circle[data-percentage="0"] {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--error-color);
+    }
+
+    .progress-circle[data-percentage="25"] {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+    }
+
+    .progress-circle[data-percentage="50"] {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+    }
+
+    .progress-circle[data-percentage="75"] {
+      background: rgba(100, 206, 199, 0.1);
+      color: var(--success-color);
+    }
+
+    .progress-circle[data-percentage="100"] {
+      background: rgba(100, 206, 199, 0.1);
+      color: var(--success-color);
+    }
+
+    .status-cell {
+      padding: 8px !important;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      text-align: center;
+    }
+
+    .status-cell:hover {
+      background: rgba(34, 109, 104, 0.1);
+    }
+
+    .status-icon {
+      font-size: var(--font-size-md);
+      display: inline-block;
+      transition: all 0.2s ease;
+    }
+
+    .status-icon.completed {
+      color: var(--success-color);
+    }
+
+    .status-icon:not(.completed) {
+      color: var(--warning-color);
+    }
+
+    .collapse-btn {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      padding: 4px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .group-info {
+      display: flex;
+      gap: 0.5vw;
+      align-items: center;
+    }
+
+    .collapse-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .column-group-header .collapse-btn {
+      margin-right: 8px;
+    }
+
+    .pagination-footer {
+      flex-shrink: 0;
+      padding: 16px 24px;
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 4px;
+    }
+
+    .page-btn {
+      padding: 8px 12px;
+      border: 1px solid var(--gray-300);
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      min-width: 40px;
+      transition: all 0.2s;
+    }
+
+    .page-btn:hover {
+      background: var(--gray-50);
+      border-color: var(--primary-color);
+    }
+
+    .page-btn.active {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+
+    .page-btn.ellipsis {
+      background: var(--gray-100);
+      color: var(--gray-500);
+      border-color: var(--gray-200);
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .page-btn.empty {
+      background: transparent;
+      border-color: transparent;
+      cursor: default;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+    }
+
+    .pagination-container {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    tr.group-row.client-group .progress-circle {
+      height: 27px;
+      border-radius: 1vw;
+    }
+
+    tr.group-row.client-group td {
+        padding: 6px 8px !important;
+        font-style: italic;
+    }
+
+    tr.mission-row .progress-circle {
+        height: 27px;
+        border-radius: 1vw;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      
+      .header-controls {
+        width: 100%;
+        justify-content: flex-end;
+      }
+      
+      .table-controls {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+      
+      .pagination-controls {
+        justify-content: center;
+      }
+      
+      .pagination-container {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .mission-count-display {
+        text-align: center;
+      }
+      
+      .page-numbers {
+        display: none;
+      }
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow-xl);
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    /* Styles pour les modales spécialisées */
+    .questionnaire {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .question-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .question-group label {
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .question-group textarea {
+      padding: 12px;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      min-height: 80px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .question-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(34, 109, 104, 0.1);
+    }
+
+    .document-section {
+      margin-bottom: 24px;
+      padding: 16px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--gray-50);
+    }
+
+    .document-section h5 {
+      margin: 0 0 12px 0;
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+
+    .file-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px dashed var(--gray-300);
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-input:hover {
+      border-color: var(--primary-color);
+      background: rgba(34, 109, 104, 0.05);
+    }
+
+    .uploaded-file {
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--success-color);
+      border-radius: 6px;
+      color: var(--success-color);
+      font-weight: 500;
+    }
+
+    .file-info {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      font-size: var(--font-size-sm);
+      color: var(--gray-600);
+    }
+
+    .upload-placeholder {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--gray-500);
+      font-style: italic;
+    }
+
+    .status-indicator {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+    }
+
+    .status-badge.validated {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+      border: 1px solid var(--success-color);
+    }
+
+    .status-badge.pending {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+      border: 1px solid var(--warning-color);
+    }
+
+    .coming-soon-modal {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .coming-soon-content h4 {
+      color: var(--gray-600);
+      margin-bottom: 16px;
+    }
+
+    .coming-soon-content p {
+      color: var(--gray-500);
+      font-style: italic;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+      background: var(--primary-color);
+      color: white;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: var(--font-size-xl);
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      font-weight: 500;
+    }
+
+    .status-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .checkbox-text {
+      color: var(--gray-700);
+    }
+
+    .file-input {
+      width: 100%;
+      padding: 1vh 0.3vw;
+      border: 2px dashed var(--gray-300);
+      border-radius: 8px;
+      background: var(--gray-50);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-input:hover {
+      border-color: var(--primary-color);
+      background: rgba(34, 109, 104, 0.05);
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: var(--gray-100);
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+
+    .file-name {
+      font-size: var(--font-size-md);
+      color: var(--gray-700);
+    }
+
+    .remove-file {
+      background: var(--error-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .remove-file:hover {
+      background: #dc2626;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 20px 24px;
+      border-top: 1px solid var(--gray-200);
+      background: var(--gray-50);
+      border-radius: 0 0 12px 12px;
+    }
+
+    .btn-cancel {
+      padding: 10px 20px;
+      border: 1px solid var(--gray-300);
+      background: white;
+      color: var(--gray-700);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-400);
+    }
+
+    .btn-save {
+      padding: 10px 20px;
+      border: none;
+      background: var(--primary-color);
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-save:hover {
+      background: var(--primary-dark);
+    }
+
+    @media (max-width: 1200px) {
+      .mission-table {
+        font-size: var(--font-size-sm);
+      }
+      
+      .column-header,
+      .mission-row td {
+        padding: 8px 6px;
+      }
+      
+      .progress-circle {
+        width: 35px;
+        height: 35px;
+        font-size: var(--font-size-sm);
+      }
+    }
+  `]
+})
+export class DashboardComponent implements OnInit {
+  avantMissionCollapsed = false;
+  pendantMissionCollapsed = false;
+  finMissionCollapsed = false;
+  allGroupsExpanded = true;
+
+  groupedData: GroupData[] = [];
+  paginatedData: GroupData[] = [];
+  allMissions: MissionData[] = [];
+  completeGroupedData: GroupData[] = [];
+  currentPage = 1;
+  itemsPerPage = 150;
+  totalMissions = 0;
+  totalPages = 0;
+  startIndex = 0;
+  endIndex = 0;
+
+  currentUser: UserProfile | null = null;
+  userEmail: string = '';
+
+  public modalData: ModalData = {
+    isOpen: false,
+    columnName: '',
+    missionId: '',
+    currentStatus: false,
+    selectedFile: null
+  };
+  uploadedDocuments: { [key: string]: File | null } = {};
+  cartoLabAnswers: { [key: string]: string } = {
+    question1: '',
+    question2: '',
+    question3: '',
+    question4: '',
+    question5: ''
+  };
+
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    // Récupérer les informations utilisateur
+    this.authService.userProfile$.subscribe(user => {
+      this.currentUser = user;
+      this.userEmail = user?.mail || '';
+      console.log('Email :', this.userEmail);
+      this.loadData();
+    });
+    
+    // Écouter les changements d'impersonation
+    this.authService.impersonatedEmail$.subscribe(() => {
+      this.userEmail = this.authService.getEffectiveUserEmail();
+      if(!this.userEmail) {
+        console.error('Aucun email d\'utilisateur effectif trouvé');
+        return;
+      }
+      console.log('Email effectif dans dashboard:', this.userEmail);
+      // Recharger les données quand l'email change
+      this.loadData();
+    });
+  }
+
+  private loadData(): void {
+    // Récupérer les données des missions depuis l'API
+    console.log('Email api:', this.userEmail);
+    this.http.get<{ success: boolean; data: MissionData[]; count: number; timestamp: string }>(`${environment.apiUrl}/missions/getAllMissionsDashboard/${this.userEmail}`)
+      .subscribe((response) => {
+        this.processData(response.data);
+      }, (error) => {
+        console.error('Erreur lors de la récupération des missions :', error);
+      });
+  }
+
+  private processData(data: MissionData[]): void {
+    // Grouper d'abord par numeroGroupe, puis par numeroClient
+    const groupedByGroupe = data.reduce((acc, mission) => {
+      const groupKey = mission.numeroGroupe;
+      if (!acc[groupKey]) {
+        acc[groupKey] = {
+          numeroGroupe: mission.numeroGroupe,
+          nomGroupe: mission.nomGroupe,
+          missions: []
+        };
+      }
+      acc[groupKey].missions.push(mission);
+      return acc;
+    }, {} as { [key: string]: { numeroGroupe: string; nomGroupe: string; missions: MissionData[] } });
+
+    // Créer la structure finale avec double groupement
+    this.groupedData = Object.values(groupedByGroupe).map(group => {
+      // Grouper les missions par numeroClient
+      const clientGroups = group.missions.reduce((acc, mission) => {
+        const clientKey = mission.numeroClient;
+        if (!acc[clientKey]) {
+          acc[clientKey] = {
+            numeroClient: mission.numeroClient,
+            nomClient: mission.nomClient,
+            missions: [],
+            expanded: false
+          };
+        }
+        acc[clientKey].missions.push(mission);
+        return acc;
+      }, {} as { [key: string]: ClientGroup });
+
+      return {
+        numeroGroupe: group.numeroGroupe,
+        nomGroupe: group.nomGroupe,
+        clients: Object.values(clientGroups),
+        expanded: false
+      };
+    });
+
+    this.totalMissions = this.groupedData.reduce((total, group) => 
+      total + group.clients.reduce((clientTotal, client) => 
+        clientTotal + client.missions.length, 0), 0);
+    
+    // Sauvegarder les données complètes pour les compteurs
+    this.completeGroupedData = JSON.parse(JSON.stringify(this.groupedData));
+    
+    // Créer une liste plate de toutes les missions pour la pagination
+    this.allMissions = this.groupedData.flatMap(group => 
+      group.clients.flatMap(client => client.missions)
+    );
+    
+    this.updatePagination();
+  }
+
+
+  private updatePagination(): void {
+    this.totalPages = Math.ceil(this.totalMissions / this.itemsPerPage);
+    this.startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    this.endIndex = Math.min(this.startIndex + this.itemsPerPage, this.totalMissions);
+    
+    // Obtenir les missions paginées
+    const paginatedMissions = this.allMissions.slice(this.startIndex, this.endIndex);
+    
+    // Reconstruire la structure groupée avec seulement les missions paginées
+    const groupedPaginated = new Map<string, GroupData>();
+    
+    paginatedMissions.forEach(mission => {
+      const groupKey = mission.numeroGroupe;
+      const clientKey = mission.numeroClient;
+      
+      if (!groupedPaginated.has(groupKey)) {
+        groupedPaginated.set(groupKey, {
+          numeroGroupe: mission.numeroGroupe,
+          nomGroupe: mission.nomGroupe,
+          clients: new Map<string, ClientGroup>(),
+          expanded: true
+        } as any);
+      }
+      
+      const group = groupedPaginated.get(groupKey)!;
+      const clientsMap = group.clients as any;
+      
+      if (!clientsMap.has(clientKey)) {
+        clientsMap.set(clientKey, {
+          numeroClient: mission.numeroClient,
+          nomClient: mission.nomClient,
+          missions: [],
+          expanded: true
+        });
+      }
+      
+      clientsMap.get(clientKey).missions.push(mission);
+    });
+    
+    // Convertir les Maps en arrays
+    this.paginatedData = Array.from(groupedPaginated.values()).map(group => ({
+      ...group,
+      clients: Array.from((group.clients as any).values())
+    }));
+    
+    // Synchroniser l'état d'expansion avec les données complètes
+    this.syncExpansionState();
+    
+    // Mettre à jour l'état du bouton
+    this.updateAllGroupsExpandedState();
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePagination();
+    }
+  }
+
+  getVisiblePages(): (number | string)[] {
+    const pages: (number | string)[] = [];
+    
+    if (this.totalPages <= 7) {
+      // Si 7 pages ou moins, afficher seulement les pages existantes
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+      return pages;
+    }
+
+    // Plus de 7 pages : logique avec ellipses
+    // Toujours inclure la page 1
+    pages.push(1);
+    
+    if (this.currentPage <= 3) {
+      // Début : 1, 2, 3, 4, 5, ..., dernière
+      pages.push(2, 3, 4, 5, '...', this.totalPages);
+    } else if (this.currentPage >= this.totalPages - 2) {
+      // Fin : 1, ..., avant-4, avant-3, avant-2, avant-1, dernière
+      pages.push('...', this.totalPages - 4, this.totalPages - 3, this.totalPages - 2, this.totalPages - 1, this.totalPages);
+    } else {
+      // Milieu : toujours afficher page-1, page, page+1
+      // Format : 1, ..., courante-1, courante, courante+1, ..., dernière
+      pages.push('...', this.currentPage - 1, this.currentPage, this.currentPage + 1, '...', this.totalPages);
+    }
+    
+    return pages;
+  }
+
+  toggleColumnGroup(group: 'avantMission' | 'pendantMission' | 'finMission'): void {
+    switch (group) {
+      case 'avantMission':
+        this.avantMissionCollapsed = !this.avantMissionCollapsed;
+        break;
+      case 'pendantMission':
+        this.pendantMissionCollapsed = !this.pendantMissionCollapsed;
+        break;
+      case 'finMission':
+        this.finMissionCollapsed = !this.finMissionCollapsed;
+        break;
+    }
+  }
+
+  toggleMainGroup(event: MouseEvent, index: number): void {
+    const target = event.target as HTMLElement;
+    
+    if (target.closest('.status-cell')) {
+      return; // On sort sans exécuter le toggle
+    }
+    
+    this.paginatedData[index].expanded = !this.paginatedData[index].expanded;
+    
+    // Synchroniser avec les données complètes
+    const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === this.paginatedData[index].numeroGroupe);
+    if (completeGroup) {
+      completeGroup.expanded = this.paginatedData[index].expanded;
+    }
+    
+    // // Quand on ouvre/ferme le groupe, synchroniser tous les clients avec l'état du groupe
+    // this.paginatedData[index].clients.forEach(client => {
+    //   client.expanded = this.paginatedData[index].expanded;
+      
+    //   // Synchroniser avec les données complètes
+    //   if (completeGroup) {
+    //     const completeClient = completeGroup.clients.find(c => c.numeroClient === client.numeroClient);
+    //     if (completeClient) {
+    //       completeClient.expanded = client.expanded;
+    //     }
+    //   }
+    // });
+    
+    // Mettre à jour l'état du bouton
+    this.updateAllGroupsExpandedState();
+  }
+
+  toggleClientGroup(event: MouseEvent, groupIndex: number, clientIndex: number): void {
+    const target = event.target as HTMLElement;
+
+    if (target.closest('.status-cell')) {
+      return; // On sort sans exécuter le toggle
+    }
+
+    this.paginatedData[groupIndex].clients[clientIndex].expanded = 
+      !this.paginatedData[groupIndex].clients[clientIndex].expanded;
+    
+    // Synchroniser avec les données complètes
+    const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === this.paginatedData[groupIndex].numeroGroupe);
+    if (completeGroup) {
+      const completeClient = completeGroup.clients.find(c => c.numeroClient === this.paginatedData[groupIndex].clients[clientIndex].numeroClient);
+      if (completeClient) {
+        completeClient.expanded = this.paginatedData[groupIndex].clients[clientIndex].expanded;
+      }
+    }
+    
+    // Mettre à jour l'état du bouton
+    this.updateAllGroupsExpandedState();
+  }
+
+  toggleAllGroups(): void {
+    this.allGroupsExpanded = !this.allGroupsExpanded;
+    
+    // Mettre à jour les données complètes
+    this.completeGroupedData.forEach(group => {
+      group.expanded = this.allGroupsExpanded;
+      group.clients.forEach(client => {
+        client.expanded = this.allGroupsExpanded;
+      });
+    });
+    
+    // Mettre à jour les données paginées
+    this.paginatedData.forEach(group => {
+      group.expanded = this.allGroupsExpanded;
+      group.clients.forEach(client => {
+        client.expanded = this.allGroupsExpanded;
+      });
+    });
+  }
+
+  private syncExpansionState(): void {
+    // Synchroniser l'état d'expansion des données paginées avec les données complètes
+    this.paginatedData.forEach(paginatedGroup => {
+      const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === paginatedGroup.numeroGroupe);
+      if (completeGroup) {
+        paginatedGroup.expanded = completeGroup.expanded;
+        
+        paginatedGroup.clients.forEach(paginatedClient => {
+          const completeClient = completeGroup.clients.find(c => c.numeroClient === paginatedClient.numeroClient);
+          if (completeClient) {
+            paginatedClient.expanded = completeClient.expanded;
+          }
+        });
+      }
+    });
+  }
+
+  private updateAllGroupsExpandedState(): void {
+    // Vérifier si tous les groupes et clients sont développés
+    const allExpanded = this.completeGroupedData.every(group => 
+      group.expanded && group.clients.every(client => client.expanded)
+    );
+    
+    this.allGroupsExpanded = allExpanded;
+  }
+
+  getTotalMissionsInGroup(group: GroupData): number {
+    // Trouver le groupe complet correspondant
+    const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === group.numeroGroupe);
+    if (!completeGroup) return 0;
+    
+    return completeGroup.clients.reduce((total, client) => total + client.missions.length, 0);
+  }
+
+  getTotalClientsInGroup(group: GroupData): number {
+    // Trouver le groupe complet correspondant
+    const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === group.numeroGroupe);
+    if (!completeGroup) return 0;
+    
+    return completeGroup.clients.length;
+  }
+
+  getTotalMissionsInClient(group: GroupData, client: ClientGroup): number {
+    // Trouver le groupe complet correspondant
+    const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === group.numeroGroupe);
+    if (!completeGroup) return 0;
+    
+    // Trouver le client complet correspondant
+    const completeClient = completeGroup.clients.find(c => c.numeroClient === client.numeroClient);
+    if (!completeClient) return 0;
+    
+    return completeClient.missions.length;
+  }
+
+  getMainGroupAverage(group: GroupData): number {
+    const allMissions = group.clients.flatMap(client => client.missions);
+    if (allMissions.length === 0) return 0;
+    
+    const total = allMissions.reduce((sum, mission) => {
+      const avg = (mission.avantMission.percentage + mission.pendantMission.percentage + mission.finMission.percentage) / 3;
+      return sum + avg;
+    }, 0);
+    
+    return Math.round(total / allMissions.length);
+  }
+
+  getClientAverage(client: ClientGroup, phase: 'avantMission' | 'pendantMission' | 'finMission'): number {
+    if (client.missions.length === 0) return 0;
+    
+    const total = client.missions.reduce((sum, mission) => {
+      return sum + mission[phase].percentage;
+    }, 0);
+    
+    return Math.round(total / client.missions.length);
+  }
+
+  getClientRecap(client: ClientGroup, phase: 'avantMission' | 'pendantMission' | 'finMission', colonne: String): String {
+    if (client.missions.length === 0) return '<div class="recap-dossier-groupe recap-empty">0/0</div>';
+    
+    let totalMissions = 0;
+    let nbMissionsValide = 0;
+
+    client.missions.forEach(mission => {
+      totalMissions++;
+      // @ts-ignore
+      if (mission[phase][colonne] == true) {
+        nbMissionsValide++;
+      }
+    });
+  
+    let className = '';
+    if (totalMissions === nbMissionsValide) {
+      className += ' recap-complete';
+    } else {
+      className += ' recap-incomplete';
+    }
+
+    return `<div class="recap-dossier-groupe ${className}">${nbMissionsValide}/${totalMissions}</div>`;
+  }
+
+  getGroupeRecap(group: GroupData, phase: 'avantMission' | 'pendantMission' | 'finMission', colonne: String): String {
+    if (group.clients.length === 0) return '<div class="recap-dossier-groupe recap-empty">0/0</div>';
+
+    let totalMissions = 0;
+    let nbMissionsValide = 0;
+
+    group.clients.forEach(client => {
+      client.missions.forEach(mission => {
+        totalMissions++;
+        // @ts-ignore
+        if (mission[phase][colonne] == true) {
+          nbMissionsValide++;
+        }
+      });
+    });
+  
+    let className = '';
+    if (totalMissions === nbMissionsValide) {
+      className += ' recap-complete';
+    } else {
+      className += ' recap-incomplete';
+    }
+
+    return `<div class="recap-dossier-groupe ${className}">${nbMissionsValide}/${totalMissions}</div>`;
+  }
+
+  getGroupeAverage(group: GroupData, phase: 'avantMission' | 'pendantMission' | 'finMission'): number {
+    const allMissions = group.clients.flatMap(client => client.missions);
+    if (allMissions.length === 0) return 0;
+    
+    const total = allMissions.reduce((sum, mission) => {
+      return sum + mission[phase].percentage;
+    }, 0);
+    
+    return Math.round(total / allMissions.length);
+  }
+
+  public openStatusModal(columnName: string, missionId: string, currentStatus: boolean): void {
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: currentStatus,
+      selectedFile: null
+    };
+  }
+
+  public openModuleModal(columnName: string, mission: MissionData): void {
+    const missionId = mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission;
+    
+    // Déterminer le type de modal selon le module
+    switch (columnName) {
+      case 'Conflict Check':
+        this.openPdfModal(columnName, missionId);
+        break;
+      case 'Carto LAB':
+        this.openQuestionnaireModal(columnName, missionId);
+        break;
+      case 'Plaquette':
+        this.openDoubleUploadModal(columnName, missionId);
+        break;
+      case 'Fin relation client':
+        this.openComingSoonModal(columnName, missionId);
+        break;
+      case 'LAB':
+      case 'QAC':
+      case 'QAM':
+      case 'LDM':
+      case 'NOG':
+      case 'Checklist':
+      case 'Révision':
+      case 'Supervision':
+      case 'NDS':
+      case 'CR':
+      case 'QMM':
+      case 'Restitution':
+        this.openDocumentModal(columnName, missionId);
+        break;
+      default:
+        this.openDocumentModal(columnName, missionId);
+    }
+  }
+
+  // Modal pour PDF uniquement (Conflict Check)
+  private openPdfModal(columnName: string, missionId: string): void {
+    const existingData = this.getModuleData(missionId, columnName);
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: existingData?.status || 'en-attente',
+      selectedFile: existingData?.file || null,
+      modalType: 'pdf',
+      acceptedFileTypes: '.pdf'
+    };
+  }
+
+  // Modal pour documents (LAB, QAC, QAM, LDM, NOG, etc.)
+  private openDocumentModal(columnName: string, missionId: string): void {
+    const existingData = this.getModuleData(missionId, columnName);
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: existingData?.status || 'en-attente',
+      selectedFile: existingData?.file || null,
+      modalType: 'document',
+      acceptedFileTypes: '.pdf,.doc,.docx,.txt,.odt'
+    };
+  }
+
+  // Modal questionnaire (Carto LAB)
+  private openQuestionnaireModal(columnName: string, missionId: string): void {
+    const existingData = this.getModuleData(missionId, columnName);
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: existingData?.status || 'en-attente',
+      modalType: 'questionnaire',
+      questionnaire: existingData?.questionnaire || {
+        question1: '',
+        question2: '',
+        question3: '',
+        question4: '',
+        question5: ''
+      }
+    };
+  }
+
+  // Modal double upload (Plaquette)
+  private openDoubleUploadModal(columnName: string, missionId: string): void {
+    const existingData = this.getModuleData(missionId, columnName);
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: existingData?.status || 'en-attente',
+      modalType: 'double',
+      selectedFile: existingData?.file1 || null,
+      selectedFile2: existingData?.file2 || null,
+      acceptedFileTypes: '.pdf,.doc,.docx'
+    };
+  }
+
+  // Modal "à venir" (Fin relation client)
+  private openComingSoonModal(columnName: string, missionId: string): void {
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: false,
+      modalType: 'coming-soon'
+    };
+  }
+
+  // Récupérer les données existantes d'un module
+  private getModuleData(missionId: string, columnName: string): any {
+    const key = `${missionId}-${columnName}`;
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : null;
+  }
+
+  public closeModal(): void {
+    this.modalData.isOpen = false;
+    this.modalData.selectedFile = null;
+  }
+
+  public onFileSelected(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      this.modalData.selectedFile = target.files[0];
+    }
+  }
+
+  public onFile2Selected(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      this.modalData.selectedFile2 = target.files[0];
+    }
+  }
+
+  public removeFile(): void {
+    this.modalData.selectedFile = null;
+  }
+
+  public updateModalStatus(): void {
+    // Méthode pour mettre à jour le statut du modal basé sur les réponses du questionnaire
+    if (this.modalData.questionnaire) {
+      const hasAnswers = Object.values(this.modalData.questionnaire).some(answer => answer.trim() !== '');
+      this.modalData.currentStatus = hasAnswers;
+    }
+  }
+
+  public saveModal(): void {
+    // Ici vous pouvez ajouter la logique pour sauvegarder le statut
+    console.log('Sauvegarde:', {
+      columnName: this.modalData.columnName,
+      missionId: this.modalData.missionId,
+      status: this.modalData.currentStatus,
+      file: this.modalData.selectedFile,
+      modalType: this.modalData.modalType
+    });
+    
+    // Fermer le modal après sauvegarde
+    this.closeModal();
+  }
+
+  public saveStatus(): void {
+    // Ici vous pouvez ajouter la logique pour sauvegarder le statut
+    console.log('Sauvegarde:', {
+      columnName: this.modalData.columnName,
+      missionId: this.modalData.missionId,
+      status: this.modalData.currentStatus,
+      file: this.modalData.selectedFile
+    });
+    
+    // Fermer le modal après sauvegarde
+    this.closeModal();
+  }
+}
