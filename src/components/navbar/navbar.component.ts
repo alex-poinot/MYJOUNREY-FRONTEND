@@ -748,8 +748,8 @@ export class NavbarComponent {
     console.log('Chargement des utilisateurs...');
        
     try {
-      console.log(`Appel API: ${environment.apiUrl}/api/users/`);
-      const response = await this.http.get<ApiResponse>(`${environment.apiUrl}/api/users/`).toPromise();
+      console.log(`Appel API: ${environment.apiUrl}/users/`);
+      const response = await this.http.get<ApiResponse>(`${environment.apiUrl}/users/`).toPromise();
       if (response && response.success && response.data) {
         // Filtrer les utilisateurs avec un email valide
         this.allUsers = response.data.filter(user => user.USR_MAIL && user.USR_MAIL.trim() !== '');

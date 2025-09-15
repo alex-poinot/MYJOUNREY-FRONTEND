@@ -84,7 +84,6 @@ interface ModalData {
       <div class="dashboard-header">
         <h1>Vue listing</h1>
         <div class="header-controls">
-          <h3>{{ modalData.title || 'Module' }}</h3>
           <button *ngIf="modalData.type !== 'coming-soon'" class="btn-save" (click)="updateModuleStatus()">
             {{ allGroupsExpanded ? 'Réduire tout' : 'Développer tout' }}
           </button>
@@ -136,9 +135,9 @@ interface ModalData {
               
               <!-- Avant la mission columns -->
               <th class="column-header percentage">%</th>
-              <th *ngIf="!avantMissionCollapsed" class="column-header">Conflit Check</th>
+              <th *ngIf="!avantMissionCollapsed" class="column-header">Conflit<br>Check</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">LAB</th>
-              <th *ngIf="!avantMissionCollapsed" class="column-header">Carto LAB</th>
+              <th *ngIf="!avantMissionCollapsed" class="column-header">Carto<br>LAB</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">QAC</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">QAM</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">LDM</th>
@@ -157,7 +156,7 @@ interface ModalData {
               <th *ngIf="!finMissionCollapsed" class="column-header">QMM</th>
               <th *ngIf="!finMissionCollapsed" class="column-header">Plaquette</th>
               <th *ngIf="!finMissionCollapsed" class="column-header">Restitution</th>
-              <th *ngIf="!finMissionCollapsed" class="column-header">Fin Relation Client</th>
+              <th *ngIf="!finMissionCollapsed" class="column-header">Fin Relation<br>Client</th>
             </tr>
           </thead>
           <tbody>
@@ -811,6 +810,68 @@ interface ModalData {
       font-size: var(--font-size-md);
       min-width: 100%;
     }
+
+    .mission-table thead tr:nth-child(1) th:nth-child(n+2) {
+      min-width: vw;
+    }
+
+    .mission-table thead tr:nth-child(2) th:nth-child(1),
+    .mission-table tbody .mission-row td:nth-child(1) {
+      width: 3.8vw;
+      min-width: 3.8vw;
+      max-width: 3.8vw;
+      text-align: left;
+    }
+
+    .mission-table thead tr:nth-child(2) th:nth-child(2),
+    .mission-table tbody .mission-row td:nth-child(2) {
+      width: 10vw;
+      min-width: 10vw;
+      max-width: 10vw;
+      text-align: left;
+    }
+
+    .mission-table thead tr:nth-child(2) th:nth-child(3),
+    .mission-table tbody .mission-row td:nth-child(3) {
+      width: 3.8vw;
+      min-width: 3.8vw;
+      max-width: 3.8vw;
+      text-align: left;
+    }
+
+    .mission-table thead tr:nth-child(2) th:nth-child(4),
+    .mission-table tbody .mission-row td:nth-child(4) {
+      width: 10vw;
+      min-width: 10vw;
+      max-width: 10vw;
+      text-align: left;
+    }
+
+    .mission-table thead tr:nth-child(2) th:nth-child(5),
+    .mission-table tbody .mission-row td:nth-child(5) {
+      width: 5vw;
+      min-width: 5vw;
+      max-width: 5vw;
+      text-align: left;
+    }
+    
+    .mission-table thead tr:nth-child(2) th:nth-child(n+6),
+    .mission-table tbody .mission-row td:nth-child(n+6) {
+      width: 4.3vw;
+      min-width: 4.3vw;
+      max-width: 4.3vw;
+    }
+
+    .mission-table tbody .mission-row td {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .mission-table thead tr:nth-child(2) th {
+      vertical-align: top;
+    }
+
 
     .group-row {
       text-align: center;
