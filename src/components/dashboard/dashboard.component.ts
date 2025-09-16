@@ -405,10 +405,14 @@ interface ModalData {
                   <!--<td class="mission-indent"></td>-->
                   
                   <!-- Information -->
-                  <td>{{ mission.numeroGroupe }}</td>
-                  <td>{{ mission.nomGroupe }}</td>
-                  <td>{{ mission.numeroClient }}</td>
-                  <td>{{ mission.nomClient }}</td>
+                  <!--<td>{{ mission.numeroGroupe }}</td>-->
+                  <!--<td>{{ mission.nomGroupe }}</td>-->
+                  <!--<td>{{ mission.numeroClient }}</td>-->
+                  <!--<td>{{ mission.nomClient }}</td>-->
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
                   <td>{{ mission.mission }}</td>
                   
                   <!-- Avant la mission -->
