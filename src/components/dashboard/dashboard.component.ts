@@ -84,7 +84,8 @@ interface ModalData {
       <div class="dashboard-header">
         <h1>Vue listing</h1>
         <div class="header-controls">
-          <button *ngIf="modalData.type !== 'coming-soon'" class="btn-save" (click)="updateModuleStatus()">
+          <button class="expand-all-btn" (click)="toggleAllGroups()">
+            <i class="fas" [ngClass]="allGroupsExpanded ? 'fa-folder-minus' : 'fa-folder-plus'"></i>
             {{ allGroupsExpanded ? 'Réduire tout' : 'Développer tout' }}
           </button>
         </div>
@@ -812,7 +813,7 @@ interface ModalData {
     }
 
     .mission-table thead tr:nth-child(1) th:nth-child(n+2) {
-      min-width: vw;
+      min-width: 7vw;
     }
 
     .mission-table thead tr:nth-child(2) th:nth-child(1),
