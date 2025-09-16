@@ -898,11 +898,11 @@ interface ModalData {
       padding: 1vh 0.3vw;
       font-weight: 600;
       text-align: center;
-      border-bottom: 2px solid var(--secondary-color);
       position: relative;
       position: sticky;
       top: 0;
       z-index: 10;
+      height: 4.6vh;
     }
 
     .group-cell {
@@ -916,6 +916,12 @@ interface ModalData {
       display: flex;
       align-items: center;
       gap: 0.5vw;
+    }
+
+    .mission-table tr.group-row.main-group {
+      position: sticky;
+      top: 10.9vh;
+      z-index: 10;
     }
     
     .column-group-header.information {
@@ -945,6 +951,7 @@ interface ModalData {
       white-space: nowrap;
       position: sticky;
       top: 4.6vh;
+      height: 6.4vh;
       z-index: 10;
     }
 
