@@ -1077,10 +1077,12 @@ interface ModalData {
     }
 
     .groupe-libelle {
-      max-width: 19vw;
+      min-width: 17vw;
+      max-width: 17vw;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
+      text-align: left;
     }
 
     .mission-row {
