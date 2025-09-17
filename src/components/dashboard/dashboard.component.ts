@@ -83,6 +83,16 @@ interface ModalData {
   template: `
     <div class="dashboard-container">
       <div class="dashboard-header">
+        <!-- Bouton Filtre -->
+        <div class="filters-section">
+          <button class="filter-btn" 
+                  [class.active]="getActiveFiltersCount() > 0"
+                  (click)="openFilterPanel()">
+            <i class="fas fa-filter"></i>
+            <span>Filtres</span>
+            <span *ngIf="getActiveFiltersCount() > 0" class="filter-count">{{ getActiveFiltersCount() }}</span>
+          </button>
+        </div>
         <h1>Vue listing</h1>
         <div class="header-controls">
           <button class="expand-all-btn" (click)="toggleAllGroups()">
@@ -91,18 +101,7 @@ interface ModalData {
           </button>
         </div>
       </div>
-
-      <!-- Bouton Filtre -->
-      <div class="filters-section">
-        <button class="filter-btn" 
-                [class.active]="getActiveFiltersCount() > 0"
-                (click)="openFilterPanel()">
-          <i class="fas fa-filter"></i>
-          <span>Filtres</span>
-          <span *ngIf="getActiveFiltersCount() > 0" class="filter-count">{{ getActiveFiltersCount() }}</span>
-        </button>
-      </div>
-      
+    
       <!-- Panel de filtres -->
       <app-filter-panel 
         [isOpen]="isFilterPanelOpen"
@@ -121,7 +120,7 @@ interface ModalData {
               </th>-->
               <!-- Groupe Information -->
               <th colspan="5" class="column-group-header information">
-                Information
+                Information groupe / client / mission
               </th>
               <!-- Groupe Avant la mission -->
               <th [attr.colspan]="avantMissionCollapsed ? 1 : 7" class="column-group-header avant-mission">
@@ -147,11 +146,11 @@ interface ModalData {
             </tr>
             <tr>
               <!-- Information columns -->
-              <th class="column-header">N° Groupe</th>
-              <th class="column-header">Nom Groupe</th>
-              <th class="column-header">N° Client</th>
-              <th class="column-header">Nom Client</th>
-              <th class="column-header">Mission</th>
+              <th class="column-header"></th>
+              <th class="column-header"></th>
+              <th class="column-header"></th>
+              <th class="column-header"></th>
+              <th class="column-header"></th>
               
               <!-- Avant la mission columns -->
               <th class="column-header percentage">%</th>
@@ -198,8 +197,10 @@ interface ModalData {
                     </div>
                     <div class="group-info">
                       <strong class="groupe-libelle">{{ group.numeroGroupe }} - {{ group.nomGroupe }}</strong>
-                      <i class="fas fa-users"></i> {{ getTotalClientsInGroup(group) }} client(s) -
-                      <i class="fas fa-briefcase"></i> {{ getTotalMissionsInGroup(group) }} mission(s)
+                      <div class="container-info-groupe">
+                        <div class="element-info-groupe"><i class="fas fa-users"></i> {{ getTotalClientsInGroup(group) }} client(s)</div>
+                        <div class="element-info-groupe"><i class="fas fa-briefcase"></i> {{ getTotalMissionsInGroup(group) }} mission(s)</div>
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -717,14 +718,14 @@ interface ModalData {
     .dashboard-container {
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 70px);
+      height: calc(100vh - 75px);
       background: var(--gray-50);
       overflow: hidden;
     }
 
     .dashboard-header {
       flex-shrink: 0;
-      padding: 12px 24px 0 24px;
+      padding: 12px 24px 12px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -771,10 +772,9 @@ interface ModalData {
     }
 
     .filters-section {
-      margin-bottom: 24px;
       display: flex;
       justify-content: flex-start;
-      padding: 0 24px;
+      width: 8vw;
     }
     
     .filter-btn {
@@ -889,41 +889,41 @@ interface ModalData {
 
     .mission-table thead tr:nth-child(2) th:nth-child(1),
     .mission-table tbody .mission-row td:nth-child(1) {
-      width: 3.8vw;
-      min-width: 3.8vw;
-      max-width: 3.8vw;
+      width: 0.8vw;
+      min-width: 0.8vw;
+      max-width: 0.8vw;
       text-align: left;
     }
 
     .mission-table thead tr:nth-child(2) th:nth-child(2),
     .mission-table tbody .mission-row td:nth-child(2) {
-      width: 10vw;
-      min-width: 10vw;
-      max-width: 10vw;
+      width: 0.8vw;
+      min-width: 0.8vw;
+      max-width: 0.8vw;
       text-align: left;
     }
 
     .mission-table thead tr:nth-child(2) th:nth-child(3),
     .mission-table tbody .mission-row td:nth-child(3) {
-      width: 3.8vw;
-      min-width: 3.8vw;
-      max-width: 3.8vw;
+      width: 0.8vw;
+      min-width: 0.8vw;
+      max-width: 0.8vw;
       text-align: left;
     }
 
     .mission-table thead tr:nth-child(2) th:nth-child(4),
     .mission-table tbody .mission-row td:nth-child(4) {
-      width: 10vw;
-      min-width: 10vw;
-      max-width: 10vw;
+      width: 0.8vw;
+      min-width: 0.8vw;
+      max-width: 0.8vw;
       text-align: left;
     }
 
     .mission-table thead tr:nth-child(2) th:nth-child(5),
     .mission-table tbody .mission-row td:nth-child(5) {
-      width: 5vw;
-      min-width: 5vw;
-      max-width: 5vw;
+      width: 22vw;
+      min-width: 22vw;
+      max-width: 22vw;
       text-align: left;
     }
     
@@ -1218,6 +1218,12 @@ interface ModalData {
       font-size: var(--font-size-md);
       min-width: 40px;
       transition: all 0.2s;
+    }
+
+    .container-info-groupe {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
 
     .page-btn:hover {
