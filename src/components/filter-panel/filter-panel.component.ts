@@ -25,13 +25,13 @@ export interface ActiveFilters {
   imports: [CommonModule, FormsModule],
   template: `
     <!-- Overlay -->
-    <div *ngIf="isOpen" class="filter-overlay" (click)="closePanel()"></div>
+    <div *ngIf="isOpen" class="filter-overlay" (click)="closePanelHandler()"></div>
     
     <!-- Panel de filtres -->
     <div class="filter-panel" [class.open]="isOpen">
       <div class="filter-header">
         <h3>Filtres</h3>
-        <button class="close-btn" (click)="closePanel()">
+        <button class="close-btn" (click)="closePanelHandler()">
           <i class="fas fa-times"></i>
         </button>
       </div>
