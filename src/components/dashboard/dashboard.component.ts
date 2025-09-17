@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
+import { FilterPanelComponent, ActiveFilters } from '../filter-panel/filter-panel.component';
 
 interface MissionData {
   numeroGroupe: string;
@@ -78,7 +79,7 @@ interface ModalData {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, FilterPanelComponent],
   template: `
     <div class="dashboard-container">
       <div class="dashboard-header">
@@ -90,6 +91,24 @@ interface ModalData {
           </button>
         </div>
       </div>
+
+      <!-- Bouton Filtre -->
+      <div class="filters-section">
+        <button class="filter-btn" 
+                [class.active]="getActiveFiltersCount() > 0"
+                (click)="openFilterPanel()">
+          <i class="fas fa-filter"></i>
+          <span>Filtres</span>
+          <span *ngIf="getActiveFiltersCount() > 0" class="filter-count">{{ getActiveFiltersCount() }}</span>
+        </button>
+      </div>
+      
+      <!-- Panel de filtres -->
+      <app-filter-panel 
+        [isOpen]="isFilterPanelOpen"
+        (closePanel)="closeFilterPanel()"
+        (filtersChanged)="onFiltersChanged($event)">
+      </app-filter-panel>
 
       <div class="table-wrapper">
         <table class="mission-table">
@@ -749,6 +768,54 @@ interface ModalData {
       background: var(--primary-dark);
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
+    }
+
+    .filters-section {
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: flex-start;
+      padding: 0 24px;
+    }
+    
+    .filter-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: white;
+      border: 2px solid var(--gray-300);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      position: relative;
+    }
+    
+    .filter-btn:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+    
+    .filter-btn.active {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+    
+    .filter-count {
+      background: var(--secondary-color);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      min-width: 18px;
+      text-align: center;
+    }
+    
+    .filter-btn.active .filter-count {
+      background: white;
+      color: var(--primary-color);
     }
 
     .table-controls {
@@ -1586,6 +1653,9 @@ export class DashboardComponent implements OnInit {
   currentUser: UserProfile | null = null;
   userEmail: string = '';
 
+  isFilterPanelOpen = false;
+  activeFilters: ActiveFilters = {};
+
   public modalData: ModalData = {
     isOpen: false,
     columnName: '',
@@ -2007,6 +2077,23 @@ export class DashboardComponent implements OnInit {
     }, 0);
     
     return Math.round(total / allMissions.length);
+  }
+
+  openFilterPanel(): void {
+    this.isFilterPanelOpen = true;
+  }
+
+  closeFilterPanel(): void {
+    this.isFilterPanelOpen = false;
+  }
+
+  onFiltersChanged(filters: ActiveFilters): void {
+    this.activeFilters = filters;
+    // Appliquer les filtres ici si nécessaire
+  }
+
+  getActiveFiltersCount(): number {
+    return Object.values(this.activeFilters).reduce((count, filters) => count + filters.length, 0);
   }
 
   public openStatusModal(columnName: string, missionId: string, currentStatus: boolean): void {
