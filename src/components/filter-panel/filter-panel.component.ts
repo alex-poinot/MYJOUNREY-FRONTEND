@@ -371,7 +371,7 @@ export class FilterPanelComponent {
     {
       key: 'groupe',
       label: 'Groupe',
-      collapsed: false,
+      collapsed: true,
       options: [
         { value: '123456', label: '123456 - TEST', selected: false },
         { value: '456123', label: '456123 - MAJORELLE', selected: false },
