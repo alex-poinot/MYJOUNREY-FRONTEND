@@ -1612,20 +1612,18 @@ export class DashboardComponent implements OnInit {
     this.authService.userProfile$.subscribe(user => {
       this.currentUser = user;
       this.userEmail = user?.mail || '';
-      console.log('Email :', this.userEmail);
-      this.loadData();
+      // console.log('Email :', this.userEmail);
+      if(this.userEmail) {
+        this.loadData();
+      }
     });
     
     // Écouter les changements d'impersonation
     this.authService.impersonatedEmail$.subscribe(() => {
       this.userEmail = this.authService.getEffectiveUserEmail();
-      if(!this.userEmail) {
-        console.error('Aucun email d\'utilisateur effectif trouvé');
-        return;
+      if(this.userEmail) {
+        this.loadData();
       }
-      console.log('Email effectif dans dashboard:', this.userEmail);
-      // Recharger les données quand l'email change
-      this.loadData();
     });
   }
 
