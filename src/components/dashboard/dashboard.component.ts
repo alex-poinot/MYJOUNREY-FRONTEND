@@ -75,13 +75,6 @@ interface ModalData {
   missionId: string;
   currentStatus: boolean;
   selectedFile: File | null;
-  selectedModule?: {
-    name: string;
-    status: 'not-started' | 'in-progress' | 'completed' | 'coming-soon';
-    selectedFile?: FileWithExpiration;
-    selectedFile2?: FileWithExpiration;
-    files?: string[];
-  };
 }
 
 @Component({
@@ -204,12 +197,12 @@ interface ModalData {
                       </button>
                     </div>
                     <div class="group-info">
-                      <strong class="groupe-libelle">{{ group.numeroGroupe }} - {{ group.nomGroupe }}</strong>
-                      <div class="container-info-groupe">
-                        <div class="element-info-groupe"><i class="fas fa-users"></i> {{ getTotalClientsInGroup(group) }} client(s)</div>
-                        <div class="element-info-groupe"><i class="fas fa-briefcase"></i> {{ getTotalMissionsInGroup(group) }} mission(s)</div>
-                      </div>
-                    </div>
+                  </div>
+                  <div class="expiration-date" 
+                       [class.expired]="isExpired(modalData.selectedFile2.expirationDate)"
+                       [class.expiring-soon]="isExpiringSoon(modalData.selectedFile2.expirationDate)">
+                    <i class="fas fa-calendar-alt"></i>
+                    Expire le {{ formatExpirationDate(modalData.selectedFile2.expirationDate) }}
                   </div>
                 </td>
                 <td class="percentage-cell">
@@ -595,31 +588,31 @@ interface ModalData {
           <div *ngIf="modalData.type === 'coming-soon'" class="coming-soon-content">
             <div class="coming-soon-icon">🚧</div>
             <h4>Fonctionnalité à venir</h4>
-                  <span *ngIf="modalData.selectedModule?.status === 'coming-soon'">Fonctionnalité à venir</span>
+                  <span *ngIf="module.status === 'coming-soon'">Fonctionnalité à venir</span>
             <p>Cette fonctionnalité sera bientôt disponible.</p>
           </div>
           
                            [(ngModel)]="question.answer"
-              <div *ngIf="modalData.selectedModule?.selectedFile && modalData.selectedModule?.status !== 'coming-soon'" class="upload-section">
+              <div *ngIf="module.allowUpload && module.status !== 'coming-soon'" class="upload-section">
                     Oui
-                  <div *ngIf="modalData.selectedModule?.name === 'plaquette'" class="plaquette-upload">
+                  <div *ngIf="module.id === 'plaquette'" class="plaquette-upload">
                     <input type="file" 
-                           [id]="'file-' + modalData.selectedModule?.name"
-                           (change)="onFileSelected($event, modalData.selectedModule)"
+                           [id]="'file-' + module.id"
+                           (change)="onFileSelected($event, module)"
                            class="file-input"
                            accept=".pdf,.doc,.docx,.xls,.xlsx">
-                    <label [for]="'file-' + modalData.selectedModule?.name" class="upload-button">
+                    <label [for]="'file-' + module.id" class="upload-button">
                       <i class="fas fa-upload"></i>
                       Charger un fichier
                     </label>
                   </div>
-                  <div *ngIf="modalData.selectedModule?.name !== 'plaquette'">
+                  <div *ngIf="module.id !== 'plaquette'">
                     <input type="file" 
-                           [id]="'file-' + modalData.selectedModule?.name"
-                           (change)="onFileSelected($event, modalData.selectedModule)"
+                           [id]="'file-' + module.id"
+                           (change)="onFileSelected($event, module)"
                            class="file-input"
                            accept=".pdf,.doc,.docx,.xls,.xlsx">
-                    <label [for]="'file-' + modalData.selectedModule?.name" class="upload-button">
+                    <label [for]="'file-' + module.id" class="upload-button">
                       <i class="fas fa-upload"></i>
                       Charger un fichier
                     </label>
@@ -708,18 +701,15 @@ interface ModalData {
                   </div>
                   <div class="file-expiration" 
                        [ngClass]="{
-                         'expired': isExpired(modalData.selectedModule?.selectedFile2?.expirationDate),
-                         'expiring-soon': isExpiringSoon(modalData.selectedModule?.selectedFile2?.expirationDate)
+                         'expired': isExpired(module.expirationDate),
+                         'expiring-soon': isExpiringSoon(module.expirationDate)
                        }">
                     <i class="fas fa-calendar-alt"></i>
-                    <span>Expire le {{ formatExpirationDate(modalData.selectedModule?.selectedFile2?.expirationDate) }}</span>
+                    <span>Expire le {{ formatExpirationDate(module.expirationDate) }}</span>
                   </div>
                   <button class="remove-file-btn" (click)="removeFile(2)">
                     <i class="fas fa-times"></i>
                   </button>
-                </div>
-              </div>
-            </div>
           </div>
           </div>
           <div class="modal-footer">
@@ -2445,24 +2435,6 @@ export class DashboardComponent implements OnInit {
       default:
         newStatus = 'empty';
     }
-  }
-
-  isExpired(expirationDate?: Date): boolean {
-    if (!expirationDate) return false;
-    return new Date() > new Date(expirationDate);
-  }
-
-  isExpiringSoon(expirationDate?: Date): boolean {
-    if (!expirationDate) return false;
-    const now = new Date();
-    const expiration = new Date(expirationDate);
-    const diffInDays = (expiration.getTime() - now.getTime()) / (1000 * 3600 * 24);
-    return diffInDays <= 30 && diffInDays > 0;
-  }
-
-  formatExpirationDate(expirationDate?: Date): string {
-    if (!expirationDate) return '';
-    return new Date(expirationDate).toLocaleDateString('fr-FR');
   }
 
   public saveStatus(): void {
