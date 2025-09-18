@@ -509,41 +509,4 @@ export class StatusModalComponent {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays <= 7 && diffDays > 0;
   }
-  getExpirationDays(moduleType: string): number {
-    const expirationMap: { [key: string]: number } = {
-      'LAB': 365,
-      'Conflit Check': 180,
-      'QAC': 90,
-      'QAM': 90,
-      'LDM': 60,
-      'NOG': 365,
-      'Checklist': 180,
-      'Révision': 90,
-      'Supervision': 90,
-      'NDS/CR Mission': 365,
-      'QMM': 180,
-      'Plaquette': 30,
-      'Restitution communication client': 60
-    };
-    return expirationMap[moduleType] || 90;
-  }
-
-  formatExpirationDate(date: Date): string {
-    return date.toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  }
-
-  isExpired(date: Date): boolean {
-    return new Date() > date;
-  }
-
-  isExpiringSoon(date: Date): boolean {
-    const today = new Date();
-    const diffTime = date.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 7 && diffDays > 0;
-  }
 }
