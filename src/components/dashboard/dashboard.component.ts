@@ -214,12 +214,12 @@ interface ModalData {
                 </td>
                 <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.labGroupe)">
                   <i class="fas status-icon" 
-                      [ngClass]="group.clients[0].missions[0].avantMission.labGroupe ? 'fa-check-circle' : 'fa-clock'"
+                      [ngClass]="group.clients[0].missions[0].avantMission.labGroupe ? 'fa-check-circle' : 'fa-pen'"
                       [class.completed]="group.clients[0].missions[0].avantMission.labGroupe"></i>
                 </td>
                 <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Carto LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.cartoLabGroupe)">
                   <i class="fas status-icon" 
-                      [ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe ? 'fa-check-circle' : 'fa-clock'"
+                      [ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe ? 'fa-check-circle' : 'fa-pen'"
                       [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe"></i>
                 </td>
                 <td *ngIf="!avantMissionCollapsed">
@@ -326,22 +326,22 @@ interface ModalData {
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Conflit Check', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.conflitCheck)">
                     <i class="fas status-icon" 
-                       [ngClass]="client.missions[0].avantMission.conflitCheck ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="client.missions[0].avantMission.conflitCheck ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.conflitCheck"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.labDossier)">
                     <i class="fas status-icon" 
-                       [ngClass]="client.missions[0].avantMission.labDossier ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="client.missions[0].avantMission.labDossier ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.labDossier"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Carto LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.cartoLabDossier)">
                     <i class="fas status-icon" 
-                       [ngClass]="client.missions[0].avantMission.cartoLabDossier ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="client.missions[0].avantMission.cartoLabDossier ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.cartoLabDossier"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAC', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.qac)">
                     <i class="fas status-icon" 
-                       [ngClass]="client.missions[0].avantMission.qac ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="client.missions[0].avantMission.qac ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.qac"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed">
@@ -447,12 +447,12 @@ interface ModalData {
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.qam)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.avantMission.qam ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.avantMission.qam ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.avantMission.qam"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LDM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.ldm)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.avantMission.ldm ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.avantMission.ldm ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.avantMission.ldm"></i>
                   </td>
                   
@@ -464,22 +464,22 @@ interface ModalData {
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('NOG', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.nog)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.pendantMission.nog ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.pendantMission.nog ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.nog"></i>
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Checklist', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.checklist)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.pendantMission.checklist ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.pendantMission.checklist ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.checklist"></i>
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Révision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.revision)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.pendantMission.revision ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.pendantMission.revision ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.revision"></i>
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Supervision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.supervision)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.pendantMission.supervision ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.pendantMission.supervision ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.supervision"></i>
                   </td>
                   
@@ -491,32 +491,32 @@ interface ModalData {
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('NDS', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.nds)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.nds ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.finMission.nds ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.nds"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('CR Mission', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.cr)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.cr ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.finMission.cr ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.cr"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('QMM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.qmm)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.qmm ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.finMission.qmm ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.qmm"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Plaquette', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.plaquette)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.plaquette ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.finMission.plaquette ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.plaquette"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Restitution communication client', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.restitution)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.restitution ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.finMission.restitution ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.restitution"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Fin relation client', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.finRelationClient)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.finRelationClient ? 'fa-check-circle' : 'fa-clock'"
+                       [ngClass]="mission.finMission.finRelationClient ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.finRelationClient"></i>
                   </td>
                 </tr>
@@ -574,19 +574,9 @@ interface ModalData {
             </button>
           </div>
           <div class="modal-body">
-            <div class="form-group">
-              <label class="checkbox-label">
-                <input 
-                  type="checkbox" 
-                  [(ngModel)]="modalData.currentStatus"
-                  class="status-checkbox">
-                <span class="checkbox-text">Tâche terminée</span>
-              </label>
-            </div>
           <!-- Modal "À venir" -->
           <div *ngIf="modalData.type === 'coming-soon'" class="coming-soon-content">
-            <div class="coming-soon-icon">🚧</div>
-            <h4>Fonctionnalité à venir</h4>
+            <h4>🚧 Fonctionnalité à venir</h4>
             <p>Cette fonctionnalité sera bientôt disponible.</p>
           </div>
           
@@ -637,6 +627,26 @@ interface ModalData {
                 <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
               </div>
           </div>
+
+          <!-- Modal Upload (PDF/Document simple avec possibilité d'ajouter) -->
+          <div *ngIf="modalData.type === 'document-add'" class="upload-section">
+            <p>{{ modalData.description }}</p>
+              <input 
+                type="file" 
+                id="file-input"
+                (change)="onFileSelected($event)"
+                [accept]="modalData.acceptedTypes"
+                class="file-input">
+              <div *ngIf="modalData.selectedFile" class="file-info">
+                <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                <button class="remove-file" (click)="removeFile()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div>
+                <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+              </div>
+          </div>
           
           <!-- Modal Upload Double (Plaquette) -->
           <div *ngIf="modalData.type === 'double-document'" class="double-upload-section">
@@ -647,16 +657,14 @@ interface ModalData {
               <h4>1. Plaquette</h4>
               <div class="file-upload-area"
                    (click)="fileInput1.click()">
-                <div class="upload-content">
-                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                  <p>Glissez-déposez la plaquette ici</p>
-                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-                </div>
                 <input #fileInput1 
                        type="file" 
                        [accept]="modalData.acceptedTypes"
                        (change)="onFileSelected($event, 1)"
-                       style="display: none;">
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
               </div>
               
               <div *ngIf="modalData.selectedFile" class="file-preview">
@@ -677,16 +685,14 @@ interface ModalData {
               <h4>2. Mail accompagnement de la remise des comptes annuels</h4>
               <div class="file-upload-area" 
                    (click)="fileInput2.click()">
-                <div class="upload-content">
-                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                  <p>Glissez-déposez le mail d'accompagnement ici</p>
-                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-                </div>
                 <input #fileInput2 
                        type="file" 
                        [accept]="modalData.acceptedTypes"
                        (change)="onFileSelected($event, 2)"
-                       style="display: none;">
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
               </div>
               
               <div *ngIf="modalData.selectedFile2" class="file-preview">
@@ -1173,7 +1179,7 @@ interface ModalData {
     }
 
     .status-icon:not(.completed) {
-      color: var(--warning-color);
+      color: var(--gray-300);
     }
 
     .collapse-btn {
@@ -1889,20 +1895,7 @@ export class DashboardComponent implements OnInit {
     if (completeGroup) {
       completeGroup.expanded = this.paginatedData[index].expanded;
     }
-    
-    // // Quand on ouvre/ferme le groupe, synchroniser tous les clients avec l'état du groupe
-    // this.paginatedData[index].clients.forEach(client => {
-    //   client.expanded = this.paginatedData[index].expanded;
-      
-    //   // Synchroniser avec les données complètes
-    //   if (completeGroup) {
-    //     const completeClient = completeGroup.clients.find(c => c.numeroClient === client.numeroClient);
-    //     if (completeClient) {
-    //       completeClient.expanded = client.expanded;
-    //     }
-    //   }
-    // });
-    
+       
     // Mettre à jour l'état du bouton
     this.updateAllGroupsExpandedState();
   }
@@ -2118,10 +2111,10 @@ export class DashboardComponent implements OnInit {
     // Configuration spécifique par module
     switch (columnName) {
       case 'Conflit Check':
-        this.modalData.type = 'pdf';
+        this.modalData.type = 'document';
         this.modalData.title = 'Conflit Check - Dépôt PDF';
         this.modalData.description = 'Déposez le PDF de vérification des conflits';
-        this.modalData.acceptedTypes = '.pdf';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
         break;
 
       case 'LAB':
@@ -2132,9 +2125,9 @@ export class DashboardComponent implements OnInit {
         break;
 
       case 'Carto LAB':
-        this.modalData.type = 'questionnaire';
+        this.modalData.type = 'coming-soon';
         this.modalData.title = 'Carto LAB - Questionnaire';
-        this.modalData.description = 'Remplissez le questionnaire de cartographie';
+        this.modalData.description = 'Cette fonctionnalité sera bientôt disponible';
         break;
 
       case 'QAC':
@@ -2166,14 +2159,14 @@ export class DashboardComponent implements OnInit {
         break;
 
       case 'Checklist':
-        this.modalData.type = 'document';
+        this.modalData.type = 'document-add';
         this.modalData.title = 'Checklist - Dépôt Document';
         this.modalData.description = 'Déposez le document Checklist';
         this.modalData.acceptedTypes = '.pdf,.doc,.docx';
         break;
 
       case 'Révision':
-        this.modalData.type = 'document';
+        this.modalData.type = 'document-add';
         this.modalData.title = 'Révision - Dépôt Document';
         this.modalData.description = 'Déposez le document de révision';
         this.modalData.acceptedTypes = '.pdf,.doc,.docx';
@@ -2186,10 +2179,17 @@ export class DashboardComponent implements OnInit {
         this.modalData.acceptedTypes = '.pdf,.doc,.docx';
         break;
 
-      case 'NDS/CR Mission':
+      case 'NDS':
         this.modalData.type = 'document';
-        this.modalData.title = 'NDS/CR Mission - Dépôt Document';
-        this.modalData.description = 'Déposez le document NDS/CR Mission';
+        this.modalData.title = 'NDS';
+        this.modalData.description = 'Déposez le document NDS';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+      
+      case 'CR Mission':
+        this.modalData.type = 'document';
+        this.modalData.title = 'CR Mission - Dépôt Document';
+        this.modalData.description = 'Déposez le document CR Mission';
         this.modalData.acceptedTypes = '.pdf,.doc,.docx';
         break;
 
