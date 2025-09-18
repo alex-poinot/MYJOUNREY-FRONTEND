@@ -1604,37 +1604,6 @@ interface ModalData {
       width: 24px;
       height: 24px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s;
-      align-self: flex-end;
-    }
-    
-    .remove-file-btn:hover {
-      background: #dc2626;
-    }
-    
-    .status-not-started {
-      background: var(--gray-100);
-      color: var(--gray-600);
-    }
-    
-    .status-in-progress {
-      background: rgba(245, 158, 11, 0.1);
-      color: var(--warning-color);
-    }
-    
-    .status-completed {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--success-color);
-    }
-    
-    .status-coming-soon {
-      background: rgba(100, 206, 199, 0.1);
-      color: var(--secondary-color);
-      font-style: italic;
-    }
 
     @media (max-width: 1200px) {
       .mission-table {
@@ -2123,16 +2092,10 @@ export class DashboardComponent implements OnInit {
       isOpen: true,
       columnName: columnName,
       missionId: missionId,
+      currentStatus: currentStatus,
+      selectedFile: null,
       selectedFile2: null
     };
-    
-    // Copier les fichiers s'ils existent
-    if (module.selectedFile) {
-      this.statusModalData.selectedFile = module.selectedFile;
-    }
-    if (module.selectedFile2) {
-      this.statusModalData.selectedFile2 = module.selectedFile2;
-    }
 
     // Configuration spécifique par module
     switch (columnName) {
