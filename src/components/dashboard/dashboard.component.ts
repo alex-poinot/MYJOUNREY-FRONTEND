@@ -587,37 +587,31 @@ interface ModalData {
           <div *ngIf="modalData.type === 'coming-soon'" class="coming-soon-content">
             <div class="coming-soon-icon">🚧</div>
             <h4>Fonctionnalité à venir</h4>
-                  <span *ngIf="module.status === 'coming-soon'">Fonctionnalité à venir</span>
             <p>Cette fonctionnalité sera bientôt disponible.</p>
           </div>
           
-                           [(ngModel)]="question.answer"
-              <div *ngIf="module.allowUpload && module.status !== 'coming-soon'" class="upload-section">
-                    Oui
-                  <div *ngIf="module.id === 'plaquette'" class="plaquette-upload">
-                    <input type="file" 
-                           [id]="'file-' + module.id"
-                           (change)="onFileSelected($event, module)"
-                           class="file-input"
-                           accept=".pdf,.doc,.docx,.xls,.xlsx">
-                    <label [for]="'file-' + module.id" class="upload-button">
-                      <i class="fas fa-upload"></i>
-                      Charger un fichier
-                    </label>
-                  </div>
-                  <div *ngIf="module.id !== 'plaquette'">
-                    <input type="file" 
-                           [id]="'file-' + module.id"
-                           (change)="onFileSelected($event, module)"
-                           class="file-input"
-                           accept=".pdf,.doc,.docx,.xls,.xlsx">
-                    <label [for]="'file-' + module.id" class="upload-button">
-                      <i class="fas fa-upload"></i>
-                      Charger un fichier
-                    </label>
-                  </div>
-                </div>
-              </div>
+          <div *ngIf="modalData.type !== 'coming-soon'" class="upload-section">
+            <div *ngIf="modalData.type === 'plaquette'" class="plaquette-upload">
+              <input type="file" 
+                     [id]="'file-' + modalData.type"
+                     (change)="onFileSelected($event)"
+                     class="file-input"
+                     accept=".pdf,.doc,.docx,.xls,.xlsx">
+              <label [for]="'file-' + modalData.type" class="upload-button">
+                <i class="fas fa-upload"></i>
+                Charger un fichier
+              </label>
+            </div>
+            <div *ngIf="modalData.type !== 'plaquette'">
+              <input type="file" 
+                     [id]="'file-' + modalData.type"
+                     (change)="onFileSelected($event)"
+                     class="file-input"
+                     accept=".pdf,.doc,.docx,.xls,.xlsx">
+              <label [for]="'file-' + modalData.type" class="upload-button">
+                <i class="fas fa-upload"></i>
+                Charger un fichier
+              </label>
             </div>
           </div>
           
@@ -697,14 +691,6 @@ interface ModalData {
                   <i class="fas fa-file-pdf file-icon"></i>
                   <div class="file-details">
                     <span class="file-name">{{ modalData.selectedFile2.name }}</span>
-                  </div>
-                  <div class="file-expiration" 
-                       [ngClass]="{
-                         'expired': isExpired(module.expirationDate),
-                         'expiring-soon': isExpiringSoon(module.expirationDate)
-                       }">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Expire le {{ formatExpirationDate(module.expirationDate) }}</span>
                   </div>
                   <button class="remove-file-btn" (click)="removeFile(2)">
                     <i class="fas fa-times"></i>
@@ -2136,7 +2122,7 @@ export class DashboardComponent implements OnInit {
         break;
 
       case 'LAB':
-        this.modalData.type = 'document';
+        this.modalData.type = 'coming-soon';
         this.modalData.title = 'LAB - Dépôt Document';
         this.modalData.description = 'Déposez le document LAB';
         this.modalData.acceptedTypes = '.pdf,.doc,.docx';
