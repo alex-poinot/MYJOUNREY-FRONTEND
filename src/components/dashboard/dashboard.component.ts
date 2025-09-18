@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AuthService, UserProfile } from '../../services/auth.service';
-import { StatusModalComponent, StatusModalData, FileWithExpiration } from '../status-modal/status-modal.component';
 import { environment } from '../../environments/environment';
 import { FilterPanelComponent, ActiveFilters } from '../filter-panel/filter-panel.component';
 
