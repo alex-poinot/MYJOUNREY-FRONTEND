@@ -744,10 +744,9 @@ interface ModalData {
       font-size: var(--font-size-md);
     }
 
-    .header-controls {
+    .upload-button-container {
       display: flex;
-      align-items: center;
-      gap: 12px;
+      justify-content: center;
     }
 
     .expand-all-btn {
@@ -1098,7 +1097,7 @@ interface ModalData {
       display: none;
     }
 
-    .mission-indent {
+    .upload-btn {
       width: 60px;
       background: var(--gray-50);
     }
@@ -1355,8 +1354,8 @@ interface ModalData {
       display: flex;
       flex-direction: column;
       gap: 8px;
-    }
-
+      padding: 10px 20px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     .question-group label {
       font-weight: 600;
       color: var(--gray-700);
@@ -1564,6 +1563,25 @@ interface ModalData {
       color: var(--gray-700);
     }
 
+    .file-expiration {
+      font-size: var(--font-size-sm);
+      color: var(--info-color);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    
+    .file-expiration.expiring-soon {
+      color: var(--warning-color);
+      font-weight: 500;
+    }
+    
+    .file-expiration.expired {
+      color: var(--error-color);
+      font-weight: 600;
+    }
+    
     .remove-file {
       background: var(--error-color);
       color: white;
@@ -1616,11 +1634,15 @@ interface ModalData {
       border-radius: 6px;
       cursor: pointer;
       font-weight: 500;
-      transition: all 0.2s;
+      font-size: var(--font-size-md);
+      font-weight: 500;
+      border: none;
+      box-shadow: var(--shadow-sm);
     }
 
-    .btn-save:hover {
-      background: var(--primary-dark);
+    .upload-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
     }
 
     @media (max-width: 1200px) {
