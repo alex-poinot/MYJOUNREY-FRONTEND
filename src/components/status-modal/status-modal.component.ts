@@ -59,7 +59,7 @@ export interface StatusModalData {
           </div>
 
           <!-- Upload de fichier principal pour tous les modules sauf ceux avec "fonctionnalité à venir" -->
-          <div class="form-group" *ngIf="modalData.status === 'in-progress' && modalData.type !== 'Carto LAB' && modalData.type !== 'Fin relation client'">
+          <div class="form-group" *ngIf="modalData.status === 'in-progress' && modalData.type !== 'Carto LAB' && modalData.type !== 'Fin relation client' && modalData.type !== 'Plaquette'">
             <label>Document :</label>
             <div class="file-upload-section">
               <button class="upload-btn" 
@@ -279,7 +279,6 @@ export interface StatusModalData {
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
-
 
     .uploaded-file {
       display: flex;
