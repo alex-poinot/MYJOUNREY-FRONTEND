@@ -16,6 +16,7 @@ export interface StatusModalData {
   selectedFile?: FileWithExpiration | null;
   selectedFile2?: FileWithExpiration | null;
   type: string;
+  documentInputs?: Array<{id: number, file: FileWithExpiration | null}>;
 }
 
 @Component({
@@ -62,6 +63,66 @@ export interface StatusModalData {
                 <span class="status-indicator coming-soon"></span>
                 Fonctionnalité à venir
               </label>
+            </div>
+          </div>
+
+          <!-- Section document-add avec inputs dynamiques -->
+          <div *ngIf="modalData.type === 'document-add'" class="upload-section">
+            <div class="form-group">
+              <div class="section-header">
+                <label>Documents :</label>
+                <button 
+                  *ngIf="modalData.documentInputs && modalData.documentInputs.length < 10"
+                  class="add-input-btn" 
+                  (click)="addDocumentInput()"
+                  type="button">
+                  <i class="fas fa-plus"></i>
+                  Ajouter un document
+                </button>
+              </div>
+              
+              <div *ngFor="let documentInput of modalData.documentInputs; let i = index" class="document-input-group">
+                <div class="input-header">
+                  <span class="input-label">Document {{ i + 1 }}</span>
+                  <button 
+                    *ngIf="modalData.documentInputs && modalData.documentInputs.length > 1"
+                    class="remove-input-btn" 
+                    (click)="removeDocumentInput(documentInput.id)"
+                    type="button">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                
+                <div class="file-upload-section">
+                  <button class="upload-btn" 
+                          (click)="triggerDocumentFileUpload(documentInput.id)">
+                    <i class="fas fa-upload"></i>
+                    {{ documentInput.file ? 'Changer le fichier' : 'Choisir un fichier' }}
+                  </button>
+                  <input 
+                    type="file" 
+                    [id]="'file-input-' + documentInput.id"
+                    (change)="onDocumentFileSelected($event, documentInput.id)" 
+                    style="display: none;">
+                  
+                  <div *ngIf="documentInput.file" class="uploaded-file">
+                    <div class="file-info">
+                      <i class="fas fa-file"></i>
+                      <span class="file-name">{{ documentInput.file.name }}</span>
+                      <span class="file-size">({{ formatFileSize(documentInput.file.size) }})</span>
+                      <button class="remove-file-btn" (click)="removeDocumentFile(documentInput.id)">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                    <div class="file-expiration" 
+                         [class.expired]="isExpired(documentInput.file.expirationDate)"
+                         [class.expiring-soon]="isExpiringSoon(documentInput.file.expirationDate)">
+                      <i class="fas fa-calendar-alt"></i>
+                      <span>Expire le {{ formatExpirationDate(documentInput.file.expirationDate) }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -384,6 +445,77 @@ export interface StatusModalData {
     .btn-save:hover {
       background: var(--primary-dark);
     }
+
+    /* Styles pour les inputs dynamiques */
+    .upload-section {
+      margin-bottom: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .add-input-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--secondary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .add-input-btn:hover {
+      background: var(--primary-color);
+    }
+
+    .document-input-group {
+      margin-bottom: 16px;
+      padding: 12px;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      background: var(--gray-50);
+    }
+
+    .input-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .input-label {
+      font-weight: 500;
+      color: var(--gray-700);
+      font-size: var(--font-size-md);
+    }
+
+    .remove-input-btn {
+      background: var(--error-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-sm);
+      transition: all 0.2s;
+    }
+
+    .remove-input-btn:hover {
+      background: #dc2626;
+    }
   `]
 })
 export class StatusModalComponent {
@@ -391,11 +523,26 @@ export class StatusModalComponent {
   @Input() modalData: StatusModalData = {
     title: '',
     status: 'not-started',
-    type: ''
+    type: '',
+    documentInputs: []
   };
   
   @Output() closeModalEvent = new EventEmitter<void>();
   @Output() saveChangesEvent = new EventEmitter<StatusModalData>();
+
+  constructor() {
+    // Initialiser avec un input par défaut si c'est un type document-add
+    if (this.modalData.type === 'document-add' && (!this.modalData.documentInputs || this.modalData.documentInputs.length === 0)) {
+      this.modalData.documentInputs = [{id: 1, file: null}];
+    }
+  }
+
+  ngOnInit() {
+    // S'assurer qu'il y a au moins un input pour document-add
+    if (this.modalData.type === 'document-add' && (!this.modalData.documentInputs || this.modalData.documentInputs.length === 0)) {
+      this.modalData.documentInputs = [{id: 1, file: null}];
+    }
+  }
 
   // Méthodes pour déterminer les fonctionnalités disponibles
   isComingSoonModule(): boolean {
@@ -425,6 +572,58 @@ export class StatusModalComponent {
     if (this.modalData.status !== 'in-progress') {
       this.modalData.selectedFile = null;
       this.modalData.selectedFile2 = null;
+      if (this.modalData.documentInputs) {
+        this.modalData.documentInputs.forEach(input => input.file = null);
+      }
+    }
+  }
+
+  addDocumentInput(): void {
+    if (!this.modalData.documentInputs) {
+      this.modalData.documentInputs = [];
+    }
+    
+    if (this.modalData.documentInputs.length < 10) {
+      const newId = Math.max(...this.modalData.documentInputs.map(input => input.id), 0) + 1;
+      this.modalData.documentInputs.push({id: newId, file: null});
+    }
+  }
+
+  removeDocumentInput(inputId: number): void {
+    if (this.modalData.documentInputs && this.modalData.documentInputs.length > 1) {
+      this.modalData.documentInputs = this.modalData.documentInputs.filter(input => input.id !== inputId);
+    }
+  }
+
+  onDocumentFileSelected(event: Event, inputId: number): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0] && this.modalData.documentInputs) {
+      const file = input.files[0];
+      const expirationDays = this.getExpirationDays(this.modalData.type);
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + expirationDays);
+
+      const fileWithExpiration: FileWithExpiration = {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
+        expirationDate: expirationDate
+      };
+
+      const documentInput = this.modalData.documentInputs.find(input => input.id === inputId);
+      if (documentInput) {
+        documentInput.file = fileWithExpiration;
+      }
+    }
+  }
+
+  removeDocumentFile(inputId: number): void {
+    if (this.modalData.documentInputs) {
+      const documentInput = this.modalData.documentInputs.find(input => input.id === inputId);
+      if (documentInput) {
+        documentInput.file = null;
+      }
     }
   }
 
@@ -465,6 +664,13 @@ export class StatusModalComponent {
       this.modalData.selectedFile = null;
     } else {
       this.modalData.selectedFile2 = null;
+    }
+  }
+
+  triggerDocumentFileUpload(inputId: number): void {
+    const input = document.getElementById(`file-input-${inputId}`) as HTMLInputElement;
+    if (input) {
+      input.click();
     }
   }
 
