@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
+import { FileWithExpiration } from '../../models/module.interface';
 import { FilterPanelComponent, ActiveFilters } from '../filter-panel/filter-panel.component';
 
 interface MissionData {
