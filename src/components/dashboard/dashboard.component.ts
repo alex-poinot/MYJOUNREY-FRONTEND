@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { AuthService, UserProfile } from '../../services/auth.service';
+import { StatusModalComponent, StatusModalData, FileWithExpiration } from '../status-modal/status-modal.component';
 import { environment } from '../../environments/environment';
 import { FilterPanelComponent, ActiveFilters } from '../filter-panel/filter-panel.component';
 
@@ -2109,9 +2109,9 @@ export class DashboardComponent implements OnInit {
     this.modalData = {
       isOpen: true,
       columnName: columnName,
-      status: module.status === 'in-progress' ? 'in-progress' : 'not-started',
-      currentStatus: currentStatus,
-      selectedFile: null,
+      status: currentModule.status === 'in-progress' ? 'in-progress' : 'not-started',
+      selectedFile: currentModule.selectedFile || null,
+      selectedFile2: currentModule.selectedFile2 || null,
       selectedFile2: null
     };
 

@@ -1,11 +1,18 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FileWithExpiration } from '../../models/module.interface';
+
+export interface FileWithExpiration {
+  name: string;
+  size: number;
+  type: string;
+  lastModified: number;
+  expirationDate: Date;
+}
 
 export interface StatusModalData {
   title: string;
-  status: 'not-started' | 'in-progress' | 'completed' | 'coming-soon';
+  status: 'not-started' | 'in-progress' | 'coming-soon';
   selectedFile?: FileWithExpiration | null;
   selectedFile2?: FileWithExpiration | null;
   type: string;
@@ -46,7 +53,7 @@ export interface StatusModalData {
                 <span class="status-indicator in-progress"></span>
                 En cours
               </label>
-              <label class="status-option" *ngIf="modalData.type === 'Carto LAB' || modalData.type === 'Fin relation client' || modalData.type === 'Plaquette'">
+              <label class="status-option" *ngIf="isComingSoonModule()">
                 <input type="radio" 
                        [value]="'coming-soon'" 
                        [(ngModel)]="modalData.status"
@@ -58,8 +65,8 @@ export interface StatusModalData {
             </div>
           </div>
 
-          <!-- Upload de fichier principal pour tous les modules sauf ceux avec "fonctionnalité à venir" -->
-          <div class="form-group" *ngIf="modalData.status === 'in-progress' && modalData.type !== 'Carto LAB' && modalData.type !== 'Fin relation client' && modalData.type !== 'Plaquette'">
+          <!-- Upload de fichier principal -->
+          <div class="form-group" *ngIf="canUploadFiles()">
             <label>Document :</label>
             <div class="file-upload-section">
               <button class="upload-btn" 
@@ -91,8 +98,8 @@ export interface StatusModalData {
             </div>
           </div>
 
-          <!-- Upload de fichier secondaire (pour certains modules) -->
-          <div class="form-group" *ngIf="modalData.status === 'in-progress' && (modalData.type === 'QAC' || modalData.type === 'QAM' || modalData.type === 'LDM')">
+          <!-- Upload de fichier secondaire -->
+          <div class="form-group" *ngIf="canUploadSecondaryFiles()">
             <label>Document complémentaire :</label>
             <div class="file-upload-section">
               <button class="upload-btn" (click)="triggerFileUpload('file2')">
@@ -246,10 +253,6 @@ export interface StatusModalData {
       background: var(--warning-color);
     }
 
-    .status-indicator.completed {
-      background: var(--success-color);
-    }
-
     .status-indicator.coming-soon {
       background: var(--info-color);
     }
@@ -394,6 +397,21 @@ export class StatusModalComponent {
   @Output() closeModalEvent = new EventEmitter<void>();
   @Output() saveChangesEvent = new EventEmitter<StatusModalData>();
 
+  // Méthodes pour déterminer les fonctionnalités disponibles
+  isComingSoonModule(): boolean {
+    return ['Fin relation client', 'Plaquette'].includes(this.modalData.type);
+  }
+
+  canUploadFiles(): boolean {
+    return this.modalData.status === 'in-progress' && 
+           !['Fin relation client', 'Plaquette'].includes(this.modalData.type);
+  }
+
+  canUploadSecondaryFiles(): boolean {
+    return this.modalData.status === 'in-progress' && 
+           ['QAC', 'QAM', 'LDM'].includes(this.modalData.type);
+  }
+
   closeModal(): void {
     this.closeModalEvent.emit();
   }
@@ -411,7 +429,8 @@ export class StatusModalComponent {
   }
 
   triggerFileUpload(fileType: 'file1' | 'file2'): void {
-    const input = document.querySelector(`input[type="file"]${fileType === 'file2' ? ':nth-of-type(2)' : ''}`) as HTMLInputElement;
+    const selector = fileType === 'file1' ? 'input[type="file"]:first-of-type' : 'input[type="file"]:last-of-type';
+    const input = document.querySelector(selector) as HTMLInputElement;
     if (input) {
       input.click();
     }
