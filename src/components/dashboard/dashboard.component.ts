@@ -734,17 +734,28 @@ interface ModalData {
             <!-- Premier document -->
             <div class="upload-group">
               <h4>1. Registre des bénéficiaires</h4>
-              <div class="file-upload-area"
-                   (click)="fileInput1.click()">
-                <input #fileInput1 
-                       type="file" 
-                       [accept]="modalData.acceptedTypes"
-                       (change)="onFileSelected($event, 1)"
-                       class="file-input">
-                <div>
-                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-                </div>
+              <div *ngFor="let input of labInputs1; let i = index" class="file-input-container">
+                <input 
+                  type="file" 
+                  class="file-input" 
+                  (change)="onLabFileSelected($event, 1, i)"
+                  [id]="'lab-file-1-' + i">
+                <span *ngIf="selectedLabFiles1[i]" class="file-name">{{ selectedLabFiles1[i]?.name }}</span>
+                <button 
+                  *ngIf="i > 0" 
+                  type="button" 
+                  class="remove-input-btn" 
+                  (click)="removeLabInput(1, i)">
+                  ×
+                </button>
               </div>
+              <button 
+                *ngIf="labInputs1.length < 10" 
+                type="button" 
+                class="add-input-btn" 
+                (click)="addLabInput(1)">
+                <i class="fas fa-plus"></i> Ajouter un fichier ({{ labInputs1.length }}/10)
+              </button>
               
               <div *ngIf="modalData.selectedFile" class="file-preview">
                 <div class="file-info">
@@ -762,17 +773,28 @@ interface ModalData {
             <!-- Deuxième document -->
             <div class="upload-group">
               <h4>2. Pièce d'identité</h4>
-              <div class="file-upload-area" 
-                   (click)="fileInput2.click()">
-                <input #fileInput2 
-                       type="file" 
-                       [accept]="modalData.acceptedTypes"
-                       (change)="onFileSelected($event, 2)"
-                       class="file-input">
-                <div>
-                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-                </div>
+              <div *ngFor="let input of labInputs2; let i = index" class="file-input-container">
+                <input 
+                  type="file" 
+                  class="file-input" 
+                  (change)="onLabFileSelected($event, 2, i)"
+                  [id]="'lab-file-2-' + i">
+                <span *ngIf="selectedLabFiles2[i]" class="file-name">{{ selectedLabFiles2[i]?.name }}</span>
+                <button 
+                  *ngIf="i > 0" 
+                  type="button" 
+                  class="remove-input-btn" 
+                  (click)="removeLabInput(2, i)">
+                  ×
+                </button>
               </div>
+              <button 
+                *ngIf="labInputs2.length < 10" 
+                type="button" 
+                class="add-input-btn" 
+                (click)="addLabInput(2)">
+                <i class="fas fa-plus"></i> Ajouter un fichier ({{ labInputs2.length }}/10)
+              </button>
               
               <div *ngIf="modalData.selectedFile2" class="file-preview">
                 <div class="file-info">
@@ -790,17 +812,28 @@ interface ModalData {
             <!-- Troisième document -->
             <div class="upload-group">
               <h4>3. Statuts</h4>
-              <div class="file-upload-area" 
-                   (click)="fileInput3.click()">
-                <input #fileInput3 
-                       type="file" 
-                       [accept]="modalData.acceptedTypes"
-                       (change)="onFileSelected($event, 3)"
-                       class="file-input">
-                <div>
-                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-                </div>
+              <div *ngFor="let input of labInputs3; let i = index" class="file-input-container">
+                <input 
+                  type="file" 
+                  class="file-input" 
+                  (change)="onLabFileSelected($event, 3, i)"
+                  [id]="'lab-file-3-' + i">
+                <span *ngIf="selectedLabFiles3[i]" class="file-name">{{ selectedLabFiles3[i]?.name }}</span>
+                <button 
+                  *ngIf="i > 0" 
+                  type="button" 
+                  class="remove-input-btn" 
+                  (click)="removeLabInput(3, i)">
+                  ×
+                </button>
               </div>
+              <button 
+                *ngIf="labInputs3.length < 10" 
+                type="button" 
+                class="add-input-btn" 
+                (click)="addLabInput(3)">
+                <i class="fas fa-plus"></i> Ajouter un fichier ({{ labInputs3.length }}/10)
+              </button>
               
               <div *ngIf="modalData.selectedFile3" class="file-preview">
                 <div class="file-info">
