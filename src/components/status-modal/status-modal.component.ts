@@ -46,7 +46,7 @@ export interface StatusModalData {
                 <span class="status-indicator in-progress"></span>
                 En cours
               </label>
-              <label class="status-option" *ngIf="modalData.type !== 'Carto LAB'">
+              <label class="status-option" *ngIf="modalData.type !== 'Carto LAB' && modalData.type !== 'Fin relation client'">
                 <input type="radio" 
                        [value]="'completed'" 
                        [(ngModel)]="modalData.status"
@@ -54,7 +54,7 @@ export interface StatusModalData {
                 <span class="status-indicator completed"></span>
                 Terminé
               </label>
-              <label class="status-option" *ngIf="modalData.type === 'Carto LAB'">
+              <label class="status-option" *ngIf="modalData.type === 'Carto LAB' || modalData.type === 'Fin relation client'">
                 <input type="radio" 
                        [value]="'coming-soon'" 
                        [(ngModel)]="modalData.status"
@@ -67,11 +67,10 @@ export interface StatusModalData {
           </div>
 
           <!-- Upload de fichier principal -->
-          <div class="form-group" *ngIf="modalData.status === 'completed' && modalData.type !== 'Carto LAB'">
+          <div class="form-group" *ngIf="modalData.status === 'completed' && modalData.type !== 'Carto LAB' && modalData.type !== 'Fin relation client'">
             <label>Document :</label>
             <div class="file-upload-section">
               <button class="upload-btn" 
-                      [class.plaquette-upload]="modalData.type === 'Plaquette'"
                       (click)="triggerFileUpload('file1')">
                 <i class="fas fa-upload"></i>
                 {{ modalData.selectedFile ? 'Changer le fichier' : 'Choisir un fichier' }}
@@ -101,7 +100,7 @@ export interface StatusModalData {
           </div>
 
           <!-- Upload de fichier secondaire (pour certains modules) -->
-          <div class="form-group" *ngIf="modalData.status === 'completed' && (modalData.type === 'QAC' || modalData.type === 'QAM' || modalData.type === 'LDM')">
+          <div class="form-group" *ngIf="modalData.status === 'completed' && (modalData.type === 'QAC' || modalData.type === 'QAM' || modalData.type === 'LDM') && modalData.type !== 'Carto LAB' && modalData.type !== 'Fin relation client'">
             <label>Document complémentaire :</label>
             <div class="file-upload-section">
               <button class="upload-btn" (click)="triggerFileUpload('file2')">
@@ -289,9 +288,6 @@ export interface StatusModalData {
       box-shadow: var(--shadow-md);
     }
 
-    .upload-btn.plaquette-upload {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    }
 
     .uploaded-file {
       display: flex;
@@ -438,6 +434,10 @@ export class StatusModalComponent {
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + expirationDays);
 
+      const expirationDays = this.getExpirationDays(this.modalData.type);
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + expirationDays);
+
       const fileWithExpiration: FileWithExpiration = {
         name: file.name,
         size: file.size,
@@ -470,6 +470,45 @@ export class StatusModalComponent {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
+  getExpirationDays(moduleType: string): number {
+    const expirationMap: { [key: string]: number } = {
+      'LAB': 365,
+      'Conflit Check': 180,
+      'QAC': 90,
+      'QAM': 90,
+      'LDM': 60,
+      'NOG': 365,
+      'Checklist': 180,
+      'Révision': 90,
+      'Supervision': 90,
+      'NDS/CR Mission': 365,
+      'QMM': 180,
+      'Plaquette': 30,
+      'Restitution communication client': 60,
+      'Carto LAB': 90,
+      'Fin relation client': 90
+    };
+    return expirationMap[moduleType] || 90;
+  }
+
+  formatExpirationDate(date: Date): string {
+    return date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
+
+  isExpired(date: Date): boolean {
+    return new Date() > date;
+  }
+
+  isExpiringSoon(date: Date): boolean {
+    const today = new Date();
+    const diffTime = date.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 7 && diffDays > 0;
+  }
   getExpirationDays(moduleType: string): number {
     const expirationMap: { [key: string]: number } = {
       'LAB': 365,
