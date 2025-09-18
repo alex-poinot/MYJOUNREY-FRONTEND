@@ -100,7 +100,7 @@ export interface StatusModalData {
           </div>
 
           <!-- Upload de fichier secondaire (pour certains modules) -->
-          <div class="form-group" *ngIf="modalData.status === 'completed' && (modalData.type === 'QAC' || modalData.type === 'QAM' || modalData.type === 'LDM') && modalData.type !== 'Carto LAB' && modalData.type !== 'Fin relation client'">
+          <div class="form-group" *ngIf="modalData.status === 'completed' && (modalData.type === 'QAC' || modalData.type === 'QAM' || modalData.type === 'LDM')">
             <label>Document complémentaire :</label>
             <div class="file-upload-section">
               <button class="upload-btn" (click)="triggerFileUpload('file2')">
