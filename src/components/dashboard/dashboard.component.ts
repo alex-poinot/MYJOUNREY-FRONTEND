@@ -630,22 +630,35 @@ interface ModalData {
 
           <!-- Modal Upload (PDF/Document simple avec possibilité d'ajouter) -->
           <div *ngIf="modalData.type === 'document-add'" class="upload-section">
-            <p>{{ modalData.description }}</p>
-              <input 
-                type="file" 
-                id="file-input"
-                (change)="onFileSelected($event)"
-                [accept]="modalData.acceptedTypes"
-                class="file-input">
-              <div *ngIf="modalData.selectedFile" class="file-info">
-                <span class="file-name">{{ modalData.selectedFile.name }}</span>
-                <button class="remove-file" (click)="removeFile()">
+            <div class="upload-controls">
+              <button 
+                *ngIf="fileInputs.length < 10"
+                class="btn-add-input" 
+                (click)="addFileInput()"
+                type="button">
+                <i class="fas fa-plus"></i>
+                Ajouter un fichier ({{ fileInputs.length }}/10)
+              </button>
+            </div>
+            
+            <div class="file-inputs-container">
+              <div *ngFor="let input of fileInputs; let i = index" class="file-input-group">
+                <input 
+                  type="file" 
+                  [id]="'file-input-' + i"
+                  class="file-input"
+                  (change)="onFileSelected($event, i)"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
+                <button 
+                  *ngIf="fileInputs.length > 1"
+                  class="btn-remove-input" 
+                  (click)="removeFileInput(i)"
+                  type="button"
+                  title="Supprimer ce fichier">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
-              <div>
-                <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-              </div>
+            </div>
           </div>
           
           <!-- Modal Upload Double (Plaquette) -->
@@ -1629,6 +1642,75 @@ interface ModalData {
       background: var(--primary-dark);
     }
 
+    .upload-controls {
+      margin-bottom: 16px;
+    }
+    
+    .btn-add-input {
+      background: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    
+    .btn-add-input:hover {
+      background: var(--primary-color);
+      transform: translateY(-1px);
+    }
+    
+    .file-inputs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .file-input-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 2px dashed var(--gray-300);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    
+    .file-input-group:hover {
+      border-color: var(--secondary-color);
+      background: var(--gray-50);
+    }
+    
+    .file-input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      font-size: var(--font-size-md);
+    }
+    
+    .btn-remove-input {
+      background: var(--error-color);
+      color: white;
+      border: none;
+      padding: 6px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    
+    .btn-remove-input:hover {
+      background: #dc2626;
+      transform: scale(1.05);
+    }
+
     @media (max-width: 1200px) {
       .mission-table {
         font-size: var(--font-size-sm);
@@ -1685,6 +1767,7 @@ export class DashboardComponent implements OnInit {
     question4: '',
     question5: ''
   };
+  fileInputs: any[] = [{}]; // Tableau pour gérer les inputs de fichiers
 
   constructor(
     private http: HttpClient,
@@ -2108,6 +2191,11 @@ export class DashboardComponent implements OnInit {
       selectedFile2: null
     };
 
+    // Réinitialiser les inputs de fichiers pour le type document-add
+    if (columnName === 'Checklist' || columnName === 'Révision') {
+      this.fileInputs = [{}];
+    }
+
     // Configuration spécifique par module
     switch (columnName) {
       case 'Conflit Check':
@@ -2232,12 +2320,32 @@ export class DashboardComponent implements OnInit {
   public closeModal(): void {
     this.modalData.isOpen = false;
     this.modalData.selectedFile = null;
+    this.fileInputs = [{}];
+  }
+
+  addFileInput(): void {
+    if (this.fileInputs.length < 10) {
+      this.fileInputs.push({});
+    }
+  }
+  
+  removeFileInput(index: number): void {
+    if (this.fileInputs.length > 1) {
+      this.fileInputs.splice(index, 1);
+    }
   }
 
   onFileSelected(event: Event, fileNumber?: number): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
-      if (fileNumber === 1) {
+      if (this.modalData.type === 'document-add' && typeof fileNumber === 'number') {
+        const file = input.files[0];
+        this.fileInputs[fileNumber] = {
+          file: file,
+          name: file.name,
+          size: file.size
+        };
+      } else if (fileNumber === 1) {
         this.modalData.selectedFile = input.files[0];
       } else if (fileNumber === 2) {
         this.modalData.selectedFile2 = input.files[0];
