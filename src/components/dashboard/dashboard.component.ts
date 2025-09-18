@@ -1044,18 +1044,18 @@ interface ModalData {
     }
 
     .group-row.client-group {
-      background: rgba(100, 206, 199, 0.1);
+      background: rgba(60, 151, 255, 0.1);
       cursor: pointer;
       transition: background-color 0.2s;
     }
 
     .group-row.client-group:hover {
-      background: rgba(100, 206, 199, 0.2);
+      background: rgba(60, 151, 255, 0.2);
     }
 
     .client-indent {
       width: 40px;
-      background: rgba(100, 206, 199, 0.1);
+      background: rgba(60, 151, 255, 0.1);
     }
 
     .client-cell {
