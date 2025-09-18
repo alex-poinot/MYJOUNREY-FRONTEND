@@ -587,32 +587,35 @@ interface ModalData {
           <div *ngIf="modalData.type === 'coming-soon'" class="coming-soon-content">
             <div class="coming-soon-icon">🚧</div>
             <h4>Fonctionnalité à venir</h4>
+                  <span *ngIf="module.status === 'coming-soon'">Fonctionnalité à venir</span>
             <p>Cette fonctionnalité sera bientôt disponible.</p>
           </div>
           
-          <!-- Modal Questionnaire (Carto LAB) -->
-          <div *ngIf="modalData.type === 'questionnaire'" class="questionnaire-content">
-            <p>{{ modalData.description }}</p>
-            <div class="questionnaire-form">
-              <div *ngFor="let question of modalData.questionnaire?.questions; let i = index" class="question-item">
-                <label>{{ i + 1 }}. {{ question.text }}</label>
-                <div class="radio-group">
-                  <label class="radio-label">
-                    <input type="radio" 
-                           [name]="'question_' + i" 
-                           value="oui"
                            [(ngModel)]="question.answer"
-                           (change)="updateQuestionnaireStatus()">
+              <div *ngIf="module.allowUpload && module.status !== 'coming-soon'" class="upload-section">
                     Oui
-                  </label>
-                  <label class="radio-label">
-                    <input type="radio" 
-                           [name]="'question_' + i" 
-                           value="non"
-                           [(ngModel)]="question.answer"
-                           (change)="updateQuestionnaireStatus()">
-                    Non
-                  </label>
+                  <div *ngIf="module.id === 'plaquette'" class="plaquette-upload">
+                    <input type="file" 
+                           [id]="'file-' + module.id"
+                           (change)="onFileSelected($event, module)"
+                           class="file-input"
+                           accept=".pdf,.doc,.docx,.xls,.xlsx">
+                    <label [for]="'file-' + module.id" class="upload-button">
+                      <i class="fas fa-upload"></i>
+                      Charger un fichier
+                    </label>
+                  </div>
+                  <div *ngIf="module.id !== 'plaquette'">
+                    <input type="file" 
+                           [id]="'file-' + module.id"
+                           (change)="onFileSelected($event, module)"
+                           class="file-input"
+                           accept=".pdf,.doc,.docx,.xls,.xlsx">
+                    <label [for]="'file-' + module.id" class="upload-button">
+                      <i class="fas fa-upload"></i>
+                      Charger un fichier
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -694,6 +697,14 @@ interface ModalData {
                   <i class="fas fa-file-pdf file-icon"></i>
                   <div class="file-details">
                     <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+                  </div>
+                  <div class="file-expiration" 
+                       [ngClass]="{
+                         'expired': isExpired(module.expirationDate),
+                         'expiring-soon': isExpiringSoon(module.expirationDate)
+                       }">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Expire le {{ formatExpirationDate(module.expirationDate) }}</span>
                   </div>
                   <button class="remove-file-btn" (click)="removeFile(2)">
                     <i class="fas fa-times"></i>
