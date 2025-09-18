@@ -574,4 +574,2106 @@ interface ModalData {
         <div class="modal-content" (click)="$event.stopPropagation()">
           <div class="modal-header">
             <h3>{{ modalData.columnName }}</h3>
-            <button class="modal-close" (click)="close
+            <button class="modal-close" (click)="closeModal()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+          <!-- Modal "À venir" -->
+          <div *ngIf="modalData.type === 'coming-soon'" class="coming-soon-content">
+            <h4>🚧 Fonctionnalité à venir</h4>
+            <p>Cette fonctionnalité sera bientôt disponible.</p>
+          </div>
+          
+          <!-- Modal Questionnaire (Carto LAB) -->
+          <div *ngIf="modalData.type === 'questionnaire'" class="questionnaire-content">
+            <p>{{ modalData.description }}</p>
+            <div class="questionnaire-form">
+              <div *ngFor="let question of modalData.questionnaire?.questions; let i = index" class="question-item">
+                <label>{{ i + 1 }}. {{ question.text }}</label>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" 
+                           [name]="'question_' + i" 
+                           value="oui"
+                           [(ngModel)]="question.answer"
+                           (change)="updateQuestionnaireStatus()">
+                    Oui
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" 
+                           [name]="'question_' + i" 
+                           value="non"
+                           [(ngModel)]="question.answer"
+                           (change)="updateQuestionnaireStatus()">
+                    Non
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Modal Upload (PDF/Document simple) -->
+          <div *ngIf="modalData.type === 'pdf' || modalData.type === 'document'" class="upload-section">
+            <p>{{ modalData.description }}</p>
+              <input 
+                type="file" 
+                id="file-input"
+                (change)="onFileSelected($event)"
+                [accept]="modalData.acceptedTypes"
+                class="file-input">
+              <div *ngIf="modalData.selectedFile" class="file-info">
+                <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                <button class="remove-file" (click)="removeFile()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div>
+                <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+              </div>
+          </div>
+
+          <!-- Modal Upload (PDF/Document simple avec possibilité d'ajouter) -->
+          <div *ngIf="modalData.type === 'document-add'" class="upload-section">
+            <div class="upload-controls">
+              <button 
+                *ngIf="fileInputs.length < 10"
+                class="btn-add-input" 
+                (click)="addFileInput()"
+                type="button">
+                <i class="fas fa-plus"></i>
+                Ajouter un fichier ({{ fileInputs.length }}/10)
+              </button>
+            </div>
+            
+            <div class="file-inputs-container">
+              <div *ngFor="let input of fileInputs; let i = index" class="file-input-group">
+                <input 
+                  type="file" 
+                  [id]="'file-input-' + i"
+                  class="file-input"
+                  (change)="onFileSelected($event, i)"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
+                <button 
+                  *ngIf="fileInputs.length > 1"
+                  class="btn-remove-input" 
+                  (click)="removeFileInput(i)"
+                  type="button"
+                  title="Supprimer ce fichier">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Modal Upload Double (Plaquette) -->
+          <div *ngIf="modalData.type === 'double-document'" class="double-upload-section">
+            <p>{{ modalData.description }}</p>
+            
+            <!-- Premier document -->
+            <div class="upload-group">
+              <h4>1. Plaquette</h4>
+              <div class="file-upload-area"
+                   (click)="fileInput1.click()">
+                <input #fileInput1 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 1)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(1)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Deuxième document -->
+            <div class="upload-group">
+              <h4>2. Mail accompagnement de la remise des comptes annuels</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput2.click()">
+                <input #fileInput2 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 2)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile2" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(2)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Upload LAB -->
+          <div *ngIf="modalData.type === 'LAB'" class="double-upload-section">
+            <p>{{ modalData.description }}</p>
+            
+            <!-- Premier document -->
+            <div class="upload-group">
+              <h4>1. Registre des bénéficiaires</h4>
+              <div class="file-upload-area"
+                   (click)="fileInput1.click()">
+                <input #fileInput1 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 1)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(1)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Deuxième document -->
+            <div class="upload-group">
+              <h4>2. Pièce d'identité</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput2.click()">
+                <input #fileInput2 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 2)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile2" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(2)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Troisième document -->
+            <div class="upload-group">
+              <h4>3. Statuts</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput3.click()">
+                <input #fileInput3 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 3)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile3" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile3.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(3)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quatrième document -->
+            <div class="upload-group">
+              <h4>4. Extrait Kbis</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput4.click()">
+                <input #fileInput4 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 4)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile4" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile4.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(4)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cinquième document -->
+            <div class="upload-group">
+              <h4>5. Déclaration conflit d'intérêt</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput5.click()">
+                <input #fileInput5 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 5)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile5" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile5.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(5)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sixième document -->
+            <div class="upload-group">
+              <h4>6. Questionnaire d'acceptation de mission (QAM)</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput6.click()">
+                <input #fileInput6 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 6)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile6" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile6.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(6)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Septième document -->
+            <div class="upload-group">
+              <h4>7. Note de travail et autre document</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput7.click()">
+                <input #fileInput7 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 7)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile7" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile7.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(7)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" (click)="closeModal()">Annuler</button>
+          <button class="btn-save" (click)="saveStatus()">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .hidden {
+      display: none;
+    }
+    .dashboard-container {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 75px);
+      background: var(--gray-50);
+      overflow: hidden;
+    }
+
+    .dashboard-header {
+      flex-shrink: 0;
+      padding: 12px 24px 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dashboard-header h1 {
+      margin: 0 0 8px 0;
+      color: var(--primary-color);
+      font-size: 1.4vw;
+      font-weight: 700;
+    }
+
+    .dashboard-header p {
+      margin: 0;
+      color: var(--gray-600);
+      font-size: var(--font-size-md);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .expand-all-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: var(--font-size-md);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .expand-all-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .filters-section {
+      display: flex;
+      justify-content: flex-start;
+      width: 8vw;
+    }
+    
+    .filter-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: white;
+      border: 2px solid var(--gray-300);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      position: relative;
+    }
+    
+    .filter-btn:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+    
+    .filter-btn.active {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+    
+    .filter-count {
+      background: var(--secondary-color);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      min-width: 18px;
+      text-align: center;
+    }
+    
+    .filter-btn.active .filter-count {
+      background: white;
+      color: var(--primary-color);
+    }
+
+    .table-controls {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .pagination-info {
+      font-size: var(--font-size-md);
+      color: var(--gray-600);
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .pagination-btn {
+      padding: 8px 12px;
+      border: 1px solid var(--gray-300);
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      transition: all 0.2s;
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background: var(--gray-50);
+      border-color: var(--primary-color);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      font-size: var(--font-size-sm);
+      color: var(--gray-700);
+      font-weight: 500;
+    }
+
+    .table-wrapper {
+      flex: 1;
+      overflow: auto;
+      margin: 0 24px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--gray-200);
+    }
+
+    .mission-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-size-md);
+      min-width: 100%;
+    }
+
+    .mission-table thead tr:nth-child(1) th:nth-child(n+2) {
+      min-width: 7vw;
+    }
+
+    .mission-table thead tr:nth-child(2) th:nth-child(1),
+    .mission-table tbody .mission-row td:nth-child(1) {
+      width: 0.8vw;
+      min-width: 0.8vw;
+      max-width: 0.8vw;
+      text-align: left;
+    }
+
+    .mission-table thead tr:nth-child(2) th:nth-child(2),
+    .mission-table tbody .mission-row td:nth-child(2) {
+      width: 0.8vw;
+      min-width: 0.8vw;
+      max-width: 0.8vw;
+      text-align: left;
+    }
+
+    .mission-table thead tr:nth-child(2) th:nth-child(3),
+    .mission-table tbody .mission-row td:nth-child(3) {
+      width: 0.8vw;
+      min-width: 0.8vw;
+      max-width: 0.8vw;
+      text-align: left;
+    }
+
+    .mission-table thead tr:nth-child(2) th:nth-child(4),
+    .mission-table tbody .mission-row td:nth-child(4) {
+      width: 0.8vw;
+      min-width: 0.8vw;
+      max-width: 0.8vw;
+      text-align: left;
+    }
+
+    .mission-table thead tr:nth-child(2) th:nth-child(5),
+    .mission-table tbody .mission-row td:nth-child(5) {
+      width: 22vw;
+      min-width: 22vw;
+      max-width: 22vw;
+      text-align: left;
+    }
+    
+    .mission-table thead tr:nth-child(2) th:nth-child(n+6),
+    .mission-table tbody .mission-row td:nth-child(n+6) {
+      width: 4.3vw;
+      min-width: 4.3vw;
+      max-width: 4.3vw;
+    }
+
+    .mission-table tbody .mission-row td {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .mission-table thead tr:nth-child(2) th {
+      vertical-align: top;
+    }
+
+
+    .group-row {
+      text-align: center;
+    }
+
+    span.tiret-no-data {
+      color: #bbbbbb;
+    }
+
+    .recap-dossier {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .column-group-header {
+      background: var(--primary-color);
+      color: white;
+      padding: 1vh 0.3vw;
+      font-weight: 600;
+      text-align: center;
+      position: relative;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      height: 4.6vh;
+    }
+
+    .group-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.5vw;
+    }
+
+    .client-row {
+      padding-left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 0.5vw;
+    }
+
+    .mission-table tr.group-row.main-group {
+      position: sticky;
+      top: 10.9vh;
+      z-index: 10;
+    }
+    
+    .column-group-header.information {
+      background: var(--primary-dark);
+    }
+
+    .column-group-header.avant-mission {
+      background: var(--primary-color);
+    }
+
+    .column-group-header.pendant-mission {
+      background: var(--secondary-color);
+      color: var(--primary-color);
+    }
+
+    .column-group-header.fin-mission {
+      background: var(--primary-color);
+    }
+
+    .column-header {
+      background: var(--gray-100);
+      color: var(--gray-700);
+      padding: 1vh 0.3vw;
+      font-weight: 600;
+      text-align: center;
+      border-bottom: 1px solid var(--gray-200);
+      white-space: nowrap;
+      position: sticky;
+      top: 4.6vh;
+      height: 6.4vh;
+      z-index: 10;
+    }
+
+    .column-header.percentage {
+      background: rgb(232 240 240);
+      color: var(--primary-color);
+      min-width: 60px;
+    }
+
+    .group-row.main-group {
+      background: var(--gray-50);
+      cursor: pointer;
+      transition: background-color 0.2s;
+      font-weight: 600;
+    }
+
+    .group-row.main-group:hover {
+      background: var(--gray-100);
+    }
+
+    .mission-count-display {
+      font-size: var(--font-size-md);
+    }
+
+    .group-row.client-group {
+      background: rgba(60, 151, 255, 0.1);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .group-row.client-group:hover {
+      background: rgba(60, 151, 255, 0.2);
+    }
+
+    .client-indent {
+      width: 40px;
+      background: rgba(60, 151, 255, 0.1);
+    }
+
+    .client-cell {
+      padding: 10px 16px;
+      font-weight: 500;
+      color: var(--secondary-color);
+    }
+
+    .client-summary {
+      font-size: var(--font-size-sm);
+      color: var(--gray-600);
+      font-weight: normal;
+      margin-left: 8px;
+    }
+    .group-summary {
+      padding: 1vh 0.3vw;
+      color: var(--gray-600);
+      font-style: italic;
+    }
+
+    .groupe-libelle {
+      min-width: 17vw;
+      max-width: 17vw;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      text-align: left;
+    }
+
+    .mission-row {
+      border-bottom: 1px solid var(--gray-100);
+      transition: all 0.2s;
+    }
+
+    .mission-row:hover {
+      background: var(--gray-50);
+    }
+
+    .mission-row.hidden {
+      display: none;
+    }
+
+    .mission-indent {
+      width: 60px;
+      background: var(--gray-50);
+    }
+
+    .mission-row td {
+      padding: 1vh 0.3vw;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .percentage-cell {
+      padding: 8px !important;
+    }
+
+    .progress-circle {
+      width: 2.5vw;
+      height: 5vh;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .progress-circle[data-percentage="0"] {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--error-color);
+    }
+
+    .progress-circle[data-percentage="25"] {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+    }
+
+    .progress-circle[data-percentage="50"] {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+    }
+
+    .progress-circle[data-percentage="75"] {
+      background: rgba(100, 206, 199, 0.1);
+      color: var(--success-color);
+    }
+
+    .progress-circle[data-percentage="100"] {
+      background: rgba(100, 206, 199, 0.1);
+      color: var(--success-color);
+    }
+
+    .status-cell {
+      padding: 8px !important;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      text-align: center;
+    }
+
+    .status-cell:hover {
+      background: rgba(34, 109, 104, 0.1);
+    }
+
+    .status-icon {
+      font-size: var(--font-size-md);
+      display: inline-block;
+      transition: all 0.2s ease;
+    }
+
+    .status-icon.completed {
+      color: var(--success-color);
+    }
+
+    .status-icon:not(.completed) {
+      color: var(--gray-300);
+    }
+
+    .collapse-btn {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      padding: 4px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .group-info {
+      display: flex;
+      gap: 0.5vw;
+      align-items: center;
+    }
+
+    .collapse-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .column-group-header .collapse-btn {
+      margin-right: 8px;
+    }
+
+    .pagination-footer {
+      flex-shrink: 0;
+      padding: 16px 24px;
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 4px;
+    }
+
+    .page-btn {
+      padding: 8px 12px;
+      border: 1px solid var(--gray-300);
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      min-width: 40px;
+      transition: all 0.2s;
+    }
+
+    .container-info-groupe {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .page-btn:hover {
+      background: var(--gray-50);
+      border-color: var(--primary-color);
+    }
+
+    .page-btn.active {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+
+    .page-btn.ellipsis {
+      background: var(--gray-100);
+      color: var(--gray-500);
+      border-color: var(--gray-200);
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .page-btn.empty {
+      background: transparent;
+      border-color: transparent;
+      cursor: default;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .page-numbers {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+    }
+
+    .pagination-container {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    tr.group-row.client-group .progress-circle {
+      height: 27px;
+      border-radius: 1vw;
+    }
+
+    tr.group-row.client-group td {
+        padding: 6px 8px !important;
+        font-style: italic;
+    }
+
+    tr.mission-row .progress-circle {
+        height: 27px;
+        border-radius: 1vw;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      
+      .header-controls {
+        width: 100%;
+        justify-content: flex-end;
+      }
+      
+      .table-controls {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+      
+      .pagination-controls {
+        justify-content: center;
+      }
+      
+      .pagination-container {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .mission-count-display {
+        text-align: center;
+      }
+      
+      .page-numbers {
+        display: none;
+      }
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow-xl);
+      width: 90%;
+      max-width: 500px;
+    }
+
+    /* Styles pour les modales spécialisées */
+    .questionnaire {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .question-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .question-group label {
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .question-group textarea {
+      padding: 12px;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      min-height: 80px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .question-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(34, 109, 104, 0.1);
+    }
+
+    .document-section {
+      margin-bottom: 24px;
+      padding: 16px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      background: var(--gray-50);
+    }
+
+    .document-section h5 {
+      margin: 0 0 12px 0;
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+
+    .file-input {
+      width: 100%;
+      padding: 12px;
+      border: 2px dashed var(--gray-300);
+      border-radius: 6px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-input:hover {
+      border-color: var(--primary-color);
+      background: rgba(34, 109, 104, 0.05);
+    }
+
+    .uploaded-file {
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--success-color);
+      border-radius: 6px;
+      color: var(--success-color);
+      font-weight: 500;
+    }
+
+    .file-info {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      font-size: var(--font-size-sm);
+      color: var(--gray-600);
+    }
+
+    .upload-placeholder {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--gray-500);
+      font-style: italic;
+    }
+
+    .status-indicator {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+    }
+
+    .status-badge.validated {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+      border: 1px solid var(--success-color);
+    }
+
+    .status-badge.pending {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+      border: 1px solid var(--warning-color);
+    }
+
+    .coming-soon-modal {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .coming-soon-content h4 {
+      color: var(--gray-600);
+      margin-bottom: 16px;
+    }
+
+    .coming-soon-content p {
+      color: var(--gray-500);
+      font-style: italic;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+      background: var(--primary-color);
+      color: white;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: var(--font-size-xl);
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-body {
+      padding: 24px;
+      max-height: 79vh;
+      overflow-y: auto;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      font-weight: 500;
+    }
+
+    .status-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .checkbox-text {
+      color: var(--gray-700);
+    }
+
+    .file-input {
+      width: 100%;
+      padding: 1vh 0.3vw;
+      border: 2px dashed var(--gray-300);
+      border-radius: 8px;
+      background: var(--gray-50);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-input:hover {
+      border-color: var(--primary-color);
+      background: rgba(34, 109, 104, 0.05);
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: var(--gray-100);
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+
+    .file-name {
+      font-size: var(--font-size-md);
+      color: var(--gray-700);
+    }
+
+    .remove-file {
+      background: var(--error-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .remove-file:hover {
+      background: #dc2626;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 20px 24px;
+      border-top: 1px solid var(--gray-200);
+      background: var(--gray-50);
+      border-radius: 0 0 12px 12px;
+    }
+
+    .btn-cancel {
+      padding: 10px 20px;
+      border: 1px solid var(--gray-300);
+      background: white;
+      color: var(--gray-700);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-400);
+    }
+
+    .btn-save {
+      padding: 10px 20px;
+      border: none;
+      background: var(--primary-color);
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-save:hover {
+      background: var(--primary-dark);
+    }
+
+    .upload-controls {
+      margin-bottom: 16px;
+    }
+    
+    .btn-add-input {
+      background: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    
+    .btn-add-input:hover {
+      background: var(--primary-color);
+      transform: translateY(-1px);
+    }
+    
+    .file-inputs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .file-input-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 2px dashed var(--gray-300);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    
+    .file-input-group:hover {
+      border-color: var(--secondary-color);
+      background: var(--gray-50);
+    }
+    
+    .file-input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      font-size: var(--font-size-md);
+    }
+    
+    .btn-remove-input {
+      background: var(--error-color);
+      color: white;
+      border: none;
+      padding: 6px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    
+    .btn-remove-input:hover {
+      background: #dc2626;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 1200px) {
+      .mission-table {
+        font-size: var(--font-size-sm);
+      }
+      
+      .column-header,
+      .mission-row td {
+        padding: 8px 6px;
+      }
+      
+      .progress-circle {
+        width: 35px;
+        height: 35px;
+        font-size: var(--font-size-sm);
+      }
+    }
+  `]
+})
+export class DashboardComponent implements OnInit {
+  avantMissionCollapsed = false;
+  pendantMissionCollapsed = false;
+  finMissionCollapsed = false;
+  allGroupsExpanded = true;
+
+  groupedData: GroupData[] = [];
+  paginatedData: GroupData[] = [];
+  allMissions: MissionData[] = [];
+  completeGroupedData: GroupData[] = [];
+  currentPage = 1;
+  itemsPerPage = 150;
+  totalMissions = 0;
+  totalPages = 0;
+  startIndex = 0;
+  endIndex = 0;
+
+  currentUser: UserProfile | null = null;
+  userEmail: string = '';
+
+  isFilterPanelOpen = false;
+  activeFilters: ActiveFilters = {};
+
+  public modalData: ModalData = {
+    isOpen: false,
+    columnName: '',
+    missionId: '',
+    currentStatus: false,
+    selectedFile: null
+  };
+  uploadedDocuments: { [key: string]: File | null } = {};
+  cartoLabAnswers: { [key: string]: string } = {
+    question1: '',
+    question2: '',
+    question3: '',
+    question4: '',
+    question5: ''
+  };
+  fileInputs: any[] = [{}]; // Tableau pour gérer les inputs de fichiers
+
+  // Propriétés pour les inputs de fichiers multiples
+  selectedFiles: { [key: number]: File | null } = {};
+  
+  // Propriétés pour les inputs LAB multiples
+  labInputs1: number[] = [1];
+  labInputs2: number[] = [1];
+  labInputs3: number[] = [1];
+  selectedLabFiles1: { [key: number]: File | null } = {};
+  selectedLabFiles2: { [key: number]: File | null } = {};
+  selectedLabFiles3: { [key: number]: File | null } = {};
+
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    // Récupérer les informations utilisateur
+    this.authService.userProfile$.subscribe(user => {
+      this.currentUser = user;
+      this.userEmail = user?.mail || '';
+      // console.log('Email :', this.userEmail);
+      if(this.userEmail) {
+        this.loadData();
+      }
+    });
+    
+    // Écouter les changements d'impersonation
+    this.authService.impersonatedEmail$.subscribe(() => {
+      this.userEmail = this.authService.getEffectiveUserEmail();
+      if(this.userEmail) {
+        this.loadData();
+      }
+    });
+  }
+
+  private loadData(): void {
+    // Récupérer les données des missions depuis l'API
+    console.log('Email api:', this.userEmail);
+    this.http.get<{ success: boolean; data: MissionData[]; count: number; timestamp: string }>(`${environment.apiUrl}/missions/getAllMissionsDashboard/${this.userEmail}`)
+      .subscribe((response) => {
+        this.processData(response.data);
+      }, (error) => {
+        console.error('Erreur lors de la récupération des missions :', error);
+      });
+  }
+
+  private processData(data: MissionData[]): void {
+    // Grouper d'abord par numeroGroupe, puis par numeroClient
+    const groupedByGroupe = data.reduce((acc, mission) => {
+      const groupKey = mission.numeroGroupe;
+      if (!acc[groupKey]) {
+        acc[groupKey] = {
+          numeroGroupe: mission.numeroGroupe,
+          nomGroupe: mission.nomGroupe,
+          missions: []
+        };
+      }
+      acc[groupKey].missions.push(mission);
+      return acc;
+    }, {} as { [key: string]: { numeroGroupe: string; nomGroupe: string; missions: MissionData[] } });
+
+    // Créer la structure finale avec double groupement
+    this.groupedData = Object.values(groupedByGroupe).map(group => {
+      // Grouper les missions par numeroClient
+      const clientGroups = group.missions.reduce((acc, mission) => {
+        const clientKey = mission.numeroClient;
+        if (!acc[clientKey]) {
+          acc[clientKey] = {
+            numeroClient: mission.numeroClient,
+            nomClient: mission.nomClient,
+            missions: [],
+            expanded: false
+          };
+        }
+        acc[clientKey].missions.push(mission);
+        return acc;
+      }, {} as { [key: string]: ClientGroup });
+
+      return {
+        numeroGroupe: group.numeroGroupe,
+        nomGroupe: group.nomGroupe,
+        clients: Object.values(clientGroups),
+        expanded: false
+      };
+    });
+
+    this.totalMissions = this.groupedData.reduce((total, group) => 
+      total + group.clients.reduce((clientTotal, client) => 
+        clientTotal + client.missions.length, 0), 0);
+    
+    // Sauvegarder les données complètes pour les compteurs
+    this.completeGroupedData = JSON.parse(JSON.stringify(this.groupedData));
+    
+    // Créer une liste plate de toutes les missions pour la pagination
+    this.allMissions = this.groupedData.flatMap(group => 
+      group.clients.flatMap(client => client.missions)
+    );
+    
+    this.updatePagination();
+  }
+
+
+  private updatePagination(): void {
+    this.totalPages = Math.ceil(this.totalMissions / this.itemsPerPage);
+    this.startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    this.endIndex = Math.min(this.startIndex + this.itemsPerPage, this.totalMissions);
+    
+    // Obtenir les missions paginées
+    const paginatedMissions = this.allMissions.slice(this.startIndex, this.endIndex);
+    
+    // Reconstruire la structure groupée avec seulement les missions paginées
+    const groupedPaginated = new Map<string, GroupData>();
+    
+    paginatedMissions.forEach(mission => {
+      const groupKey = mission.numeroGroupe;
+      const clientKey = mission.numeroClient;
+      
+      if (!groupedPaginated.has(groupKey)) {
+        groupedPaginated.set(groupKey, {
+          numeroGroupe: mission.numeroGroupe,
+          nomGroupe: mission.nomGroupe,
+          clients: new Map<string, ClientGroup>(),
+          expanded: true
+        } as any);
+      }
+      
+      const group = groupedPaginated.get(groupKey)!;
+      const clientsMap = group.clients as any;
+      
+      if (!clientsMap.has(clientKey)) {
+        clientsMap.set(clientKey, {
+          numeroClient: mission.numeroClient,
+          nomClient: mission.nomClient,
+          missions: [],
+          expanded: true
+        });
+      }
+      
+      clientsMap.get(clientKey).missions.push(mission);
+    });
+    
+    // Convertir les Maps en arrays
+    this.paginatedData = Array.from(groupedPaginated.values()).map(group => ({
+      ...group,
+      clients: Array.from((group.clients as any).values())
+    }));
+    
+    // Synchroniser l'état d'expansion avec les données complètes
+    this.syncExpansionState();
+    
+    // Mettre à jour l'état du bouton
+    this.updateAllGroupsExpandedState();
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePagination();
+    }
+  }
+
+  getVisiblePages(): (number | string)[] {
+    const pages: (number | string)[] = [];
+    
+    if (this.totalPages <= 7) {
+      // Si 7 pages ou moins, afficher seulement les pages existantes
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+      return pages;
+    }
+
+    // Plus de 7 pages : logique avec ellipses
+    // Toujours inclure la page 1
+    pages.push(1);
+    
+    if (this.currentPage <= 3) {
+      // Début : 1, 2, 3, 4, 5, ..., dernière
+      pages.push(2, 3, 4, 5, '...', this.totalPages);
+    } else if (this.currentPage >= this.totalPages - 2) {
+      // Fin : 1, ..., avant-4, avant-3, avant-2, avant-1, dernière
+      pages.push('...', this.totalPages - 4, this.totalPages - 3, this.totalPages - 2, this.totalPages - 1, this.totalPages);
+    } else {
+      // Milieu : toujours afficher page-1, page, page+1
+      // Format : 1, ..., courante-1, courante, courante+1, ..., dernière
+      pages.push('...', this.currentPage - 1, this.currentPage, this.currentPage + 1, '...', this.totalPages);
+    }
+    
+    return pages;
+  }
+
+  toggleColumnGroup(group: 'avantMission' | 'pendantMission' | 'finMission'): void {
+    switch (group) {
+      case 'avantMission':
+        this.avantMissionCollapsed = !this.avantMissionCollapsed;
+        break;
+      case 'pendantMission':
+        this.pendantMissionCollapsed = !this.pendantMissionCollapsed;
+        break;
+      case 'finMission':
+        this.finMissionCollapsed = !this.finMissionCollapsed;
+        break;
+    }
+  }
+
+  toggleMainGroup(event: MouseEvent, index: number): void {
+    const target = event.target as HTMLElement;
+    
+    if (target.closest('.status-cell')) {
+      return; // On sort sans exécuter le toggle
+    }
+    
+    this.paginatedData[index].expanded = !this.paginatedData[index].expanded;
+    
+    // Synchroniser avec les données complètes
+    const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === this.paginatedData[index].numeroGroupe);
+    if (completeGroup) {
+      completeGroup.expanded = this.paginatedData[index].expanded;
+    }
+       
+    // Mettre à jour l'état du bouton
+    this.updateAllGroupsExpandedState();
+  }
+
+  toggleClientGroup(event: MouseEvent, groupIndex: number, clientIndex: number): void {
+    const target = event.target as HTMLElement;
+
+    if (target.closest('.status-cell')) {
+      return; // On sort sans exécuter le toggle
+    }
+
+    this.paginatedData[groupIndex].clients[clientIndex].expanded = 
+      !this.paginatedData[groupIndex].clients[clientIndex].expanded;
+    
+    // Synchroniser avec les données complètes
+    const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === this.paginatedData[groupIndex].numeroGroupe);
+    if (completeGroup) {
+      const completeClient = completeGroup.clients.find(c => c.numeroClient === this.paginatedData[groupIndex].clients[clientIndex].numeroClient);
+      if (completeClient) {
+        completeClient.expanded = this.paginatedData[groupIndex].clients[clientIndex].expanded;
+      }
+    }
+    
+    // Mettre à jour l'état du bouton
+    this.updateAllGroupsExpandedState();
+  }
+
+  toggleAllGroups(): void {
+    this.allGroupsExpanded = !this.allGroupsExpanded;
+    
+    // Mettre à jour les données complètes
+    this.completeGroupedData.forEach(group => {
+      group.expanded = this.allGroupsExpanded;
+      group.clients.forEach(client => {
+        client.expanded = this.allGroupsExpanded;
+      });
+    });
+    
+    // Mettre à jour les données paginées
+    this.paginatedData.forEach(group => {
+      group.expanded = this.allGroupsExpanded;
+      group.clients.forEach(client => {
+        client.expanded = this.allGroupsExpanded;
+      });
+    });
+  }
+
+  private syncExpansionState(): void {
+    // Synchroniser l'état d'expansion des données paginées avec les données complètes
+    this.paginatedData.forEach(paginatedGroup => {
+      const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === paginatedGroup.numeroGroupe);
+      if (completeGroup) {
+        paginatedGroup.expanded = completeGroup.expanded;
+        
+        paginatedGroup.clients.forEach(paginatedClient => {
+          const completeClient = completeGroup.clients.find(c => c.numeroClient === paginatedClient.numeroClient);
+          if (completeClient) {
+            paginatedClient.expanded = completeClient.expanded;
+          }
+        });
+      }
+    });
+  }
+
+  private updateAllGroupsExpandedState(): void {
+    // Vérifier si tous les groupes et clients sont développés
+    const allExpanded = this.completeGroupedData.every(group => 
+      group.expanded && group.clients.every(client => client.expanded)
+    );
+    
+    this.allGroupsExpanded = allExpanded;
+  }
+
+  getTotalMissionsInGroup(group: GroupData): number {
+    // Trouver le groupe complet correspondant
+    const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === group.numeroGroupe);
+    if (!completeGroup) return 0;
+    
+    return completeGroup.clients.reduce((total, client) => total + client.missions.length, 0);
+  }
+
+  getTotalClientsInGroup(group: GroupData): number {
+    // Trouver le groupe complet correspondant
+    const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === group.numeroGroupe);
+    if (!completeGroup) return 0;
+    
+    return completeGroup.clients.length;
+  }
+
+  getTotalMissionsInClient(group: GroupData, client: ClientGroup): number {
+    // Trouver le groupe complet correspondant
+    const completeGroup = this.completeGroupedData.find(g => g.numeroGroupe === group.numeroGroupe);
+    if (!completeGroup) return 0;
+    
+    // Trouver le client complet correspondant
+    const completeClient = completeGroup.clients.find(c => c.numeroClient === client.numeroClient);
+    if (!completeClient) return 0;
+    
+    return completeClient.missions.length;
+  }
+
+  getMainGroupAverage(group: GroupData): number {
+    const allMissions = group.clients.flatMap(client => client.missions);
+    if (allMissions.length === 0) return 0;
+    
+    const total = allMissions.reduce((sum, mission) => {
+      const avg = (mission.avantMission.percentage + mission.pendantMission.percentage + mission.finMission.percentage) / 3;
+      return sum + avg;
+    }, 0);
+    
+    return Math.round(total / allMissions.length);
+  }
+
+  getClientAverage(client: ClientGroup, phase: 'avantMission' | 'pendantMission' | 'finMission'): number {
+    if (client.missions.length === 0) return 0;
+    
+    const total = client.missions.reduce((sum, mission) => {
+      return sum + mission[phase].percentage;
+    }, 0);
+    
+    return Math.round(total / client.missions.length);
+  }
+
+  getClientRecap(client: ClientGroup, phase: 'avantMission' | 'pendantMission' | 'finMission', colonne: String): String {
+    if (client.missions.length === 0) return '<div class="recap-dossier-groupe recap-empty">0/0</div>';
+    
+    let totalMissions = 0;
+    let nbMissionsValide = 0;
+
+    client.missions.forEach(mission => {
+      totalMissions++;
+      // @ts-ignore
+      if (mission[phase][colonne] == true) {
+        nbMissionsValide++;
+      }
+    });
+  
+    let className = '';
+    if (totalMissions === nbMissionsValide) {
+      className += ' recap-complete';
+    } else {
+      className += ' recap-incomplete';
+    }
+
+    return `<div class="recap-dossier-groupe ${className}">${nbMissionsValide}/${totalMissions}</div>`;
+  }
+
+  getGroupeRecap(group: GroupData, phase: 'avantMission' | 'pendantMission' | 'finMission', colonne: String): String {
+    if (group.clients.length === 0) return '<div class="recap-dossier-groupe recap-empty">0/0</div>';
+
+    let totalMissions = 0;
+    let nbMissionsValide = 0;
+
+    group.clients.forEach(client => {
+      client.missions.forEach(mission => {
+        totalMissions++;
+        // @ts-ignore
+        if (mission[phase][colonne] == true) {
+          nbMissionsValide++;
+        }
+      });
+    });
+  
+    let className = '';
+    if (totalMissions === nbMissionsValide) {
+      className += ' recap-complete';
+    } else {
+      className += ' recap-incomplete';
+    }
+
+    return `<div class="recap-dossier-groupe ${className}">${nbMissionsValide}/${totalMissions}</div>`;
+  }
+
+  getGroupeAverage(group: GroupData, phase: 'avantMission' | 'pendantMission' | 'finMission'): number {
+    const allMissions = group.clients.flatMap(client => client.missions);
+    if (allMissions.length === 0) return 0;
+    
+    const total = allMissions.reduce((sum, mission) => {
+      return sum + mission[phase].percentage;
+    }, 0);
+    
+    return Math.round(total / allMissions.length);
+  }
+
+  openFilterPanel(): void {
+    this.isFilterPanelOpen = true;
+  }
+
+  closeFilterPanel(): void {
+    this.isFilterPanelOpen = false;
+  }
+
+  onFiltersChanged(filters: ActiveFilters): void {
+    this.activeFilters = filters;
+    // Appliquer les filtres ici si nécessaire
+  }
+
+  getActiveFiltersCount(): number {
+    return Object.values(this.activeFilters).reduce((count, filters) => count + filters.length, 0);
+  }
+
+  public openStatusModal(columnName: string, missionId: string, currentStatus: boolean): void {
+    // Initialiser les données de base
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: currentStatus,
+      selectedFile: null,
+      selectedFile2: null
+    };
+
+    // Réinitialiser les inputs de fichiers pour le type document-add
+    if (columnName === 'Checklist' || columnName === 'Révision') {
+      this.fileInputs = [{}];
+    }
+
+    // Configuration spécifique par module
+    switch (columnName) {
+      case 'Conflit Check':
+        this.modalData.type = 'document';
+        this.modalData.title = 'Conflit Check - Dépôt PDF';
+        this.modalData.description = 'Déposez le PDF de vérification des conflits';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'LAB':
+        this.modalData.type = 'LAB';
+        this.modalData.title = 'LAB - Dépôt Document';
+        this.modalData.description = 'Déposez les documents LAB';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Carto LAB':
+        this.modalData.type = 'coming-soon';
+        this.modalData.title = 'Carto LAB - Questionnaire';
+        this.modalData.description = 'Cette fonctionnalité sera bientôt disponible';
+        break;
+
+      case 'QAC':
+        this.modalData.type = 'document';
+        this.modalData.title = 'QAC - Dépôt Document';
+        this.modalData.description = 'Déposez le document QAC';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'QAM':
+        this.modalData.type = 'document';
+        this.modalData.title = 'QAM - Dépôt Document';
+        this.modalData.description = 'Déposez le document QAM';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'LDM':
+        this.modalData.type = 'document';
+        this.modalData.title = 'LDM - Dépôt Document';
+        this.modalData.description = 'Déposez le document LDM';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'NOG':
+        this.modalData.type = 'document';
+        this.modalData.title = 'NOG - Dépôt Document';
+        this.modalData.description = 'Déposez le document NOG';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Checklist':
+        this.modalData.type = 'document-add';
+        this.modalData.title = 'Checklist - Dépôt Document';
+        this.modalData.description = 'Déposez le document Checklist';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Révision':
+        this.modalData.type = 'document-add';
+        this.modalData.title = 'Révision - Dépôt Document';
+        this.modalData.description = 'Déposez le document de révision';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Supervision':
+        this.modalData.type = 'document';
+        this.modalData.title = 'Supervision - Dépôt Document';
+        this.modalData.description = 'Déposez le document de supervision';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'NDS':
+        this.modalData.type = 'document';
+        this.modalData.title = 'NDS';
+        this.modalData.description = 'Déposez le document NDS';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+      
+      case 'CR Mission':
+        this.modalData.type = 'document';
+        this.modalData.title = 'CR Mission - Dépôt Document';
+        this.modalData.description = 'Déposez le document CR Mission';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'QMM':
+        this.modalData.type = 'document';
+        this.modalData.title = 'QMM - Dépôt Document';
+        this.modalData.description = 'Déposez le document QMM';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Plaquette':
+        this.modalData.type = 'double-document';
+        this.modalData.title = 'Plaquette - Dépôt Documents';
+        this.modalData.description = 'Déposez la plaquette et le mail d\'accompagnement';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Restitution communication client':
+        this.modalData.type = 'document';
+        this.modalData.title = 'Restitution - Dépôt Document';
+        this.modalData.description = 'Déposez le document de restitution';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+
+      case 'Fin relation client':
+        this.modalData.type = 'coming-soon';
+        this.modalData.title = 'Fin relation client';
+        this.modalData.description = 'Cette fonctionnalité sera bientôt disponible';
+        break;
+
+      default:
+        this.modalData.type = 'document';
+        this.modalData.title = columnName + ' - Dépôt Document';
+        this.modalData.description = 'Déposez le document requis';
+        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+        break;
+    }
+  }
+
+  public closeModal(): void {
+    this.modalData.isOpen = false;
+    this.modalData.selectedFile = null;
+    this.fileInputs = [{}];
+  }
+
+  addFileInput(): void {
+    if (this.fileInputs.length < 10) {
+      this.fileInputs.push({});
+    }
+  }
+  
+  removeFileInput(index: number): void {
+    if (this.fileInputs.length > 1) {
+      this.fileInputs.splice(index, 1);
+    }
+  }
+
+  addLabInput(docNumber: number): void {
+    if (docNumber === 1 && this.labInputs1.length < 10) {
+      this.labInputs1.push(this.labInputs1.length + 1);
+    } else if (docNumber === 2 && this.labInputs2.length < 10) {
+      this.labInputs2.push(this.labInputs2.length + 1);
+    } else if (docNumber === 3 && this.labInputs3.length < 10) {
+      this.labInputs3.push(this.labInputs3.length + 1);
+    }
+  }
+  
+  removeLabInput(docNumber: number, inputIndex: number): void {
+    if (docNumber === 1 && this.labInputs1.length > 1) {
+      this.labInputs1.splice(inputIndex, 1);
+      delete this.selectedLabFiles1[inputIndex + 1];
+    } else if (docNumber === 2 && this.labInputs2.length > 1) {
+      this.labInputs2.splice(inputIndex, 1);
+      delete this.selectedLabFiles2[inputIndex + 1];
+    } else if (docNumber === 3 && this.labInputs3.length > 1) {
+      this.labInputs3.splice(inputIndex, 1);
+      delete this.selectedLabFiles3[inputIndex + 1];
+    }
+  }
+  
+  onLabFileSelected(event: Event, docNumber: number, inputIndex: number): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] || null;
+    
+    if (docNumber === 1) {
+      this.selectedLabFiles1[inputIndex] = file;
+    } else if (docNumber === 2) {
+      this.selectedLabFiles2[inputIndex] = file;
+    } else if (docNumber === 3) {
+      this.selectedLabFiles3[inputIndex] = file;
+    }
+  }
+
+  onFileSelected(event: Event, fileNumber?: number): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      if (this.modalData.type === 'document-add' && typeof fileNumber === 'number') {
+        const file = input.files[0];
+        this.fileInputs[fileNumber] = {
+          file: file,
+          name: file.name,
+          size: file.size
+        };
+      } else if (fileNumber === 1) {
+        this.modalData.selectedFile = input.files[0];
+      } else if (fileNumber === 2) {
+        this.modalData.selectedFile2 = input.files[0];
+      } else {
+        this.modalData.selectedFile = input.files[0];
+      }
+      this.updateModuleStatus();
+    }
+  }
+
+  onFileDrop(event: DragEvent, fileNumber?: number): void {
+    event.preventDefault();
+    
+    const files = event.dataTransfer?.files;
+    if (files && files[0]) {
+      if (fileNumber === 1) {
+        this.modalData.selectedFile = files[0];
+      } else if (fileNumber === 2) {
+        this.modalData.selectedFile2 = files[0];
+      } else {
+        this.modalData.selectedFile = files[0];
+      }
+      this.updateModuleStatus();
+    }
+  }
+
+  removeFile(fileNumber?: number): void {
+    if (fileNumber === 1) {
+      this.modalData.selectedFile = null;
+    } else if (fileNumber === 2) {
+      this.modalData.selectedFile2 = null;
+    } else {
+      this.modalData.selectedFile = null;
+    }
+    this.updateModuleStatus();
+  }
+
+  updateQuestionnaireStatus(): void {
+    if (this.modalData.questionnaire) {
+      const allAnswered = this.modalData.questionnaire.questions.every(q => q.answer);
+      this.updateModuleStatus();
+    }
+  }
+
+  updateModuleStatus(): void {
+    
+    let newStatus: 'empty' | 'incomplete' | 'complete' = 'empty';
+    
+    switch (this.modalData.type) {
+      case 'pdf':
+      case 'document':
+        newStatus = this.modalData.selectedFile ? 'complete' : 'incomplete';
+        break;
+      case 'double-document':
+        newStatus = (this.modalData.selectedFile && this.modalData.selectedFile2) ? 'complete' : 'incomplete';
+        break;
+      case 'questionnaire':
+        break;
+      case 'coming-soon':
+        newStatus = 'empty';
+        break;
+      default:
+        newStatus = 'empty';
+    }
+  }
+
+  public saveStatus(): void {
+    // Ici vous pouvez ajouter la logique pour sauvegarder le statut
+    console.log('Sauvegarde:', {
+      columnName: this.modalData.columnName,
+      missionId: this.modalData.missionId,
+      status: this.modalData.currentStatus,
+      file: this.modalData.selectedFile
+    });
+    
+    // Fermer le modal après sauvegarde
+    this.closeModal();
+  }
+}
