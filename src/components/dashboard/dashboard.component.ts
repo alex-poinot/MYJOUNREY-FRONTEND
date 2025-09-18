@@ -58,6 +58,11 @@ interface GroupData {
 interface ModalData {
   isOpen: boolean;
   selectedFile2?: File | null;
+  selectedFile3?: File | null;
+  selectedFile4?: File | null;
+  selectedFile5?: File | null;
+  selectedFile6?: File | null;
+  selectedFile7?: File | null;
   type?: string;
   title?: string;
   description?: string;
@@ -721,11 +726,211 @@ interface ModalData {
               </div>
             </div>
           </div>
+
+          <!-- Modal Upload LAB -->
+          <div *ngIf="modalData.type === 'LAB'" class="double-upload-section">
+            <p>{{ modalData.description }}</p>
+            
+            <!-- Premier document -->
+            <div class="upload-group">
+              <h4>1. Registre des bénéficiaires</h4>
+              <div class="file-upload-area"
+                   (click)="fileInput1.click()">
+                <input #fileInput1 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 1)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(1)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Deuxième document -->
+            <div class="upload-group">
+              <h4>2. Pièce d'identité</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput2.click()">
+                <input #fileInput2 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 2)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile2" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(2)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Troisième document -->
+            <div class="upload-group">
+              <h4>3. Statuts</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput3.click()">
+                <input #fileInput3 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 3)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile3" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile3.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(3)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quatrième document -->
+            <div class="upload-group">
+              <h4>4. Extrait Kbis</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput4.click()">
+                <input #fileInput4 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 4)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile4" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile4.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(4)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cinquième document -->
+            <div class="upload-group">
+              <h4>5. Déclaration conflit d'intérêt</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput5.click()">
+                <input #fileInput5 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 5)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile5" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile5.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(5)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sixième document -->
+            <div class="upload-group">
+              <h4>6. Questionnaire d'acceptation de mission (QAM)</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput6.click()">
+                <input #fileInput6 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 6)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile6" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile6.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(6)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Septième document -->
+            <div class="upload-group">
+              <h4>7. Note de travail et autre document</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput7.click()">
+                <input #fileInput7 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 7)"
+                       class="file-input">
+                <div>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+              </div>
+              
+              <div *ngIf="modalData.selectedFile7" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile7.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(7)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="modal-footer">
-            <button class="btn-cancel" (click)="closeModal()">Annuler</button>
-            <button class="btn-save" (click)="saveStatus()">Enregistrer</button>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" (click)="closeModal()">Annuler</button>
+          <button class="btn-save" (click)="saveStatus()">Enregistrer</button>
         </div>
       </div>
     </div>
@@ -1359,8 +1564,6 @@ interface ModalData {
       box-shadow: var(--shadow-xl);
       width: 90%;
       max-width: 500px;
-      max-height: 90vh;
-      overflow-y: auto;
     }
 
     /* Styles pour les modales spécialisées */
@@ -1528,6 +1731,8 @@ interface ModalData {
 
     .modal-body {
       padding: 24px;
+      max-height: 79vh;
+      overflow-y: auto;
     }
 
     .form-group {
@@ -2206,9 +2411,9 @@ export class DashboardComponent implements OnInit {
         break;
 
       case 'LAB':
-        this.modalData.type = 'document';
+        this.modalData.type = 'LAB';
         this.modalData.title = 'LAB - Dépôt Document';
-        this.modalData.description = 'Déposez le document LAB';
+        this.modalData.description = 'Déposez les documents LAB';
         this.modalData.acceptedTypes = '.pdf,.doc,.docx';
         break;
 
