@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { StatusModalComponent, StatusModalData } from '../status-modal/status-modal.component';
 import { AuthService, UserProfile } from '../../services/auth.service';
-import { environment } from '../../environments/environment';
 import { FileWithExpiration } from '../../models/module.interface';
 import { FilterPanelComponent, ActiveFilters } from '../filter-panel/filter-panel.component';
 
@@ -80,7 +80,7 @@ interface ModalData {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, FilterPanelComponent],
+  imports: [CommonModule, FormsModule, FilterPanelComponent, StatusModalComponent],
   template: `
     <div class="dashboard-container">
       <div class="dashboard-header">
@@ -593,129 +593,12 @@ interface ModalData {
           </div>
           
                            [(ngModel)]="question.answer"
-              <div *ngIf="module.allowUpload && module.status !== 'coming-soon'" class="upload-section">
-                    Oui
-                  <div *ngIf="module.id === 'plaquette'" class="plaquette-upload">
-                    <input type="file" 
-                           [id]="'file-' + module.id"
-                           (change)="onFileSelected($event, module)"
-                           class="file-input"
-                           accept=".pdf,.doc,.docx,.xls,.xlsx">
-                    <label [for]="'file-' + module.id" class="upload-button">
-                      <i class="fas fa-upload"></i>
-                      Charger un fichier
-                    </label>
-                  </div>
-                  <div *ngIf="module.id !== 'plaquette'">
-                    <input type="file" 
-                           [id]="'file-' + module.id"
-                           (change)="onFileSelected($event, module)"
-                           class="file-input"
-                           accept=".pdf,.doc,.docx,.xls,.xlsx">
-                    <label [for]="'file-' + module.id" class="upload-button">
-                      <i class="fas fa-upload"></i>
-                      Charger un fichier
-                    </label>
-            </div>
-          </div>
-          
-          <!-- Modal Upload (PDF/Document simple) -->
-          <div *ngIf="modalData.type === 'pdf' || modalData.type === 'document'" class="upload-section">
-            <p>{{ modalData.description }}</p>
-              <input 
-                type="file" 
-                id="file-input"
-                (change)="onFileSelected($event)"
-                [accept]="modalData.acceptedTypes"
-                class="file-input">
-              <div *ngIf="modalData.selectedFile" class="file-info">
-                <span class="file-name">{{ modalData.selectedFile.name }}</span>
-                <button class="remove-file" (click)="removeFile()">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-              <div>
-                <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-              </div>
-          </div>
-          
-          <!-- Modal Upload Double (Plaquette) -->
-          <div *ngIf="modalData.type === 'double-document'" class="double-upload-section">
-            <p>{{ modalData.description }}</p>
-            
-            <!-- Premier document -->
-            <div class="upload-group">
-              <h4>1. Plaquette</h4>
-              <div class="file-upload-area"
-                   (click)="fileInput1.click()">
-                <div class="upload-content">
-                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                  <p>Glissez-déposez la plaquette ici</p>
-                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-                </div>
-                <input #fileInput1 
-                       type="file" 
-                       [accept]="modalData.acceptedTypes"
-                       (change)="onFileSelected($event, 1)"
-                       style="display: none;">
-              </div>
-              
-              <div *ngIf="modalData.selectedFile" class="file-preview">
-                <div class="file-info">
-                  <i class="fas fa-file-pdf file-icon"></i>
-                  <div class="file-details">
-                    <span class="file-name">{{ modalData.selectedFile.name }}</span>
-                  </div>
-                  <button class="remove-file-btn" (click)="removeFile(1)">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Deuxième document -->
-            <div class="upload-group">
-              <h4>2. Mail accompagnement de la remise des comptes annuels</h4>
-              <div class="file-upload-area" 
-                   (click)="fileInput2.click()">
-                <div class="upload-content">
-                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                  <p>Glissez-déposez le mail d'accompagnement ici</p>
-                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-                </div>
-                <input #fileInput2 
-                       type="file" 
-                       [accept]="modalData.acceptedTypes"
-                       (change)="onFileSelected($event, 2)"
-                       style="display: none;">
-              </div>
-              
-              <div *ngIf="modalData.selectedFile2" class="file-preview">
-                <div class="file-info">
-                  <i class="fas fa-file-pdf file-icon"></i>
-                  <div class="file-details">
-                    <span class="file-name">{{ modalData.selectedFile2.name }}</span>
-                  </div>
-                  <div class="file-expiration" 
-                       [ngClass]="{
-                         'expired': isExpired(module.expirationDate),
-                         'expiring-soon': isExpiringSoon(module.expirationDate)
-                       }">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Expire le {{ formatExpirationDate(module.expirationDate) }}</span>
-                  </div>
-                  <button class="remove-file-btn" (click)="removeFile(2)">
-                    <i class="fas fa-times"></i>
-                  </button>
-          </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn-cancel" (click)="closeModal()">Annuler</button>
-            <button class="btn-save" (click)="saveStatus()">Enregistrer</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <app-status-modal
+      [isOpen]="showStatusModal"
+      [modalData]="statusModalData"
+      (closeModalEvent)="closeStatusModal()"
+      (saveChangesEvent)="saveStatusChanges($event)">
+    </app-status-modal>
   `,
   styles: [`
     .hidden {
