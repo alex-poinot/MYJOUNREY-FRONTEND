@@ -2089,13 +2089,11 @@ export class DashboardComponent implements OnInit {
 
   public openStatusModal(columnName: string, missionId: string, currentStatus: boolean): void {
     // Initialiser les données de base
-    this.modalData = {
-      isOpen: true,
-      columnName: columnName,
-      missionId: missionId,
-      currentStatus: currentStatus,
+    this.statusModalData = {
       selectedFile: null,
-      selectedFile2: null
+      selectedFile: module.selectedFile || null,
+      selectedFile2: module.selectedFile2 || null,
+      type: columnName
     };
 
     // Configuration spécifique par module
