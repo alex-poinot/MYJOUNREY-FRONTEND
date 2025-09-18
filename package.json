@@ -3,14 +3,14 @@
   "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "build:staging": "ng build --configuration=staging",
     "build:prod": "ng build --configuration=production",
     "build:bolt": "ng build --configuration=bolt",
     "serve:staging": "ng serve --configuration=staging",
     "serve:prod": "ng serve --configuration=production",
-    "serve:bolt": "ng serve --configuration=bolt"
+    "serve:bolt": "ng serve --configuration=bolt --proxy-config proxy.conf.json"
   },
   "dependencies": {
     "@angular/animations": "^20.0.0",

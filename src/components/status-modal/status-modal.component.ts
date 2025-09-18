@@ -434,10 +434,6 @@ export class StatusModalComponent {
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + expirationDays);
 
-      const expirationDays = this.getExpirationDays(this.modalData.type);
-      const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + expirationDays);
-
       const fileWithExpiration: FileWithExpiration = {
         name: file.name,
         size: file.size,
