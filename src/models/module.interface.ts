@@ -44,3 +44,11 @@ export interface ModuleTemplate {
   icon: string;
   description: string;
 }
+
+export interface FileWithExpiration {
+  name: string;
+  size: number;
+  type: string;
+  lastModified: number;
+  expirationDate: Date;
+}
