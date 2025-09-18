@@ -587,7 +587,38 @@ interface ModalData {
           <div *ngIf="modalData.type === 'coming-soon'" class="coming-soon-content">
             <div class="coming-soon-icon">🚧</div>
             <h4>Fonctionnalité à venir</h4>
+                  <span *ngIf="module.status === 'coming-soon'">Fonctionnalité à venir</span>
             <p>Cette fonctionnalité sera bientôt disponible.</p>
+          </div>
+          
+                           [(ngModel)]="question.answer"
+              <div *ngIf="module.allowUpload && module.status !== 'coming-soon'" class="upload-section">
+                    Oui
+                  <div *ngIf="module.id === 'plaquette'" class="plaquette-upload">
+                    <input type="file" 
+                           [id]="'file-' + module.id"
+                           (change)="onFileSelected($event, module)"
+                           class="file-input"
+                           accept=".pdf,.doc,.docx,.xls,.xlsx">
+                    <label [for]="'file-' + module.id" class="upload-button">
+                      <i class="fas fa-upload"></i>
+                      Charger un fichier
+                    </label>
+                  </div>
+                  <div *ngIf="module.id !== 'plaquette'">
+                    <input type="file" 
+                           [id]="'file-' + module.id"
+                           (change)="onFileSelected($event, module)"
+                           class="file-input"
+                           accept=".pdf,.doc,.docx,.xls,.xlsx">
+                    <label [for]="'file-' + module.id" class="upload-button">
+                      <i class="fas fa-upload"></i>
+                      Charger un fichier
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           <!-- Modal Upload (PDF/Document simple) -->
@@ -669,11 +700,11 @@ interface ModalData {
                   </div>
                   <div class="file-expiration" 
                        [ngClass]="{
-                         'expired': isExpired(modalData.selectedFile2.expirationDate),
-                         'expiring-soon': isExpiringSoon(modalData.selectedFile2.expirationDate)
+                         'expired': isExpired(module.expirationDate),
+                         'expiring-soon': isExpiringSoon(module.expirationDate)
                        }">
                     <i class="fas fa-calendar-alt"></i>
-                    <span>Expire le {{ formatExpirationDate(modalData.selectedFile2.expirationDate) }}</span>
+                    <span>Expire le {{ formatExpirationDate(module.expirationDate) }}</span>
                   </div>
                   <button class="remove-file-btn" (click)="removeFile(2)">
                     <i class="fas fa-times"></i>
@@ -1603,6 +1634,130 @@ interface ModalData {
       background: var(--primary-dark);
     }
 
+    .upload-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+      border: none;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .upload-button:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+    }
+    
+    .plaquette-upload .upload-button {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .plaquette-upload .upload-button:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+    }
+    
+    .uploaded-file {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      background: var(--gray-50);
+      border-radius: 6px;
+      border: 1px solid var(--gray-200);
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gray-700);
+      width: 100%;
+    }
+    
+    .file-name {
+      font-weight: 500;
+    }
+    
+    .file-size {
+      color: var(--gray-500);
+      font-size: var(--font-size-sm);
+    }
+    
+    .file-expiration {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--font-size-sm);
+      color: var(--gray-600);
+      width: 100%;
+    }
+    
+    .file-expiration.expiring-soon {
+      color: var(--warning-color);
+      font-weight: 500;
+    }
+    
+    .file-expiration.expired {
+      color: var(--error-color);
+      font-weight: 600;
+    }
+    
+    .remove-file-btn {
+      background: var(--error-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s;
+      align-self: flex-end;
+    }
+    
+    .remove-file-btn:hover {
+      background: #dc2626;
+    }
+    
+    .status-not-started {
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+    
+    .status-in-progress {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+    }
+    
+    .status-completed {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+    }
+    
+    .status-coming-soon {
+      background: rgba(100, 206, 199, 0.1);
+      color: var(--secondary-color);
+      font-style: italic;
+    }
+
     @media (max-width: 1200px) {
       .mission-table {
         font-size: var(--font-size-sm);
@@ -2217,46 +2372,15 @@ export class DashboardComponent implements OnInit {
   onFileSelected(event: Event, fileNumber?: number): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
-      const file = input.files[0];
-      
       if (fileNumber === 1) {
-        this.modalData.selectedFile = file;
+        this.modalData.selectedFile = input.files[0];
       } else if (fileNumber === 2) {
-        this.modalData.selectedFile2 = file;
-        // Générer une date d'expiration selon le type de module
-        const expirationDays = this.getExpirationDays('plaquette');
-        const expirationDate = new Date();
-        expirationDate.setDate(expirationDate.getDate() + expirationDays);
-        (this.modalData.selectedFile2 as any).expirationDate = expirationDate;
+        this.modalData.selectedFile2 = input.files[0];
       } else {
-        this.modalData.selectedFile = file;
-        // Générer une date d'expiration selon le type de module
-        const expirationDays = this.getExpirationDays(this.modalData.columnName?.toLowerCase() || '');
-        const expirationDate = new Date();
-        expirationDate.setDate(expirationDate.getDate() + expirationDays);
-        (this.modalData.selectedFile as any).expirationDate = expirationDate;
+        this.modalData.selectedFile = input.files[0];
       }
       this.updateModuleStatus();
     }
-  }
-
-  getExpirationDays(moduleId: string): number {
-    const expirationMap: { [key: string]: number } = {
-      'lab': 365,
-      'conflit check': 180,
-      'qac': 90,
-      'qam': 120,
-      'ldm': 365,
-      'checklist': 30,
-      'révision': 60,
-      'supervision': 90,
-      'nds': 365,
-      'cr mission': 365,
-      'qmm': 180,
-      'plaquette': 365,
-      'restitution communication client': 90
-    };
-    return expirationMap[moduleId] || 90;
   }
 
   onFileDrop(event: DragEvent, fileNumber?: number): void {
@@ -2280,10 +2404,8 @@ export class DashboardComponent implements OnInit {
       this.modalData.selectedFile = null;
     } else if (fileNumber === 2) {
       this.modalData.selectedFile2 = null;
-      (this.modalData.selectedFile2 as any).expirationDate = null;
     } else {
       this.modalData.selectedFile = null;
-      (this.modalData.selectedFile as any).expirationDate = null;
     }
     this.updateModuleStatus();
   }
@@ -2315,35 +2437,6 @@ export class DashboardComponent implements OnInit {
       default:
         newStatus = 'empty';
     }
-  }
-
-  formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
-
-  formatExpirationDate(date: Date): string {
-    if (!date) return '';
-    return date.toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  }
-
-  isExpired(date: Date): boolean {
-    if (!date) return false;
-    return new Date() > date;
-  }
-
-  isExpiringSoon(date: Date): boolean {
-    if (!date) return false;
-    const sevenDaysFromNow = new Date();
-    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
-    return date <= sevenDaysFromNow && date > new Date();
   }
 
   public saveStatus(): void {
