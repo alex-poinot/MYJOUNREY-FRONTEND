@@ -2109,7 +2109,7 @@ export class DashboardComponent implements OnInit {
     this.modalData = {
       isOpen: true,
       columnName: columnName,
-      missionId: missionId,
+      status: module.status === 'in-progress' ? 'in-progress' : 'not-started',
       currentStatus: currentStatus,
       selectedFile: null,
       selectedFile2: null
