@@ -13,6 +13,8 @@ export interface FilterGroup {
   label: string;
   options: FilterOption[];
   collapsed: boolean;
+  searchTerm?: string;
+  filteredOptions?: FilterOption[];
 }
 
 export interface ActiveFilters {
@@ -72,7 +74,35 @@ export interface ActiveFilters {
             </div>
             
             <div *ngIf="!group.collapsed" class="group-options">
-              <div *ngFor="let option of group.options" class="filter-option">
+              <!-- Input de recherche -->
+              <div class="search-container">
+                <div class="search-input-wrapper">
+                  <i class="fas fa-search search-icon"></i>
+                  <input 
+                    type="text" 
+                    class="search-input"
+                    [value]="group.searchTerm || ''"
+                    (input)="onSearchChange(group, $event.target.value)"
+                    placeholder="Rechercher..."
+                    autocomplete="off">
+                  <button 
+                    *ngIf="group.searchTerm && group.searchTerm.length > 0"
+                    class="clear-search-btn"
+                    (click)="clearSearch(group)"
+                    type="button">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Message si aucun résultat -->
+              <div *ngIf="group.filteredOptions && group.filteredOptions.length === 0" class="no-results-message">
+                <i class="fas fa-search"></i>
+                <span>Aucun résultat trouvé</span>
+              </div>
+              
+              <!-- Options filtrées -->
+              <div *ngFor="let option of group.filteredOptions || group.options" class="filter-option">
                 <label class="checkbox-label">
                   <input 
                     type="checkbox" 
@@ -302,6 +332,78 @@ export interface ActiveFilters {
       background: var(--gray-25);
     }
     
+    .search-container {
+      margin-bottom: 12px;
+    }
+    
+    .search-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 8px 12px 8px 32px;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      font-size: var(--font-size-sm);
+      background: white;
+      transition: all 0.2s;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(34, 109, 104, 0.1);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      color: var(--gray-400);
+      font-size: var(--font-size-sm);
+      pointer-events: none;
+    }
+    
+    .clear-search-btn {
+      position: absolute;
+      right: 8px;
+      background: none;
+      border: none;
+      color: var(--gray-400);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      transition: all 0.2s;
+    }
+    
+    .clear-search-btn:hover {
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+    
+    .no-results-message {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      color: var(--gray-500);
+      font-size: var(--font-size-sm);
+      font-style: italic;
+      text-align: center;
+      justify-content: center;
+      background: var(--gray-50);
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    
     .filter-option {
       margin-bottom: 8px;
     }
@@ -372,6 +474,7 @@ export class FilterPanelComponent {
       key: 'groupe',
       label: 'Groupe',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: '123456', label: '123456 - TEST', selected: false },
         { value: '456123', label: '456123 - MAJORELLE', selected: false },
@@ -382,6 +485,7 @@ export class FilterPanelComponent {
       key: 'dossier',
       label: 'Dossier',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: '123456', label: '123456 - TEST', selected: false },
         { value: '456123', label: '456123 - MAJORELLE', selected: false },
@@ -392,6 +496,7 @@ export class FilterPanelComponent {
       key: 'bureau',
       label: 'Bureau',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: 'neuilly', label: 'Neuilly', selected: false },
         { value: 'rennes', label: 'Rennes', selected: false },
@@ -402,6 +507,7 @@ export class FilterPanelComponent {
       key: 'departement',
       label: 'Département',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: 'ec', label: 'EC', selected: false },
         { value: 'bpo', label: 'BPO', selected: false },
@@ -412,6 +518,7 @@ export class FilterPanelComponent {
       key: 'associe',
       label: 'Associé',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: 'michel_joly', label: 'Michel JOLY', selected: false },
         { value: 'yvan_malnuit', label: 'Yvan MALNUIT', selected: false },
@@ -422,6 +529,7 @@ export class FilterPanelComponent {
       key: 'dmcm_factureur',
       label: 'DMCM/Factureur',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: 'alexis_brunet', label: 'Alexis BRUNET', selected: false },
         { value: 'gautier_tirel', label: 'Gautier TIREL', selected: false },
@@ -432,6 +540,7 @@ export class FilterPanelComponent {
       key: 'mission',
       label: 'Mission',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: '210', label: '210', selected: false },
         { value: '220', label: '220', selected: false },
@@ -442,6 +551,7 @@ export class FilterPanelComponent {
       key: 'millesime',
       label: 'Millésime',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: '2025', label: '2025', selected: false },
         { value: '2024', label: '2024', selected: false },
@@ -452,6 +562,7 @@ export class FilterPanelComponent {
       key: 'etat_dossier',
       label: 'État dossier',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: 'ouvert', label: 'Ouvert', selected: false },
         { value: 'ferme', label: 'Fermé', selected: false }
@@ -461,6 +572,7 @@ export class FilterPanelComponent {
       key: 'naf_section',
       label: 'NAF section',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: 'industrie', label: 'Industrie', selected: false },
         { value: 'enseignement', label: 'Enseignement', selected: false },
@@ -471,6 +583,7 @@ export class FilterPanelComponent {
       key: 'mois_cloture',
       label: 'Mois clôture',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: 'janvier', label: 'Janvier', selected: false },
         { value: 'fevrier', label: 'Février', selected: false },
@@ -481,6 +594,7 @@ export class FilterPanelComponent {
       key: 'forme_juridique',
       label: 'Forme juridique',
       collapsed: true,
+      searchTerm: '',
       options: [
         { value: 'sas', label: 'SAS', selected: false },
         { value: 'sarl', label: 'SARL', selected: false },
@@ -489,6 +603,29 @@ export class FilterPanelComponent {
     }
   ];
 
+  constructor() {
+    // Initialiser les options filtrées
+    this.filterGroups.forEach(group => {
+      group.filteredOptions = [...group.options];
+    });
+  }
+
+  onSearchChange(group: FilterGroup, searchTerm: string): void {
+    group.searchTerm = searchTerm;
+    if (!searchTerm.trim()) {
+      group.filteredOptions = [...group.options];
+    } else {
+      const term = searchTerm.toLowerCase();
+      group.filteredOptions = group.options.filter(option =>
+        option.label.toLowerCase().includes(term)
+      );
+    }
+  }
+
+  clearSearch(group: FilterGroup): void {
+    group.searchTerm = '';
+    group.filteredOptions = [...group.options];
+  }
   toggleGroup(group: FilterGroup): void {
     group.collapsed = !group.collapsed;
   }
@@ -501,12 +638,15 @@ export class FilterPanelComponent {
   selectAll(group: FilterGroup, event: Event): void {
     event.stopPropagation();
     const allSelected = this.areAllSelected(group);
-    group.options.forEach(option => option.selected = !allSelected);
+    // Appliquer seulement aux options filtrées visibles
+    const optionsToToggle = group.filteredOptions || group.options;
+    optionsToToggle.forEach(option => option.selected = !allSelected);
     this.emitFiltersChanged();
   }
 
   areAllSelected(group: FilterGroup): boolean {
-    return group.options.every(option => option.selected);
+    const optionsToCheck = group.filteredOptions || group.options;
+    return optionsToCheck.length > 0 && optionsToCheck.every(option => option.selected);
   }
 
   getSelectedCount(group: FilterGroup): number {
