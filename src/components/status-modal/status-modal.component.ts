@@ -46,15 +46,7 @@ export interface StatusModalData {
                 <span class="status-indicator in-progress"></span>
                 En cours
               </label>
-              <label class="status-option" *ngIf="modalData.type !== 'Carto LAB' && modalData.type !== 'Fin relation client'">
-                <input type="radio" 
-                       [value]="'completed'" 
-                       [(ngModel)]="modalData.status"
-                       (change)="onStatusChange()">
-                <span class="status-indicator completed"></span>
-                Terminé
-              </label>
-              <label class="status-option" *ngIf="modalData.type === 'Carto LAB' || modalData.type === 'Fin relation client'">
+              <label class="status-option" *ngIf="modalData.type === 'Carto LAB' || modalData.type === 'Fin relation client' || modalData.type === 'Plaquette'">
                 <input type="radio" 
                        [value]="'coming-soon'" 
                        [(ngModel)]="modalData.status"
@@ -66,8 +58,8 @@ export interface StatusModalData {
             </div>
           </div>
 
-          <!-- Upload de fichier principal -->
-          <div class="form-group" *ngIf="modalData.status === 'completed' && modalData.type !== 'Carto LAB' && modalData.type !== 'Fin relation client'">
+          <!-- Upload de fichier principal pour tous les modules sauf ceux avec "fonctionnalité à venir" -->
+          <div class="form-group" *ngIf="modalData.status === 'in-progress' && modalData.type !== 'Carto LAB' && modalData.type !== 'Fin relation client'">
             <label>Document :</label>
             <div class="file-upload-section">
               <button class="upload-btn" 
@@ -100,7 +92,7 @@ export interface StatusModalData {
           </div>
 
           <!-- Upload de fichier secondaire (pour certains modules) -->
-          <div class="form-group" *ngIf="modalData.status === 'completed' && (modalData.type === 'QAC' || modalData.type === 'QAM' || modalData.type === 'LDM')">
+          <div class="form-group" *ngIf="modalData.status === 'in-progress' && (modalData.type === 'QAC' || modalData.type === 'QAM' || modalData.type === 'LDM')">
             <label>Document complémentaire :</label>
             <div class="file-upload-section">
               <button class="upload-btn" (click)="triggerFileUpload('file2')">
@@ -412,8 +404,8 @@ export class StatusModalComponent {
   }
 
   onStatusChange(): void {
-    // Réinitialiser les fichiers si le statut n'est plus "completed"
-    if (this.modalData.status !== 'completed') {
+    // Réinitialiser les fichiers si le statut n'est plus "in-progress"
+    if (this.modalData.status !== 'in-progress') {
       this.modalData.selectedFile = null;
       this.modalData.selectedFile2 = null;
     }
