@@ -2123,10 +2123,16 @@ export class DashboardComponent implements OnInit {
       isOpen: true,
       columnName: columnName,
       missionId: missionId,
-      currentStatus: currentStatus,
-      selectedFile: null,
       selectedFile2: null
     };
+    
+    // Copier les fichiers s'ils existent
+    if (module.selectedFile) {
+      this.statusModalData.selectedFile = module.selectedFile;
+    }
+    if (module.selectedFile2) {
+      this.statusModalData.selectedFile2 = module.selectedFile2;
+    }
 
     // Configuration spécifique par module
     switch (columnName) {
