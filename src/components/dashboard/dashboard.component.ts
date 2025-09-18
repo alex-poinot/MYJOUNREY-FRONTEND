@@ -616,9 +616,6 @@ interface ModalData {
                       <i class="fas fa-upload"></i>
                       Charger un fichier
                     </label>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
           
