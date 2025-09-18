@@ -1974,6 +1974,17 @@ export class DashboardComponent implements OnInit {
   };
   fileInputs: any[] = [{}]; // Tableau pour gérer les inputs de fichiers
 
+  // Propriétés pour les inputs de fichiers multiples
+  selectedFiles: { [key: number]: File | null } = {};
+  
+  // Propriétés pour les inputs LAB multiples
+  labInputs1: number[] = [1];
+  labInputs2: number[] = [1];
+  labInputs3: number[] = [1];
+  selectedLabFiles1: { [key: number]: File | null } = {};
+  selectedLabFiles2: { [key: number]: File | null } = {};
+  selectedLabFiles3: { [key: number]: File | null } = {};
+
   constructor(
     private http: HttpClient,
     private authService: AuthService
@@ -2537,6 +2548,42 @@ export class DashboardComponent implements OnInit {
   removeFileInput(index: number): void {
     if (this.fileInputs.length > 1) {
       this.fileInputs.splice(index, 1);
+    }
+  }
+
+  addLabInput(docNumber: number): void {
+    if (docNumber === 1 && this.labInputs1.length < 10) {
+      this.labInputs1.push(this.labInputs1.length + 1);
+    } else if (docNumber === 2 && this.labInputs2.length < 10) {
+      this.labInputs2.push(this.labInputs2.length + 1);
+    } else if (docNumber === 3 && this.labInputs3.length < 10) {
+      this.labInputs3.push(this.labInputs3.length + 1);
+    }
+  }
+  
+  removeLabInput(docNumber: number, inputIndex: number): void {
+    if (docNumber === 1 && this.labInputs1.length > 1) {
+      this.labInputs1.splice(inputIndex, 1);
+      delete this.selectedLabFiles1[inputIndex + 1];
+    } else if (docNumber === 2 && this.labInputs2.length > 1) {
+      this.labInputs2.splice(inputIndex, 1);
+      delete this.selectedLabFiles2[inputIndex + 1];
+    } else if (docNumber === 3 && this.labInputs3.length > 1) {
+      this.labInputs3.splice(inputIndex, 1);
+      delete this.selectedLabFiles3[inputIndex + 1];
+    }
+  }
+  
+  onLabFileSelected(event: Event, docNumber: number, inputIndex: number): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] || null;
+    
+    if (docNumber === 1) {
+      this.selectedLabFiles1[inputIndex] = file;
+    } else if (docNumber === 2) {
+      this.selectedLabFiles2[inputIndex] = file;
+    } else if (docNumber === 3) {
+      this.selectedLabFiles3[inputIndex] = file;
     }
   }
 
