@@ -590,31 +590,6 @@ interface ModalData {
             <p>Cette fonctionnalité sera bientôt disponible.</p>
           </div>
           
-          <div *ngIf="modalData.type !== 'coming-soon'" class="upload-section">
-            <div *ngIf="modalData.type === 'plaquette'" class="plaquette-upload">
-              <input type="file" 
-                     [id]="'file-' + modalData.type"
-                     (change)="onFileSelected($event)"
-                     class="file-input"
-                     accept=".pdf,.doc,.docx,.xls,.xlsx">
-              <label [for]="'file-' + modalData.type" class="upload-button">
-                <i class="fas fa-upload"></i>
-                Charger un fichier
-              </label>
-            </div>
-            <div *ngIf="modalData.type !== 'plaquette'">
-              <input type="file" 
-                     [id]="'file-' + modalData.type"
-                     (change)="onFileSelected($event)"
-                     class="file-input"
-                     accept=".pdf,.doc,.docx,.xls,.xlsx">
-              <label [for]="'file-' + modalData.type" class="upload-button">
-                <i class="fas fa-upload"></i>
-                Charger un fichier
-              </label>
-            </div>
-          </div>
-          
           <!-- Modal Upload (PDF/Document simple) -->
           <div *ngIf="modalData.type === 'pdf' || modalData.type === 'document'" class="upload-section">
             <p>{{ modalData.description }}</p>
@@ -691,6 +666,14 @@ interface ModalData {
                   <i class="fas fa-file-pdf file-icon"></i>
                   <div class="file-details">
                     <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+                  </div>
+                  <div class="file-expiration" 
+                       [ngClass]="{
+                         'expired': isExpired(modalData.selectedFile2.expirationDate),
+                         'expiring-soon': isExpiringSoon(modalData.selectedFile2.expirationDate)
+                       }">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Expire le {{ formatExpirationDate(modalData.selectedFile2.expirationDate) }}</span>
                   </div>
                   <button class="remove-file-btn" (click)="removeFile(2)">
                     <i class="fas fa-times"></i>
@@ -2122,7 +2105,7 @@ export class DashboardComponent implements OnInit {
         break;
 
       case 'LAB':
-        this.modalData.type = 'coming-soon';
+        this.modalData.type = 'document';
         this.modalData.title = 'LAB - Dépôt Document';
         this.modalData.description = 'Déposez le document LAB';
         this.modalData.acceptedTypes = '.pdf,.doc,.docx';
@@ -2234,15 +2217,46 @@ export class DashboardComponent implements OnInit {
   onFileSelected(event: Event, fileNumber?: number): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
+      const file = input.files[0];
+      
       if (fileNumber === 1) {
-        this.modalData.selectedFile = input.files[0];
+        this.modalData.selectedFile = file;
       } else if (fileNumber === 2) {
-        this.modalData.selectedFile2 = input.files[0];
+        this.modalData.selectedFile2 = file;
+        // Générer une date d'expiration selon le type de module
+        const expirationDays = this.getExpirationDays('plaquette');
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + expirationDays);
+        (this.modalData.selectedFile2 as any).expirationDate = expirationDate;
       } else {
-        this.modalData.selectedFile = input.files[0];
+        this.modalData.selectedFile = file;
+        // Générer une date d'expiration selon le type de module
+        const expirationDays = this.getExpirationDays(this.modalData.columnName?.toLowerCase() || '');
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + expirationDays);
+        (this.modalData.selectedFile as any).expirationDate = expirationDate;
       }
       this.updateModuleStatus();
     }
+  }
+
+  getExpirationDays(moduleId: string): number {
+    const expirationMap: { [key: string]: number } = {
+      'lab': 365,
+      'conflit check': 180,
+      'qac': 90,
+      'qam': 120,
+      'ldm': 365,
+      'checklist': 30,
+      'révision': 60,
+      'supervision': 90,
+      'nds': 365,
+      'cr mission': 365,
+      'qmm': 180,
+      'plaquette': 365,
+      'restitution communication client': 90
+    };
+    return expirationMap[moduleId] || 90;
   }
 
   onFileDrop(event: DragEvent, fileNumber?: number): void {
@@ -2266,8 +2280,10 @@ export class DashboardComponent implements OnInit {
       this.modalData.selectedFile = null;
     } else if (fileNumber === 2) {
       this.modalData.selectedFile2 = null;
+      (this.modalData.selectedFile2 as any).expirationDate = null;
     } else {
       this.modalData.selectedFile = null;
+      (this.modalData.selectedFile as any).expirationDate = null;
     }
     this.updateModuleStatus();
   }
@@ -2299,6 +2315,35 @@ export class DashboardComponent implements OnInit {
       default:
         newStatus = 'empty';
     }
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  formatExpirationDate(date: Date): string {
+    if (!date) return '';
+    return date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
+
+  isExpired(date: Date): boolean {
+    if (!date) return false;
+    return new Date() > date;
+  }
+
+  isExpiringSoon(date: Date): boolean {
+    if (!date) return false;
+    const sevenDaysFromNow = new Date();
+    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+    return date <= sevenDaysFromNow && date > new Date();
   }
 
   public saveStatus(): void {
