@@ -2,10 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
-import { StatusModalComponent, StatusModalData } from '../status-modal/status-modal.component';
 import { AuthService, UserProfile } from '../../services/auth.service';
-import { FileWithExpiration } from '../../models/module.interface';
+import { environment } from '../../environments/environment';
 import { FilterPanelComponent, ActiveFilters } from '../filter-panel/filter-panel.component';
 
 interface MissionData {
@@ -81,7 +79,7 @@ interface ModalData {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, FilterPanelComponent, StatusModalComponent],
+  imports: [CommonModule, FormsModule, HttpClientModule, FilterPanelComponent],
   template: `
     <div class="dashboard-container">
       <div class="dashboard-header">
@@ -198,12 +196,12 @@ interface ModalData {
                       </button>
                     </div>
                     <div class="group-info">
-                  </div>
-                  <div class="expiration-date" 
-                       [class.expired]="isExpired(modalData.selectedFile2.expirationDate)"
-                       [class.expiring-soon]="isExpiringSoon(modalData.selectedFile2.expirationDate)">
-                    <i class="fas fa-calendar-alt"></i>
-                    Expire le {{ formatExpirationDate(modalData.selectedFile2.expirationDate) }}
+                      <strong class="groupe-libelle">{{ group.numeroGroupe }} - {{ group.nomGroupe }}</strong>
+                      <div class="container-info-groupe">
+                        <div class="element-info-groupe"><i class="fas fa-users"></i> {{ getTotalClientsInGroup(group) }} client(s)</div>
+                        <div class="element-info-groupe"><i class="fas fa-briefcase"></i> {{ getTotalMissionsInGroup(group) }} mission(s)</div>
+                      </div>
+                    </div>
                   </div>
                 </td>
                 <td class="percentage-cell">
@@ -589,17 +587,129 @@ interface ModalData {
           <div *ngIf="modalData.type === 'coming-soon'" class="coming-soon-content">
             <div class="coming-soon-icon">🚧</div>
             <h4>Fonctionnalité à venir</h4>
-                  <span *ngIf="module.status === 'coming-soon'">Fonctionnalité à venir</span>
             <p>Cette fonctionnalité sera bientôt disponible.</p>
           </div>
           
+          <!-- Modal Questionnaire (Carto LAB) -->
+          <div *ngIf="modalData.type === 'questionnaire'" class="questionnaire-content">
+            <p>{{ modalData.description }}</p>
+            <div class="questionnaire-form">
+              <div *ngFor="let question of modalData.questionnaire?.questions; let i = index" class="question-item">
+                <label>{{ i + 1 }}. {{ question.text }}</label>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" 
+                           [name]="'question_' + i" 
+                           value="oui"
                            [(ngModel)]="question.answer"
-    <app-status-modal
-      [isOpen]="showStatusModal"
-      [modalData]="statusModalData"
-      (closeModalEvent)="closeStatusModal()"
-      (saveChangesEvent)="saveStatusChanges($event)">
-    </app-status-modal>
+                           (change)="updateQuestionnaireStatus()">
+                    Oui
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" 
+                           [name]="'question_' + i" 
+                           value="non"
+                           [(ngModel)]="question.answer"
+                           (change)="updateQuestionnaireStatus()">
+                    Non
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Modal Upload (PDF/Document simple) -->
+          <div *ngIf="modalData.type === 'pdf' || modalData.type === 'document'" class="upload-section">
+            <p>{{ modalData.description }}</p>
+              <input 
+                type="file" 
+                id="file-input"
+                (change)="onFileSelected($event)"
+                [accept]="modalData.acceptedTypes"
+                class="file-input">
+              <div *ngIf="modalData.selectedFile" class="file-info">
+                <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                <button class="remove-file" (click)="removeFile()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div>
+                <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+              </div>
+          </div>
+          
+          <!-- Modal Upload Double (Plaquette) -->
+          <div *ngIf="modalData.type === 'double-document'" class="double-upload-section">
+            <p>{{ modalData.description }}</p>
+            
+            <!-- Premier document -->
+            <div class="upload-group">
+              <h4>1. Plaquette</h4>
+              <div class="file-upload-area"
+                   (click)="fileInput1.click()">
+                <div class="upload-content">
+                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                  <p>Glissez-déposez la plaquette ici</p>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+                <input #fileInput1 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 1)"
+                       style="display: none;">
+              </div>
+              
+              <div *ngIf="modalData.selectedFile" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(1)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Deuxième document -->
+            <div class="upload-group">
+              <h4>2. Mail accompagnement de la remise des comptes annuels</h4>
+              <div class="file-upload-area" 
+                   (click)="fileInput2.click()">
+                <div class="upload-content">
+                  <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                  <p>Glissez-déposez le mail d'accompagnement ici</p>
+                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+                </div>
+                <input #fileInput2 
+                       type="file" 
+                       [accept]="modalData.acceptedTypes"
+                       (change)="onFileSelected($event, 2)"
+                       style="display: none;">
+              </div>
+              
+              <div *ngIf="modalData.selectedFile2" class="file-preview">
+                <div class="file-info">
+                  <i class="fas fa-file-pdf file-icon"></i>
+                  <div class="file-details">
+                    <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+                  </div>
+                  <button class="remove-file-btn" (click)="removeFile(2)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancel" (click)="closeModal()">Annuler</button>
+            <button class="btn-save" (click)="saveStatus()">Enregistrer</button>
+          </div>
+        </div>
+      </div>
+    </div>
   `,
   styles: [`
     .hidden {
@@ -1513,99 +1623,6 @@ interface ModalData {
       background: var(--primary-dark);
     }
 
-    .upload-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 24px;
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-weight: 500;
-      border: none;
-      box-shadow: var(--shadow-sm);
-    }
-    
-    .upload-button:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
-      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
-    }
-    
-    .plaquette-upload .upload-button {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      box-shadow: var(--shadow-sm);
-    }
-    
-    .plaquette-upload .upload-button:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
-      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
-    }
-    
-    .uploaded-file {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px;
-      background: var(--gray-50);
-      border-radius: 6px;
-      border: 1px solid var(--gray-200);
-      flex-direction: column;
-      gap: 8px;
-    }
-    
-    .file-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--gray-700);
-      width: 100%;
-    }
-    
-    .file-name {
-      font-weight: 500;
-    }
-    
-    .file-size {
-      color: var(--gray-500);
-      font-size: var(--font-size-sm);
-    }
-    
-    .file-expiration {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: var(--font-size-sm);
-      color: var(--gray-600);
-      width: 100%;
-    }
-    
-    .file-expiration.expiring-soon {
-      color: var(--warning-color);
-      font-weight: 500;
-    }
-    
-    .file-expiration.expired {
-      color: var(--error-color);
-      font-weight: 600;
-    }
-    
-    .remove-file-btn {
-      background: var(--error-color);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      width: 24px;
-      height: 24px;
-      cursor: pointer;
-
     @media (max-width: 1200px) {
       .mission-table {
         font-size: var(--font-size-sm);
@@ -2089,11 +2106,13 @@ export class DashboardComponent implements OnInit {
 
   public openStatusModal(columnName: string, missionId: string, currentStatus: boolean): void {
     // Initialiser les données de base
-    this.statusModalData = {
+    this.modalData = {
+      isOpen: true,
+      columnName: columnName,
+      missionId: missionId,
+      currentStatus: currentStatus,
       selectedFile: null,
-      selectedFile: module.selectedFile || null,
-      selectedFile2: module.selectedFile2 || null,
-      type: columnName
+      selectedFile2: null
     };
 
     // Configuration spécifique par module
