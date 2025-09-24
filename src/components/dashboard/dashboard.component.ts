@@ -2546,6 +2546,7 @@ export class DashboardComponent implements OnInit {
         console.log('Fichier sélectionné:', this.modalData.selectedFile);
         this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal);
         this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+        this.loadData();
       }
       this.updateModuleStatus();
     }
