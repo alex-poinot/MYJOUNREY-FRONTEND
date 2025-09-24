@@ -140,7 +140,7 @@ export interface ActiveFilters {
       top: 0;
       left: 0;
       height: 100vh;
-      width: 400px;
+      width: 25vw;
       background: white;
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
       z-index: 1000;
@@ -158,7 +158,7 @@ export interface ActiveFilters {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 24px;
+      padding: 1.5vh 1vw;
       border-bottom: 1px solid var(--gray-200);
       background: var(--primary-color);
       color: white;
@@ -176,8 +176,8 @@ export interface ActiveFilters {
       color: white;
       font-size: var(--font-size-lg);
       cursor: pointer;
-      padding: 8px;
-      border-radius: 4px;
+      padding: 0.5vw;
+      border-radius: 0.5vw;
       transition: background-color 0.2s;
     }
     
@@ -192,8 +192,8 @@ export interface ActiveFilters {
     }
     
     .active-filters-section {
-      padding: 16px 24px;
-      border-bottom: 1px solid var(--gray-200);
+      padding: 1vh 1vw;
+      border-bottom: 0.1vh solid var(--gray-200);
       background: var(--gray-50);
     }
     
@@ -214,8 +214,8 @@ export interface ActiveFilters {
       background: var(--error-color);
       color: white;
       border: none;
-      padding: 6px 12px;
-      border-radius: 4px;
+      padding: 1vh 1vw;
+      border-radius: 0.5vw;
       font-size: var(--font-size-sm);
       cursor: pointer;
       transition: background-color 0.2s;
@@ -236,10 +236,10 @@ export interface ActiveFilters {
       align-items: center;
       background: var(--primary-color);
       color: white;
-      padding: 4px 8px;
-      border-radius: 12px;
+      padding: 0.5vh 0.5vw;
+      border-radius: 0.8vw;
       font-size: var(--font-size-sm);
-      gap: 6px;
+      gap: 0.3vw;
     }
     
     .filter-tag button {
@@ -247,14 +247,14 @@ export interface ActiveFilters {
       border: none;
       color: white;
       cursor: pointer;
-      padding: 2px;
+      padding: 0.2vh 0.1vw;
       border-radius: 50%;
-      width: 16px;
-      height: 16px;
+      width: 1vw;
+      height: 1vw;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
+      font-size: var(--font-size-md);
       transition: background-color 0.2s;
     }
     
@@ -263,7 +263,7 @@ export interface ActiveFilters {
     }
     
     .filter-groups {
-      padding: 16px 0;
+      padding: 1vh 0;
     }
     
     .filter-group {
@@ -274,7 +274,7 @@ export interface ActiveFilters {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 24px;
+      padding: 1vh 1vw;
       cursor: pointer;
       transition: background-color 0.2s;
     }
@@ -289,6 +289,7 @@ export interface ActiveFilters {
       gap: 8px;
       font-weight: 600;
       color: var(--gray-700);
+      font-size: var(--font-size-lg);
     }
     
     .group-title i {
@@ -313,10 +314,10 @@ export interface ActiveFilters {
     
     .select-all-btn {
       background: none;
-      border: 1px solid var(--primary-color);
+      border: 0.1vh solid var(--primary-color);
       color: var(--primary-color);
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 0.5vh 0.5vw;
+      border-radius: 0.5vw;
       font-size: var(--font-size-sm);
       cursor: pointer;
       transition: all 0.2s;
@@ -328,7 +329,7 @@ export interface ActiveFilters {
     }
     
     .group-options {
-      padding: 8px 24px 16px 24px;
+      padding: 1vh 1vw 1vh 2vw;
       background: var(--gray-25);
     }
     
@@ -344,9 +345,9 @@ export interface ActiveFilters {
     
     .search-input {
       width: 100%;
-      padding: 8px 12px 8px 32px;
-      border: 1px solid var(--gray-300);
-      border-radius: 6px;
+      padding: 1vh 1vw 1vh 2vw;
+      border: 0.1vh solid var(--gray-300);
+      border-radius: 0.5vw;
       font-size: var(--font-size-sm);
       background: white;
       transition: all 0.2s;
@@ -411,9 +412,9 @@ export interface ActiveFilters {
     .checkbox-label {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.5vw;
       cursor: pointer;
-      padding: 4px 0;
+      padding: 0.2vh 0;
       transition: color 0.2s;
     }
     
@@ -426,10 +427,10 @@ export interface ActiveFilters {
     }
     
     .checkbox-custom {
-      width: 16px;
-      height: 16px;
-      border: 2px solid var(--gray-300);
-      border-radius: 3px;
+      width: 1vw;
+      height: 2vh;
+      border: 0.2vh solid var(--gray-300);
+      border-radius: 0.2vw;
       position: relative;
       transition: all 0.2s;
       flex-shrink: 0;
@@ -454,13 +455,6 @@ export interface ActiveFilters {
     .option-text {
       font-size: var(--font-size-md);
       line-height: 1.4;
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-      .filter-panel {
-        width: 100vw;
-      }
     }
   `]
 })

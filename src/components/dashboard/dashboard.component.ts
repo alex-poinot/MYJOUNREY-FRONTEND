@@ -5,6 +5,12 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { FilterPanelComponent, ActiveFilters } from '../filter-panel/filter-panel.component';
+import { tap } from 'rxjs/internal/operators/tap';
+import { map } from 'rxjs/internal/operators/map';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { throwError } from 'rxjs/internal/observable/throwError';
+import { Observable } from 'rxjs/internal/Observable';
+import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 
 interface MissionData {
   numeroGroupe: string;
@@ -12,6 +18,9 @@ interface MissionData {
   numeroClient: string;
   nomClient: string;
   mission: string;
+  missionId: string;
+  profilId: string;
+  source: string;
   avantMission: {
     percentage: number;
     conflitCheck: boolean;
@@ -56,13 +65,19 @@ interface GroupData {
 }
 
 interface ModalData {
+  [key: string]: any;
   isOpen: boolean;
+  selectedFile: File | null;
+  selectedFileId: string;
   selectedFile2?: File | null;
   selectedFile3?: File | null;
   selectedFile4?: File | null;
   selectedFile5?: File | null;
   selectedFile6?: File | null;
   selectedFile7?: File | null;
+  selectedFile8?: File | null;
+  selectedFile9?: File | null;
+  selectedFile10?: File | null;
   type?: string;
   title?: string;
   description?: string;
@@ -78,7 +93,8 @@ interface ModalData {
   columnName: string;
   missionId: string;
   currentStatus: boolean;
-  selectedFile: File | null;
+  modifyMode: boolean;
+  hasAccess: boolean;
 }
 
 @Component({
@@ -217,12 +233,12 @@ interface ModalData {
                 <td *ngIf="!avantMissionCollapsed">
                   <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'checklist')"></div>
                 </td>
-                <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.labGroupe)">
+                <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB documentaire', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.labGroupe, group.clients[0].missions[0].numeroGroupe, group.clients[0].missions[0].profilId, 'Groupe')">
                   <i class="fas status-icon" 
                       [ngClass]="group.clients[0].missions[0].avantMission.labGroupe ? 'fa-check-circle' : 'fa-pen'"
                       [class.completed]="group.clients[0].missions[0].avantMission.labGroupe"></i>
                 </td>
-                <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Carto LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.cartoLabGroupe)">
+                <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Cartographie LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.cartoLabGroupe, group.clients[0].missions[0].numeroGroupe, group.clients[0].missions[0].profilId, 'Groupe')">
                   <i class="fas status-icon" 
                       [ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe ? 'fa-check-circle' : 'fa-pen'"
                       [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe"></i>
@@ -329,22 +345,22 @@ interface ModalData {
                       {{ getClientAverage(client, 'avantMission') }}%
                     </div>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Conflit Check', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.conflitCheck)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Conflict check', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.conflitCheck, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.conflitCheck ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.conflitCheck"></i>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.labDossier)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB documentaire', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.labDossier, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.labDossier ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.labDossier"></i>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Carto LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.cartoLabDossier)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Cartographie LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.cartoLabDossier, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.cartoLabDossier ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.cartoLabDossier"></i>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAC', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.qac)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAC', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.qac, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.qac ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.qac"></i>
@@ -438,8 +454,13 @@ interface ModalData {
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td>{{ mission.mission }}</td>
-                  
+                  <td>
+                    <div class="container-mission">
+                      <div>{{ mission.mission }}</div>
+                      <i class="info-mission-source fa-regular fa-info-circle" title="{{ mission.source }}" aria-hidden="true"></i>
+                    </div>
+                  </td>
+
                   <!-- Avant la mission -->
                   <td class="percentage-cell">
                     <div class="progress-circle" [attr.data-percentage]="mission.avantMission.percentage">
@@ -450,12 +471,12 @@ interface ModalData {
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.qam)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.qam, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.avantMission.qam ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.avantMission.qam"></i>
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LDM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.ldm)">
+                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LDM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.ldm, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.avantMission.ldm ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.avantMission.ldm"></i>
@@ -467,22 +488,22 @@ interface ModalData {
                       {{ mission.pendantMission.percentage }}%
                     </div>
                   </td>
-                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('NOG', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.nog)">
+                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('NOG', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.nog, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.pendantMission.nog ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.nog"></i>
                   </td>
-                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Checklist', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.checklist)">
+                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Checklist', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.checklist, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.pendantMission.checklist ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.checklist"></i>
                   </td>
-                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Révision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.revision)">
+                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Revision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.revision, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.pendantMission.revision ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.revision"></i>
                   </td>
-                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Supervision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.supervision)">
+                  <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Supervision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.supervision, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.pendantMission.supervision ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.supervision"></i>
@@ -494,32 +515,32 @@ interface ModalData {
                       {{ mission.finMission.percentage }}%
                     </div>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('NDS', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.nds)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('NDS', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.nds, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.nds ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.nds"></i>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('CR Mission', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.cr)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('CR mission ou Attestation', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.cr, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.cr ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.cr"></i>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('QMM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.qmm)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('QMM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.qmm, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.qmm ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.qmm"></i>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Plaquette', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.plaquette)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Plaquette', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.plaquette, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.plaquette ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.plaquette"></i>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Restitution communication client', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.restitution)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Restitution', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.restitution, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.restitution ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.restitution"></i>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Fin relation client', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.finRelationClient)">
+                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Fin relation client', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.finRelationClient, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.finRelationClient ? 'fa-check-circle' : 'fa-pen'"
                        [class.completed]="mission.finMission.finRelationClient"></i>
@@ -534,7 +555,7 @@ interface ModalData {
       <div class="pagination-footer">
         <div class="pagination-container">
           <div class="mission-count-display">
-            {{ startIndex + 1 }}-{{ endIndex }} sur {{ totalMissions }} missions
+            {{ endIndex == 0 ? 0 : startIndex + 1 }}-{{ endIndex }} sur {{ totalMissions }} missions
           </div>
           
           <div class="pagination-controls">
@@ -570,159 +591,215 @@ interface ModalData {
       </div>
 
       <!-- Modal pour les statuts -->
-      <div *ngIf="modalData.isOpen" class="modal-overlay" (click)="closeModal()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h3>{{ modalData.columnName }}</h3>
-            <button class="modal-close" (click)="closeModal()">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          <div class="modal-body">
+    <div *ngIf="modalData.isOpen" class="modal-overlay" (click)="closeModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ modalData.columnName }}</h3>
+          <button class="modal-close" (click)="closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="modal-body">
+
           <!-- Modal "À venir" -->
           <div *ngIf="modalData.type === 'coming-soon'" class="coming-soon-content">
             <h4>🚧 Fonctionnalité à venir</h4>
             <p>Cette fonctionnalité sera bientôt disponible.</p>
           </div>
-          
-          <!-- Modal Questionnaire (Carto LAB) -->
-          <div *ngIf="modalData.type === 'questionnaire'" class="questionnaire-content">
+
+          <!-- Modal Questionnaire -->
+          <div *ngIf="modalData.type === 'questionnaire' && modalData.modifyMode === true" class="questionnaire-content">
             <p>{{ modalData.description }}</p>
             <div class="questionnaire-form">
               <div *ngFor="let question of modalData.questionnaire?.questions; let i = index" class="question-item">
                 <label>{{ i + 1 }}. {{ question.text }}</label>
                 <div class="radio-group">
                   <label class="radio-label">
-                    <input type="radio" 
-                           [name]="'question_' + i" 
-                           value="oui"
-                           [(ngModel)]="question.answer"
-                           (change)="updateQuestionnaireStatus()">
+                    <input type="radio"
+                          [name]="'question_' + i"
+                          value="oui"
+                          [(ngModel)]="question.answer"
+                          (change)="updateQuestionnaireStatus()">
                     Oui
                   </label>
                   <label class="radio-label">
-                    <input type="radio" 
-                           [name]="'question_' + i" 
-                           value="non"
-                           [(ngModel)]="question.answer"
-                           (change)="updateQuestionnaireStatus()">
+                    <input type="radio"
+                          [name]="'question_' + i"
+                          value="non"
+                          [(ngModel)]="question.answer"
+                          (change)="updateQuestionnaireStatus()">
                     Non
                   </label>
                 </div>
               </div>
             </div>
           </div>
-          
+
           <!-- Modal Upload (PDF/Document simple) -->
-          <div *ngIf="modalData.type === 'pdf' || modalData.type === 'document'" class="upload-section">
+          <div *ngIf="modalData.type === 'document'" class="upload-section">
             <p>{{ modalData.description }}</p>
-              <input 
-                type="file" 
-                id="file-input"
-                (change)="onFileSelected($event)"
-                [accept]="modalData.acceptedTypes"
-                class="file-input">
-              <div *ngIf="modalData.selectedFile" class="file-info">
-                <span class="file-name">{{ modalData.selectedFile.name }}</span>
-                <button class="remove-file" (click)="removeFile()">
+            <div *ngIf="modalData.modifyMode === true"
+              class="file-input-group">
+              <input type="file"
+                    id="file-input"
+                    (change)="onFileSelected($event)"
+                    [accept]="modalData.acceptedTypes"
+                    class="file-input">
+            </div>
+            <div *ngIf="modalData.selectedFile" class="file-info">
+              <span class="file-name">{{ modalData.selectedFile.name }}</span>
+              <div class="file-actions">
+                <button *ngIf="modalData.selectedFile.type === 'application/pdf'"
+                        class="preview-file"
+                        (click)="previewFile(modalData.selectedFile)">
+                  <i class="fas fa-eye"></i>
+                </button>
+
+                <button class="download-file"
+                        (click)="downloadFile(modalData.selectedFile)">
+                  <i class="fas fa-download"></i>
+                </button>
+
+                <button *ngIf="modalData.modifyMode === true"
+                        class="remove-file"
+                        (click)="removeFile(modalData.selectedFileId)">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
-              <div>
-                <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-              </div>
+            </div>
+            <div *ngIf="modalData.selectedFile == null"
+              class="no-file-modal">
+                Aucun fichier
+            </div>
+            <div *ngIf="modalData.modifyMode === true">
+              <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+            </div>
           </div>
 
-          <!-- Modal Upload (PDF/Document simple avec possibilité d'ajouter) -->
+          <!-- Modal Upload (possibilité d’ajouter plusieurs documents) -->
           <div *ngIf="modalData.type === 'document-add'" class="upload-section">
-            <div class="upload-controls">
-              <button 
-                *ngIf="fileInputs.length < 10"
-                class="btn-add-input" 
-                (click)="addFileInput()"
-                type="button">
-                <i class="fas fa-plus"></i>
-                Ajouter un fichier ({{ fileInputs.length }}/10)
-              </button>
-            </div>
-            
-            <div class="file-inputs-container">
-              <div *ngFor="let input of fileInputs; let i = index" class="file-input-group">
-                <input 
-                  type="file" 
-                  [id]="'file-input-' + i"
-                  class="file-input"
-                  (change)="onFileSelected($event, i)"
-                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
-                <button 
-                  *ngIf="fileInputs.length > 1"
-                  class="btn-remove-input" 
-                  (click)="removeFileInput(i)"
-                  type="button"
-                  title="Supprimer ce fichier">
-                  <i class="fas fa-times"></i>
-                </button>
+            <p>{{ modalData.description }}</p>
+            <div *ngIf="modalData.modifyMode === true"
+              class="file-inputs-container">
+              <div *ngFor="let input of fileInputs; let i = index">
+                <div *ngIf="fileInputs.length == i+1" class="file-input-group">
+                  <input type="file"
+                        [id]="'file-input-' + i"
+                        class="file-input"
+                        (change)="onFileSelected($event, i)"
+                        accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
+                </div>
               </div>
             </div>
+            <div *ngIf="getAllFilesStatus()">
+              <div *ngFor="let input of fileInputs; let i = index">
+                <div *ngIf="getFile(i)" class="file-info">
+                  <span class="file-name">{{ getFileName(i) }}</span>
+                  <div class="file-actions">
+                    <button *ngIf="getFileType(i) === 'application/pdf'"
+                            class="preview-file"
+                            (click)="previewFile(getFile(i))">
+                      <i class="fas fa-eye"></i>
+                    </button>
+
+                    <button class="download-file"
+                            (click)="downloadFile(getFile(i))">
+                      <i class="fas fa-download"></i>
+                    </button>
+
+                    <button *ngIf="modalData.modifyMode === true"
+                            class="remove-file"
+                            (click)="removeFileInput(i)">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="getAllFilesStatus() == false"
+              class="no-file-modal">
+                Aucun fichier
+            </div>
           </div>
-          
+
           <!-- Modal Upload Double (Plaquette) -->
           <div *ngIf="modalData.type === 'double-document'" class="double-upload-section">
             <p>{{ modalData.description }}</p>
-            
+
             <!-- Premier document -->
             <div class="upload-group">
               <h4>1. Plaquette</h4>
-              <div class="file-upload-area"
-                   (click)="fileInput1.click()">
-                <input #fileInput1 
-                       type="file" 
-                       [accept]="modalData.acceptedTypes"
-                       (change)="onFileSelected($event, 1)"
-                       class="file-input">
-                <div>
-                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-                </div>
+              <div *ngIf="modalData.modifyMode === true"
+                class="file-upload-area" (click)="fileInput1.click()">
+                <input #fileInput1
+                      type="file"
+                      [accept]="modalData.acceptedTypes"
+                      (change)="onFileSelected($event, 1)"
+                      class="file-input">
+                <div><small>Formats acceptés : {{ modalData.acceptedTypes }}</small></div>
               </div>
-              
+
               <div *ngIf="modalData.selectedFile" class="file-preview">
                 <div class="file-info">
-                  <i class="fas fa-file-pdf file-icon"></i>
-                  <div class="file-details">
-                    <span class="file-name">{{ modalData.selectedFile.name }}</span>
-                  </div>
-                  <button class="remove-file-btn" (click)="removeFile(1)">
+                  <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                  <button *ngIf="modalData.selectedFile.type === 'application/pdf'"
+                          class="preview-file"
+                          (click)="previewFile(modalData.selectedFile)">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="download-file"
+                          (click)="downloadFile(modalData.selectedFile)">
+                    <i class="fas fa-download"></i>
+                  </button>
+                  <button *ngIf="modalData.modifyMode === true"
+                          class="remove-file-btn"
+                          (click)="removeFile('1')">
                     <i class="fas fa-times"></i>
                   </button>
                 </div>
               </div>
+              <div *ngIf="!modalData.selectedFile"
+                class="no-file-modal">
+                  Aucun fichier
+              </div>
             </div>
-            
+
             <!-- Deuxième document -->
             <div class="upload-group">
               <h4>2. Mail accompagnement de la remise des comptes annuels</h4>
-              <div class="file-upload-area" 
-                   (click)="fileInput2.click()">
-                <input #fileInput2 
-                       type="file" 
-                       [accept]="modalData.acceptedTypes"
-                       (change)="onFileSelected($event, 2)"
-                       class="file-input">
-                <div>
-                  <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
-                </div>
+              <div *ngIf="modalData.modifyMode === true"
+                class="file-upload-area" (click)="fileInput2.click()">
+                <input #fileInput2
+                      type="file"
+                      [accept]="modalData.acceptedTypes"
+                      (change)="onFileSelected($event, 2)"
+                      class="file-input">
+                <div><small>Formats acceptés : {{ modalData.acceptedTypes }}</small></div>
               </div>
-              
+
               <div *ngIf="modalData.selectedFile2" class="file-preview">
                 <div class="file-info">
-                  <i class="fas fa-file-pdf file-icon"></i>
-                  <div class="file-details">
-                    <span class="file-name">{{ modalData.selectedFile2.name }}</span>
-                  </div>
-                  <button class="remove-file-btn" (click)="removeFile(2)">
+                  <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+                  <button *ngIf="modalData.selectedFile2.type === 'application/pdf'"
+                          class="preview-file"
+                          (click)="previewFile(modalData.selectedFile2)">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="download-file"
+                          (click)="downloadFile(modalData.selectedFile2)">
+                    <i class="fas fa-download"></i>
+                  </button>
+                  <button *ngIf="modalData.modifyMode === true"
+                          class="remove-file-btn"
+                          (click)="removeFile('2')">
                     <i class="fas fa-times"></i>
                   </button>
                 </div>
+              </div>
+              <div *ngIf="!modalData.selectedFile2"
+                class="no-file-modal">
+                  Aucun fichier
               </div>
             </div>
           </div>
@@ -730,333 +807,72 @@ interface ModalData {
           <!-- Modal Upload LAB -->
           <div *ngIf="modalData.type === 'LAB'" class="double-upload-section">
             <p>{{ modalData.description }}</p>
-            
-            <!-- Premier document -->
-            <div class="upload-group">
-              <h4>1. Registre des bénéficiaires</h4>
-              <div class="upload-controls">
-                <button 
-                  *ngIf="labInputs1.length < 10"
-                  class="btn-add-input" 
-                  (click)="addLabInput(1)"
-                  type="button">
-                  <i class="fas fa-plus"></i>
-                  Ajouter un fichier ({{ labInputs1.length }}/10)
-                </button>
-              </div>
 
-              <div class="file-inputs-container">
-                <div *ngFor="let input of labInputs1; let i = index" class="file-input-group">
-                  <input 
-                    type="file" 
-                    [id]="'lab-file-1-' + i"
-                    class="file-input"
-                    (change)="onLabFileSelected($event, 1, i)"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
-                  <button 
-                    *ngIf="labInputs1.length > 1"
-                    class="btn-remove-input" 
-                    (click)="removeLabInput(1, i)"
-                    type="button"
-                    title="Supprimer ce fichier">
-                    <i class="fas fa-times"></i>
+            <!-- Reprise du même pattern pour chaque document LAB -->
+            <ng-container *ngFor="let n of [1,2,3,4,5,6,7]">
+              <div class="upload-group">
+                <h4>{{ n }}. {{ labTitles[n] }}</h4>
+
+                <div *ngIf="modalData.modifyMode === true"
+                  class="upload-controls">
+                  <button *ngIf="getLabInputs(n).length < 10"
+                          class="btn-add-input"
+                          (click)="addLabInput(n)"
+                          type="button">
+                    <i class="fas fa-plus"></i>
+                    Ajouter un fichier
                   </button>
                 </div>
-              </div>
 
-              <div *ngIf="modalData.selectedFile" class="file-preview">
-                <div class="file-info">
-                  <i class="fas fa-file-pdf file-icon"></i>
-                  <div class="file-details">
-                    <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                <div *ngIf="modalData.modifyMode === true"
+                  class="file-inputs-container">
+                  <div *ngFor="let input of getLabInputs(n); let i = index" class="file-input-group">
+                    <input type="file"
+                          [id]="'lab-file-' + n + '-' + i"
+                          class="file-input"
+                          (change)="onLabFileSelected($event, n, i)"
+                          accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
+                    <button *ngIf="getLabInputs(n).length > 1"
+                            class="btn-remove-input"
+                            (click)="removeLabInput(n, i)"
+                            type="button"
+                            title="Supprimer ce fichier">
+                      <i class="fas fa-times"></i>
+                    </button>
                   </div>
-                  <button class="btn-remove-input" (click)="removeFile(1)">
-                    <i class="fas fa-times"></i>
-                  </button>
                 </div>
-              </div>
-            </div>
-            
-            <!-- Deuxième document -->
-            <div class="upload-group">
-              <h4>2. Pièce d'identité</h4>
-              <div class="upload-controls">
-                <button 
-                  *ngIf="labInputs2.length < 10"
-                  class="btn-add-input" 
-                  (click)="addLabInput(2)"
-                  type="button">
-                  <i class="fas fa-plus"></i>
-                  Ajouter un fichier ({{ labInputs2.length }}/10)
-                </button>
-              </div>
 
-              <div class="file-inputs-container">
-                <div *ngFor="let input of labInputs2; let i = index" class="file-input-group">
-                  <input 
-                    type="file" 
-                    [id]="'lab-file-2-' + i"
-                    class="file-input"
-                    (change)="onLabFileSelected($event, 2, i)"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
-                  <button 
-                    *ngIf="labInputs2.length > 1"
-                    class="btn-remove-input" 
-                    (click)="removeLabInput(2, i)"
-                    type="button"
-                    title="Supprimer ce fichier">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-              
-              <div *ngIf="modalData.selectedFile2" class="file-preview">
-                <div class="file-info">
-                  <i class="fas fa-file-pdf file-icon"></i>
-                  <div class="file-details">
-                    <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+                <div *ngIf="modalData['selectedFile' + (n === 1 ? '' : n)]" class="file-preview">
+                  <div class="file-info">
+                    <span class="file-name">{{ modalData['selectedFile' + (n === 1 ? '' : n)].name }}</span>
+                    <button *ngIf="modalData['selectedFile' + (n === 1 ? '' : n)].type === 'application/pdf'"
+                            class="preview-file"
+                            (click)="previewFile(modalData['selectedFile' + (n === 1 ? '' : n)])">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="download-file"
+                            (click)="downloadFile(modalData['selectedFile' + (n === 1 ? '' : n)])">
+                      <i class="fas fa-download"></i>
+                    </button>
+                    <button *ngIf="modalData.modifyMode === true"
+                            class="remove-file-btn"
+                            (click)="removeFile(n.toString())">
+                      <i class="fas fa-times"></i>
+                    </button>
                   </div>
-                  <button class="remove-file-btn" (click)="removeFile(2)">
-                    <i class="fas fa-times"></i>
-                  </button>
+                </div>
+                <div *ngIf="!modalData['selectedFile' + (n === 1 ? '' : n)]"
+                  class="no-file-modal">
+                    Aucun fichier
                 </div>
               </div>
-            </div>
-
-            <!-- Troisième document -->
-            <div class="upload-group">
-              <h4>3. Statuts</h4>
-              <div class="upload-controls">
-                <button 
-                  *ngIf="labInputs3.length < 10"
-                  class="btn-add-input" 
-                  (click)="addLabInput(3)"
-                  type="button">
-                  <i class="fas fa-plus"></i>
-                  Ajouter un fichier ({{ labInputs3.length }}/10)
-                </button>
-              </div>
-
-              <div class="file-inputs-container">
-                <div *ngFor="let input of labInputs3; let i = index" class="file-input-group">
-                  <input 
-                    type="file" 
-                    [id]="'lab-file-3-' + i"
-                    class="file-input"
-                    (change)="onLabFileSelected($event, 3, i)"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
-                  <button 
-                    *ngIf="labInputs3.length > 1"
-                    class="btn-remove-input" 
-                    (click)="removeLabInput(3, i)"
-                    type="button"
-                    title="Supprimer ce fichier">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-              
-              <div *ngIf="modalData.selectedFile3" class="file-preview">
-                <div class="file-info">
-                  <i class="fas fa-file-pdf file-icon"></i>
-                  <div class="file-details">
-                    <span class="file-name">{{ modalData.selectedFile3.name }}</span>
-                  </div>
-                  <button class="remove-file-btn" (click)="removeFile(3)">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Quatrième document -->
-            <div class="upload-group">
-              <h4>4. Extrait Kbis</h4>
-              <div class="upload-controls">
-                <button 
-                  *ngIf="labInputs4.length < 10"
-                  class="btn-add-input" 
-                  (click)="addLabInput(4)"
-                  type="button">
-                  <i class="fas fa-plus"></i>
-                  Ajouter un fichier ({{ labInputs4.length }}/10)
-                </button>
-              </div>
-
-              <div class="file-inputs-container">
-                <div *ngFor="let input of labInputs4; let i = index" class="file-input-group">
-                  <input 
-                    type="file" 
-                    [id]="'lab-file-4-' + i"
-                    class="file-input"
-                    (change)="onLabFileSelected($event, 4, i)"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
-                  <button 
-                    *ngIf="labInputs4.length > 1"
-                    class="btn-remove-input" 
-                    (click)="removeLabInput(4, i)"
-                    type="button"
-                    title="Supprimer ce fichier">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-              
-              <div *ngIf="modalData.selectedFile4" class="file-preview">
-                <div class="file-info">
-                  <i class="fas fa-file-pdf file-icon"></i>
-                  <div class="file-details">
-                    <span class="file-name">{{ modalData.selectedFile4.name }}</span>
-                  </div>
-                  <button class="remove-file-btn" (click)="removeFile(4)">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Cinquième document -->
-            <div class="upload-group">
-              <h4>5. Déclaration conflit d'intérêt</h4>
-              <div class="upload-controls">
-                <button 
-                  *ngIf="labInputs5.length < 10"
-                  class="btn-add-input" 
-                  (click)="addLabInput(5)"
-                  type="button">
-                  <i class="fas fa-plus"></i>
-                  Ajouter un fichier ({{ labInputs5.length }}/10)
-                </button>
-              </div>
-
-              <div class="file-inputs-container">
-                <div *ngFor="let input of labInputs5; let i = index" class="file-input-group">
-                  <input 
-                    type="file" 
-                    [id]="'lab-file-5-' + i"
-                    class="file-input"
-                    (change)="onLabFileSelected($event, 5, i)"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
-                  <button 
-                    *ngIf="labInputs5.length > 1"
-                    class="btn-remove-input" 
-                    (click)="removeLabInput(5, i)"
-                    type="button"
-                    title="Supprimer ce fichier">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-              
-              <div *ngIf="modalData.selectedFile5" class="file-preview">
-                <div class="file-info">
-                  <i class="fas fa-file-pdf file-icon"></i>
-                  <div class="file-details">
-                    <span class="file-name">{{ modalData.selectedFile5.name }}</span>
-                  </div>
-                  <button class="remove-file-btn" (click)="removeFile(5)">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Sixième document -->
-            <div class="upload-group">
-              <h4>6. Questionnaire d'acceptation de mission (QAM)</h4>
-              <div class="upload-controls">
-                <button 
-                  *ngIf="labInputs6.length < 10"
-                  class="btn-add-input" 
-                  (click)="addLabInput(6)"
-                  type="button">
-                  <i class="fas fa-plus"></i>
-                  Ajouter un fichier ({{ labInputs6.length }}/10)
-                </button>
-              </div>
-
-              <div class="file-inputs-container">
-                <div *ngFor="let input of labInputs6; let i = index" class="file-input-group">
-                  <input 
-                    type="file" 
-                    [id]="'lab-file-6-' + i"
-                    class="file-input"
-                    (change)="onLabFileSelected($event, 6, i)"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
-                  <button 
-                    *ngIf="labInputs6.length > 1"
-                    class="btn-remove-input" 
-                    (click)="removeLabInput(6, i)"
-                    type="button"
-                    title="Supprimer ce fichier">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-              
-              <div *ngIf="modalData.selectedFile6" class="file-preview">
-                <div class="file-info">
-                  <i class="fas fa-file-pdf file-icon"></i>
-                  <div class="file-details">
-                    <span class="file-name">{{ modalData.selectedFile6.name }}</span>
-                  </div>
-                  <button class="remove-file-btn" (click)="removeFile(6)">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Septième document -->
-            <div class="upload-group">
-              <h4>7. Note de travail et autre document</h4>
-              <div class="upload-controls">
-                <button 
-                  *ngIf="labInputs7.length < 10"
-                  class="btn-add-input" 
-                  (click)="addLabInput(7)"
-                  type="button">
-                  <i class="fas fa-plus"></i>
-                  Ajouter un fichier ({{ labInputs7.length }}/10)
-                </button>
-              </div>
-
-              <div class="file-inputs-container">
-                <div *ngFor="let input of labInputs7; let i = index" class="file-input-group">
-                  <input 
-                    type="file" 
-                    [id]="'lab-file-7-' + i"
-                    class="file-input"
-                    (change)="onLabFileSelected($event, 7, i)"
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
-                  <button 
-                    *ngIf="labInputs7.length > 1"
-                    class="btn-remove-input" 
-                    (click)="removeLabInput(7, i)"
-                    type="button"
-                    title="Supprimer ce fichier">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-              
-              <div *ngIf="modalData.selectedFile7" class="file-preview">
-                <div class="file-info">
-                  <i class="fas fa-file-pdf file-icon"></i>
-                  <div class="file-details">
-                    <span class="file-name">{{ modalData.selectedFile7.name }}</span>
-                  </div>
-                  <button class="remove-file-btn" (click)="removeFile(7)">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
+            </ng-container>
           </div>
         </div>
+
         <div class="modal-footer">
-          <button class="btn-cancel" (click)="closeModal()">Annuler</button>
-          <button class="btn-save" (click)="saveStatus()">Enregistrer</button>
+          <!--<button class="btn-cancel" (click)="closeModal()">Annuler</button>
+          <button class="btn-save" (click)="saveStatus()">Enregistrer</button>-->
         </div>
       </div>
     </div>
@@ -1068,21 +884,21 @@ interface ModalData {
     .dashboard-container {
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 75px);
+      height: calc(100vh - 8vh);
       background: var(--gray-50);
       overflow: hidden;
     }
 
     .dashboard-header {
       flex-shrink: 0;
-      padding: 12px 24px 12px 24px;
+      padding: 1vh 1vw;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .dashboard-header h1 {
-      margin: 0 0 8px 0;
+      margin: 0 0 1vh 0;
       color: var(--primary-color);
       font-size: 1.4vw;
       font-weight: 700;
@@ -1097,22 +913,24 @@ interface ModalData {
     .header-controls {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 0.5vw;
+      width: 10vw;
+      justify-content: flex-end;
     }
 
     .expand-all-btn {
       background: var(--primary-color);
       color: white;
       border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
+      padding: 1vh 1vw;
+      border-radius: 0.5vw;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
       font-size: var(--font-size-md);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.3vw;
     }
 
     .expand-all-btn:hover {
@@ -1124,21 +942,22 @@ interface ModalData {
     .filters-section {
       display: flex;
       justify-content: flex-start;
-      width: 8vw;
+      width: 10vw;
     }
     
     .filter-btn {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
+      gap: 0.3vw;
+      padding: 1vh 1vw;
       background: white;
-      border: 2px solid var(--gray-300);
-      border-radius: 8px;
+      border: 0.1vh solid var(--gray-300);
+      border-radius: 0.5vw;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s;
       position: relative;
+      font-size: var(--font-size-md);
     }
     
     .filter-btn:hover {
@@ -1191,10 +1010,10 @@ interface ModalData {
     }
 
     .pagination-btn {
-      padding: 8px 12px;
-      border: 1px solid var(--gray-300);
+      padding: 1vh 1vw;
+      border: 0.1vh solid var(--gray-300);
       background: white;
-      border-radius: 6px;
+      border-radius: 0.5vw;
       cursor: pointer;
       font-size: var(--font-size-md);
       transition: all 0.2s;
@@ -1219,7 +1038,7 @@ interface ModalData {
     .table-wrapper {
       flex: 1;
       overflow: auto;
-      margin: 0 24px;
+      margin: 0 1vw;
       background: white;
       border-radius: 12px;
       box-shadow: var(--shadow-md);
@@ -1481,17 +1300,12 @@ interface ModalData {
       color: var(--error-color);
     }
 
-    .progress-circle[data-percentage="25"] {
+    .progress-circle[data-percentage]:not([data-percentage="0"]):not([data-percentage="100"]) {
       background: rgba(245, 158, 11, 0.1);
       color: var(--warning-color);
     }
 
-    .progress-circle[data-percentage="50"] {
-      background: rgba(245, 158, 11, 0.1);
-      color: var(--warning-color);
-    }
-
-    .progress-circle[data-percentage="75"] {
+    .progress-circle[data-percentage="100"] {
       background: rgba(100, 206, 199, 0.1);
       color: var(--success-color);
     }
@@ -1553,7 +1367,7 @@ interface ModalData {
 
     .pagination-footer {
       flex-shrink: 0;
-      padding: 16px 24px;
+      padding: 1vh 1vw;
     }
 
     .page-numbers {
@@ -1562,13 +1376,13 @@ interface ModalData {
     }
 
     .page-btn {
-      padding: 8px 12px;
-      border: 1px solid var(--gray-300);
+      padding: 1vh 1vw;
+      border: 0.1vh solid var(--gray-300);
       background: white;
-      border-radius: 6px;
+      border-radius: 0.5vw;
       cursor: pointer;
       font-size: var(--font-size-md);
-      min-width: 40px;
+      min-width: 2vw;
       transition: all 0.2s;
     }
 
@@ -1597,6 +1411,18 @@ interface ModalData {
       pointer-events: none;
     }
 
+    .no-file-modal {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gray-300);
+      color: var(--gray-300);
+      padding: 1vh 1vw;
+      margin-top: 1vh;
+      border-radius: 8px;
+    }
+
     .page-btn.empty {
       background: transparent;
       border-color: transparent;
@@ -1616,10 +1442,11 @@ interface ModalData {
       width: 100%;
       align-items: center;
       justify-content: space-between;
+      gap: 0.5vw;
     }
 
     tr.group-row.client-group .progress-circle {
-      height: 27px;
+      height: 3vh;
       border-radius: 1vw;
     }
 
@@ -1633,41 +1460,14 @@ interface ModalData {
         border-radius: 1vw;
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .dashboard-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-      }
-      
-      .header-controls {
-        width: 100%;
-        justify-content: flex-end;
-      }
-      
-      .table-controls {
-        flex-direction: column;
-        gap: 12px;
-        align-items: stretch;
-      }
-      
-      .pagination-controls {
-        justify-content: center;
-      }
-      
-      .pagination-container {
-        flex-direction: column;
-        gap: 12px;
-      }
-      
-      .mission-count-display {
-        text-align: center;
-      }
-      
-      .page-numbers {
-        display: none;
-      }
+    .container-mission {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .info-mission-source {
+      color: var(--primary-light);
     }
 
     /* Modal Styles */
@@ -1686,10 +1486,10 @@ interface ModalData {
 
     .modal-content {
       background: white;
-      border-radius: 12px;
+      border-radius: 0.5vw;
       box-shadow: var(--shadow-xl);
       width: 90%;
-      max-width: 500px;
+      max-width: 35vw;
     }
 
     /* Styles pour les modales spécialisées */
@@ -1818,47 +1618,11 @@ interface ModalData {
       font-style: italic;
     }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--gray-200);
-      background: var(--primary-color);
-      color: white;
-      border-radius: 12px 12px 0 0;
-    }
-
-    .modal-header h3 {
-      margin: 0;
-      font-size: var(--font-size-lg);
-      font-weight: 600;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      color: white;
-      font-size: var(--font-size-xl);
-      cursor: pointer;
-      padding: 0;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: background-color 0.2s;
-    }
-
-    .modal-close:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
     .modal-body {
-      padding: 24px;
+      padding: 1vh 1vw;
       max-height: 79vh;
       overflow-y: auto;
+      font-size: var(--font-size-md);
     }
 
     .form-group {
@@ -1912,6 +1676,13 @@ interface ModalData {
     .file-name {
       font-size: var(--font-size-md);
       color: var(--gray-700);
+      max-width: 16vw;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 0.5vw;
+      align-items: center;
     }
 
     .remove-file {
@@ -1935,22 +1706,23 @@ interface ModalData {
     .modal-footer {
       display: flex;
       justify-content: flex-end;
-      gap: 12px;
-      padding: 20px 24px;
-      border-top: 1px solid var(--gray-200);
+      gap: 0.5vw;
+      padding: 2vh 1vw;
+      border-top: 0.1vh solid var(--gray-200);
       background: var(--gray-50);
-      border-radius: 0 0 12px 12px;
+      border-radius: 0 0 0.5vw 0.5vw;
     }
 
-    .btn-cancel {
-      padding: 10px 20px;
-      border: 1px solid var(--gray-300);
+     .btn-cancel {
+      padding: 1vh 1vw;
+      border: 0.1vh solid var(--gray-300);
       background: white;
       color: var(--gray-700);
-      border-radius: 6px;
+      border-radius: 0.5vw;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s;
+      font-size: var(--font-size-md);
     }
 
     .btn-cancel:hover {
@@ -1959,14 +1731,15 @@ interface ModalData {
     }
 
     .btn-save {
-      padding: 10px 20px;
+      padding: 1vh 1vw;
       border: none;
       background: var(--primary-color);
       color: white;
-      border-radius: 6px;
+      border-radius: 0.5vw;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s;
+      font-size: var(--font-size-md);
     }
 
     .btn-save:hover {
@@ -1999,7 +1772,6 @@ interface ModalData {
     .file-inputs-container {
       display: flex;
       flex-direction: column;
-      gap: 12px;
     }
     
     .file-input-group {
@@ -2041,23 +1813,6 @@ interface ModalData {
       background: #dc2626;
       transform: scale(1.05);
     }
-
-    @media (max-width: 1200px) {
-      .mission-table {
-        font-size: var(--font-size-sm);
-      }
-      
-      .column-header,
-      .mission-row td {
-        padding: 8px 6px;
-      }
-      
-      .progress-circle {
-        width: 35px;
-        height: 35px;
-        font-size: var(--font-size-sm);
-      }
-    }
   `]
 })
 export class DashboardComponent implements OnInit {
@@ -2088,7 +1843,10 @@ export class DashboardComponent implements OnInit {
     columnName: '',
     missionId: '',
     currentStatus: false,
-    selectedFile: null
+    selectedFile: null,
+    selectedFileId: '',
+    modifyMode: false,
+    hasAccess: false
   };
   uploadedDocuments: { [key: string]: File | null } = {};
   cartoLabAnswers: { [key: string]: string } = {
@@ -2118,6 +1876,10 @@ export class DashboardComponent implements OnInit {
   selectedLabFiles5: { [key: number]: File | null } = {};
   selectedLabFiles6: { [key: number]: File | null } = {};
   selectedLabFiles7: { [key: number]: File | null } = {};
+
+  moduleGlobal = '';
+  missionIdDosPgiDosGroupeGlobal = '';
+  sourceGlobal = '';
 
   constructor(
     private http: HttpClient,
@@ -2530,141 +2292,165 @@ export class DashboardComponent implements OnInit {
     return Object.values(this.activeFilters).reduce((count, filters) => count + filters.length, 0);
   }
 
-  public openStatusModal(columnName: string, missionId: string, currentStatus: boolean): void {
-    // Initialiser les données de base
-    this.modalData = {
-      isOpen: true,
-      columnName: columnName,
-      missionId: missionId,
-      currentStatus: currentStatus,
-      selectedFile: null,
-      selectedFile2: null
-    };
+  public openStatusModal(columnName: string, mission: string, currentStatus: boolean, missionIdDosPgiDosGroupe: string, profilId: string, source: string): void {
+    this.missionIdDosPgiDosGroupeGlobal = missionIdDosPgiDosGroupe;
+    this.moduleGlobal = columnName;
+    this.sourceGlobal = source;
 
-    // Réinitialiser les inputs de fichiers pour le type document-add
-    if (columnName === 'Checklist' || columnName === 'Révision') {
-      this.fileInputs = [{}];
-    }
+    this.getModuleFiles(missionIdDosPgiDosGroupe, columnName, profilId, source).then(moduleData => {
+      let module = moduleData.data[0];
+      let hasAccess = module.DTMOD_ModuleLecture == 'oui';
+      let modifyMode = module.DTMOD_ModuleModification == 'oui';
 
-    // Configuration spécifique par module
-    switch (columnName) {
-      case 'Conflit Check':
-        this.modalData.type = 'document';
-        this.modalData.title = 'Conflit Check - Dépôt PDF';
-        this.modalData.description = 'Déposez le PDF de vérification des conflits';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+      let file = null;
+      if(module.Base64_File) {
+        file = this.base64ToFile(module.Base64_File, module.MODFILE_TITLE);
+      }
 
-      case 'LAB':
-        this.modalData.type = 'LAB';
-        this.modalData.title = 'LAB - Dépôt Document';
-        this.modalData.description = 'Déposez les documents LAB';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+      // Initialiser les données de base
+      this.modalData = {
+        isOpen: true,
+        columnName: columnName,
+        missionId: missionIdDosPgiDosGroupe,
+        currentStatus: currentStatus,
+        selectedFile: file,
+        selectedFileId: module.MODFILE_Id,
+        selectedFile2: null,
+        modifyMode: modifyMode,
+        hasAccess: hasAccess
+      };
 
-      case 'Carto LAB':
-        this.modalData.type = 'coming-soon';
-        this.modalData.title = 'Carto LAB - Questionnaire';
-        this.modalData.description = 'Cette fonctionnalité sera bientôt disponible';
-        break;
+      // Réinitialiser les inputs de fichiers pour le type document-add
+      if (columnName === 'Checklist' || columnName === 'Révision') {
+        this.fileInputs = [{}];
+      }
 
-      case 'QAC':
-        this.modalData.type = 'document';
-        this.modalData.title = 'QAC - Dépôt Document';
-        this.modalData.description = 'Déposez le document QAC';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+      // Configuration spécifique par module
+      switch (columnName) {
+        case 'Conflit Check':
+          this.modalData.type = 'document';
+          this.modalData.title = 'Conflit Check - Dépôt PDF';
+          this.modalData.description = 'Déposez le PDF de vérification des conflits';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
 
-      case 'QAM':
-        this.modalData.type = 'document';
-        this.modalData.title = 'QAM - Dépôt Document';
-        this.modalData.description = 'Déposez le document QAM';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+        case 'LAB':
+          this.modalData.type = 'document';
+          // this.modalData.type = 'LAB';
+          this.modalData.title = 'LAB - Dépôt Document';
+          this.modalData.description = 'Déposez les documents LAB';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
 
-      case 'LDM':
-        this.modalData.type = 'document';
-        this.modalData.title = 'LDM - Dépôt Document';
-        this.modalData.description = 'Déposez le document LDM';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+        case 'Carto LAB':
+          this.modalData.type = 'coming-soon';
+          this.modalData.title = 'Carto LAB - Questionnaire';
+          this.modalData.description = 'Cette fonctionnalité sera bientôt disponible';
+          break;
 
-      case 'NOG':
-        this.modalData.type = 'document';
-        this.modalData.title = 'NOG - Dépôt Document';
-        this.modalData.description = 'Déposez le document NOG';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+        case 'QAC':
+          this.modalData.type = 'document';
+          this.modalData.title = 'QAC - Dépôt Document';
+          this.modalData.description = 'Déposez le document QAC';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
 
-      case 'Checklist':
-        this.modalData.type = 'document-add';
-        this.modalData.title = 'Checklist - Dépôt Document';
-        this.modalData.description = 'Déposez le document Checklist';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+        case 'QAM':
+          this.modalData.type = 'document';
+          this.modalData.title = 'QAM - Dépôt Document';
+          this.modalData.description = 'Déposez le document QAM';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
 
-      case 'Révision':
-        this.modalData.type = 'document-add';
-        this.modalData.title = 'Révision - Dépôt Document';
-        this.modalData.description = 'Déposez le document de révision';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+        case 'LDM':
+          this.modalData.type = 'document';
+          this.modalData.title = 'LDM - Dépôt Document';
+          this.modalData.description = 'Déposez le document LDM';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
 
-      case 'Supervision':
-        this.modalData.type = 'document';
-        this.modalData.title = 'Supervision - Dépôt Document';
-        this.modalData.description = 'Déposez le document de supervision';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+        case 'NOG':
+          this.modalData.type = 'document';
+          this.modalData.title = 'NOG - Dépôt Document';
+          this.modalData.description = 'Déposez le document NOG';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
 
-      case 'NDS':
-        this.modalData.type = 'document';
-        this.modalData.title = 'NDS';
-        this.modalData.description = 'Déposez le document NDS';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
-      
-      case 'CR Mission':
-        this.modalData.type = 'document';
-        this.modalData.title = 'CR Mission - Dépôt Document';
-        this.modalData.description = 'Déposez le document CR Mission';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+        case 'Checklist':
+          // this.modalData.type = 'document-add';
+          this.modalData.type = 'document';
+          this.modalData.title = 'Checklist - Dépôt Document';
+          this.modalData.description = 'Déposez le document Checklist';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
 
-      case 'QMM':
-        this.modalData.type = 'document';
-        this.modalData.title = 'QMM - Dépôt Document';
-        this.modalData.description = 'Déposez le document QMM';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+        case 'Révision':
+          // this.modalData.type = 'document-add';
+          this.modalData.type = 'document';
+          this.modalData.title = 'Révision - Dépôt Document';
+          this.modalData.description = 'Déposez le document de révision';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
 
-      case 'Plaquette':
-        this.modalData.type = 'double-document';
-        this.modalData.title = 'Plaquette - Dépôt Documents';
-        this.modalData.description = 'Déposez la plaquette et le mail d\'accompagnement';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+        case 'Supervision':
+          this.modalData.type = 'document';
+          this.modalData.title = 'Supervision - Dépôt Document';
+          this.modalData.description = 'Déposez le document de supervision';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
 
-      case 'Restitution communication client':
-        this.modalData.type = 'document';
-        this.modalData.title = 'Restitution - Dépôt Document';
-        this.modalData.description = 'Déposez le document de restitution';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
+        case 'NDS':
+          this.modalData.type = 'document';
+          this.modalData.title = 'NDS';
+          this.modalData.description = 'Déposez le document NDS';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
+        
+        case 'CR Mission':
+          this.modalData.type = 'document';
+          this.modalData.title = 'CR Mission - Dépôt Document';
+          this.modalData.description = 'Déposez le document CR Mission';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
 
-      case 'Fin relation client':
-        this.modalData.type = 'coming-soon';
-        this.modalData.title = 'Fin relation client';
-        this.modalData.description = 'Cette fonctionnalité sera bientôt disponible';
-        break;
+        case 'QMM':
+          this.modalData.type = 'document';
+          this.modalData.title = 'QMM - Dépôt Document';
+          this.modalData.description = 'Déposez le document QMM';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
 
-      default:
-        this.modalData.type = 'document';
-        this.modalData.title = columnName + ' - Dépôt Document';
-        this.modalData.description = 'Déposez le document requis';
-        this.modalData.acceptedTypes = '.pdf,.doc,.docx';
-        break;
-    }
+        case 'Plaquette':
+          // this.modalData.type = 'double-document';
+          this.modalData.type = 'document';
+          this.modalData.title = 'Plaquette - Dépôt Documents';
+          this.modalData.description = 'Déposez la plaquette et le mail d\'accompagnement';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
+
+        case 'Restitution communication client':
+          this.modalData.type = 'document';
+          this.modalData.title = 'Restitution - Dépôt Document';
+          this.modalData.description = 'Déposez le document de restitution';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
+
+        case 'Fin relation client':
+          this.modalData.type = 'coming-soon';
+          this.modalData.title = 'Fin relation client';
+          this.modalData.description = 'Cette fonctionnalité sera bientôt disponible';
+          break;
+
+        default:
+          this.modalData.type = 'document';
+          this.modalData.title = columnName + ' - Dépôt Document';
+          this.modalData.description = 'Déposez le document requis';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          break;
+      }
+    }).catch(error => {
+      console.error('Erreur lors de la récupération des fichiers du module:', error);
+    });
   }
 
   public closeModal(): void {
@@ -2683,6 +2469,7 @@ export class DashboardComponent implements OnInit {
     if (this.fileInputs.length > 1) {
       this.fileInputs.splice(index, 1);
     }
+    console.log('File inputs after removal:', this.fileInputs);
   }
 
   addLabInput(docNumber: number): void {
@@ -2725,18 +2512,40 @@ export class DashboardComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       if (this.modalData.type === 'document-add' && typeof fileNumber === 'number') {
-        const file = input.files[0];
-        this.fileInputs[fileNumber] = {
-          file: file,
-          name: file.name,
-          size: file.size
-        };
+        console.log('File number:', fileNumber);
+        switch (fileNumber+1) {
+          case 1: this.modalData.selectedFile = input.files[0];
+            break;
+          case 2: this.modalData.selectedFile2 = input.files[0];
+            break;
+          case 3: this.modalData.selectedFile3 = input.files[0];
+            break;
+          case 4: this.modalData.selectedFile4 = input.files[0];
+            break;
+          case 5: this.modalData.selectedFile5 = input.files[0];
+            break;
+          case 6: this.modalData.selectedFile6 = input.files[0];
+            break;
+          case 7: this.modalData.selectedFile7 = input.files[0];
+            break;
+          case 8: this.modalData.selectedFile8 = input.files[0];
+            break;
+          case 9: this.modalData.selectedFile9 = input.files[0];
+            break;
+          case 10: this.modalData.selectedFile10 = input.files[0];
+            break;
+          default: break;
+        }
+        this.addFileInput();
       } else if (fileNumber === 1) {
         this.modalData.selectedFile = input.files[0];
       } else if (fileNumber === 2) {
         this.modalData.selectedFile2 = input.files[0];
       } else {
         this.modalData.selectedFile = input.files[0];
+        console.log('Fichier sélectionné:', this.modalData.selectedFile);
+        this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal);
+        this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
       }
       this.updateModuleStatus();
     }
@@ -2758,15 +2567,17 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  removeFile(fileNumber?: number): void {
-    if (fileNumber === 1) {
-      this.modalData.selectedFile = null;
-    } else if (fileNumber === 2) {
-      this.modalData.selectedFile2 = null;
-    } else {
-      this.modalData.selectedFile = null;
-    }
-    this.updateModuleStatus();
+  removeFile(fileNumber: string): void {
+    // if (fileNumber === 1) {
+    //   this.modalData.selectedFile = null;
+    // } else if (fileNumber === 2) {
+    //   this.modalData.selectedFile2 = null;
+    // } else {
+    this.modalData.selectedFile = null;
+    this.deleteModuleFile(fileNumber);
+    this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
+    this.loadData();
+    // this.updateModuleStatus();
   }
 
   updateQuestionnaireStatus(): void {
@@ -2809,5 +2620,192 @@ export class DashboardComponent implements OnInit {
     
     // Fermer le modal après sauvegarde
     this.closeModal();
+  }
+
+  public previewFile(file: File | null): void {
+    if (file) {
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL, '_blank');
+    }
+  }
+
+  public downloadFile(file: File | null): void {
+    if (file) {
+      const fileURL = URL.createObjectURL(file);
+      const a = document.createElement('a');
+      a.href = fileURL;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(fileURL);
+    }
+  }
+
+  public getLabInputs(n: number) {
+    switch (n) {
+      case 1: return this.labInputs1;
+      case 2: return this.labInputs2;
+      case 3: return this.labInputs3;
+      case 4: return this.labInputs4;
+      case 5: return this.labInputs5;
+      case 6: return this.labInputs6;
+      case 7: return this.labInputs7;
+      default: return [];
+    }
+  }
+
+  public labTitles: { [key: number]: string } = {
+    1: "Registre des bénéficiaires",
+    2: "Pièce d'identité",
+    3: "Statuts",
+    4: "Extrait Kbis",
+    5: "Déclaration conflit d'intérêt",
+    6: "Questionnaire d'acceptation de mission (QAM)",
+    7: "Note de travail et autre document"
+  }
+
+  public getFileName(index: number): string {
+    const file = this.getFile(index);
+    return file ? file.name : '';
+  }
+
+  public getFileType(index: number): string {
+    const file = this.getFile(index);
+    return file ? file.type : '';
+  }
+
+  public getFile(index: number): File | null {
+    console.log('Récupération du fichier pour l\'index :', index);
+    switch (index) {
+      case 1: return this.modalData.selectedFile ?? null;
+      case 2: return this.modalData.selectedFile2 ?? null;
+      case 3: return this.modalData.selectedFile3 ?? null;
+      case 4: return this.modalData.selectedFile4 ?? null;
+      case 5: return this.modalData.selectedFile5 ?? null;
+      case 6: return this.modalData.selectedFile6 ?? null;
+      case 7: return this.modalData.selectedFile7 ?? null;
+      case 8: return this.modalData.selectedFile8 ?? null;
+      case 9: return this.modalData.selectedFile9 ?? null;
+      case 10: return this.modalData.selectedFile10 ?? null;
+      default: return null;
+    }
+  }
+
+  public getAllFilesStatus() {
+    let res = false;
+
+    for(let i = 1; i <= 10; i++) {
+      const file = this.getFile(i);
+      if (file) {
+        res = true;
+      }
+    }
+    return res;
+  }
+
+  sendModuleFile(module: String, email: String, file: File, missionIdDosPgiDosGroupe: String, source: String) {
+    console.log('Envoi du fichier du module:', module);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      let base64File = '';
+      let fileName = '';
+      if (reader.result) {
+        base64File = (reader.result as string).split(',')[1];
+        fileName = file.name;
+      }
+      const moduleFile = {
+        module,
+        email,
+        file: base64File,
+        missionIdDosPgiDosGroupe: missionIdDosPgiDosGroupe + "",
+        title: fileName,
+        source
+      };
+
+      this.http.post(`${environment.apiUrl}/files/setModuleFile`, moduleFile)
+        .subscribe(response => {
+          console.log('Réponse du serveur:', response);
+        });
+    };
+  }
+
+  getModuleFiles(missionIdDosPgiDosGroupe: String, module: String, profilId: String, source: string): Promise<any> {
+    return firstValueFrom(
+      this.http.get(`${environment.apiUrl}/files/getModuleFiles/${missionIdDosPgiDosGroupe}&${module}&${profilId}&${source}`)
+      .pipe(
+        catchError(error => {
+          console.error('Erreur lors de la récupération des fichiers du module:', error);
+          throw error; // Rejeter la promesse avec l'erreur pour gérer les erreurs de manière propre
+        }),
+        tap(response => {
+          console.log('Réponse du serveur:', response);
+        })
+      )
+    );
+  }
+
+  base64ToFile(base64String: string, fileName: string): File {
+    const byteCharacters = atob(base64String);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const fileExtension = fileName.split('.').pop();
+    let mimeType = 'application/octet-stream';
+
+    switch (fileExtension) {
+      case 'pdf':
+        mimeType = 'application/pdf';
+        break;
+      case 'jpg':
+      case 'jpeg':
+        mimeType = 'image/jpeg';
+        break;
+      case 'png':
+        mimeType = 'image/png';
+        break;
+      case 'txt':
+        mimeType = 'text/plain';
+        break;
+      case 'xlsx':
+        mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        break;
+      case 'docx':
+        mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        break;
+    }
+
+    const blob = new Blob([byteArray], { type: mimeType });
+    const file = new File([blob], fileName, { type: blob.type });
+    return file;
+  }
+
+  sendModuleStatus(module: String, email: String, missionIdDosPgiDosGroupe: String, source: String, status: String) {
+    console.log('Envoi du status du module:', module);
+
+    const moduleStatus = {
+      module,
+      email,
+      status,
+      missionIdDosPgiDosGroupe: missionIdDosPgiDosGroupe + "",
+      source
+    };
+
+    this.http.post(`${environment.apiUrl}/modules/setModuleStatus`, moduleStatus)
+      .subscribe(response => {
+        console.log('Réponse du serveur:', response);
+      });
+  }
+
+  deleteModuleFile(fileId: String) {
+    console.log('Suppression du fichier du module:', fileId);
+
+    this.http.delete(`${environment.apiUrl}/files/deleteModuleFile/${fileId}`)
+      .subscribe(response => {
+        console.log('Réponse du serveur:', response);
+      });
   }
 }

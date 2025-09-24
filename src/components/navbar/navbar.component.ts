@@ -171,22 +171,22 @@ export interface TabGroup {
       background: white;
       color: var(--gray-800);
       box-shadow: var(--shadow-md);
-      border-bottom: 2px solid var(--primary-color);
+      border-bottom: 0.2vh solid var(--primary-color);
       z-index: 100;
       display: flex;
       align-items: center;
-      padding: 0 24px;
-      gap: 32px;
+      padding: 0 1vw;
+      gap: 1.5vw;
     }
 
     .navbar-brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 1vw;
       cursor: pointer;
       transition: all 0.2s ease;
-      padding: 8px 12px;
-      border-radius: 8px;
+      padding: 1vh 1vw;
+      border-radius: 0.5vw;
     }
 
     .navbar-brand:hover {
@@ -228,10 +228,10 @@ export interface TabGroup {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 16px;
+      padding: 1vh 1vw;
       cursor: pointer;
       transition: all 0.2s ease;
-      border-radius: 8px;
+      border-radius: 0.5vw;
       white-space: nowrap;
     }
 
@@ -259,17 +259,17 @@ export interface TabGroup {
       position: absolute;
       top: 100%;
       left: 0;
-      min-width: 200px;
+      min-width: 15vw;
       background: white;
       border: 1px solid var(--primary-color);
-      border-radius: 8px;
+      border-radius: 0.5vw;
       box-shadow: var(--shadow-lg);
       opacity: 0;
       visibility: hidden;
       transform: translateY(-10px);
       transition: all 0.2s ease;
       z-index: 1000;
-      margin-top: 8px;
+      margin-top: 0.8vh;
     }
 
     .dropdown-menu.visible {
@@ -279,11 +279,11 @@ export interface TabGroup {
     }
 
     .dropdown-item {
-      padding: 10px 16px;
+      padding: 1vh 1vw;
       cursor: pointer;
       transition: all 0.2s ease;
-      border-radius: 6px;
-      margin: 4px;
+      border-radius: 0.5vw;
+      margin: 0.4vh 0.2vw;
       font-size: var(--font-size-md);
     }
 
@@ -311,10 +311,10 @@ export interface TabGroup {
     }
 
     .profile-photo {
-      width: 36px;
-      height: 36px;
+      width: 2.5vw;
+      height: 5vh;
       border-radius: 50%;
-      border: 2px solid var(--primary-color);
+      border: 0.25vh solid var(--primary-color);
       object-fit: cover;
     }
 
@@ -340,14 +340,14 @@ export interface TabGroup {
     .impersonation-badge {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.3vw;
       background: var(--warning-color);
       color: white;
-      padding: 4px 8px;
-      border-radius: 12px;
+      padding: 0.6vh 0.3vw;
+      border-radius: 0.8vw;
       font-size: var(--font-size-sm);
       font-weight: 600;
-      margin-right: 12px;
+      margin-right: 1vw;
     }
     
     .stop-impersonation-btn {
@@ -355,8 +355,8 @@ export interface TabGroup {
       border: none;
       color: white;
       border-radius: 50%;
-      width: 16px;
-      height: 16px;
+      width: 0.8vw;
+      height: 1.6vh;
       cursor: pointer;
       font-size: var(--font-size-sm);
       display: flex;
@@ -374,10 +374,11 @@ export interface TabGroup {
       border: none;
       color: white;
       cursor: pointer;
-      padding: 8px;
+      padding: 0.6vh 0.3vw;
       border-radius: 4px;
       transition: all 0.2s ease;
-      margin-left: 8px;
+      margin-left: 0.3vw;
+      font-size: var(--font-size-lg);
     }
     
     .impersonation-btn:hover {
@@ -389,10 +390,11 @@ export interface TabGroup {
       border: none;
       color: var(--gray-600);
       cursor: pointer;
-      padding: 8px;
+      padding: 0.6vh 0.3vw;
       border-radius: 4px;
       transition: all 0.2s ease;
-      margin-left: 8px;
+      margin-left: 0.3vw;
+      font-size: var(--font-size-lg);
     }
     
     .logout-btn:hover {
@@ -419,68 +421,32 @@ export interface TabGroup {
       border-radius: 12px;
       box-shadow: var(--shadow-xl);
       width: 90%;
-      max-width: 500px;
+      max-width: 30vw;
       max-height: 90vh;
       overflow-y: auto;
     }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--gray-200);
-      background: var(--secondary-color);
-      color: white;
-      border-radius: 12px 12px 0 0;
-    }
-
-    .modal-header h3 {
-      margin: 0;
-      font-size: var(--font-size-lg);
-      font-weight: 600;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      color: white;
-      font-size: var(--font-size-xl);
-      cursor: pointer;
-      padding: 0;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: background-color 0.2s;
-    }
-
-    .modal-close:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
     .modal-body {
-      padding: 24px;
+      padding: 1vh 1vw;
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 2vh;
     }
 
     .form-group label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 1vh;
       font-weight: 500;
       color: var(--gray-700);
+      font-size: var(--font-size-lg);
     }
 
     .email-input {
       width: 100%;
-      padding: 12px 16px;
-      border: 2px solid var(--gray-300);
-      border-radius: 8px;
+      padding: 1vh 1vw;
+      border: 0.2vh solid var(--gray-300);
+      border-radius: 0.5vw;
       font-size: var(--font-size-md);
       transition: all 0.2s;
     }
@@ -501,20 +467,20 @@ export interface TabGroup {
       left: 0;
       right: 0;
       background: white;
-      border: 1px solid var(--gray-300);
+      border: 0.1vh solid var(--gray-300);
       border-top: none;
       border-radius: 0 0 8px 8px;
       box-shadow: var(--shadow-lg);
-      max-height: 200px;
+      max-height: 15vh;
       overflow-y: auto;
       z-index: 1000;
     }
 
     .user-item {
-      padding: 12px 16px;
+      padding: 1vh 1vw;
       cursor: pointer;
       transition: background-color 0.2s;
-      border-bottom: 1px solid var(--gray-100);
+      border-bottom: 0.1vh solid var(--gray-100);
     }
 
     .user-item:hover {
@@ -562,11 +528,11 @@ export interface TabGroup {
     .warning-message {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
-      padding: 12px;
+      gap: 1vw;
+      padding: 1vh 1vw;
       background: rgba(245, 158, 11, 0.1);
-      border: 1px solid var(--warning-color);
-      border-radius: 8px;
+      border: 0.1vh solid var(--warning-color);
+      border-radius: 0.5vw;
       color: var(--warning-color);
       font-size: var(--font-size-md);
     }
@@ -579,22 +545,23 @@ export interface TabGroup {
     .modal-footer {
       display: flex;
       justify-content: flex-end;
-      gap: 12px;
-      padding: 20px 24px;
-      border-top: 1px solid var(--gray-200);
+      gap: 0.5vw;
+      padding: 2vh 1vw;
+      border-top: 0.1vh solid var(--gray-200);
       background: var(--gray-50);
-      border-radius: 0 0 12px 12px;
+      border-radius: 0 0 0.5vw 0.5vw;
     }
 
     .btn-cancel {
-      padding: 10px 20px;
-      border: 1px solid var(--gray-300);
+      padding: 1vh 1vw;
+      border: 0.1vh solid var(--gray-300);
       background: white;
       color: var(--gray-700);
-      border-radius: 6px;
+      border-radius: 0.5vw;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s;
+      font-size: var(--font-size-md);
     }
 
     .btn-cancel:hover {
@@ -603,14 +570,15 @@ export interface TabGroup {
     }
 
     .btn-confirm {
-      padding: 10px 20px;
+      padding: 1vh 1vw;
       border: none;
       background: var(--secondary-color);
       color: white;
-      border-radius: 6px;
+      border-radius: 0.5vw;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.2s;
+      font-size: var(--font-size-md);
     }
 
     .btn-confirm:hover:not(:disabled) {
@@ -620,42 +588,6 @@ export interface TabGroup {
     .btn-confirm:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-    }
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .navbar-horizontal {
-        padding: 0 16px;
-        gap: 16px;
-      }
-      
-      .group-name {
-        display: none;
-      }
-      
-      .profile-info {
-        display: none;
-      }
-      
-      .impersonation-badge {
-        display: none;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .navbar-horizontal {
-        height: 60px;
-        padding: 0 12px;
-        gap: 8px;
-      }
-      
-      .brand-title {
-        font-size: var(--font-size-md);
-      }
-      
-      .logo {
-        font-size: var(--font-size-xl);
-        padding: 4px;
-      }
     }
   `]
 })
