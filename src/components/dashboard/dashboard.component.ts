@@ -6,11 +6,9 @@ import { AuthService, UserProfile } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { FilterPanelComponent, ActiveFilters } from '../filter-panel/filter-panel.component';
 import { tap } from 'rxjs/internal/operators/tap';
-import { map } from 'rxjs/internal/operators/map';
 import { catchError } from 'rxjs/internal/operators/catchError';
-import { throwError } from 'rxjs/internal/observable/throwError';
-import { Observable } from 'rxjs/internal/Observable';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
+import { ClearCacheRequest } from '@azure/msal-browser';
 
 interface MissionData {
   numeroGroupe: string;
@@ -23,30 +21,30 @@ interface MissionData {
   source: string;
   avantMission: {
     percentage: number;
-    conflitCheck: boolean;
-    labGroupe: boolean;
-    labDossier: boolean;
-    cartoLabGroupe: boolean;
-    cartoLabDossier: boolean;
-    qac: boolean;
-    qam: boolean;
-    ldm: boolean;
+    conflitCheck: string;
+    labGroupe: string;
+    labDossier: string;
+    cartoLabGroupe: string;
+    cartoLabDossier: string;
+    qac: string;
+    qam: string;
+    ldm: string;
   };
   pendantMission: {
     percentage: number;
-    nog: boolean;
-    checklist: boolean;
-    revision: boolean;
-    supervision: boolean;
+    nog: string;
+    checklist: string;
+    revision: string;
+    supervision: string;
   };
   finMission: {
     percentage: number;
-    nds: boolean;
-    cr: boolean;
-    qmm: boolean;
-    plaquette: boolean;
-    restitution: boolean;
-    finRelationClient: boolean;
+    nds: string;
+    cr: string;
+    qmm: string;
+    plaquette: string;
+    restitution: string;
+    finRelationClient: string;
   };
 }
 
@@ -56,7 +54,6 @@ interface ClientGroup {
   missions: MissionData[];
   expanded: boolean;
 }
-
 interface GroupData {
   numeroGroupe: string;
   nomGroupe: string;
@@ -70,6 +67,7 @@ interface ModalData {
   selectedFile: File | null;
   selectedFileId: string;
   selectedFile2?: File | null;
+  selectedFileId2?: string | '';
   selectedFile3?: File | null;
   selectedFile4?: File | null;
   selectedFile5?: File | null;
@@ -92,7 +90,7 @@ interface ModalData {
   };
   columnName: string;
   missionId: string;
-  currentStatus: boolean;
+  currentStatus: string;
   modifyMode: boolean;
   hasAccess: boolean;
 }
@@ -231,17 +229,17 @@ interface ModalData {
                   </div>
                 </td>
                 <td *ngIf="!avantMissionCollapsed">
-                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'checklist')"></div>
+                  <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'conflitCheck')"></div>
                 </td>
                 <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB documentaire', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.labGroupe, group.clients[0].missions[0].numeroGroupe, group.clients[0].missions[0].profilId, 'Groupe')">
                   <i class="fas status-icon" 
-                      [ngClass]="group.clients[0].missions[0].avantMission.labGroupe ? 'fa-check-circle' : 'fa-pen'"
-                      [class.completed]="group.clients[0].missions[0].avantMission.labGroupe"></i>
+                      [ngClass]="group.clients[0].missions[0].avantMission.labGroupe == 'oui' ? 'fa-check-circle' : group.clients[0].missions[0].avantMission.labGroupe == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                      [class.completed]="group.clients[0].missions[0].avantMission.labGroupe == 'oui'"></i>
                 </td>
                 <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Cartographie LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.cartoLabGroupe, group.clients[0].missions[0].numeroGroupe, group.clients[0].missions[0].profilId, 'Groupe')">
-                  <i class="fas status-icon" 
-                      [ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe ? 'fa-check-circle' : 'fa-pen'"
-                      [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe"></i>
+                  <i class="fas status-icon"
+                      [ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe == 'oui' ? 'fa-check-circle' : group.clients[0].missions[0].avantMission.cartoLabGroupe == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                      [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe == 'oui'"></i>
                 </td>
                 <td *ngIf="!avantMissionCollapsed">
                   <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'qac')"></div>
@@ -347,23 +345,23 @@ interface ModalData {
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Conflict check', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.conflitCheck, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon" 
-                       [ngClass]="client.missions[0].avantMission.conflitCheck ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="client.missions[0].avantMission.conflitCheck"></i>
+                       [ngClass]="client.missions[0].avantMission.conflitCheck == 'oui' ? 'fa-check-circle' : client.missions[0].avantMission.conflitCheck == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="client.missions[0].avantMission.conflitCheck == 'oui'"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB documentaire', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.labDossier, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon" 
-                       [ngClass]="client.missions[0].avantMission.labDossier ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="client.missions[0].avantMission.labDossier"></i>
+                       [ngClass]="client.missions[0].avantMission.labDossier == 'oui' ? 'fa-check-circle' : client.missions[0].avantMission.labDossier == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="client.missions[0].avantMission.labDossier == 'oui'"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Cartographie LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.cartoLabDossier, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon" 
-                       [ngClass]="client.missions[0].avantMission.cartoLabDossier ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="client.missions[0].avantMission.cartoLabDossier"></i>
+                       [ngClass]="client.missions[0].avantMission.cartoLabDossier == 'oui' ? 'fa-check-circle' : client.missions[0].avantMission.cartoLabDossier == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="client.missions[0].avantMission.cartoLabDossier == 'oui'"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAC', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.qac, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon" 
-                       [ngClass]="client.missions[0].avantMission.qac ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="client.missions[0].avantMission.qac"></i>
+                       [ngClass]="client.missions[0].avantMission.qac == 'oui' ? 'fa-check-circle' : client.missions[0].avantMission.qac == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="client.missions[0].avantMission.qac == 'oui'"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed">
                     <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'avantMission', 'qam')">
@@ -463,8 +461,8 @@ interface ModalData {
 
                   <!-- Avant la mission -->
                   <td class="percentage-cell">
-                    <div class="progress-circle" [attr.data-percentage]="mission.avantMission.percentage">
-                      {{ mission.avantMission.percentage }}%
+                    <div class="progress-circle" [attr.data-percentage]="getMissionAverage(mission, 'avantMission')">
+                      {{ getMissionAverage(mission, 'avantMission') }}%
                     </div>
                   </td>
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
@@ -473,77 +471,77 @@ interface ModalData {
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.qam, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.avantMission.qam ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.avantMission.qam"></i>
+                       [ngClass]="mission.avantMission.qam == 'oui' ? 'fa-check-circle' : mission.avantMission.qam == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.avantMission.qam == 'oui'"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LDM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.ldm, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.avantMission.ldm ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.avantMission.ldm"></i>
+                       [ngClass]="mission.avantMission.ldm == 'oui' ? 'fa-check-circle' : mission.avantMission.ldm == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.avantMission.ldm == 'oui'"></i>
                   </td>
                   
                   <!-- Pendant la mission -->
                   <td class="percentage-cell">
-                    <div class="progress-circle" [attr.data-percentage]="mission.pendantMission.percentage">
-                      {{ mission.pendantMission.percentage }}%
+                    <div class="progress-circle" [attr.data-percentage]="getMissionAverage(mission, 'pendantMission')">
+                      {{ getMissionAverage(mission, 'pendantMission') }}%
                     </div>
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('NOG', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.nog, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.pendantMission.nog ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.pendantMission.nog"></i>
+                       [ngClass]="mission.pendantMission.nog == 'oui' ? 'fa-check-circle' : mission.pendantMission.nog == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.pendantMission.nog == 'oui'"></i>
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Checklist', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.checklist, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.pendantMission.checklist ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.pendantMission.checklist"></i>
+                       [ngClass]="mission.pendantMission.checklist == 'oui' ? 'fa-check-circle' : mission.pendantMission.checklist == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.pendantMission.checklist == 'oui'"></i>
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Revision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.revision, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.pendantMission.revision ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.pendantMission.revision"></i>
+                       [ngClass]="mission.pendantMission.revision == 'oui' ? 'fa-check-circle' : mission.pendantMission.revision == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.pendantMission.revision == 'oui'"></i>
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Supervision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.supervision, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.pendantMission.supervision ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.pendantMission.supervision"></i>
+                       [ngClass]="mission.pendantMission.supervision == 'oui' ? 'fa-check-circle' : mission.pendantMission.supervision == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.pendantMission.supervision == 'oui'"></i>
                   </td>
                   
                   <!-- Fin de mission -->
                   <td class="percentage-cell">
-                    <div class="progress-circle" [attr.data-percentage]="mission.finMission.percentage">
-                      {{ mission.finMission.percentage }}%
+                    <div class="progress-circle" [attr.data-percentage]="getMissionAverage(mission, 'finMission')">
+                      {{ getMissionAverage(mission, 'finMission') }}%
                     </div>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('NDS', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.nds, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.nds ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.finMission.nds"></i>
+                       [ngClass]="mission.finMission.nds == 'oui' ? 'fa-check-circle' : mission.finMission.nds == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.finMission.nds == 'oui'"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('CR mission ou Attestation', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.cr, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.cr ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.finMission.cr"></i>
+                       [ngClass]="mission.finMission.cr == 'oui' ? 'fa-check-circle' : mission.finMission.cr == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.finMission.cr == 'oui'"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('QMM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.qmm, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.qmm ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.finMission.qmm"></i>
+                       [ngClass]="mission.finMission.qmm == 'oui' ? 'fa-check-circle' : mission.finMission.qmm == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.finMission.qmm == 'oui'"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Plaquette', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.plaquette, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.plaquette ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.finMission.plaquette"></i>
+                       [ngClass]="mission.finMission.plaquette == 'oui' ? 'fa-check-circle' : mission.finMission.plaquette == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.finMission.plaquette == 'oui'"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Restitution', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.restitution, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.restitution ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.finMission.restitution"></i>
+                       [ngClass]="mission.finMission.restitution == 'oui' ? 'fa-check-circle' : mission.finMission.restitution == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.finMission.restitution == 'oui'"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Fin relation client', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.finRelationClient, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.finRelationClient ? 'fa-check-circle' : 'fa-pen'"
-                       [class.completed]="mission.finMission.finRelationClient"></i>
+                       [ngClass]="mission.finMission.finRelationClient == 'oui' ? 'fa-check-circle' : mission.finMission.finRelationClient == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.finMission.finRelationClient == 'oui'"></i>
                   </td>
                 </tr>
               </ng-container>
@@ -727,80 +725,80 @@ interface ModalData {
           <div *ngIf="modalData.type === 'double-document'" class="double-upload-section">
             <p>{{ modalData.description }}</p>
 
-            <!-- Premier document -->
-            <div class="upload-group">
-              <h4>1. Plaquette</h4>
-              <div *ngIf="modalData.modifyMode === true"
-                class="file-upload-area" (click)="fileInput1.click()">
-                <input #fileInput1
-                      type="file"
-                      [accept]="modalData.acceptedTypes"
-                      (change)="onFileSelected($event, 1)"
-                      class="file-input">
-                <div><small>Formats acceptés : {{ modalData.acceptedTypes }}</small></div>
-              </div>
+            <h4>1. Plaquette</h4>
+            <div *ngIf="modalData.modifyMode === true"
+              class="file-input-group">
+              <input type="file"
+                    id="file-input"
+                    (change)="onFileSelectedDouble($event, 'plaquette')"
+                    [accept]="modalData.acceptedTypes"
+                    class="file-input">
+            </div>
+            <div *ngIf="modalData.selectedFile" class="file-info">
+              <span class="file-name">{{ modalData.selectedFile.name }}</span>
+              <div class="file-actions">
+                <button *ngIf="modalData.selectedFile.type === 'application/pdf'"
+                        class="preview-file"
+                        (click)="previewFile(modalData.selectedFile)">
+                  <i class="fas fa-eye"></i>
+                </button>
 
-              <div *ngIf="modalData.selectedFile" class="file-preview">
-                <div class="file-info">
-                  <span class="file-name">{{ modalData.selectedFile.name }}</span>
-                  <button *ngIf="modalData.selectedFile.type === 'application/pdf'"
-                          class="preview-file"
-                          (click)="previewFile(modalData.selectedFile)">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  <button class="download-file"
-                          (click)="downloadFile(modalData.selectedFile)">
-                    <i class="fas fa-download"></i>
-                  </button>
-                  <button *ngIf="modalData.modifyMode === true"
-                          class="remove-file-btn"
-                          (click)="removeFile('1')">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-              <div *ngIf="!modalData.selectedFile"
-                class="no-file-modal">
-                  Aucun fichier
+                <button class="download-file"
+                        (click)="downloadFile(modalData.selectedFile)">
+                  <i class="fas fa-download"></i>
+                </button>
+
+                <button *ngIf="modalData.modifyMode === true"
+                        class="remove-file"
+                        (click)="removeFileDouble(modalData.selectedFileId, 'plaquette')">
+                  <i class="fas fa-times"></i>
+                </button>
               </div>
             </div>
+            <div *ngIf="modalData.selectedFile == null"
+              class="no-file-modal">
+                Aucun fichier
+            </div>
+            <div *ngIf="modalData.modifyMode === true">
+              <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
+            </div>
 
-            <!-- Deuxième document -->
-            <div class="upload-group">
-              <h4>2. Mail accompagnement de la remise des comptes annuels</h4>
-              <div *ngIf="modalData.modifyMode === true"
-                class="file-upload-area" (click)="fileInput2.click()">
-                <input #fileInput2
-                      type="file"
-                      [accept]="modalData.acceptedTypes"
-                      (change)="onFileSelected($event, 2)"
-                      class="file-input">
-                <div><small>Formats acceptés : {{ modalData.acceptedTypes }}</small></div>
-              </div>
+            <h4>2. Mail accompagnement de la remise des comptes annuels</h4>
+            <div *ngIf="modalData.modifyMode === true"
+              class="file-input-group">
+              <input type="file"
+                    id="file-input"
+                    (change)="onFileSelectedDouble($event, 'mail')"
+                    [accept]="modalData.acceptedTypes"
+                    class="file-input">
+            </div>
+            <div *ngIf="modalData.selectedFile2" class="file-info">
+              <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+              <div class="file-actions">
+                <button *ngIf="modalData.selectedFile2.type === 'application/pdf'"
+                        class="preview-file"
+                        (click)="previewFile(modalData.selectedFile2)">
+                  <i class="fas fa-eye"></i>
+                </button>
 
-              <div *ngIf="modalData.selectedFile2" class="file-preview">
-                <div class="file-info">
-                  <span class="file-name">{{ modalData.selectedFile2.name }}</span>
-                  <button *ngIf="modalData.selectedFile2.type === 'application/pdf'"
-                          class="preview-file"
-                          (click)="previewFile(modalData.selectedFile2)">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  <button class="download-file"
-                          (click)="downloadFile(modalData.selectedFile2)">
-                    <i class="fas fa-download"></i>
-                  </button>
-                  <button *ngIf="modalData.modifyMode === true"
-                          class="remove-file-btn"
-                          (click)="removeFile('2')">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
+                <button class="download-file"
+                        (click)="downloadFile(modalData.selectedFile2)">
+                  <i class="fas fa-download"></i>
+                </button>
+
+                <button *ngIf="modalData.modifyMode === true"
+                        class="remove-file"
+                        (click)="removeFileDouble(modalData.selectedFileId2 || '', 'mail')">
+                  <i class="fas fa-times"></i>
+                </button>
               </div>
-              <div *ngIf="!modalData.selectedFile2"
-                class="no-file-modal">
-                  Aucun fichier
-              </div>
+            </div>
+            <div *ngIf="modalData.selectedFile2 == null"
+              class="no-file-modal">
+                Aucun fichier
+            </div>
+            <div *ngIf="modalData.modifyMode === true">
+              <small>Formats acceptés : {{ modalData.acceptedTypes }}</small>
             </div>
           </div>
 
@@ -1340,6 +1338,10 @@ interface ModalData {
       color: var(--gray-300);
     }
 
+    .status-icon:not(.completed).fa-hourglass {
+      color: var(--warning-color);
+    }
+
     .collapse-btn {
       background: none;
       border: none;
@@ -1842,7 +1844,7 @@ export class DashboardComponent implements OnInit {
     isOpen: false,
     columnName: '',
     missionId: '',
-    currentStatus: false,
+    currentStatus: '',
     selectedFile: null,
     selectedFileId: '',
     modifyMode: false,
@@ -1893,6 +1895,7 @@ export class DashboardComponent implements OnInit {
       this.userEmail = user?.mail || '';
       // console.log('Email :', this.userEmail);
       if(this.userEmail) {
+        this.setLogConnexion();
         this.loadData();
       }
     });
@@ -2205,13 +2208,100 @@ export class DashboardComponent implements OnInit {
   }
 
   getClientAverage(client: ClientGroup, phase: 'avantMission' | 'pendantMission' | 'finMission'): number {
-    if (client.missions.length === 0) return 0;
-    
-    const total = client.missions.reduce((sum, mission) => {
-      return sum + mission[phase].percentage;
-    }, 0);
-    
-    return Math.round(total / client.missions.length);
+    let countV = 0;
+    let total = 0;
+
+    if(phase == 'avantMission') {
+      const allMissions = client.missions;
+
+      if (allMissions.length === 0) return 0;
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+        nbValide += mission[phase].qam == 'oui' ? 1 : 0;
+        nbValide += mission[phase].ldm == 'oui' ? 1 : 0;
+        total += 2;
+        return nbValide;
+      }, 0);
+
+      const clientCount = (client.missions[0][phase].conflitCheck == 'oui' ? 1 : 0) +
+        (client.missions[0][phase].labDossier == 'oui' ? 1 : 0) +
+        (client.missions[0][phase].qac == 'oui' ? 1 : 0) + 
+        (client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0)
+
+      total += 4;
+
+      countV = missionCount + clientCount;
+    } else if(phase == 'pendantMission') {
+      const allMissions = client.missions;
+
+      if (allMissions.length === 0) return 0;
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+          nbValide += mission[phase].nog == 'oui' ? 1 : 0;
+          nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
+          nbValide += mission[phase].revision == 'oui' ? 1 : 0;
+          nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
+          total += 4;
+          return nbValide;
+        }, 0);
+
+        countV = missionCount;
+    } else if(phase == 'finMission') {
+      const allMissions = client.missions;
+
+      if (allMissions.length === 0) return 0;
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+          nbValide += mission[phase].nds == 'oui' ? 1 : 0;
+          nbValide += mission[phase].cr == 'oui' ? 1 : 0;
+          nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
+          nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
+          nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
+          nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
+          total += 6;
+          return nbValide;
+        }, 0);
+
+        countV = missionCount;
+    }
+
+    return Math.ceil(countV / total * 100);
+  }
+
+  getMissionAverage(mission: MissionData, phase: 'avantMission' | 'pendantMission' | 'finMission'): number {
+    let countV = 0;
+    let total = 0;
+
+    if(phase == 'avantMission') {
+      const missionCount = (mission[phase].qam == 'oui' ? 1 : 0) +
+        (mission[phase].ldm == 'oui' ? 1 : 0);
+
+      total = 2;
+      countV = missionCount;
+    } else if(phase == 'pendantMission') {
+      const missionCount = (mission[phase].nog == 'oui' ? 1 : 0) +
+        (mission[phase].checklist == 'oui' ? 1 : 0) + 
+        (mission[phase].revision == 'oui' ? 1 : 0) +
+        (mission[phase].supervision == 'oui' ? 1 : 0);
+
+      total = 4;
+      countV = missionCount;
+    } else if(phase == 'finMission') {
+      const missionCount = (mission[phase].nds == 'oui' ? 1 : 0) +
+        (mission[phase].cr == 'oui' ? 1 : 0) + 
+        (mission[phase].qmm == 'oui' ? 1 : 0) +
+        (mission[phase].plaquette == 'oui' ? 1 : 0) +
+        (mission[phase].restitution == 'oui' ? 1 : 0) +
+        (mission[phase].finRelationClient == 'oui' ? 1 : 0);
+
+      total = 6;
+      countV = missionCount;
+    }
+
+    return Math.ceil(countV / total * 100);
   }
 
   getClientRecap(client: ClientGroup, phase: 'avantMission' | 'pendantMission' | 'finMission', colonne: String): String {
@@ -2223,7 +2313,7 @@ export class DashboardComponent implements OnInit {
     client.missions.forEach(mission => {
       totalMissions++;
       // @ts-ignore
-      if (mission[phase][colonne] == true) {
+      if (mission[phase][colonne] == 'oui') {
         nbMissionsValide++;
       }
     });
@@ -2244,15 +2334,28 @@ export class DashboardComponent implements OnInit {
     let totalMissions = 0;
     let nbMissionsValide = 0;
 
-    group.clients.forEach(client => {
-      client.missions.forEach(mission => {
-        totalMissions++;
-        // @ts-ignore
-        if (mission[phase][colonne] == true) {
-          nbMissionsValide++;
-        }
+
+    if(phase == 'avantMission' && (colonne == 'conflitCheck' || colonne == 'qac')) {
+      group.clients.forEach(client => {
+        // client.missions.forEach(mission => {
+          totalMissions++;
+          // @ts-ignore
+          if (client.missions[0][phase][colonne] == 'oui') {
+            nbMissionsValide++;
+          }
+        // });
       });
-    });
+    } else {
+      group.clients.forEach(client => {
+        client.missions.forEach(mission => {
+          totalMissions++;
+          // @ts-ignore
+          if (mission[phase][colonne] == 'oui') {
+            nbMissionsValide++;
+          }
+        });
+      });
+    }
   
     let className = '';
     if (totalMissions === nbMissionsValide) {
@@ -2265,14 +2368,78 @@ export class DashboardComponent implements OnInit {
   }
 
   getGroupeAverage(group: GroupData, phase: 'avantMission' | 'pendantMission' | 'finMission'): number {
-    const allMissions = group.clients.flatMap(client => client.missions);
-    if (allMissions.length === 0) return 0;
-    
-    const total = allMissions.reduce((sum, mission) => {
-      return sum + mission[phase].percentage;
-    }, 0);
-    
-    return Math.round(total / allMissions.length);
+    let countV = 0;
+    let total = 0;
+
+    if(phase == 'avantMission') {
+      const allMissions = group.clients.flatMap(client => client.missions);
+
+      if (allMissions.length === 0) return 0;
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+        nbValide += mission[phase].qam == 'oui' ? 1 : 0;
+        nbValide += mission[phase].ldm == 'oui' ? 1 : 0;
+        total += 2;
+        return nbValide;
+      }, 0);
+
+      const allClients = group.clients;
+      if (allClients.length === 0) return 0;
+
+      const clientCount = allClients.reduce((sum, client) => {
+        let nbValide = sum;
+        nbValide += client.missions[0][phase].conflitCheck == 'oui' ? 1 : 0;
+        nbValide += client.missions[0][phase].labDossier == 'oui' ? 1 : 0;
+        nbValide += client.missions[0][phase].qac == 'oui' ? 1 : 0;
+        nbValide += client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0;
+        total += 4;
+        return nbValide;
+      }, 0);
+
+      const groupeCount = (group.clients[0].missions[0][phase].labGroupe == 'oui' ? 1 : 0) +
+        (group.clients[0].missions[0][phase].cartoLabGroupe == 'oui' ? 1 : 0);
+
+      total += 2;
+
+      countV = missionCount + clientCount + groupeCount;
+    } else if(phase == 'pendantMission') {
+      const allMissions = group.clients.flatMap(client => client.missions);
+
+      if (allMissions.length === 0) return 0;
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+          nbValide += mission[phase].nog == 'oui' ? 1 : 0;
+          nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
+          nbValide += mission[phase].revision == 'oui' ? 1 : 0;
+          nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
+          total += 4;
+          return nbValide;
+        }, 0);
+
+        countV = missionCount;
+    } else if(phase == 'finMission') {
+      const allMissions = group.clients.flatMap(client => client.missions);
+
+      if (allMissions.length === 0) return 0;
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+          nbValide += mission[phase].nds == 'oui' ? 1 : 0;
+          nbValide += mission[phase].cr == 'oui' ? 1 : 0;
+          nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
+          nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
+          nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
+          nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
+          total += 6;
+          return nbValide;
+        }, 0);
+
+        countV = missionCount;
+    }
+
+    return Math.ceil(countV / total * 100);
   }
 
   openFilterPanel(): void {
@@ -2292,10 +2459,12 @@ export class DashboardComponent implements OnInit {
     return Object.values(this.activeFilters).reduce((count, filters) => count + filters.length, 0);
   }
 
-  public openStatusModal(columnName: string, mission: string, currentStatus: boolean, missionIdDosPgiDosGroupe: string, profilId: string, source: string): void {
+  public openStatusModal(columnName: string, mission: string, currentStatus: string, missionIdDosPgiDosGroupe: string, profilId: string, source: string): void {
     this.missionIdDosPgiDosGroupeGlobal = missionIdDosPgiDosGroupe;
     this.moduleGlobal = columnName;
     this.sourceGlobal = source;
+
+    console.log('paginatedData', this.paginatedData);
 
     this.getModuleFiles(missionIdDosPgiDosGroupe, columnName, profilId, source).then(moduleData => {
       let module = moduleData.data[0];
@@ -2303,22 +2472,58 @@ export class DashboardComponent implements OnInit {
       let modifyMode = module.DTMOD_ModuleModification == 'oui';
 
       let file = null;
-      if(module.Base64_File) {
-        file = this.base64ToFile(module.Base64_File, module.MODFILE_TITLE);
-      }
+      let file2 = null;
 
-      // Initialiser les données de base
-      this.modalData = {
-        isOpen: true,
-        columnName: columnName,
-        missionId: missionIdDosPgiDosGroupe,
-        currentStatus: currentStatus,
-        selectedFile: file,
-        selectedFileId: module.MODFILE_Id,
-        selectedFile2: null,
-        modifyMode: modifyMode,
-        hasAccess: hasAccess
-      };
+      if(columnName == 'Plaquette') {
+        console.log(moduleData.data);
+        let modFileId = '';
+        let modFileId2 = '';
+        //ecris moi une boucle for qui parcours moduleData.data
+        let modData = moduleData.data;
+        modData.forEach((element: any) => {
+          if(element.MODFILE_FileCategorie == 'plaquette') {
+            if(module.Base64_File) {
+              file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
+              modFileId = element.MODFILE_Id;
+            }
+          } else if(element.MODFILE_FileCategorie == 'mail') {
+            if(module.Base64_File) {
+              file2 = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
+              modFileId2 = element.MODFILE_Id;
+            }
+          }
+        });
+
+        this.modalData = {
+          isOpen: true,
+          columnName: columnName,
+          missionId: missionIdDosPgiDosGroupe,
+          currentStatus: currentStatus,
+          selectedFile: file,
+          selectedFileId: modFileId,
+          selectedFile2: file2,
+          selectedFileId2: modFileId2,
+          modifyMode: modifyMode,
+          hasAccess: hasAccess
+        };
+      } else {
+        if(module.Base64_File) {
+          file = this.base64ToFile(module.Base64_File, module.MODFILE_TITLE);
+        }
+        // Initialiser les données de base
+        this.modalData = {
+          isOpen: true,
+          columnName: columnName,
+          missionId: missionIdDosPgiDosGroupe,
+          currentStatus: currentStatus,
+          selectedFile: file,
+          selectedFileId: module.MODFILE_Id,
+          selectedFile2: null,
+          selectedFileId2: '',
+          modifyMode: modifyMode,
+          hasAccess: hasAccess
+        };
+      }
 
       // Réinitialiser les inputs de fichiers pour le type document-add
       if (columnName === 'Checklist' || columnName === 'Révision') {
@@ -2421,11 +2626,11 @@ export class DashboardComponent implements OnInit {
           break;
 
         case 'Plaquette':
-          // this.modalData.type = 'double-document';
-          this.modalData.type = 'document';
+          this.modalData.type = 'double-document';
           this.modalData.title = 'Plaquette - Dépôt Documents';
           this.modalData.description = 'Déposez la plaquette et le mail d\'accompagnement';
-          this.modalData.acceptedTypes = '.pdf,.doc,.docx';
+          this.modalData.acceptedTypes = '.pdf,.doc,.docx,.eml,.msg,.txt,.oft';
+
           break;
 
         case 'Restitution communication client':
@@ -2511,44 +2716,41 @@ export class DashboardComponent implements OnInit {
   onFileSelected(event: Event, fileNumber?: number): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
-      if (this.modalData.type === 'document-add' && typeof fileNumber === 'number') {
-        console.log('File number:', fileNumber);
-        switch (fileNumber+1) {
-          case 1: this.modalData.selectedFile = input.files[0];
-            break;
-          case 2: this.modalData.selectedFile2 = input.files[0];
-            break;
-          case 3: this.modalData.selectedFile3 = input.files[0];
-            break;
-          case 4: this.modalData.selectedFile4 = input.files[0];
-            break;
-          case 5: this.modalData.selectedFile5 = input.files[0];
-            break;
-          case 6: this.modalData.selectedFile6 = input.files[0];
-            break;
-          case 7: this.modalData.selectedFile7 = input.files[0];
-            break;
-          case 8: this.modalData.selectedFile8 = input.files[0];
-            break;
-          case 9: this.modalData.selectedFile9 = input.files[0];
-            break;
-          case 10: this.modalData.selectedFile10 = input.files[0];
-            break;
-          default: break;
-        }
-        this.addFileInput();
-      } else if (fileNumber === 1) {
-        this.modalData.selectedFile = input.files[0];
-      } else if (fileNumber === 2) {
-        this.modalData.selectedFile2 = input.files[0];
-      } else {
+      
+      this.modalData.selectedFile = input.files[0];
+      console.log('Fichier sélectionné:', this.modalData.selectedFile);
+      this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal);
+      this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui');
+
+    }
+  }
+
+  onFileSelectedDouble(event: Event, categorie: string): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      if(categorie === 'plaquette') {
         this.modalData.selectedFile = input.files[0];
         console.log('Fichier sélectionné:', this.modalData.selectedFile);
-        this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal);
-        this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
-        this.loadData();
+        this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
+        if(this.modalData.selectedFile2) {
+          this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+        } else {
+          this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+        }
+      } else if(categorie === 'mail') {
+        this.modalData.selectedFile2 = input.files[0];
+        console.log('Fichier sélectionné:', this.modalData.selectedFile2);
+        this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
+        if(this.modalData.selectedFile) {
+          this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui');
+        } else {
+          this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours');
+        }
       }
-      this.updateModuleStatus();
     }
   }
 
@@ -2569,16 +2771,25 @@ export class DashboardComponent implements OnInit {
   }
 
   removeFile(fileNumber: string): void {
-    // if (fileNumber === 1) {
-    //   this.modalData.selectedFile = null;
-    // } else if (fileNumber === 2) {
-    //   this.modalData.selectedFile2 = null;
-    // } else {
     this.modalData.selectedFile = null;
-    this.deleteModuleFile(fileNumber);
+    this.deleteModuleFile(fileNumber, this.userEmail, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
     this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
-    this.loadData();
-    // this.updateModuleStatus();
+    this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non');
+  }
+
+  removeFileDouble(fileNumber: string, categorie: string): void {
+    this.modalData.selectedFile = null;
+    this.deleteModuleFile(fileNumber, this.userEmail, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+    if(categorie == 'plaquette' && this.modalData.selectedFile2) {
+      this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours');
+    } else if(categorie == 'mail' && this.modalData.selectedFile) {
+      this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours');
+    } else {
+      this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non');
+    }
   }
 
   updateQuestionnaireStatus(): void {
@@ -2705,7 +2916,7 @@ export class DashboardComponent implements OnInit {
     return res;
   }
 
-  sendModuleFile(module: String, email: String, file: File, missionIdDosPgiDosGroupe: String, source: String) {
+  sendModuleFile(module: String, email: String, file: File, missionIdDosPgiDosGroupe: String, source: String, categorie?: string | ''): void {
     console.log('Envoi du fichier du module:', module);
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -2722,7 +2933,8 @@ export class DashboardComponent implements OnInit {
         file: base64File,
         missionIdDosPgiDosGroupe: missionIdDosPgiDosGroupe + "",
         title: fileName,
-        source
+        source,
+        categorie: categorie || ''
       };
 
       this.http.post(`${environment.apiUrl}/files/setModuleFile`, moduleFile)
@@ -2801,12 +3013,84 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  deleteModuleFile(fileId: String) {
+  deleteModuleFile(fileId: String, email: String, source: String, missionIdDosPgiDosGroupe: String, module: String) {
     console.log('Suppression du fichier du module:', fileId);
 
-    this.http.delete(`${environment.apiUrl}/files/deleteModuleFile/${fileId}`)
-      .subscribe(response => {
-        console.log('Réponse du serveur:', response);
+    this.http.post(`${environment.apiUrl}/files/deleteModuleFile`, {
+        fileId,
+        email,
+        source,
+        missionIdDosPgiDosGroupe,
+        module
+    })
+    .subscribe(response => {
+      console.log('Réponse du serveur:', response);
+    });
+  }
+
+  setLogConnexion() {
+    console.log('Envoi du log de connexion:', this.userEmail);
+
+    this.http.post(`${environment.apiUrl}/logs/setLogConnexion`, {
+        email: this.userEmail,
+        page: 'Vue listing'
+    })
+    .subscribe(response => {
+      console.log('Réponse du serveur:', response);
+    });
+  }
+
+  updateStatusTable(niveau: string, module: string, etat: string) {
+    console.log('Niveau', niveau);
+    console.log('Module', module);
+    this.paginatedData.forEach((group: GroupData) => {
+      group.clients.forEach((client: ClientGroup) => {
+        client.missions.forEach((mission: MissionData) => {
+          if(niveau == 'Groupe') {
+            if(module == 'LAB documentaire') {
+              mission.avantMission.labGroupe = etat;
+            } else if(module == 'Cartographie LAB') {
+              mission.avantMission.cartoLabGroupe = etat;
+            }
+          } else if(niveau == 'Dossier') {
+            if(module == 'LAB documentaire') {
+              mission.avantMission.labDossier = etat;
+            } else if(module == 'Cartographie LAB') {
+              mission.avantMission.cartoLabDossier = etat;
+            } else if(module == 'QAC') {
+              mission.avantMission.qac == etat;
+            } else if(module == 'Conflict check') {
+              mission.avantMission.conflitCheck = etat;
+            }
+          } else if(niveau == 'Mission') {
+            if(module == 'QAM') {
+              mission.avantMission.qam = etat;
+            } else if(module == 'LDM') {
+              mission.avantMission.ldm = etat;
+            } else if(module == 'NOG') {
+              mission.pendantMission.nog == etat;
+            } else if(module == 'Checklist') {
+              mission.pendantMission.checklist = etat;
+            } else if(module == 'Revision') {
+              mission.pendantMission.revision = etat;
+            } else if(module == 'Supervision') {
+              mission.pendantMission.supervision = etat;
+            } else if(module == 'NDS') {
+              mission.finMission.nds = etat;
+            } else if(module == 'CR mission ou Attestation') {
+              mission.finMission.cr = etat;
+            } else if(module == 'QMM') {
+              mission.finMission.qmm = etat;
+            } else if(module == 'Plaquette') {
+              mission.finMission.plaquette = etat;
+            } else if(module == 'Restitution') {
+              mission.finMission.restitution = etat;
+            } else if(module == 'Fin relation client') {
+              mission.finMission.finRelationClient = etat;
+            }
+          }
+        });
       });
+    });
   }
 }
