@@ -2722,7 +2722,7 @@ export class DashboardComponent implements OnInit {
       this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal);
       this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
 
-      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
 
     }
   }
@@ -2736,8 +2736,10 @@ export class DashboardComponent implements OnInit {
         this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
         if(this.modalData.selectedFile2) {
           this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
         } else {
           this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
         }
       } else if(categorie === 'mail') {
         this.modalData.selectedFile2 = input.files[0];
@@ -2745,10 +2747,10 @@ export class DashboardComponent implements OnInit {
         this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
         if(this.modalData.selectedFile) {
           this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
-          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
         } else {
           this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
-          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
         }
       }
     }
@@ -2774,7 +2776,7 @@ export class DashboardComponent implements OnInit {
     this.modalData.selectedFile = null;
     this.deleteModuleFile(fileNumber, this.userEmail, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
     this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
-    this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non');
+    this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
   }
 
   removeFileDouble(fileNumber: string, categorie: string): void {
@@ -2782,13 +2784,13 @@ export class DashboardComponent implements OnInit {
     this.deleteModuleFile(fileNumber, this.userEmail, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
     if(categorie == 'plaquette' && this.modalData.selectedFile2) {
       this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
-      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
     } else if(categorie == 'mail' && this.modalData.selectedFile) {
       this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
-      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
     } else {
       this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
-      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
     }
   }
 
@@ -3040,53 +3042,59 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  updateStatusTable(niveau: string, module: string, etat: string) {
+  updateStatusTable(niveau: string, module: string, etat: string, missionIdDosPgiDosGroupe: string) {
     console.log('Niveau', niveau);
     console.log('Module', module);
     this.paginatedData.forEach((group: GroupData) => {
       group.clients.forEach((client: ClientGroup) => {
         client.missions.forEach((mission: MissionData) => {
           if(niveau == 'Groupe') {
-            if(module == 'LAB documentaire') {
-              mission.avantMission.labGroupe = etat;
-            } else if(module == 'Cartographie LAB') {
-              mission.avantMission.cartoLabGroupe = etat;
+            if(mission.numeroGroupe == missionIdDosPgiDosGroupe) {
+              if(module == 'LAB documentaire') {
+                mission.avantMission.labGroupe = etat;
+              } else if(module == 'Cartographie LAB') {
+                mission.avantMission.cartoLabGroupe = etat;
+              }
             }
           } else if(niveau == 'Dossier') {
-            if(module == 'LAB documentaire') {
-              mission.avantMission.labDossier = etat;
-            } else if(module == 'Cartographie LAB') {
-              mission.avantMission.cartoLabDossier = etat;
-            } else if(module == 'QAC') {
-              mission.avantMission.qac == etat;
-            } else if(module == 'Conflict check') {
-              mission.avantMission.conflitCheck = etat;
+            if(mission.numeroClient == missionIdDosPgiDosGroupe) {
+              if(module == 'LAB documentaire') {
+                mission.avantMission.labDossier = etat;
+              } else if(module == 'Cartographie LAB') {
+                mission.avantMission.cartoLabDossier = etat;
+              } else if(module == 'QAC') {
+                mission.avantMission.qac = etat;
+              } else if(module == 'Conflict check') {
+                mission.avantMission.conflitCheck = etat;
+              }
             }
           } else if(niveau == 'Mission') {
-            if(module == 'QAM') {
-              mission.avantMission.qam = etat;
-            } else if(module == 'LDM') {
-              mission.avantMission.ldm = etat;
-            } else if(module == 'NOG') {
-              mission.pendantMission.nog == etat;
-            } else if(module == 'Checklist') {
-              mission.pendantMission.checklist = etat;
-            } else if(module == 'Revision') {
-              mission.pendantMission.revision = etat;
-            } else if(module == 'Supervision') {
-              mission.pendantMission.supervision = etat;
-            } else if(module == 'NDS') {
-              mission.finMission.nds = etat;
-            } else if(module == 'CR mission ou Attestation') {
-              mission.finMission.cr = etat;
-            } else if(module == 'QMM') {
-              mission.finMission.qmm = etat;
-            } else if(module == 'Plaquette') {
-              mission.finMission.plaquette = etat;
-            } else if(module == 'Restitution') {
-              mission.finMission.restitution = etat;
-            } else if(module == 'Fin relation client') {
-              mission.finMission.finRelationClient = etat;
+            if(mission.missionId == missionIdDosPgiDosGroupe) {
+              if(module == 'QAM') {
+                mission.avantMission.qam = etat;
+              } else if(module == 'LDM') {
+                mission.avantMission.ldm = etat;
+              } else if(module == 'NOG') {
+                mission.pendantMission.nog = etat;
+              } else if(module == 'Checklist') {
+                mission.pendantMission.checklist = etat;
+              } else if(module == 'Revision') {
+                mission.pendantMission.revision = etat;
+              } else if(module == 'Supervision') {
+                mission.pendantMission.supervision = etat;
+              } else if(module == 'NDS') {
+                mission.finMission.nds = etat;
+              } else if(module == 'CR mission ou Attestation') {
+                mission.finMission.cr = etat;
+              } else if(module == 'QMM') {
+                mission.finMission.qmm = etat;
+              } else if(module == 'Plaquette') {
+                mission.finMission.plaquette = etat;
+              } else if(module == 'Restitution') {
+                mission.finMission.restitution = etat;
+              } else if(module == 'Fin relation client') {
+                mission.finMission.finRelationClient = etat;
+              }
             }
           }
         });
