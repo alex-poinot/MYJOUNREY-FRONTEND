@@ -173,8 +173,8 @@ interface ModalData {
               
               <!-- Avant la mission columns -->
               <th class="column-header percentage">%</th>
-              <th *ngIf="!avantMissionCollapsed" class="column-header">Conflit<br>Check</th>
-              <th *ngIf="!avantMissionCollapsed" class="column-header">LAB</th>
+              <th *ngIf="!avantMissionCollapsed" class="column-header">Conflict<br>Check</th>
+              <th *ngIf="!avantMissionCollapsed" class="column-header">LAB<br>doc</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">Carto<br>LAB</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">QAC</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">QAM</th>
@@ -224,7 +224,7 @@ interface ModalData {
                   </div>
                 </td>
                 <td class="percentage-cell">
-                  <div class="progress-circle" [attr.data-percentage]="getGroupeAverage(group, 'avantMission')">
+                  <div class="progress-circle" title="{{ getGroupeAverageCalcul(group, 'avantMission') }}" [attr.data-percentage]="getGroupeAverage(group, 'avantMission')">
                     {{ getGroupeAverage(group, 'avantMission') }}%
                   </div>
                 </td>
@@ -256,7 +256,7 @@ interface ModalData {
                 </td>
 
                 <td class="percentage-cell">
-                  <div class="progress-circle" [attr.data-percentage]="getGroupeAverage(group, 'pendantMission')">
+                  <div class="progress-circle" title="{{ getGroupeAverageCalcul(group, 'pendantMission') }}" [attr.data-percentage]="getGroupeAverage(group, 'pendantMission')">
                     {{ getGroupeAverage(group, 'pendantMission') }}%
                   </div>
                 </td>
@@ -282,7 +282,7 @@ interface ModalData {
                   </td>
 
                 <td class="percentage-cell">
-                  <div class="progress-circle" [attr.data-percentage]="getGroupeAverage(group, 'finMission')">
+                  <div class="progress-circle" title="{{ getGroupeAverageCalcul(group, 'finMission') }}" [attr.data-percentage]="getGroupeAverage(group, 'finMission')">
                     {{ getGroupeAverage(group, 'finMission') }}%
                   </div>
                 </td>
@@ -339,7 +339,7 @@ interface ModalData {
                   
                   <!-- Colonnes vides pour l'alignement -->
                   <td class="percentage-cell">
-                    <div class="progress-circle" [attr.data-percentage]="getClientAverage(client, 'avantMission')">
+                    <div class="progress-circle" title="{{ getClientAverageCalcul(client, 'avantMission') }}" [attr.data-percentage]="getClientAverage(client, 'avantMission')">
                       {{ getClientAverage(client, 'avantMission') }}%
                     </div>
                   </td>
@@ -375,7 +375,7 @@ interface ModalData {
                   </td>
 
                   <td class="percentage-cell">
-                    <div class="progress-circle" [attr.data-percentage]="getClientAverage(client, 'pendantMission')">
+                    <div class="progress-circle" title="{{ getClientAverageCalcul(client, 'pendantMission') }}" [attr.data-percentage]="getClientAverage(client, 'pendantMission')">
                       {{ getClientAverage(client, 'pendantMission') }}%
                     </div>
                   </td>
@@ -401,7 +401,7 @@ interface ModalData {
                   </td>
                   
                   <td class="percentage-cell">
-                    <div class="progress-circle" [attr.data-percentage]="getClientAverage(client, 'finMission')">
+                    <div class="progress-circle" title="{{ getClientAverageCalcul(client, 'finMission') }}" [attr.data-percentage]="getClientAverage(client, 'finMission')">
                       {{ getClientAverage(client, 'finMission') }}%
                     </div>
                   </td>
@@ -461,7 +461,7 @@ interface ModalData {
 
                   <!-- Avant la mission -->
                   <td class="percentage-cell">
-                    <div class="progress-circle" [attr.data-percentage]="getMissionAverage(mission, 'avantMission')">
+                    <div class="progress-circle" title="{{ getMissionAverageCalcul(mission, 'avantMission') }}" [attr.data-percentage]="getMissionAverage(mission, 'avantMission')">
                       {{ getMissionAverage(mission, 'avantMission') }}%
                     </div>
                   </td>
@@ -482,7 +482,7 @@ interface ModalData {
                   
                   <!-- Pendant la mission -->
                   <td class="percentage-cell">
-                    <div class="progress-circle" [attr.data-percentage]="getMissionAverage(mission, 'pendantMission')">
+                    <div class="progress-circle" title="{{ getMissionAverageCalcul(mission, 'pendantMission') }}" [attr.data-percentage]="getMissionAverage(mission, 'pendantMission')">
                       {{ getMissionAverage(mission, 'pendantMission') }}%
                     </div>
                   </td>
@@ -509,7 +509,7 @@ interface ModalData {
                   
                   <!-- Fin de mission -->
                   <td class="percentage-cell">
-                    <div class="progress-circle" [attr.data-percentage]="getMissionAverage(mission, 'finMission')">
+                    <div class="progress-circle" title="{{ getMissionAverageCalcul(mission, 'finMission') }}" [attr.data-percentage]="getMissionAverage(mission, 'finMission')">
                       {{ getMissionAverage(mission, 'finMission') }}%
                     </div>
                   </td>
@@ -1836,6 +1836,7 @@ export class DashboardComponent implements OnInit {
 
   currentUser: UserProfile | null = null;
   userEmail: string = '';
+  usrMailCollab: string = '';
 
   isFilterPanelOpen = false;
   activeFilters: ActiveFilters = {};
@@ -1893,6 +1894,7 @@ export class DashboardComponent implements OnInit {
     this.authService.userProfile$.subscribe(user => {
       this.currentUser = user;
       this.userEmail = user?.mail || '';
+      this.usrMailCollab = user?.mail || '';
       // console.log('Email :', this.userEmail);
       if(this.userEmail) {
         this.setLogConnexion();
@@ -2271,6 +2273,70 @@ export class DashboardComponent implements OnInit {
     return Math.ceil(countV / total * 100);
   }
 
+  getClientAverageCalcul(client: ClientGroup, phase: 'avantMission' | 'pendantMission' | 'finMission'): string {
+    let countV = 0;
+    let total = 0;
+
+    if(phase == 'avantMission') {
+      const allMissions = client.missions;
+
+      if (allMissions.length === 0) return '';
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+        nbValide += mission[phase].qam == 'oui' ? 1 : 0;
+        nbValide += mission[phase].ldm == 'oui' ? 1 : 0;
+        total += 2;
+        return nbValide;
+      }, 0);
+
+      const clientCount = (client.missions[0][phase].conflitCheck == 'oui' ? 1 : 0) +
+        (client.missions[0][phase].labDossier == 'oui' ? 1 : 0) +
+        (client.missions[0][phase].qac == 'oui' ? 1 : 0) + 
+        (client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0)
+
+      total += 4;
+
+      countV = missionCount + clientCount;
+    } else if(phase == 'pendantMission') {
+      const allMissions = client.missions;
+
+      if (allMissions.length === 0) return '';
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+          nbValide += mission[phase].nog == 'oui' ? 1 : 0;
+          nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
+          nbValide += mission[phase].revision == 'oui' ? 1 : 0;
+          nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
+          total += 4;
+          return nbValide;
+        }, 0);
+
+        countV = missionCount;
+    } else if(phase == 'finMission') {
+      const allMissions = client.missions;
+
+      if (allMissions.length === 0) return '';
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+          nbValide += mission[phase].nds == 'oui' ? 1 : 0;
+          nbValide += mission[phase].cr == 'oui' ? 1 : 0;
+          nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
+          nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
+          nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
+          nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
+          total += 6;
+          return nbValide;
+        }, 0);
+
+        countV = missionCount;
+    }
+
+    return countV + ' / ' + total;
+  }
+
   getMissionAverage(mission: MissionData, phase: 'avantMission' | 'pendantMission' | 'finMission'): number {
     let countV = 0;
     let total = 0;
@@ -2302,6 +2368,39 @@ export class DashboardComponent implements OnInit {
     }
 
     return Math.ceil(countV / total * 100);
+  }
+
+  getMissionAverageCalcul(mission: MissionData, phase: 'avantMission' | 'pendantMission' | 'finMission'): string {
+    let countV = 0;
+    let total = 0;
+
+    if(phase == 'avantMission') {
+      const missionCount = (mission[phase].qam == 'oui' ? 1 : 0) +
+        (mission[phase].ldm == 'oui' ? 1 : 0);
+
+      total = 2;
+      countV = missionCount;
+    } else if(phase == 'pendantMission') {
+      const missionCount = (mission[phase].nog == 'oui' ? 1 : 0) +
+        (mission[phase].checklist == 'oui' ? 1 : 0) + 
+        (mission[phase].revision == 'oui' ? 1 : 0) +
+        (mission[phase].supervision == 'oui' ? 1 : 0);
+
+      total = 4;
+      countV = missionCount;
+    } else if(phase == 'finMission') {
+      const missionCount = (mission[phase].nds == 'oui' ? 1 : 0) +
+        (mission[phase].cr == 'oui' ? 1 : 0) + 
+        (mission[phase].qmm == 'oui' ? 1 : 0) +
+        (mission[phase].plaquette == 'oui' ? 1 : 0) +
+        (mission[phase].restitution == 'oui' ? 1 : 0) +
+        (mission[phase].finRelationClient == 'oui' ? 1 : 0);
+
+      total = 6;
+      countV = missionCount;
+    }
+
+    return countV + ' / ' + total;
   }
 
   getClientRecap(client: ClientGroup, phase: 'avantMission' | 'pendantMission' | 'finMission', colonne: String): String {
@@ -2442,6 +2541,81 @@ export class DashboardComponent implements OnInit {
     return Math.ceil(countV / total * 100);
   }
 
+    getGroupeAverageCalcul(group: GroupData, phase: 'avantMission' | 'pendantMission' | 'finMission'): string {
+    let countV = 0;
+    let total = 0;
+
+    if(phase == 'avantMission') {
+      const allMissions = group.clients.flatMap(client => client.missions);
+
+      if (allMissions.length === 0) return '';
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+        nbValide += mission[phase].qam == 'oui' ? 1 : 0;
+        nbValide += mission[phase].ldm == 'oui' ? 1 : 0;
+        total += 2;
+        return nbValide;
+      }, 0);
+
+      const allClients = group.clients;
+      if (allClients.length === 0) return '';
+
+      const clientCount = allClients.reduce((sum, client) => {
+        let nbValide = sum;
+        nbValide += client.missions[0][phase].conflitCheck == 'oui' ? 1 : 0;
+        nbValide += client.missions[0][phase].labDossier == 'oui' ? 1 : 0;
+        nbValide += client.missions[0][phase].qac == 'oui' ? 1 : 0;
+        nbValide += client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0;
+        total += 4;
+        return nbValide;
+      }, 0);
+
+      const groupeCount = (group.clients[0].missions[0][phase].labGroupe == 'oui' ? 1 : 0) +
+        (group.clients[0].missions[0][phase].cartoLabGroupe == 'oui' ? 1 : 0);
+
+      total += 2;
+
+      countV = missionCount + clientCount + groupeCount;
+    } else if(phase == 'pendantMission') {
+      const allMissions = group.clients.flatMap(client => client.missions);
+
+      if (allMissions.length === 0) return '';
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+          nbValide += mission[phase].nog == 'oui' ? 1 : 0;
+          nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
+          nbValide += mission[phase].revision == 'oui' ? 1 : 0;
+          nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
+          total += 4;
+          return nbValide;
+        }, 0);
+
+        countV = missionCount;
+    } else if(phase == 'finMission') {
+      const allMissions = group.clients.flatMap(client => client.missions);
+
+      if (allMissions.length === 0) return '';
+
+      const missionCount = allMissions.reduce((sum, mission) => {
+        let nbValide = sum;
+          nbValide += mission[phase].nds == 'oui' ? 1 : 0;
+          nbValide += mission[phase].cr == 'oui' ? 1 : 0;
+          nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
+          nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
+          nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
+          nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
+          total += 6;
+          return nbValide;
+        }, 0);
+
+        countV = missionCount;
+    }
+
+    return countV + ' / '  + total;
+  }
+
   openFilterPanel(): void {
     this.isFilterPanelOpen = true;
   }
@@ -2532,22 +2706,22 @@ export class DashboardComponent implements OnInit {
 
       // Configuration spécifique par module
       switch (columnName) {
-        case 'Conflit Check':
+        case 'Conflict check':
           this.modalData.type = 'document';
           this.modalData.title = 'Conflit Check - Dépôt PDF';
           this.modalData.description = 'Déposez le PDF de vérification des conflits';
           this.modalData.acceptedTypes = '.pdf,.doc,.docx';
           break;
 
-        case 'LAB':
-          this.modalData.type = 'document';
-          // this.modalData.type = 'LAB';
+        case 'LAB documentaire':
+          // this.modalData.type = 'document';
+          this.modalData.type = 'LAB';
           this.modalData.title = 'LAB - Dépôt Document';
           this.modalData.description = 'Déposez les documents LAB';
           this.modalData.acceptedTypes = '.pdf,.doc,.docx';
           break;
 
-        case 'Carto LAB':
+        case 'Cartographie LAB':
           this.modalData.type = 'coming-soon';
           this.modalData.title = 'Carto LAB - Questionnaire';
           this.modalData.description = 'Cette fonctionnalité sera bientôt disponible';
@@ -2589,7 +2763,7 @@ export class DashboardComponent implements OnInit {
           this.modalData.acceptedTypes = '.pdf,.doc,.docx';
           break;
 
-        case 'Révision':
+        case 'Revision':
           // this.modalData.type = 'document-add';
           this.modalData.type = 'document';
           this.modalData.title = 'Révision - Dépôt Document';
@@ -2611,7 +2785,7 @@ export class DashboardComponent implements OnInit {
           this.modalData.acceptedTypes = '.pdf,.doc,.docx';
           break;
         
-        case 'CR Mission':
+        case 'CR mission ou Attestation':
           this.modalData.type = 'document';
           this.modalData.title = 'CR Mission - Dépôt Document';
           this.modalData.description = 'Déposez le document CR Mission';
@@ -2633,7 +2807,7 @@ export class DashboardComponent implements OnInit {
 
           break;
 
-        case 'Restitution communication client':
+        case 'Restitution':
           this.modalData.type = 'document';
           this.modalData.title = 'Restitution - Dépôt Document';
           this.modalData.description = 'Déposez le document de restitution';
@@ -2719,8 +2893,8 @@ export class DashboardComponent implements OnInit {
       
       this.modalData.selectedFile = input.files[0];
       console.log('Fichier sélectionné:', this.modalData.selectedFile);
-      this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal);
-      this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+      this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal);
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
 
       this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
 
@@ -2733,23 +2907,23 @@ export class DashboardComponent implements OnInit {
       if(categorie === 'plaquette') {
         this.modalData.selectedFile = input.files[0];
         console.log('Fichier sélectionné:', this.modalData.selectedFile);
-        this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
+        this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
         if(this.modalData.selectedFile2) {
-          this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
           this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
         } else {
-          this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
           this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
         }
       } else if(categorie === 'mail') {
         this.modalData.selectedFile2 = input.files[0];
         console.log('Fichier sélectionné:', this.modalData.selectedFile2);
-        this.sendModuleFile(this.moduleGlobal, this.userEmail, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
+        this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
         if(this.modalData.selectedFile) {
-          this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
           this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
         } else {
-          this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
           this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
         }
       }
@@ -2774,22 +2948,22 @@ export class DashboardComponent implements OnInit {
 
   removeFile(fileNumber: string): void {
     this.modalData.selectedFile = null;
-    this.deleteModuleFile(fileNumber, this.userEmail, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
-    this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
+    this.deleteModuleFile(fileNumber, this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+    this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
     this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
   }
 
   removeFileDouble(fileNumber: string, categorie: string): void {
     this.modalData.selectedFile = null;
-    this.deleteModuleFile(fileNumber, this.userEmail, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+    this.deleteModuleFile(fileNumber, this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
     if(categorie == 'plaquette' && this.modalData.selectedFile2) {
-      this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
       this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
     } else if(categorie == 'mail' && this.modalData.selectedFile) {
-      this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
       this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
     } else {
-      this.sendModuleStatus(this.moduleGlobal, this.userEmail, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
       this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
     }
   }
@@ -3031,10 +3205,10 @@ export class DashboardComponent implements OnInit {
   }
 
   setLogConnexion() {
-    console.log('Envoi du log de connexion:', this.userEmail);
+    console.log('Envoi du log de connexion:', this.usrMailCollab);
 
     this.http.post(`${environment.apiUrl}/logs/setLogConnexion`, {
-        email: this.userEmail,
+        email: this.usrMailCollab,
         page: 'Vue listing'
     })
     .subscribe(response => {
