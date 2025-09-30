@@ -46,6 +46,7 @@ export interface TabGroup {
       <div class="navbar-menu">
         <div *ngFor="let group of tabGroups" 
              class="menu-group"
+             style="display:none"
              (mouseenter)="onGroupHover(group, true)"
              (mouseleave)="onGroupHover(group, false)">
           
@@ -602,15 +603,16 @@ export class NavbarComponent {
   impersonationEmailInput = '';
   filteredUsers: ApiUser[] = [];
   allUsers: ApiUser[] = [];
+  allAdminUsers: string[] = [];
   usersLoaded = false;
   showUserDropdown = false;
   isLoadingAllUsers = false;
   isSearchingUsers = false;
   isImpersonating = false;
+  isAdminValue = false;
   defaultPhoto = 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=100';
 
   private searchSubject = new Subject<string>();
-
   tabGroups: TabGroup[] = [
     {
       name: 'Avant la mission',
@@ -649,6 +651,13 @@ export class NavbarComponent {
       this.isImpersonating = email !== null;
     });
 
+    this.http.get<{ success: boolean; data: string[]; count: number; timestamp: string }>(`${environment.apiUrl}/users/getAllAdminUsers`)
+      .subscribe((response) => {
+        this.allAdminUsers = response.data;
+      }, (error) => {
+        console.error('Erreur lors de la récupération des admins :', error);
+      });
+
     // Configuration de la recherche avec debounce
     this.searchSubject.pipe(
       debounceTime(300),
@@ -670,6 +679,8 @@ export class NavbarComponent {
     });
 
   }
+
+  
 
   private async loadAllUsers(): Promise<void> {
     if (this.usersLoaded || this.isLoadingAllUsers) {
@@ -767,8 +778,13 @@ export class NavbarComponent {
   }
   
   isAdmin(): boolean {
-    return this.authService.isCurrentUserAdmin();
+    if(this.allAdminUsers.length == 0) {
+      return false;
+    } else {
+      return this.allAdminUsers.includes(this.currentUser?.mail.toLowerCase() ?? '');
+    }
   }
+
   
   openImpersonationModal(): void {
     this.showImpersonationModal = true;

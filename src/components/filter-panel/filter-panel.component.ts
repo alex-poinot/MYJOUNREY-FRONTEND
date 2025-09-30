@@ -1,6 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../environments/environment';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 export interface FilterOption {
   value: string;
@@ -59,58 +61,125 @@ export interface ActiveFilters {
         
         <!-- Groupes de filtres -->
         <div class="filter-groups">
-          <div *ngFor="let group of filterGroups" class="filter-group">
-            <div class="group-header" (click)="toggleGroup(group)">
-              <div class="group-title">
-                <i class="fas" [class.fa-chevron-down]="!group.collapsed" [class.fa-chevron-right]="group.collapsed"></i>
-                <span>{{ group.label }}</span>
-                <span *ngIf="getSelectedCount(group) > 0" class="selected-count">({{ getSelectedCount(group) }})</span>
-              </div>
-              <div class="group-actions">
-                <button *ngIf="!group.collapsed" class="select-all-btn" (click)="selectAll(group, $event)">
-                  {{ areAllSelected(group) ? 'Désélectionner tout' : 'Tout sélectionner' }}
-                </button>
-              </div>
-            </div>
-            
-            <div *ngIf="!group.collapsed" class="group-options">
-              <!-- Input de recherche -->
-              <div class="search-container">
-                <div class="search-input-wrapper">
-                  <i class="fas fa-search search-icon"></i>
-                  <input 
-                    type="text" 
-                    class="search-input"
-                    [value]="group.searchTerm || ''"
-                    (input)="onSearchChange(group, $event.target.value)"
-                    placeholder="Rechercher..."
-                    autocomplete="off">
-                  <button 
-                    *ngIf="group.searchTerm && group.searchTerm.length > 0"
-                    class="clear-search-btn"
-                    (click)="clearSearch(group)"
-                    type="button">
-                    <i class="fas fa-times"></i>
+
+          <div class="filter-group-categorie">
+            <div class="libelle-filter-categorie">Filtres sur les dossiers</div>
+            <div *ngFor="let group of filterGroupsDossier" class="filter-group">
+              <div class="group-header" (click)="toggleGroup(group)">
+                <div class="group-title">
+                  <i class="fas" [class.fa-chevron-down]="!group.collapsed" [class.fa-chevron-right]="group.collapsed"></i>
+                  <span>{{ group.label }}</span>
+                  <span *ngIf="getSelectedCount(group) > 0" class="selected-count">({{ getSelectedCount(group) }})</span>
+                </div>
+                <div class="group-actions">
+                  <button *ngIf="!group.collapsed" class="select-all-btn" (click)="selectAll(group, $event)">
+                    {{ areAllSelected(group) ? 'Désélectionner tout' : 'Tout sélectionner' }}
                   </button>
                 </div>
               </div>
               
-              <!-- Message si aucun résultat -->
-              <div *ngIf="group.filteredOptions && group.filteredOptions.length === 0" class="no-results-message">
-                <i class="fas fa-search"></i>
-                <span>Aucun résultat trouvé</span>
+              <div *ngIf="!group.collapsed" class="group-options">
+                <!-- Input de recherche -->
+                <div class="search-container">
+                  <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                      type="text" 
+                      class="search-input"
+                      [value]="group.searchTerm || ''"
+                      (input)="onSearchChange(group, $event.target.value)"
+                      placeholder="Rechercher..."
+                      autocomplete="off">
+                    <button 
+                      *ngIf="group.searchTerm && group.searchTerm.length > 0"
+                      class="clear-search-btn"
+                      (click)="clearSearch(group)"
+                      type="button">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Message si aucun résultat -->
+                <div *ngIf="group.filteredOptions && group.filteredOptions.length === 0" class="no-results-message">
+                  <i class="fas fa-search"></i>
+                  <span>Aucun résultat trouvé</span>
+                </div>
+                
+                <!-- Options filtrées -->
+                <div class="container-list-option-filter">
+                  <div *ngFor="let option of (group.filteredOptions || group.options | slice:0:50)" class="filter-option">
+                    <label class="checkbox-label">
+                      <input 
+                        type="checkbox" 
+                        [checked]="option.selected"
+                        (change)="toggleOption(group, option)">
+                      <span class="checkbox-custom"></span>
+                      <span class="option-text">{{ option.label }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group-categorie">
+            <div class="libelle-filter-categorie">Filtres sur les missions</div>
+            <div *ngFor="let group of filterGroupsMission" class="filter-group">
+              <div class="group-header" (click)="toggleGroup(group)">
+                <div class="group-title">
+                  <i class="fas" [class.fa-chevron-down]="!group.collapsed" [class.fa-chevron-right]="group.collapsed"></i>
+                  <span>{{ group.label }}</span>
+                  <span *ngIf="getSelectedCount(group) > 0" class="selected-count">({{ getSelectedCount(group) }})</span>
+                </div>
+                <div class="group-actions">
+                  <button *ngIf="!group.collapsed" class="select-all-btn" (click)="selectAll(group, $event)">
+                    {{ areAllSelected(group) ? 'Désélectionner tout' : 'Tout sélectionner' }}
+                  </button>
+                </div>
               </div>
               
-              <!-- Options filtrées -->
-              <div *ngFor="let option of group.filteredOptions || group.options" class="filter-option">
-                <label class="checkbox-label">
-                  <input 
-                    type="checkbox" 
-                    [checked]="option.selected"
-                    (change)="toggleOption(group, option)">
-                  <span class="checkbox-custom"></span>
-                  <span class="option-text">{{ option.label }}</span>
-                </label>
+              <div *ngIf="!group.collapsed" class="group-options">
+                <!-- Input de recherche -->
+                <div class="search-container">
+                  <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                      type="text" 
+                      class="search-input"
+                      [value]="group.searchTerm || ''"
+                      (input)="onSearchChange(group, $event.target.value)"
+                      placeholder="Rechercher..."
+                      autocomplete="off">
+                    <button 
+                      *ngIf="group.searchTerm && group.searchTerm.length > 0"
+                      class="clear-search-btn"
+                      (click)="clearSearch(group)"
+                      type="button">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Message si aucun résultat -->
+                <div *ngIf="group.filteredOptions && group.filteredOptions.length === 0" class="no-results-message">
+                  <i class="fas fa-search"></i>
+                  <span>Aucun résultat trouvé</span>
+                </div>
+                
+                <!-- Options filtrées -->
+                <div class="container-list-option-filter">
+                  <div *ngFor="let option of group.filteredOptions || group.options" class="filter-option">
+                    <label class="checkbox-label">
+                      <input 
+                        type="checkbox" 
+                        [checked]="option.selected"
+                        (change)="toggleOption(group, option)">
+                      <span class="checkbox-custom"></span>
+                      <span class="option-text">{{ option.label }}</span>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -229,6 +298,8 @@ export interface ActiveFilters {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+      max-height: 20vh;
+      overflow-y: auto;
     }
     
     .filter-tag {
@@ -257,13 +328,14 @@ export interface ActiveFilters {
       font-size: var(--font-size-md);
       transition: background-color 0.2s;
     }
+
+    .container-list-option-filter {
+      max-height: 20vh;
+      overflow-y: auto;
+    }
     
     .filter-tag button:hover {
       background: rgba(255, 255, 255, 0.2);
-    }
-    
-    .filter-groups {
-      padding: 1vh 0;
     }
     
     .filter-group {
@@ -282,6 +354,13 @@ export interface ActiveFilters {
     .group-header:hover {
       background: var(--gray-50);
     }
+
+    .libelle-filter-categorie {
+      background-color: var(--primary-light);
+      color: white;
+      padding: 0.4vh 0.4vw;
+      font-size: var(--font-size-lg);
+    }
     
     .group-title {
       display: flex;
@@ -296,6 +375,13 @@ export interface ActiveFilters {
       font-size: var(--font-size-sm);
       color: var(--primary-color);
       transition: transform 0.2s;
+    }
+
+    .container-list-option-filter .option-text {
+      max-width: 19vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     .selected-count {
@@ -463,42 +549,30 @@ export class FilterPanelComponent {
   @Output() closePanel = new EventEmitter<void>();
   @Output() filtersChanged = new EventEmitter<ActiveFilters>();
 
-  filterGroups: FilterGroup[] = [
+  filterGroupsDossier: FilterGroup[] = [
     {
       key: 'groupe',
       label: 'Groupe',
       collapsed: true,
       searchTerm: '',
-      options: [
-        { value: '123456', label: '123456 - TEST', selected: false },
-        { value: '456123', label: '456123 - MAJORELLE', selected: false },
-        { value: '114629', label: '114629 - BPI', selected: false }
-      ]
+      options: []
     },
     {
       key: 'dossier',
       label: 'Dossier',
       collapsed: true,
       searchTerm: '',
-      options: [
-        { value: '123456', label: '123456 - TEST', selected: false },
-        { value: '456123', label: '456123 - MAJORELLE', selected: false },
-        { value: '114629', label: '114629 - BPI', selected: false }
-      ]
+      options: []
     },
     {
-      key: 'bureau',
+      key: 'bureau_dossier',
       label: 'Bureau',
       collapsed: true,
       searchTerm: '',
-      options: [
-        { value: 'neuilly', label: 'Neuilly', selected: false },
-        { value: 'rennes', label: 'Rennes', selected: false },
-        { value: 'lyon', label: 'Lyon', selected: false }
-      ]
+      options: []
     },
     {
-      key: 'departement',
+      key: 'departement_dossier',
       label: 'Département',
       collapsed: true,
       searchTerm: '',
@@ -509,7 +583,83 @@ export class FilterPanelComponent {
       ]
     },
     {
-      key: 'associe',
+      key: 'associe_dossier',
+      label: 'Associé',
+      collapsed: true,
+      searchTerm: '',
+      options: [
+        { value: 'michel_joly', label: 'Michel JOLY', selected: false },
+        { value: 'yvan_malnuit', label: 'Yvan MALNUIT', selected: false },
+        { value: 'herve_sauce', label: 'Hervé SAUCE', selected: false }
+      ]
+    },
+    {
+      key: 'etat_dossier',
+      label: 'État dossier',
+      collapsed: true,
+      searchTerm: '',
+      options: [
+        { value: 'ouvert', label: 'Ouvert', selected: false },
+        { value: 'ferme', label: 'Fermé', selected: false }
+      ]
+    },
+    {
+      key: 'naf_section',
+      label: 'NAF section',
+      collapsed: true,
+      searchTerm: '',
+      options: []
+    },
+    {
+      key: 'mois_cloture',
+      label: 'Mois clôture',
+      collapsed: true,
+      searchTerm: '',
+      options: [
+        { value: '1', label: 'Janvier', selected: false },
+        { value: '2', label: 'Février', selected: false },
+        { value: '3', label: 'Mars', selected: false },
+        { value: '4', label: 'Avril', selected: false },
+        { value: '5', label: 'Mai', selected: false },
+        { value: '6', label: 'Juin', selected: false },
+        { value: '7', label: 'Juillet', selected: false },
+        { value: '8', label: 'Août', selected: false },
+        { value: '9', label: 'Septembre', selected: false },
+        { value: '10', label: 'Octobre', selected: false },
+        { value: '11', label: 'Novembre', selected: false },
+        { value: '12', label: 'Décembre', selected: false }
+      ]
+    },
+    {
+      key: 'forme_juridique',
+      label: 'Forme juridique',
+      collapsed: true,
+      searchTerm: '',
+      options: []
+    }
+  ];
+
+  filterGroupsMission: FilterGroup[] = [
+    {
+      key: 'bureau_mission',
+      label: 'Bureau',
+      collapsed: true,
+      searchTerm: '',
+      options: []
+    },
+    {
+      key: 'departement_mission',
+      label: 'Département',
+      collapsed: true,
+      searchTerm: '',
+      options: [
+        { value: 'ec', label: 'EC', selected: false },
+        { value: 'bpo', label: 'BPO', selected: false },
+        { value: 'ibas', label: 'IBAS', selected: false }
+      ]
+    },
+    {
+      key: 'associe_mission',
       label: 'Associé',
       collapsed: true,
       searchTerm: '',
@@ -535,73 +685,45 @@ export class FilterPanelComponent {
       label: 'Mission',
       collapsed: true,
       searchTerm: '',
-      options: [
-        { value: '210', label: '210', selected: false },
-        { value: '220', label: '220', selected: false },
-        { value: '370', label: '370', selected: false }
-      ]
+      options: []
     },
     {
       key: 'millesime',
       label: 'Millésime',
       collapsed: true,
       searchTerm: '',
-      options: [
-        { value: '2025', label: '2025', selected: false },
-        { value: '2024', label: '2024', selected: false },
-        { value: '2023', label: '2023', selected: false }
-      ]
+      options: []
     },
     {
-      key: 'etat_dossier',
-      label: 'État dossier',
+      key: 'etat_mission',
+      label: 'État mission',
       collapsed: true,
       searchTerm: '',
       options: [
-        { value: 'ouvert', label: 'Ouvert', selected: false },
-        { value: 'ferme', label: 'Fermé', selected: false }
-      ]
-    },
-    {
-      key: 'naf_section',
-      label: 'NAF section',
-      collapsed: true,
-      searchTerm: '',
-      options: [
-        { value: 'industrie', label: 'Industrie', selected: false },
-        { value: 'enseignement', label: 'Enseignement', selected: false },
-        { value: 'commerce', label: 'Commerce', selected: false }
-      ]
-    },
-    {
-      key: 'mois_cloture',
-      label: 'Mois clôture',
-      collapsed: true,
-      searchTerm: '',
-      options: [
-        { value: 'janvier', label: 'Janvier', selected: false },
-        { value: 'fevrier', label: 'Février', selected: false },
-        { value: 'mars', label: 'Mars', selected: false }
-      ]
-    },
-    {
-      key: 'forme_juridique',
-      label: 'Forme juridique',
-      collapsed: true,
-      searchTerm: '',
-      options: [
-        { value: 'sas', label: 'SAS', selected: false },
-        { value: 'sarl', label: 'SARL', selected: false },
-        { value: 'sci', label: 'SCI', selected: false }
+        { value: 'ouvert', label: 'Ouverte', selected: false },
+        { value: 'ferme', label: 'Fermée', selected: false }
       ]
     }
   ];
 
-  constructor() {
+  constructor(private http: HttpClient) {
     // Initialiser les options filtrées
-    this.filterGroups.forEach(group => {
+    this.filterGroupsDossier.forEach(group => {
       group.filteredOptions = [...group.options];
     });
+    this.filterGroupsMission.forEach(group => {
+      group.filteredOptions = [...group.options];
+    });
+  }
+
+  ngOnInit(): void {
+    this.loadListeGroupeFilter();
+    this.loadListeDossierFilter();
+    this.loadListeBureauxFilter();
+    this.loadListeMissionsFilter();
+    this.loadListeMillesimesFilter();
+    this.loadListeFormesJuridiqueFilter();
+    this.loadListeNafsFilter();
   }
 
   onSearchChange(group: FilterGroup, searchTerm: string): void {
@@ -648,15 +770,33 @@ export class FilterPanelComponent {
   }
 
   getActiveFiltersCount(): number {
-    return this.filterGroups.reduce((count, group) => 
+    let countTot = this.filterGroupsDossier.reduce((count, group) => 
       count + group.options.filter(option => option.selected).length, 0
     );
+    countTot += this.filterGroupsMission.reduce((count, group) => 
+      count + group.options.filter(option => option.selected).length, 0
+    );
+
+    return countTot;
   }
 
   getActiveFilterTags(): Array<{groupKey: string, groupLabel: string, optionValue: string, optionLabel: string}> {
     const tags: Array<{groupKey: string, groupLabel: string, optionValue: string, optionLabel: string}> = [];
     
-    this.filterGroups.forEach(group => {
+    this.filterGroupsDossier.forEach(group => {
+      group.options.forEach(option => {
+        if (option.selected) {
+          tags.push({
+            groupKey: group.key,
+            groupLabel: group.label,
+            optionValue: option.value,
+            optionLabel: option.label
+          });
+        }
+      });
+    });
+
+    this.filterGroupsMission.forEach(group => {
       group.options.forEach(option => {
         if (option.selected) {
           tags.push({
@@ -673,9 +813,18 @@ export class FilterPanelComponent {
   }
 
   removeFilter(groupKey: string, optionValue: string): void {
-    const group = this.filterGroups.find(g => g.key === groupKey);
+    const group = this.filterGroupsDossier.find(g => g.key === groupKey);
     if (group) {
       const option = group.options.find(o => o.value === optionValue);
+      if (option) {
+        option.selected = false;
+        this.emitFiltersChanged();
+      }
+    }
+
+    const groupM = this.filterGroupsMission.find(g => g.key === groupKey);
+    if (groupM) {
+      const option = groupM.options.find(o => o.value === optionValue);
       if (option) {
         option.selected = false;
         this.emitFiltersChanged();
@@ -684,7 +833,10 @@ export class FilterPanelComponent {
   }
 
   clearAllFilters(): void {
-    this.filterGroups.forEach(group => {
+    this.filterGroupsDossier.forEach(group => {
+      group.options.forEach(option => option.selected = false);
+    });
+    this.filterGroupsMission.forEach(group => {
       group.options.forEach(option => option.selected = false);
     });
     this.emitFiltersChanged();
@@ -693,7 +845,17 @@ export class FilterPanelComponent {
   private emitFiltersChanged(): void {
     const activeFilters: ActiveFilters = {};
     
-    this.filterGroups.forEach(group => {
+    this.filterGroupsDossier.forEach(group => {
+      const selectedValues = group.options
+        .filter(option => option.selected)
+        .map(option => option.value);
+      
+      if (selectedValues.length > 0) {
+        activeFilters[group.key] = selectedValues;
+      }
+    });
+
+    this.filterGroupsMission.forEach(group => {
       const selectedValues = group.options
         .filter(option => option.selected)
         .map(option => option.value);
@@ -708,5 +870,77 @@ export class FilterPanelComponent {
 
   closePanelHandler(): void {
     this.closePanel.emit();
+  }
+
+  loadListeGroupeFilter(): void {
+    this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllGroupesFilter`)
+      .subscribe((response) => {
+        this.filterGroupsDossier[0].options = response.data;
+        this.filterGroupsDossier[0].filteredOptions = [...response.data];
+      }, (error) => {
+        console.error('Erreur lors de la récupération des groupes :', error);
+      });
+  }
+
+  loadListeDossierFilter(): void {
+    this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllDossiersFilter`)
+      .subscribe((response) => {
+        this.filterGroupsDossier[1].options = response.data;
+        this.filterGroupsDossier[1].filteredOptions = [...response.data];
+      }, (error) => {
+        console.error('Erreur lors de la récupération des dossiers :', error);
+      });
+  }
+
+  loadListeBureauxFilter(): void {
+    this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllBureauxFilter`)
+      .subscribe((response) => {
+        this.filterGroupsDossier[2].options = response.data;
+        this.filterGroupsDossier[2].filteredOptions = [...response.data];
+        this.filterGroupsMission[0].options = response.data;
+        this.filterGroupsMission[0].filteredOptions = [...response.data];
+      }, (error) => {
+        console.error('Erreur lors de la récupération des bureaux :', error);
+      });
+  }
+
+  loadListeMissionsFilter(): void {
+    this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllMissionsFilter`)
+      .subscribe((response) => {
+        this.filterGroupsMission[4].options = response.data;
+        this.filterGroupsMission[4].filteredOptions = [...response.data];
+      }, (error) => {
+        console.error('Erreur lors de la récupération des missions :', error);
+      });
+  }
+
+  loadListeMillesimesFilter(): void {
+    this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllMillesimesFilter`)
+      .subscribe((response) => {
+        this.filterGroupsMission[5].options = response.data;
+        this.filterGroupsMission[5].filteredOptions = [...response.data];
+      }, (error) => {
+        console.error('Erreur lors de la récupération des missions :', error);
+      });
+  }
+
+  loadListeFormesJuridiqueFilter(): void {
+    this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllFormesJuridiqueFilter`)
+      .subscribe((response) => {
+        this.filterGroupsDossier[8].options = response.data;
+        this.filterGroupsDossier[8].filteredOptions = [...response.data];
+      }, (error) => {
+        console.error('Erreur lors de la récupération des formes juridique :', error);
+      });
+  }
+
+  loadListeNafsFilter(): void {
+    this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllNafsFilter`)
+      .subscribe((response) => {
+        this.filterGroupsDossier[6].options = response.data;
+        this.filterGroupsDossier[6].filteredOptions = [...response.data];
+      }, (error) => {
+        console.error('Erreur lors de la récupération des nafs :', error);
+      });
   }
 }

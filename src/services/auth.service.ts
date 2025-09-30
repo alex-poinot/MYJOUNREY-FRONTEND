@@ -3,6 +3,7 @@ import { Optional } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
 import { AuthenticationResult, AccountInfo } from '@azure/msal-browser';
 import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { loginRequest, graphConfig } from '../auth/auth.config';
 import { environment } from '../environments/environment';
@@ -32,6 +33,9 @@ export class AuthService {
 
   private originalUserSubject = new BehaviorSubject<UserProfile | null>(null);
   public originalUser$ = this.originalUserSubject.asObservable();
+
+  public listAdminUsers: string[] = [];
+
   constructor(
     @Optional() private msalService: MsalService,
     private http: HttpClient
@@ -201,9 +205,21 @@ export class AuthService {
     this.impersonatedEmailSubject.next(null);
   }
 
-  isCurrentUserAdmin(): boolean {
+  async isCurrentUserAdmin(): Promise<boolean> {
     const currentUser = this.userProfileSubject.value;
-    return currentUser?.isAdmin === true || currentUser?.mail === 'alexandre.poinot@fr.gt.com' || currentUser?.mail === 'rochelle.thevaseelan@fr.gt.com' || currentUser?.mail === 'romain.tetillon@fr.gt.com';
+    if(this.listAdminUsers.length == 0) {
+      try {
+        const adminUsers = await this.getAllAdmin();
+        this.listAdminUsers = adminUsers.data;
+        console.log('Liste admin', this.listAdminUsers);
+        return this.listAdminUsers.includes(currentUser?.mail ?? '');
+      } catch (error) {
+        console.error('Erreur lors de la vérification de l\'administrateur:', error);
+        return false;
+      }
+    } else {
+      return this.listAdminUsers.includes(currentUser?.mail ?? '');
+    }
   }
 
   isImpersonating(): boolean {
@@ -225,5 +241,20 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return this.isAuthenticatedSubject.value;
+  }
+
+  getAllAdmin(): Promise<any> {
+    return firstValueFrom(
+      this.http.get(`${environment.apiUrl}/users/getAllAdminUsers`)
+      .pipe(
+        catchError(error => {
+          console.error('Erreur lors de la récupération des fichiers du module:', error);
+          throw error; // Rejeter la promesse avec l'erreur pour gérer les erreurs de manière propre
+        }),
+        tap(response => {
+          console.log('Réponse du serveur:', response);
+        })
+      )
+    );
   }
 }

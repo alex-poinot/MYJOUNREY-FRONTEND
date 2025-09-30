@@ -9,6 +9,8 @@ import { tap } from 'rxjs/internal/operators/tap';
 import { catchError } from 'rxjs/internal/operators/catchError';
 import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
 import { ClearCacheRequest } from '@azure/msal-browser';
+import { ChangeDetectorRef } from '@angular/core';
+import iziToast from 'izitoast';
 
 interface MissionData {
   numeroGroupe: string;
@@ -19,6 +21,17 @@ interface MissionData {
   missionId: string;
   profilId: string;
   source: string;
+  BUREAU_ID: string;
+  MD_RESP_PRINCIPAL_MISS_SIRH: string;
+  MD_MISSION: string;
+  MD_MILLESIME: string;
+  MD_ETAT: string;
+  DOS_BUREAU: string;
+  DOS_ASSOCIE_SIRH: string;
+  DOS_ETAT: string;
+  NAF_ID: string;
+  DOS_MOIS_CLOTURE: string;
+  DOS_FORME_JURIDIQUE: string;
   avantMission: {
     percentage: number;
     conflitCheck: string;
@@ -68,6 +81,20 @@ interface ModalData {
   selectedFileId: string;
   selectedFile2?: File | null;
   selectedFileId2?: string | '';
+  selectedFileLab1?: Array<File>;
+  selectedFileLab2?: Array<File>;
+  selectedFileLab3?: Array<File>;
+  selectedFileLab4?: Array<File>;
+  selectedFileLab5?: Array<File>;
+  selectedFileLab6?: Array<File>;
+  selectedFileLab7?: Array<File>;
+  selectedFileLabId1?: Array<String>;
+  selectedFileLabId2?: Array<String>;
+  selectedFileLabId3?: Array<String>;
+  selectedFileLabId4?: Array<String>;
+  selectedFileLabId5?: Array<String>;
+  selectedFileLabId6?: Array<String>;
+  selectedFileLabId7?: Array<String>;
   selectedFile3?: File | null;
   selectedFile4?: File | null;
   selectedFile5?: File | null;
@@ -93,6 +120,10 @@ interface ModalData {
   currentStatus: string;
   modifyMode: boolean;
   hasAccess: boolean;
+}
+
+interface InsertFile {
+  MODFILE_Id: string;
 }
 
 @Component({
@@ -812,54 +843,44 @@ interface ModalData {
                 <h4>{{ n }}. {{ labTitles[n] }}</h4>
 
                 <div *ngIf="modalData.modifyMode === true"
-                  class="upload-controls">
-                  <button *ngIf="getLabInputs(n).length < 10"
-                          class="btn-add-input"
-                          (click)="addLabInput(n)"
-                          type="button">
-                    <i class="fas fa-plus"></i>
-                    Ajouter un fichier
-                  </button>
-                </div>
-
-                <div *ngIf="modalData.modifyMode === true"
                   class="file-inputs-container">
-                  <div *ngFor="let input of getLabInputs(n); let i = index" class="file-input-group">
-                    <input type="file"
-                          [id]="'lab-file-' + n + '-' + i"
-                          class="file-input"
-                          (change)="onLabFileSelected($event, n, i)"
-                          accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
-                    <button *ngIf="getLabInputs(n).length > 1"
-                            class="btn-remove-input"
-                            (click)="removeLabInput(n, i)"
-                            type="button"
-                            title="Supprimer ce fichier">
-                      <i class="fas fa-times"></i>
-                    </button>
+                  <div *ngFor="let input of fileInputsLab[n-1]; let i = index">
+                    <div *ngIf="fileInputs.length == i+1" class="file-input-group">
+                      <input type="file"
+                            [id]="'file-input-' + i"
+                            class="file-input"
+                            (change)="onFileSelectedLab($event, n, i)"
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
+                    </div>
                   </div>
                 </div>
 
-                <div *ngIf="modalData['selectedFile' + (n === 1 ? '' : n)]" class="file-preview">
-                  <div class="file-info">
-                    <span class="file-name">{{ modalData['selectedFile' + (n === 1 ? '' : n)].name }}</span>
-                    <button *ngIf="modalData['selectedFile' + (n === 1 ? '' : n)].type === 'application/pdf'"
-                            class="preview-file"
-                            (click)="previewFile(modalData['selectedFile' + (n === 1 ? '' : n)])">
-                      <i class="fas fa-eye"></i>
-                    </button>
-                    <button class="download-file"
-                            (click)="downloadFile(modalData['selectedFile' + (n === 1 ? '' : n)])">
-                      <i class="fas fa-download"></i>
-                    </button>
-                    <button *ngIf="modalData.modifyMode === true"
-                            class="remove-file-btn"
-                            (click)="removeFile(n.toString())">
-                      <i class="fas fa-times"></i>
-                    </button>
+                <div *ngIf="getAllFilesLabStatus(n)">
+                  <div *ngFor="let input of fileInputsLab[n-1]; let i = index">
+                    <div *ngIf="getFileLab(n, i)" class="file-info">
+                      <span class="file-name">{{ getFileLabName(n, i) }}</span>
+                      <div class="file-actions">
+                        <button *ngIf="getFileLabType(n, i) === 'application/pdf'"
+                                class="preview-file"
+                                (click)="previewFile(getFileLab(n, i))">
+                          <i class="fas fa-eye"></i>
+                        </button>
+
+                        <button class="download-file"
+                                (click)="downloadFile(getFileLab(n, i))">
+                          <i class="fas fa-download"></i>
+                        </button>
+
+                        <button *ngIf="modalData.modifyMode === true"
+                                class="remove-file"
+                                (click)="removeFileLab(n, i)">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div *ngIf="!modalData['selectedFile' + (n === 1 ? '' : n)]"
+                <div *ngIf="getAllFilesLabStatus(n) == false"
                   class="no-file-modal">
                     Aucun fichier
                 </div>
@@ -1051,7 +1072,7 @@ interface ModalData {
     }
 
     .mission-table thead tr:nth-child(1) th:nth-child(n+2) {
-      min-width: 7vw;
+      min-width: 8vw;
     }
 
     .mission-table thead tr:nth-child(2) th:nth-child(1),
@@ -1826,6 +1847,7 @@ export class DashboardComponent implements OnInit {
   groupedData: GroupData[] = [];
   paginatedData: GroupData[] = [];
   allMissions: MissionData[] = [];
+  allMissionsFiltred: MissionData[] = [];
   completeGroupedData: GroupData[] = [];
   currentPage = 1;
   itemsPerPage = 150;
@@ -1861,6 +1883,8 @@ export class DashboardComponent implements OnInit {
   };
   fileInputs: any[] = [{}]; // Tableau pour gérer les inputs de fichiers
 
+  fileInputsLab: any[][] = Array.from({ length: 7 }, () => [{}]);
+
   // Propriétés pour les inputs de fichiers multiples
   selectedFiles: { [key: number]: File | null } = {};
   
@@ -1886,7 +1910,8 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -1984,7 +2009,12 @@ export class DashboardComponent implements OnInit {
     this.endIndex = Math.min(this.startIndex + this.itemsPerPage, this.totalMissions);
     
     // Obtenir les missions paginées
-    const paginatedMissions = this.allMissions.slice(this.startIndex, this.endIndex);
+    let paginatedMissions = null;
+    if(this.activeFilters.length > 0) {
+      this.allMissionsFiltred.slice(this.startIndex, this.endIndex);
+    } else {
+      this.allMissions.slice(this.startIndex, this.endIndex);
+    }
     
     // Reconstruire la structure groupée avec seulement les missions paginées
     const groupedPaginated = new Map<string, GroupData>();
@@ -2624,11 +2654,6 @@ export class DashboardComponent implements OnInit {
     this.isFilterPanelOpen = false;
   }
 
-  onFiltersChanged(filters: ActiveFilters): void {
-    this.activeFilters = filters;
-    // Appliquer les filtres ici si nécessaire
-  }
-
   getActiveFiltersCount(): number {
     return Object.values(this.activeFilters).reduce((count, filters) => count + filters.length, 0);
   }
@@ -2643,6 +2668,18 @@ export class DashboardComponent implements OnInit {
     this.getModuleFiles(missionIdDosPgiDosGroupe, columnName, profilId, source).then(moduleData => {
       let module = moduleData.data[0];
       let hasAccess = module.DTMOD_ModuleLecture == 'oui';
+      if(!hasAccess) {
+        iziToast.error({
+          timeout: 3000,
+          icon: 'fa-regular fa-triangle-exclamation', 
+          title: 'Vous n\'avez pas accès à ce module.', 
+          close: false, 
+          position: 'bottomCenter', 
+          transitionIn: 'flipInX',
+          transitionOut: 'flipOutX'
+        });
+        return;
+      }
       let modifyMode = module.DTMOD_ModuleModification == 'oui';
 
       let file = null;
@@ -2677,6 +2714,102 @@ export class DashboardComponent implements OnInit {
           selectedFileId: modFileId,
           selectedFile2: file2,
           selectedFileId2: modFileId2,
+          modifyMode: modifyMode,
+          hasAccess: hasAccess
+        };
+      } else if(columnName == 'LAB documentaire') {
+        this.fileInputsLab = Array.from({ length: 7 }, () => [{}]);
+        console.log(moduleData.data);
+        let modFile: File[] = [];
+        let modFile2: File[] = [];
+        let modFile3: File[] = [];
+        let modFile4: File[] = [];
+        let modFile5: File[] = [];
+        let modFile6: File[] = [];
+        let modFile7: File[] = [];
+        let modFileId: string[] = [];
+        let modFileId2: string[] = [];
+        let modFileId3: string[] = [];
+        let modFileId4: string[] = [];
+        let modFileId5: string[] = [];
+        let modFileId6: string[] = [];
+        let modFileId7: string[] = [];
+        //ecris moi une boucle for qui parcours moduleData.data
+        let modData = moduleData.data;
+        modData.forEach((element: any) => {
+          if(element.MODFILE_FileCategorie == this.getCategorieLab(1)) {
+            if(module.Base64_File) {
+              file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
+              modFile.push(file);
+              modFileId.push(element.MODFILE_Id);
+              this.fileInputsLab[0].push({});
+            }
+          } else if(element.MODFILE_FileCategorie == this.getCategorieLab(2)) {
+            if(module.Base64_File) {
+              file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
+              modFile2.push(file);
+              modFileId2.push(element.MODFILE_Id);
+              this.fileInputsLab[1].push({});
+            }
+          } else if(element.MODFILE_FileCategorie == this.getCategorieLab(3)) {
+            if(module.Base64_File) {
+              file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
+              modFile3.push(file);
+              modFileId3.push(element.MODFILE_Id);
+              this.fileInputsLab[2].push({});
+            }
+          } else if(element.MODFILE_FileCategorie == this.getCategorieLab(4)) {
+            if(module.Base64_File) {
+              file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
+              modFile4.push(file);
+              modFileId4.push(element.MODFILE_Id);
+              this.fileInputsLab[3].push({});
+            }
+          } else if(element.MODFILE_FileCategorie == this.getCategorieLab(5)) {
+            if(module.Base64_File) {
+              file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
+              modFile5.push(file);
+              modFileId5.push(element.MODFILE_Id);
+              this.fileInputsLab[4].push({});
+            }
+          } else if(element.MODFILE_FileCategorie == this.getCategorieLab(6)) {
+            if(module.Base64_File) {
+              file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
+              modFile6.push(file);
+              modFileId6.push(element.MODFILE_Id);
+              this.fileInputsLab[5].push({});
+            }
+          } else if(element.MODFILE_FileCategorie == this.getCategorieLab(7)) {
+            if(module.Base64_File) {
+              file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
+              modFile7.push(file);
+              modFileId7.push(element.MODFILE_Id);
+              this.fileInputsLab[6].push({});
+            }
+          }
+        });
+
+        this.modalData = {
+          isOpen: true,
+          columnName: columnName,
+          missionId: missionIdDosPgiDosGroupe,
+          currentStatus: currentStatus,
+          selectedFile: null,
+          selectedFileId: '',
+          selectedFileLab1: modFile,
+          selectedFileLab2: modFile2,
+          selectedFileLab3: modFile3,
+          selectedFileLab4: modFile4,
+          selectedFileLab5: modFile5,
+          selectedFileLab6: modFile6,
+          selectedFileLab7: modFile7,
+          selectedFileLabId1: modFileId,
+          selectedFileLabId2: modFileId2,
+          selectedFileLabId3: modFileId3,
+          selectedFileLabId4: modFileId4,
+          selectedFileLabId5: modFileId5,
+          selectedFileLabId6: modFileId6,
+          selectedFileLabId7: modFileId7,
           modifyMode: modifyMode,
           hasAccess: hasAccess
         };
@@ -2757,7 +2890,7 @@ export class DashboardComponent implements OnInit {
 
         case 'Checklist':
           // this.modalData.type = 'document-add';
-          this.modalData.type = 'document';
+          this.modalData.type = 'coming-soon';
           this.modalData.title = 'Checklist - Dépôt Document';
           this.modalData.description = 'Déposez le document Checklist';
           this.modalData.acceptedTypes = '.pdf,.doc,.docx';
@@ -2901,6 +3034,126 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  getCategorieLab(n: number): string {
+    switch(n) {
+      case 1: return 'registre beneficiaires';
+      case 2: return 'piece identite';
+      case 3: return 'statuts';
+      case 4: return 'extrait kbis';
+      case 5: return 'declaration conflit interet';
+      case 6: return 'qam';
+      case 7: return 'note travail et autre';
+      default: return '';
+    }
+  }
+
+  onFileSelectedLab(event: Event, n: number, fileNumber: number): void {
+    const input = event.target as HTMLInputElement;
+    let categorie = this.getCategorieLab(n);
+    if (input.files && input.files[0]) {
+      if(n == 1) {
+        this.modalData.selectedFileLab1?.push(input.files[0]);
+        this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
+        if((this.modalData.selectedFileLab2?.length ?? 0) > 0 && (this.modalData.selectedFileLab3?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab4?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        } else {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+        }
+        this.fileInputsLab[0].push({});
+      } else if(n == 2) {
+        this.modalData.selectedFileLab2?.push(input.files[0]);
+        console.log('Fichier sélectionné:', this.modalData.selectedFileLab2?.[fileNumber-1]);
+        this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
+        if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab3?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab4?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        } else {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+        }
+        this.fileInputsLab[1].push({});
+      } else if(n == 3) {
+        this.modalData.selectedFileLab3?.push(input.files[0]);
+        console.log('Fichier sélectionné:', this.modalData.selectedFileLab3?.[fileNumber-1]);
+        this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
+        if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab2?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab4?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        } else {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+        }
+        this.fileInputsLab[2].push({});
+      } else if(n == 4) {
+        this.modalData.selectedFileLab4?.push(input.files[0]);
+        console.log('Fichier sélectionné:', this.modalData.selectedFileLab4?.[fileNumber-1]);
+        this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
+        if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab2?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab3?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        } else {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+        }
+        this.fileInputsLab[3].push({});
+      } else if(n == 5) {
+        this.modalData.selectedFileLab5?.push(input.files[0]);
+        console.log('Fichier sélectionné:', this.modalData.selectedFileLab5?.[fileNumber-1]);
+        this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
+        if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab2?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab3?.length ?? 0) > 0 && (this.modalData.selectedFileLab4?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        } else {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+        }
+        this.fileInputsLab[4].push({});
+      } else if(n == 6) {
+        this.modalData.selectedFileLab6?.push(input.files[0]);
+        console.log('Fichier sélectionné:', this.modalData.selectedFileLab6?.[fileNumber-1]);
+        this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
+        if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab2?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab3?.length ?? 0) > 0 && (this.modalData.selectedFileLab4?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab5?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        } else {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+        }
+        this.fileInputsLab[5].push({});
+      } else if(n == 7) {
+        this.modalData.selectedFileLab7?.push(input.files[0]);
+        console.log('Fichier sélectionné:', this.modalData.selectedFileLab7?.[fileNumber-1]);
+        this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
+        if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab2?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab3?.length ?? 0) > 0 && (this.modalData.selectedFileLab4?.length ?? 0) > 0 &&
+        (this.modalData.selectedFileLab5?.length ?? 0) > 0 && (this.modalData.selectedFileLab6?.length ?? 0) > 0) {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        } else {
+          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+        }
+        this.fileInputsLab[6].push({});
+      }
+      this.fileInputsLab = [...this.fileInputsLab];
+      this.changeDetectorRef.detectChanges();
+    }
+  }
+
   onFileSelectedDouble(event: Event, categorie: string): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -2968,6 +3221,103 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  removeFileLab(n: number, fileNumber: number): void {
+    if(n == 1) {
+      this.modalData.selectedFileLab1?.splice(fileNumber - 1, 1);
+      this.deleteModuleFile(this.modalData.selectedFileLabId1?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      if(((this.modalData.selectedFileLab2?.length ?? 0) > 0) || ((this.modalData.selectedFileLab3?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+      } else {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
+      }
+      this.fileInputsLab[0].pop();
+    } else if(n == 2) {
+      this.modalData.selectedFileLab2?.splice(fileNumber - 1, 1);
+      this.deleteModuleFile(this.modalData.selectedFileLabId2?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab3?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+      } else {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
+      }
+      this.fileInputsLab[1].pop();
+    } else if(n == 3) {
+      this.modalData.selectedFileLab3?.splice(fileNumber - 1, 1);
+      this.deleteModuleFile(this.modalData.selectedFileLabId3?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+      } else {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
+      }
+      this.fileInputsLab[2].pop();
+    } else if(n == 4) {
+      this.modalData.selectedFileLab4?.splice(fileNumber - 1, 1);
+      this.deleteModuleFile(this.modalData.selectedFileLabId4?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+      } else {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
+      }
+      this.fileInputsLab[3].pop();
+    } else if(n == 5) {
+      this.modalData.selectedFileLab5?.splice(fileNumber - 1, 1);
+      this.deleteModuleFile(this.modalData.selectedFileLabId5?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab4?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+      } else {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
+      }
+      this.fileInputsLab[4].pop();
+    } else if(n == 6) {
+      this.modalData.selectedFileLab6?.splice(fileNumber - 1, 1);
+      this.deleteModuleFile(this.modalData.selectedFileLabId6?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab4?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab5?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+      } else {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
+      }
+      this.fileInputsLab[5].pop();
+    } else if(n == 7) {
+      this.modalData.selectedFileLab7?.splice(fileNumber - 1, 1);
+      this.deleteModuleFile(this.modalData.selectedFileLabId7?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab4?.length ?? 0) > 0) ||
+      ((this.modalData.selectedFileLab5?.length ?? 0) > 0) || ((this.modalData.selectedFileLab6?.length ?? 0) > 0)) {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+      } else {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
+      }
+      this.fileInputsLab[6].pop();
+    }
+    this.fileInputsLab = [...this.fileInputsLab];
+    this.changeDetectorRef.detectChanges();
+  }
+
   updateQuestionnaireStatus(): void {
     if (this.modalData.questionnaire) {
       const allAnswered = this.modalData.questionnaire.questions.every(q => q.answer);
@@ -3030,19 +3380,6 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  public getLabInputs(n: number) {
-    switch (n) {
-      case 1: return this.labInputs1;
-      case 2: return this.labInputs2;
-      case 3: return this.labInputs3;
-      case 4: return this.labInputs4;
-      case 5: return this.labInputs5;
-      case 6: return this.labInputs6;
-      case 7: return this.labInputs7;
-      default: return [];
-    }
-  }
-
   public labTitles: { [key: number]: string } = {
     1: "Registre des bénéficiaires",
     2: "Pièce d'identité",
@@ -3058,13 +3395,22 @@ export class DashboardComponent implements OnInit {
     return file ? file.name : '';
   }
 
+  public getFileLabName(n: number, index: number): string {
+    const file = this.getFileLab(n, index);
+    return file ? file.name : '';
+  }
+
   public getFileType(index: number): string {
     const file = this.getFile(index);
     return file ? file.type : '';
   }
 
+  public getFileLabType(n: number, index: number): string {
+    const file = this.getFileLab(n, index);
+    return file ? file.type : '';
+  }
+
   public getFile(index: number): File | null {
-    console.log('Récupération du fichier pour l\'index :', index);
     switch (index) {
       case 1: return this.modalData.selectedFile ?? null;
       case 2: return this.modalData.selectedFile2 ?? null;
@@ -3080,6 +3426,19 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  public getFileLab(n: number, index: number): File | null {
+    switch (n) {
+      case 1: return this.modalData.selectedFileLab1?.[index-1] ?? null;
+      case 2: return this.modalData.selectedFileLab2?.[index-1] ?? null;
+      case 3: return this.modalData.selectedFileLab3?.[index-1] ?? null;
+      case 4: return this.modalData.selectedFileLab4?.[index-1] ?? null;
+      case 5: return this.modalData.selectedFileLab5?.[index-1] ?? null;
+      case 6: return this.modalData.selectedFileLab6?.[index-1] ?? null;
+      case 7: return this.modalData.selectedFileLab7?.[index-1] ?? null;
+      default: return null;
+    }
+  }
+
   public getAllFilesStatus() {
     let res = false;
 
@@ -3090,6 +3449,19 @@ export class DashboardComponent implements OnInit {
       }
     }
     return res;
+  }
+
+  public getAllFilesLabStatus(n: number) {
+    switch (n) {
+      case 1: return (this.modalData.selectedFileLab1?.length ?? 0) > 0;
+      case 2: return (this.modalData.selectedFileLab2?.length ?? 0) > 0;
+      case 3: return (this.modalData.selectedFileLab3?.length ?? 0) > 0;
+      case 4: return (this.modalData.selectedFileLab4?.length ?? 0) > 0;
+      case 5: return (this.modalData.selectedFileLab5?.length ?? 0) > 0;
+      case 6: return (this.modalData.selectedFileLab6?.length ?? 0) > 0;
+      case 7: return (this.modalData.selectedFileLab7?.length ?? 0) > 0;
+      default: return null;
+    }
   }
 
   sendModuleFile(module: String, email: String, file: File, missionIdDosPgiDosGroupe: String, source: String, categorie?: string | ''): void {
@@ -3110,11 +3482,42 @@ export class DashboardComponent implements OnInit {
         missionIdDosPgiDosGroupe: missionIdDosPgiDosGroupe + "",
         title: fileName,
         source,
-        categorie: categorie || ''
+        categorie: categorie || '',
+        mailPriseProfil: this.userEmail
       };
 
-      this.http.post(`${environment.apiUrl}/files/setModuleFile`, moduleFile)
+      this.http.post<{ success: boolean; data: InsertFile[]; count: number; timestamp: string }>(`${environment.apiUrl}/files/setModuleFile`, moduleFile)
         .subscribe(response => {
+          if(categorie == 'mail') {
+            this.modalData.selectedFileId = response.data[0].MODFILE_Id;
+          } else if(categorie == 'plaquette') {
+            this.modalData.selectedFileId2 = response.data[0].MODFILE_Id;
+          } else if(categorie == this.getCategorieLab(1)) {
+            this.modalData.selectedFileLabId1?.push(response.data[0].MODFILE_Id);
+          } else if(categorie == this.getCategorieLab(2)) {
+            this.modalData.selectedFileLabId2?.push(response.data[0].MODFILE_Id);
+          } else if(categorie == this.getCategorieLab(3)) {
+            this.modalData.selectedFileLabId3?.push(response.data[0].MODFILE_Id);
+          } else if(categorie == this.getCategorieLab(4)) {
+            this.modalData.selectedFileLabId4?.push(response.data[0].MODFILE_Id);
+          } else if(categorie == this.getCategorieLab(5)) {
+            this.modalData.selectedFileLabId5?.push(response.data[0].MODFILE_Id);
+          } else if(categorie == this.getCategorieLab(6)) {
+            this.modalData.selectedFileLabId6?.push(response.data[0].MODFILE_Id);
+          } else if(categorie == this.getCategorieLab(7)) {
+            this.modalData.selectedFileLabId7?.push(response.data[0].MODFILE_Id);
+          } else {
+            this.modalData.selectedFileId = response.data[0].MODFILE_Id;
+          }
+          iziToast.success({
+            timeout: 3000, 
+            icon: 'fa-regular fa-thumbs-up', 
+            title: 'Fichier ajouté avec succès !', 
+            close: false, 
+            position: 'bottomCenter', 
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+          });
           console.log('Réponse du serveur:', response);
         });
     };
@@ -3180,7 +3583,8 @@ export class DashboardComponent implements OnInit {
       email,
       status,
       missionIdDosPgiDosGroupe: missionIdDosPgiDosGroupe + "",
-      source
+      source,
+      mailPriseProfil: this.userEmail
     };
 
     this.http.post(`${environment.apiUrl}/modules/setModuleStatus`, moduleStatus)
@@ -3201,6 +3605,15 @@ export class DashboardComponent implements OnInit {
     })
     .subscribe(response => {
       console.log('Réponse du serveur:', response);
+      iziToast.success({
+        timeout: 3000, 
+        icon: 'fa-regular fa-thumbs-up', 
+        title: 'Fichier supprimé avec succès !', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
     });
   }
 
@@ -3274,5 +3687,13 @@ export class DashboardComponent implements OnInit {
         });
       });
     });
+  }
+
+  onFiltersChanged(filters: ActiveFilters): void {
+    this.activeFilters = filters;
+    // Appliquer les filtres ici si nécessaire
+    console.log('Filter:',this.activeFilters);
+    console.log('Data:',this.paginatedData);
+    console.log('Missions:',this.allMissions);
   }
 }
