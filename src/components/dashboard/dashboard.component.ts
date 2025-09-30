@@ -2010,10 +2010,10 @@ export class DashboardComponent implements OnInit {
     
     // Obtenir les missions paginées
     let paginatedMissions = null;
-    if(this.activeFilters.length > 0) {
-      this.allMissionsFiltred.slice(this.startIndex, this.endIndex);
+    if(Object.keys(this.activeFilters).length > 0) {
+      paginatedMissions = this.allMissionsFiltred.slice(this.startIndex, this.endIndex);
     } else {
-      this.allMissions.slice(this.startIndex, this.endIndex);
+      paginatedMissions = this.allMissions.slice(this.startIndex, this.endIndex);
     }
     
     // Reconstruire la structure groupée avec seulement les missions paginées
