@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 export interface FilterOption {
+  key: string;
   value: string;
   label: string;
   selected: boolean;
@@ -572,26 +573,11 @@ export class FilterPanelComponent {
       options: []
     },
     {
-      key: 'departement_dossier',
-      label: 'Département',
-      collapsed: true,
-      searchTerm: '',
-      options: [
-        { value: 'ec', label: 'EC', selected: false },
-        { value: 'bpo', label: 'BPO', selected: false },
-        { value: 'ibas', label: 'IBAS', selected: false }
-      ]
-    },
-    {
       key: 'associe_dossier',
       label: 'Associé',
       collapsed: true,
       searchTerm: '',
-      options: [
-        { value: 'michel_joly', label: 'Michel JOLY', selected: false },
-        { value: 'yvan_malnuit', label: 'Yvan MALNUIT', selected: false },
-        { value: 'herve_sauce', label: 'Hervé SAUCE', selected: false }
-      ]
+      options: []
     },
     {
       key: 'etat_dossier',
@@ -599,8 +585,8 @@ export class FilterPanelComponent {
       collapsed: true,
       searchTerm: '',
       options: [
-        { value: 'ouvert', label: 'Ouvert', selected: false },
-        { value: 'ferme', label: 'Fermé', selected: false }
+        { key: 'etat_dossier', value: 'ouvert', label: 'Ouvert', selected: true },
+        { key: 'etat_dossier', value: 'ferme', label: 'Fermé', selected: false }
       ]
     },
     {
@@ -616,18 +602,18 @@ export class FilterPanelComponent {
       collapsed: true,
       searchTerm: '',
       options: [
-        { value: '1', label: 'Janvier', selected: false },
-        { value: '2', label: 'Février', selected: false },
-        { value: '3', label: 'Mars', selected: false },
-        { value: '4', label: 'Avril', selected: false },
-        { value: '5', label: 'Mai', selected: false },
-        { value: '6', label: 'Juin', selected: false },
-        { value: '7', label: 'Juillet', selected: false },
-        { value: '8', label: 'Août', selected: false },
-        { value: '9', label: 'Septembre', selected: false },
-        { value: '10', label: 'Octobre', selected: false },
-        { value: '11', label: 'Novembre', selected: false },
-        { value: '12', label: 'Décembre', selected: false }
+        { key: 'mois_cloture', value: '1', label: 'Janvier', selected: false },
+        { key: 'mois_cloture', value: '2', label: 'Février', selected: false },
+        { key: 'mois_cloture', value: '3', label: 'Mars', selected: false },
+        { key: 'mois_cloture', value: '4', label: 'Avril', selected: false },
+        { key: 'mois_cloture', value: '5', label: 'Mai', selected: false },
+        { key: 'mois_cloture', value: '6', label: 'Juin', selected: false },
+        { key: 'mois_cloture', value: '7', label: 'Juillet', selected: false },
+        { key: 'mois_cloture', value: '8', label: 'Août', selected: false },
+        { key: 'mois_cloture', value: '9', label: 'Septembre', selected: false },
+        { key: 'mois_cloture', value: '10', label: 'Octobre', selected: false },
+        { key: 'mois_cloture', value: '11', label: 'Novembre', selected: false },
+        { key: 'mois_cloture', value: '12', label: 'Décembre', selected: false }
       ]
     },
     {
@@ -648,37 +634,18 @@ export class FilterPanelComponent {
       options: []
     },
     {
-      key: 'departement_mission',
-      label: 'Département',
-      collapsed: true,
-      searchTerm: '',
-      options: [
-        { value: 'ec', label: 'EC', selected: false },
-        { value: 'bpo', label: 'BPO', selected: false },
-        { value: 'ibas', label: 'IBAS', selected: false }
-      ]
-    },
-    {
       key: 'associe_mission',
       label: 'Associé',
       collapsed: true,
       searchTerm: '',
-      options: [
-        { value: 'michel_joly', label: 'Michel JOLY', selected: false },
-        { value: 'yvan_malnuit', label: 'Yvan MALNUIT', selected: false },
-        { value: 'herve_sauce', label: 'Hervé SAUCE', selected: false }
-      ]
+      options: []
     },
     {
       key: 'dmcm_factureur',
       label: 'DMCM/Factureur',
       collapsed: true,
       searchTerm: '',
-      options: [
-        { value: 'alexis_brunet', label: 'Alexis BRUNET', selected: false },
-        { value: 'gautier_tirel', label: 'Gautier TIREL', selected: false },
-        { value: 'jonathan_sarail', label: 'Jonathan SARAIL', selected: false }
-      ]
+      options: []
     },
     {
       key: 'mission',
@@ -700,8 +667,8 @@ export class FilterPanelComponent {
       collapsed: true,
       searchTerm: '',
       options: [
-        { value: 'ouvert', label: 'Ouverte', selected: false },
-        { value: 'ferme', label: 'Fermée', selected: false }
+        { key: 'etat_mission', value: 'ouvert', label: 'Ouverte', selected: true },
+        { key: 'etat_mission', value: 'ferme', label: 'Fermée', selected: false }
       ]
     }
   ];
@@ -723,7 +690,9 @@ export class FilterPanelComponent {
     this.loadListeMissionsFilter();
     this.loadListeMillesimesFilter();
     this.loadListeFormesJuridiqueFilter();
-    this.loadListeNafsFilter();
+    // this.loadListeNafsFilter();
+    // this.loadListeDmcmFactFilter();
+    // this.loadListeAssociesFilter();
   }
 
   onSearchChange(group: FilterGroup, searchTerm: string): void {
@@ -849,7 +818,6 @@ export class FilterPanelComponent {
       const selectedValues = group.options
         .filter(option => option.selected)
         .map(option => option.value);
-      
       if (selectedValues.length > 0) {
         activeFilters[group.key] = selectedValues;
       }
@@ -859,7 +827,6 @@ export class FilterPanelComponent {
       const selectedValues = group.options
         .filter(option => option.selected)
         .map(option => option.value);
-      
       if (selectedValues.length > 0) {
         activeFilters[group.key] = selectedValues;
       }
@@ -875,8 +842,11 @@ export class FilterPanelComponent {
   loadListeGroupeFilter(): void {
     this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllGroupesFilter`)
       .subscribe((response) => {
-        this.filterGroupsDossier[0].options = response.data;
-        this.filterGroupsDossier[0].filteredOptions = [...response.data];
+        this.filterGroupsDossier[0].options = response.data.map(item => ({
+          ...item,
+          key: 'groupe'
+        }));
+        this.filterGroupsDossier[0].filteredOptions = [...this.filterGroupsDossier[0].options];
       }, (error) => {
         console.error('Erreur lors de la récupération des groupes :', error);
       });
@@ -885,8 +855,11 @@ export class FilterPanelComponent {
   loadListeDossierFilter(): void {
     this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllDossiersFilter`)
       .subscribe((response) => {
-        this.filterGroupsDossier[1].options = response.data;
-        this.filterGroupsDossier[1].filteredOptions = [...response.data];
+        this.filterGroupsDossier[1].options = response.data.map(item => ({
+          ...item,
+          key: 'dossier'
+        }));
+        this.filterGroupsDossier[1].filteredOptions = [...this.filterGroupsDossier[1].options];
       }, (error) => {
         console.error('Erreur lors de la récupération des dossiers :', error);
       });
@@ -895,10 +868,16 @@ export class FilterPanelComponent {
   loadListeBureauxFilter(): void {
     this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllBureauxFilter`)
       .subscribe((response) => {
-        this.filterGroupsDossier[2].options = response.data;
-        this.filterGroupsDossier[2].filteredOptions = [...response.data];
-        this.filterGroupsMission[0].options = response.data;
-        this.filterGroupsMission[0].filteredOptions = [...response.data];
+        this.filterGroupsDossier[2].options = response.data.map(item => ({
+          ...item,
+          key: 'bureau_dossier'
+        }));
+        this.filterGroupsDossier[2].filteredOptions = [...this.filterGroupsDossier[2].options];
+        this.filterGroupsMission[0].options = response.data.map(item => ({
+          ...item,
+          key: 'bureau_mission'
+        }));
+        this.filterGroupsMission[0].filteredOptions = [...this.filterGroupsMission[0].options];
       }, (error) => {
         console.error('Erreur lors de la récupération des bureaux :', error);
       });
@@ -907,8 +886,11 @@ export class FilterPanelComponent {
   loadListeMissionsFilter(): void {
     this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllMissionsFilter`)
       .subscribe((response) => {
-        this.filterGroupsMission[4].options = response.data;
-        this.filterGroupsMission[4].filteredOptions = [...response.data];
+        this.filterGroupsMission[3].options = response.data.map(item => ({
+          ...item,
+          key: 'mission'
+        }));
+        this.filterGroupsMission[3].filteredOptions = [...this.filterGroupsMission[3].options];
       }, (error) => {
         console.error('Erreur lors de la récupération des missions :', error);
       });
@@ -917,8 +899,11 @@ export class FilterPanelComponent {
   loadListeMillesimesFilter(): void {
     this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllMillesimesFilter`)
       .subscribe((response) => {
-        this.filterGroupsMission[5].options = response.data;
-        this.filterGroupsMission[5].filteredOptions = [...response.data];
+        this.filterGroupsMission[4].options = response.data.map(item => ({
+          ...item,
+          key: 'millesime'
+        }));
+        this.filterGroupsMission[4].filteredOptions = [...this.filterGroupsMission[4].options];
       }, (error) => {
         console.error('Erreur lors de la récupération des missions :', error);
       });
@@ -927,8 +912,11 @@ export class FilterPanelComponent {
   loadListeFormesJuridiqueFilter(): void {
     this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllFormesJuridiqueFilter`)
       .subscribe((response) => {
-        this.filterGroupsDossier[8].options = response.data;
-        this.filterGroupsDossier[8].filteredOptions = [...response.data];
+        this.filterGroupsDossier[7].options = response.data.map(item => ({
+          ...item,
+          key: 'forme_juridique'
+        }));
+        this.filterGroupsDossier[7].filteredOptions = [...this.filterGroupsDossier[7].options];
       }, (error) => {
         console.error('Erreur lors de la récupération des formes juridique :', error);
       });
@@ -937,8 +925,43 @@ export class FilterPanelComponent {
   loadListeNafsFilter(): void {
     this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllNafsFilter`)
       .subscribe((response) => {
-        this.filterGroupsDossier[6].options = response.data;
-        this.filterGroupsDossier[6].filteredOptions = [...response.data];
+        this.filterGroupsDossier[5].options = response.data.map(item => ({
+          ...item,
+          key: 'naf_section'
+        }));
+        this.filterGroupsDossier[5].filteredOptions = [...this.filterGroupsDossier[5].options];
+      }, (error) => {
+        console.error('Erreur lors de la récupération des nafs :', error);
+      });
+  }
+
+  loadListeDmcmFactFilter(): void {
+    this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllDmcmFactFilter`)
+      .subscribe((response) => {
+        this.filterGroupsMission[2].options = response.data.map(item => ({
+          ...item,
+          key: 'dmcm_factureur'
+        }));
+        this.filterGroupsMission[2].filteredOptions = [...this.filterGroupsMission[2].options];
+      }, (error) => {
+        console.error('Erreur lors de la récupération des nafs :', error);
+      });
+  }
+
+  loadListeAssociesFilter(): void {
+    this.http.get<{ success: boolean; data: FilterOption[]; count: number; timestamp: string }>(`${environment.apiUrl}/filters/getAllAssociesFilter`)
+      .subscribe((response) => {
+         this.filterGroupsDossier[3].options = response.data.map(item => ({
+          ...item,
+          key: 'associe_dossier'
+        }));
+        this.filterGroupsDossier[3].filteredOptions = [...this.filterGroupsDossier[3].options];
+
+        this.filterGroupsMission[1].options = response.data.map(item => ({
+          ...item,
+          key: 'associe_mission'
+        }));
+        this.filterGroupsMission[1].filteredOptions = [...this.filterGroupsMission[1].options];
       }, (error) => {
         console.error('Erreur lors de la récupération des nafs :', error);
       });

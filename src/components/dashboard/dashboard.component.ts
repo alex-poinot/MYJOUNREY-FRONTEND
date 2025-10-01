@@ -26,6 +26,8 @@ interface MissionData {
   MD_MISSION: string;
   MD_MILLESIME: string;
   MD_ETAT: string;
+  MD_DMCM_SIRH: string;
+  MD_FACTUREUR_SIRH: string;
   DOS_BUREAU: string;
   DOS_ASSOCIE_SIRH: string;
   DOS_ETAT: string;
@@ -173,7 +175,7 @@ interface InsertFile {
                 Information groupe / client / mission
               </th>
               <!-- Groupe Avant la mission -->
-              <th [attr.colspan]="avantMissionCollapsed ? 1 : 7" class="column-group-header avant-mission">
+              <th [attr.colspan]="avantMissionCollapsed ? 1 : 6" class="column-group-header avant-mission">
                 <button class="collapse-btn" (click)="toggleColumnGroup('avantMission')">
                   <i class="fas" [ngClass]="avantMissionCollapsed ? 'fa-chevron-right' : 'fa-chevron-down'"></i>
                 </button>
@@ -207,7 +209,7 @@ interface InsertFile {
               <th *ngIf="!avantMissionCollapsed" class="column-header">Conflict<br>Check</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">LAB<br>doc</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">Carto<br>LAB</th>
-              <th *ngIf="!avantMissionCollapsed" class="column-header">QAC</th>
+              <!--<th *ngIf="!avantMissionCollapsed" class="column-header">QAC</th>-->
               <th *ngIf="!avantMissionCollapsed" class="column-header">QAM</th>
               <th *ngIf="!avantMissionCollapsed" class="column-header">LDM</th>
               
@@ -268,13 +270,13 @@ interface InsertFile {
                       [class.completed]="group.clients[0].missions[0].avantMission.labGroupe == 'oui'"></i>
                 </td>
                 <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Cartographie LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.cartoLabGroupe, group.clients[0].missions[0].numeroGroupe, group.clients[0].missions[0].profilId, 'Groupe')">
-                  <i class="fas status-icon"
-                      [ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe == 'oui' ? 'fa-check-circle' : group.clients[0].missions[0].avantMission.cartoLabGroupe == 'encours' ? 'fa-hourglass' : 'fa-pen'"
-                      [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe == 'oui'"></i>
+                  <i class="fas status-icon fa-person-digging"></i>
+                      <!--[ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe == 'oui' ? 'fa-check-circle' : group.clients[0].missions[0].avantMission.cartoLabGroupe == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                      [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe == 'oui'"></i>-->
                 </td>
-                <td *ngIf="!avantMissionCollapsed">
+                <!--<td *ngIf="!avantMissionCollapsed">
                   <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'qac')"></div>
-                </td>
+                </td>-->
                 <td *ngIf="!avantMissionCollapsed">
                   <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'qam')">
                     {{ getGroupeRecap(group, 'avantMission', 'qam') }}
@@ -385,15 +387,15 @@ interface InsertFile {
                        [class.completed]="client.missions[0].avantMission.labDossier == 'oui'"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Cartographie LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.cartoLabDossier, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
-                    <i class="fas status-icon" 
-                       [ngClass]="client.missions[0].avantMission.cartoLabDossier == 'oui' ? 'fa-check-circle' : client.missions[0].avantMission.cartoLabDossier == 'encours' ? 'fa-hourglass' : 'fa-pen'"
-                       [class.completed]="client.missions[0].avantMission.cartoLabDossier == 'oui'"></i>
+                    <i class="fas status-icon fa-person-digging"></i>
+                       <!--[ngClass]="client.missions[0].avantMission.cartoLabDossier == 'oui' ? 'fa-check-circle' : client.missions[0].avantMission.cartoLabDossier == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="client.missions[0].avantMission.cartoLabDossier == 'oui'"></i>-->
                   </td>
-                  <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAC', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.qac, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
+                  <!--<td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAC', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.qac, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.qac == 'oui' ? 'fa-check-circle' : client.missions[0].avantMission.qac == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.qac == 'oui'"></i>
-                  </td>
+                  </td>-->
                   <td *ngIf="!avantMissionCollapsed">
                     <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'avantMission', 'qam')">
                       {{ getClientRecap(client, 'avantMission', 'qam') }}
@@ -486,7 +488,7 @@ interface InsertFile {
                   <td>
                     <div class="container-mission">
                       <div>{{ mission.mission }}</div>
-                      <i class="info-mission-source fa-regular fa-info-circle" title="{{ mission.source }}" aria-hidden="true"></i>
+                      <!--<i class="info-mission-source fa-regular fa-info-circle" title="{{ mission.source }}" aria-hidden="true"></i>-->
                     </div>
                   </td>
 
@@ -499,7 +501,7 @@ interface InsertFile {
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
                   <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
-                  <td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>
+                  <!--<td *ngIf="!avantMissionCollapsed"><span class="tiret-no-data">-</span></td>-->
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.qam, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.avantMission.qam == 'oui' ? 'fa-check-circle' : mission.avantMission.qam == 'encours' ? 'fa-hourglass' : 'fa-pen'"
@@ -523,9 +525,9 @@ interface InsertFile {
                        [class.completed]="mission.pendantMission.nog == 'oui'"></i>
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Checklist', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.checklist, mission.missionId, mission.profilId, 'Mission')">
-                    <i class="fas status-icon" 
-                       [ngClass]="mission.pendantMission.checklist == 'oui' ? 'fa-check-circle' : mission.pendantMission.checklist == 'encours' ? 'fa-hourglass' : 'fa-pen'"
-                       [class.completed]="mission.pendantMission.checklist == 'oui'"></i>
+                    <i class="fas status-icon fa-person-digging"></i>
+                       <!--[ngClass]="mission.pendantMission.checklist == 'oui' ? 'fa-check-circle' : mission.pendantMission.checklist == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.pendantMission.checklist == 'oui'"></i>-->
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Revision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.revision, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
@@ -570,9 +572,9 @@ interface InsertFile {
                        [class.completed]="mission.finMission.restitution == 'oui'"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Fin relation client', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.finRelationClient, mission.missionId, mission.profilId, 'Mission')">
-                    <i class="fas status-icon" 
-                       [ngClass]="mission.finMission.finRelationClient == 'oui' ? 'fa-check-circle' : mission.finMission.finRelationClient == 'encours' ? 'fa-hourglass' : 'fa-pen'"
-                       [class.completed]="mission.finMission.finRelationClient == 'oui'"></i>
+                    <i class="fas status-icon fa-person-digging"></i>
+                       <!--[ngClass]="mission.finMission.finRelationClient == 'oui' ? 'fa-check-circle' : mission.finMission.finRelationClient == 'encours' ? 'fa-hourglass' : 'fa-pen'"
+                       [class.completed]="mission.finMission.finRelationClient == 'oui'"></i>-->
                   </td>
                 </tr>
               </ng-container>
@@ -1847,6 +1849,7 @@ export class DashboardComponent implements OnInit {
   groupedData: GroupData[] = [];
   paginatedData: GroupData[] = [];
   allMissions: MissionData[] = [];
+  initialData: MissionData[] = [];
   allMissionsFiltred: MissionData[] = [];
   completeGroupedData: GroupData[] = [];
   currentPage = 1;
@@ -1861,7 +1864,7 @@ export class DashboardComponent implements OnInit {
   usrMailCollab: string = '';
 
   isFilterPanelOpen = false;
-  activeFilters: ActiveFilters = {};
+  activeFilters: ActiveFilters = {'etat_mission': ['ouvert'], 'etat_dossier': ['ouvert']};
 
   public modalData: ModalData = {
     isOpen: false,
@@ -1941,7 +1944,9 @@ export class DashboardComponent implements OnInit {
     console.log('Email api:', this.userEmail);
     this.http.get<{ success: boolean; data: MissionData[]; count: number; timestamp: string }>(`${environment.apiUrl}/missions/getAllMissionsDashboard/${this.userEmail}`)
       .subscribe((response) => {
-        this.processData(response.data);
+        this.initialData = response.data;
+        this.loadDataFiltred();
+        // this.processData(response.data);
       }, (error) => {
         console.error('Erreur lors de la récupération des missions :', error);
       });
@@ -2257,11 +2262,11 @@ export class DashboardComponent implements OnInit {
       }, 0);
 
       const clientCount = (client.missions[0][phase].conflitCheck == 'oui' ? 1 : 0) +
-        (client.missions[0][phase].labDossier == 'oui' ? 1 : 0) +
-        (client.missions[0][phase].qac == 'oui' ? 1 : 0) + 
-        (client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0)
+        (client.missions[0][phase].labDossier == 'oui' ? 1 : 0)
+        // (client.missions[0][phase].qac == 'oui' ? 1 : 0) + 
+        // (client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0)
 
-      total += 4;
+      total += 2;
 
       countV = missionCount + clientCount;
     } else if(phase == 'pendantMission') {
@@ -2272,10 +2277,10 @@ export class DashboardComponent implements OnInit {
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
           nbValide += mission[phase].nog == 'oui' ? 1 : 0;
-          nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
+          // nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
           nbValide += mission[phase].revision == 'oui' ? 1 : 0;
           nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
-          total += 4;
+          total += 3;
           return nbValide;
         }, 0);
 
@@ -2292,8 +2297,8 @@ export class DashboardComponent implements OnInit {
           nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
           nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
           nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
-          nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
-          total += 6;
+          // nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
+          total += 5;
           return nbValide;
         }, 0);
 
@@ -2321,11 +2326,11 @@ export class DashboardComponent implements OnInit {
       }, 0);
 
       const clientCount = (client.missions[0][phase].conflitCheck == 'oui' ? 1 : 0) +
-        (client.missions[0][phase].labDossier == 'oui' ? 1 : 0) +
-        (client.missions[0][phase].qac == 'oui' ? 1 : 0) + 
-        (client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0)
+        (client.missions[0][phase].labDossier == 'oui' ? 1 : 0)
+        // (client.missions[0][phase].qac == 'oui' ? 1 : 0) + 
+        // (client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0)
 
-      total += 4;
+      total += 2;
 
       countV = missionCount + clientCount;
     } else if(phase == 'pendantMission') {
@@ -2336,10 +2341,10 @@ export class DashboardComponent implements OnInit {
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
           nbValide += mission[phase].nog == 'oui' ? 1 : 0;
-          nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
+          // nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
           nbValide += mission[phase].revision == 'oui' ? 1 : 0;
           nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
-          total += 4;
+          total += 3;
           return nbValide;
         }, 0);
 
@@ -2356,8 +2361,8 @@ export class DashboardComponent implements OnInit {
           nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
           nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
           nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
-          nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
-          total += 6;
+          // nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
+          total += 5;
           return nbValide;
         }, 0);
 
@@ -2379,21 +2384,21 @@ export class DashboardComponent implements OnInit {
       countV = missionCount;
     } else if(phase == 'pendantMission') {
       const missionCount = (mission[phase].nog == 'oui' ? 1 : 0) +
-        (mission[phase].checklist == 'oui' ? 1 : 0) + 
+        // (mission[phase].checklist == 'oui' ? 1 : 0) + 
         (mission[phase].revision == 'oui' ? 1 : 0) +
         (mission[phase].supervision == 'oui' ? 1 : 0);
 
-      total = 4;
+      total = 3;
       countV = missionCount;
     } else if(phase == 'finMission') {
       const missionCount = (mission[phase].nds == 'oui' ? 1 : 0) +
         (mission[phase].cr == 'oui' ? 1 : 0) + 
         (mission[phase].qmm == 'oui' ? 1 : 0) +
         (mission[phase].plaquette == 'oui' ? 1 : 0) +
-        (mission[phase].restitution == 'oui' ? 1 : 0) +
-        (mission[phase].finRelationClient == 'oui' ? 1 : 0);
+        (mission[phase].restitution == 'oui' ? 1 : 0);
+        // (mission[phase].finRelationClient == 'oui' ? 1 : 0);
 
-      total = 6;
+      total = 5;
       countV = missionCount;
     }
 
@@ -2412,21 +2417,21 @@ export class DashboardComponent implements OnInit {
       countV = missionCount;
     } else if(phase == 'pendantMission') {
       const missionCount = (mission[phase].nog == 'oui' ? 1 : 0) +
-        (mission[phase].checklist == 'oui' ? 1 : 0) + 
+        // (mission[phase].checklist == 'oui' ? 1 : 0) + 
         (mission[phase].revision == 'oui' ? 1 : 0) +
         (mission[phase].supervision == 'oui' ? 1 : 0);
 
-      total = 4;
+      total = 3;
       countV = missionCount;
     } else if(phase == 'finMission') {
       const missionCount = (mission[phase].nds == 'oui' ? 1 : 0) +
         (mission[phase].cr == 'oui' ? 1 : 0) + 
         (mission[phase].qmm == 'oui' ? 1 : 0) +
         (mission[phase].plaquette == 'oui' ? 1 : 0) +
-        (mission[phase].restitution == 'oui' ? 1 : 0) +
-        (mission[phase].finRelationClient == 'oui' ? 1 : 0);
+        (mission[phase].restitution == 'oui' ? 1 : 0);
+        // (mission[phase].finRelationClient == 'oui' ? 1 : 0);
 
-      total = 6;
+      total = 5;
       countV = missionCount;
     }
 
@@ -2520,16 +2525,16 @@ export class DashboardComponent implements OnInit {
         let nbValide = sum;
         nbValide += client.missions[0][phase].conflitCheck == 'oui' ? 1 : 0;
         nbValide += client.missions[0][phase].labDossier == 'oui' ? 1 : 0;
-        nbValide += client.missions[0][phase].qac == 'oui' ? 1 : 0;
-        nbValide += client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0;
-        total += 4;
+        // nbValide += client.missions[0][phase].qac == 'oui' ? 1 : 0;
+        // nbValide += client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0;
+        total += 2;
         return nbValide;
       }, 0);
 
-      const groupeCount = (group.clients[0].missions[0][phase].labGroupe == 'oui' ? 1 : 0) +
-        (group.clients[0].missions[0][phase].cartoLabGroupe == 'oui' ? 1 : 0);
+      const groupeCount = (group.clients[0].missions[0][phase].labGroupe == 'oui' ? 1 : 0);
+        // (group.clients[0].missions[0][phase].cartoLabGroupe == 'oui' ? 1 : 0);
 
-      total += 2;
+      total += 1;
 
       countV = missionCount + clientCount + groupeCount;
     } else if(phase == 'pendantMission') {
@@ -2540,10 +2545,10 @@ export class DashboardComponent implements OnInit {
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
           nbValide += mission[phase].nog == 'oui' ? 1 : 0;
-          nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
+          // nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
           nbValide += mission[phase].revision == 'oui' ? 1 : 0;
           nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
-          total += 4;
+          total += 3;
           return nbValide;
         }, 0);
 
@@ -2560,8 +2565,8 @@ export class DashboardComponent implements OnInit {
           nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
           nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
           nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
-          nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
-          total += 6;
+          // nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
+          total += 5;
           return nbValide;
         }, 0);
 
@@ -2595,16 +2600,16 @@ export class DashboardComponent implements OnInit {
         let nbValide = sum;
         nbValide += client.missions[0][phase].conflitCheck == 'oui' ? 1 : 0;
         nbValide += client.missions[0][phase].labDossier == 'oui' ? 1 : 0;
-        nbValide += client.missions[0][phase].qac == 'oui' ? 1 : 0;
-        nbValide += client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0;
-        total += 4;
+        // nbValide += client.missions[0][phase].qac == 'oui' ? 1 : 0;
+        // nbValide += client.missions[0][phase].cartoLabDossier == 'oui' ? 1 : 0;
+        total += 2;
         return nbValide;
       }, 0);
 
-      const groupeCount = (group.clients[0].missions[0][phase].labGroupe == 'oui' ? 1 : 0) +
-        (group.clients[0].missions[0][phase].cartoLabGroupe == 'oui' ? 1 : 0);
+      const groupeCount = (group.clients[0].missions[0][phase].labGroupe == 'oui' ? 1 : 0);
+        // (group.clients[0].missions[0][phase].cartoLabGroupe == 'oui' ? 1 : 0);
 
-      total += 2;
+      total += 1;
 
       countV = missionCount + clientCount + groupeCount;
     } else if(phase == 'pendantMission') {
@@ -2615,10 +2620,10 @@ export class DashboardComponent implements OnInit {
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
           nbValide += mission[phase].nog == 'oui' ? 1 : 0;
-          nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
+          // nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
           nbValide += mission[phase].revision == 'oui' ? 1 : 0;
           nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
-          total += 4;
+          total += 3;
           return nbValide;
         }, 0);
 
@@ -2635,8 +2640,8 @@ export class DashboardComponent implements OnInit {
           nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
           nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
           nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
-          nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
-          total += 6;
+          // nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
+          total += 5;
           return nbValide;
         }, 0);
 
@@ -3689,11 +3694,125 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  loadDataFiltred(): void {
+    let filters = this.activeFilters;
+    this.allMissionsFiltred = this.initialData;
+
+    let listeFiltre = Object.keys(filters);
+    listeFiltre.forEach((key: string) => {
+      const filtersValues = filters[key];
+      if(key == 'etat_dossier') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.DOS_ETAT)
+          );
+        }
+      }
+      if(key == 'etat_mission') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.MD_ETAT)
+          );
+        }
+      }
+      if(key == 'dossier') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.numeroClient)
+          );
+        }
+      }
+      if(key == 'groupe') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.numeroGroupe)
+          );
+        }
+      }
+      if(key == 'bureau_dossier') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.DOS_BUREAU)
+          );
+        }
+      }
+      if(key == 'bureau_mission') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.BUREAU_ID)
+          );
+        }
+      }
+      if(key == 'naf_section') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.NAF_ID)
+          );
+        }
+      }
+      if(key == 'forme_juridique') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.DOS_FORME_JURIDIQUE)
+          );
+        }
+      }
+      if(key == 'millesime') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.MD_MILLESIME)
+          );
+        }
+      }
+      if(key == 'mission') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.MD_MISSION)
+          );
+        }
+      }
+      if(key == 'mois_cloture') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.DOS_MOIS_CLOTURE)
+          );
+        }
+      }
+      if(key == 'associe_mission') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.MD_RESP_PRINCIPAL_MISS_SIRH)
+          );
+        }
+      }
+      if(key == 'associe_dossier') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.DOS_ASSOCIE_SIRH)
+          );
+        }
+      }
+      if(key == 'dmcm_factureur') {
+        if (filtersValues && Array.isArray(filtersValues) && filtersValues.length > 0) {
+          this.allMissionsFiltred = this.allMissionsFiltred.filter(mission =>
+            filtersValues.includes(mission.MD_DMCM_SIRH) || filtersValues.includes(mission.MD_FACTUREUR_SIRH)
+          );
+        }
+      }
+    })
+
+    console.log('APRES:',this.allMissionsFiltred);
+
+    this.processData(this.allMissionsFiltred);
+  }
+
   onFiltersChanged(filters: ActiveFilters): void {
     this.activeFilters = filters;
     // Appliquer les filtres ici si nécessaire
     console.log('Filter:',this.activeFilters);
     console.log('Data:',this.paginatedData);
-    console.log('Missions:',this.allMissions);
+    console.log('AVANT:',this.initialData);
+
+    this.loadDataFiltred();
   }
 }
