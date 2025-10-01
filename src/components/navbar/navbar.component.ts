@@ -205,9 +205,9 @@ export interface TabGroup {
     }
 
     .brand-title {
-      font-family: 'MilkyHoney';
+      font-family: Inter, system-ui, sans-serif;
       font-size: 1.3vw;
-      font-weight: 500;
+      font-weight: 700;
       margin: 0;
       background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
       -webkit-background-clip: text;
