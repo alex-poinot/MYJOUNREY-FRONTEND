@@ -11,7 +11,8 @@ import { AuthService } from '../../services/auth.service';
       <div class="login-card">
         <div class="login-header">
           <div class="logo">
-            <div class="logo-robot">🤖</div>
+            <!--<div class="logo-robot">🤖</div>-->
+            <div class="logo-robot"><img src="assets/images/logo_MyJourney.png" alt="Logo MyJourney"></div>
             <h1 class="brand-title">MyJourney</h1>
           </div>
           <h2>Connexion requise</h2>
@@ -79,9 +80,9 @@ import { AuthService } from '../../services/auth.service';
       margin-bottom: 24px;
     }
 
-    .logo-robot {
-      font-size: 48px;
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+    .logo-robot img {
+      width: 2.5vw;
+      height: auto;
     }
 
     .brand-title {

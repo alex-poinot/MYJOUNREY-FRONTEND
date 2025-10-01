@@ -315,6 +315,13 @@ input:focus, textarea:focus, select:focus {
   background: rgba(201, 0, 0, 0.38);
 }
 
+@font-face {
+  font-family: 'MilkyHoney';
+  src: url('/assets/fonts/MilkyHoney.woff2') format('truetype'); /* Notez le "/" avant "assets" */
+  font-weight: normal;
+  font-style: normal;
+}
+
 /* Amélioration de l'accessibilité */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

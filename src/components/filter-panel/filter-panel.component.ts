@@ -690,9 +690,9 @@ export class FilterPanelComponent {
     this.loadListeMissionsFilter();
     this.loadListeMillesimesFilter();
     this.loadListeFormesJuridiqueFilter();
-    // this.loadListeNafsFilter();
-    // this.loadListeDmcmFactFilter();
-    // this.loadListeAssociesFilter();
+    this.loadListeNafsFilter();
+    this.loadListeDmcmFactFilter();
+    this.loadListeAssociesFilter();
   }
 
   onSearchChange(group: FilterGroup, searchTerm: string): void {

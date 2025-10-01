@@ -38,7 +38,8 @@ export interface TabGroup {
     <nav class="navbar-horizontal">
       <!-- Logo et titre -->
       <div class="navbar-brand" (click)="goToHome()">
-        <div class="logo-robot">🤖</div>
+        <!--<div class="logo-robot">🤖</div>-->
+        <div class="logo-robot"><img src="assets/images/logo_MyJourney.png" alt="Logo MyJourney"></div>
         <h1 class="brand-title">MyJourney</h1>
       </div>
 
@@ -198,15 +199,15 @@ export interface TabGroup {
       font-size: 1.4vw;
     }
 
-    .logo-robot {
-      font-size: 1.5vw;
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+    .logo-robot img {
+      max-width: 2vw;
+      height: auto;
     }
 
     .brand-title {
-      font-family: 'Inter', system-ui, sans-serif;
-      font-size: var(--font-size-xl);
-      font-weight: 700;
+      font-family: 'MilkyHoney';
+      font-size: 1.3vw;
+      font-weight: 500;
       margin: 0;
       background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
       -webkit-background-clip: text;

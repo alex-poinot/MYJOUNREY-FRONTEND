@@ -189,7 +189,7 @@ interface InsertFile {
                 Pendant la mission
               </th>
               <!-- Groupe Fin de mission -->
-              <th [attr.colspan]="finMissionCollapsed ? 1 : 7" class="column-group-header fin-mission">
+              <th [attr.colspan]="finMissionCollapsed ? 1 : 6" class="column-group-header fin-mission">
                 <button class="collapse-btn" (click)="toggleColumnGroup('finMission')">
                   <i class="fas" [ngClass]="finMissionCollapsed ? 'fa-chevron-right' : 'fa-chevron-down'"></i>
                 </button>
@@ -223,9 +223,9 @@ interface InsertFile {
               <!-- Fin de mission columns -->
               <th class="column-header percentage">%</th>
               <th *ngIf="!finMissionCollapsed" class="column-header">NDS</th>
-              <th *ngIf="!finMissionCollapsed" class="column-header">CR</th>
+              <!--<th *ngIf="!finMissionCollapsed" class="column-header">CR</th>-->
               <th *ngIf="!finMissionCollapsed" class="column-header">QMM</th>
-              <th *ngIf="!finMissionCollapsed" class="column-header">Plaquette</th>
+              <th *ngIf="!finMissionCollapsed" class="column-header">Plaquette /<br>Att. / CR</th>
               <th *ngIf="!finMissionCollapsed" class="column-header">Restitution</th>
               <th *ngIf="!finMissionCollapsed" class="column-header">Fin Relation<br>Client</th>
             </tr>
@@ -324,11 +324,11 @@ interface InsertFile {
                     {{ getGroupeRecap(group, 'finMission', 'nds') }}
                   </div>
                 </td>
-                <td *ngIf="!finMissionCollapsed">
+                <!--<td *ngIf="!finMissionCollapsed">
                   <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'finMission', 'cr')">
                     {{ getGroupeRecap(group, 'finMission', 'cr') }}
                   </div>
-                </td>
+                </td>-->
                 <td *ngIf="!finMissionCollapsed">
                   <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'finMission', 'qmm')">
                     {{ getGroupeRecap(group, 'finMission', 'qmm') }}
@@ -443,11 +443,11 @@ interface InsertFile {
                       {{ getClientRecap(client, 'finMission', 'nds') }}
                     </div>
                   </td>
-                  <td *ngIf="!finMissionCollapsed">
+                  <!--<td *ngIf="!finMissionCollapsed">
                     <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'finMission', 'cr')">
                       {{ getClientRecap(client, 'finMission', 'cr') }}
                     </div>
-                  </td>
+                  </td>-->
                   <td *ngIf="!finMissionCollapsed">
                     <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'finMission', 'qmm')">
                       {{ getClientRecap(client, 'finMission', 'qmm') }}
@@ -551,11 +551,11 @@ interface InsertFile {
                        [ngClass]="mission.finMission.nds == 'oui' ? 'fa-check-circle' : mission.finMission.nds == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.finMission.nds == 'oui'"></i>
                   </td>
-                  <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('CR mission ou Attestation', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.cr, mission.missionId, mission.profilId, 'Mission')">
+                  <!--<td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('CR mission ou Attestation', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.cr, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.cr == 'oui' ? 'fa-check-circle' : mission.finMission.cr == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.finMission.cr == 'oui'"></i>
-                  </td>
+                  </td>-->
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('QMM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.qmm, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.qmm == 'oui' ? 'fa-check-circle' : mission.finMission.qmm == 'encours' ? 'fa-hourglass' : 'fa-pen'"
@@ -758,7 +758,7 @@ interface InsertFile {
           <div *ngIf="modalData.type === 'double-document'" class="double-upload-section">
             <p>{{ modalData.description }}</p>
 
-            <h4>1. Plaquette</h4>
+            <h4>1. Plaquette ou Attestation de l’EC ou CR de mission</h4>
             <div *ngIf="modalData.modifyMode === true"
               class="file-input-group">
               <input type="file"
@@ -2293,12 +2293,12 @@ export class DashboardComponent implements OnInit {
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
           nbValide += mission[phase].nds == 'oui' ? 1 : 0;
-          nbValide += mission[phase].cr == 'oui' ? 1 : 0;
+          // nbValide += mission[phase].cr == 'oui' ? 1 : 0;
           nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
           nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
           nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
           // nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
-          total += 5;
+          total += 4;
           return nbValide;
         }, 0);
 
@@ -2357,12 +2357,12 @@ export class DashboardComponent implements OnInit {
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
           nbValide += mission[phase].nds == 'oui' ? 1 : 0;
-          nbValide += mission[phase].cr == 'oui' ? 1 : 0;
+          // nbValide += mission[phase].cr == 'oui' ? 1 : 0;
           nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
           nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
           nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
           // nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
-          total += 5;
+          total += 4;
           return nbValide;
         }, 0);
 
@@ -2392,13 +2392,13 @@ export class DashboardComponent implements OnInit {
       countV = missionCount;
     } else if(phase == 'finMission') {
       const missionCount = (mission[phase].nds == 'oui' ? 1 : 0) +
-        (mission[phase].cr == 'oui' ? 1 : 0) + 
+        // (mission[phase].cr == 'oui' ? 1 : 0) + 
         (mission[phase].qmm == 'oui' ? 1 : 0) +
         (mission[phase].plaquette == 'oui' ? 1 : 0) +
         (mission[phase].restitution == 'oui' ? 1 : 0);
         // (mission[phase].finRelationClient == 'oui' ? 1 : 0);
 
-      total = 5;
+      total = 4;
       countV = missionCount;
     }
 
@@ -2425,13 +2425,13 @@ export class DashboardComponent implements OnInit {
       countV = missionCount;
     } else if(phase == 'finMission') {
       const missionCount = (mission[phase].nds == 'oui' ? 1 : 0) +
-        (mission[phase].cr == 'oui' ? 1 : 0) + 
+        // (mission[phase].cr == 'oui' ? 1 : 0) + 
         (mission[phase].qmm == 'oui' ? 1 : 0) +
         (mission[phase].plaquette == 'oui' ? 1 : 0) +
         (mission[phase].restitution == 'oui' ? 1 : 0);
         // (mission[phase].finRelationClient == 'oui' ? 1 : 0);
 
-      total = 5;
+      total = 4;
       countV = missionCount;
     }
 
@@ -2561,12 +2561,12 @@ export class DashboardComponent implements OnInit {
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
           nbValide += mission[phase].nds == 'oui' ? 1 : 0;
-          nbValide += mission[phase].cr == 'oui' ? 1 : 0;
+          // nbValide += mission[phase].cr == 'oui' ? 1 : 0;
           nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
           nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
           nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
           // nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
-          total += 5;
+          total += 4;
           return nbValide;
         }, 0);
 
@@ -2636,12 +2636,12 @@ export class DashboardComponent implements OnInit {
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
           nbValide += mission[phase].nds == 'oui' ? 1 : 0;
-          nbValide += mission[phase].cr == 'oui' ? 1 : 0;
+          // nbValide += mission[phase].cr == 'oui' ? 1 : 0;
           nbValide += mission[phase].qmm == 'oui' ? 1 : 0;
           nbValide += mission[phase].plaquette == 'oui' ? 1 : 0;
           nbValide += mission[phase].restitution == 'oui' ? 1 : 0;
           // nbValide += mission[phase].finRelationClient == 'oui' ? 1 : 0;
-          total += 5;
+          total += 4;
           return nbValide;
         }, 0);
 
@@ -3230,6 +3230,7 @@ export class DashboardComponent implements OnInit {
     if(n == 1) {
       this.modalData.selectedFileLab1?.splice(fileNumber - 1, 1);
       this.deleteModuleFile(this.modalData.selectedFileLabId1?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      this.modalData.selectedFileLabId1?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab2?.length ?? 0) > 0) || ((this.modalData.selectedFileLab3?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
@@ -3243,6 +3244,7 @@ export class DashboardComponent implements OnInit {
     } else if(n == 2) {
       this.modalData.selectedFileLab2?.splice(fileNumber - 1, 1);
       this.deleteModuleFile(this.modalData.selectedFileLabId2?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      this.modalData.selectedFileLabId2?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab3?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
@@ -3256,6 +3258,7 @@ export class DashboardComponent implements OnInit {
     } else if(n == 3) {
       this.modalData.selectedFileLab3?.splice(fileNumber - 1, 1);
       this.deleteModuleFile(this.modalData.selectedFileLabId3?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      this.modalData.selectedFileLabId3?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
@@ -3269,6 +3272,7 @@ export class DashboardComponent implements OnInit {
     } else if(n == 4) {
       this.modalData.selectedFileLab4?.splice(fileNumber - 1, 1);
       this.deleteModuleFile(this.modalData.selectedFileLabId4?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      this.modalData.selectedFileLabId4?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
@@ -3282,6 +3286,7 @@ export class DashboardComponent implements OnInit {
     } else if(n == 5) {
       this.modalData.selectedFileLab5?.splice(fileNumber - 1, 1);
       this.deleteModuleFile(this.modalData.selectedFileLabId5?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      this.modalData.selectedFileLabId5?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab4?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
@@ -3295,6 +3300,7 @@ export class DashboardComponent implements OnInit {
     } else if(n == 6) {
       this.modalData.selectedFileLab6?.splice(fileNumber - 1, 1);
       this.deleteModuleFile(this.modalData.selectedFileLabId6?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      this.modalData.selectedFileLabId6?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab4?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab5?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
@@ -3308,6 +3314,7 @@ export class DashboardComponent implements OnInit {
     } else if(n == 7) {
       this.modalData.selectedFileLab7?.splice(fileNumber - 1, 1);
       this.deleteModuleFile(this.modalData.selectedFileLabId7?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      this.modalData.selectedFileLabId7?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab4?.length ?? 0) > 0) ||
       ((this.modalData.selectedFileLab5?.length ?? 0) > 0) || ((this.modalData.selectedFileLab6?.length ?? 0) > 0)) {
@@ -3493,11 +3500,12 @@ export class DashboardComponent implements OnInit {
 
       this.http.post<{ success: boolean; data: InsertFile[]; count: number; timestamp: string }>(`${environment.apiUrl}/files/setModuleFile`, moduleFile)
         .subscribe(response => {
-          if(categorie == 'mail') {
+          if(categorie == 'plaquette') {
             this.modalData.selectedFileId = response.data[0].MODFILE_Id;
-          } else if(categorie == 'plaquette') {
+          } else if(categorie == 'mail') {
             this.modalData.selectedFileId2 = response.data[0].MODFILE_Id;
           } else if(categorie == this.getCategorieLab(1)) {
+            console.log('LAB 1', response.data[0].MODFILE_Id);
             this.modalData.selectedFileLabId1?.push(response.data[0].MODFILE_Id);
           } else if(categorie == this.getCategorieLab(2)) {
             this.modalData.selectedFileLabId2?.push(response.data[0].MODFILE_Id);
@@ -3600,6 +3608,8 @@ export class DashboardComponent implements OnInit {
 
   deleteModuleFile(fileId: String, email: String, source: String, missionIdDosPgiDosGroupe: String, module: String) {
     console.log('Suppression du fichier du module:', fileId);
+
+    console.log(this.modalData.selectedFileLabId1);
 
     this.http.post(`${environment.apiUrl}/files/deleteModuleFile`, {
         fileId,
