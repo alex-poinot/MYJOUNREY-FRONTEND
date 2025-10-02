@@ -1634,9 +1634,9 @@ interface InsertFile {
     .icon-access-module {
       font-size: 0.55vw;
       position: absolute;
-      top: 0.7vh;
-      left: 0.8vw;
-      color: var(--primary-dark);
+      bottom: 0.7vh;
+      right: 0.8vw;
+      color: #0000c0;
       opacity: 0.5;
     }
 
