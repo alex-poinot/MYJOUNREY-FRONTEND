@@ -44,6 +44,15 @@ interface MissionData {
     qac: string;
     qam: string;
     ldm: string;
+    percentageAccess: number;
+    conflitCheckAccess: string;
+    labGroupeAccess: string;
+    labDossierAccess: string;
+    cartoLabGroupeAccess: string;
+    cartoLabDossierAccess: string;
+    qacAccess: string;
+    qamAccess: string;
+    ldmAccess: string;
   };
   pendantMission: {
     percentage: number;
@@ -51,6 +60,11 @@ interface MissionData {
     checklist: string;
     revision: string;
     supervision: string;
+    percentageAccess: number;
+    nogAccess: string;
+    checklistAccess: string;
+    revisionAccess: string;
+    supervisionAccess: string;
   };
   finMission: {
     percentage: number;
@@ -60,6 +74,13 @@ interface MissionData {
     plaquette: string;
     restitution: string;
     finRelationClient: string;
+    percentageAccess: number;
+    ndsAccess: string;
+    crAccess: string;
+    qmmAccess: string;
+    plaquetteAccess: string;
+    restitutionAccess: string;
+    finRelationClientAccess: string;
   };
 }
 
@@ -268,11 +289,15 @@ interface InsertFile {
                   <i class="fas status-icon" 
                       [ngClass]="group.clients[0].missions[0].avantMission.labGroupe == 'oui' ? 'fa-check-circle' : group.clients[0].missions[0].avantMission.labGroupe == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                       [class.completed]="group.clients[0].missions[0].avantMission.labGroupe == 'oui'"></i>
+                  <i *ngIf="group.clients[0].missions[0].avantMission.labGroupeAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="group.clients[0].missions[0].avantMission.labGroupeAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                 </td>
                 <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Cartographie LAB', group.clients[0].missions[0].numeroGroupe + '-' + group.clients[0].missions[0].numeroClient + '-' + group.clients[0].missions[0].mission, group.clients[0].missions[0].avantMission.cartoLabGroupe, group.clients[0].missions[0].numeroGroupe, group.clients[0].missions[0].profilId, 'Groupe')">
                   <i class="fas status-icon fa-person-digging"></i>
                       <!--[ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupe == 'oui' ? 'fa-check-circle' : group.clients[0].missions[0].avantMission.cartoLabGroupe == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                       [class.completed]="group.clients[0].missions[0].avantMission.cartoLabGroupe == 'oui'"></i>-->
+                  <i *ngIf="group.clients[0].missions[0].avantMission.cartoLabGroupeAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="group.clients[0].missions[0].avantMission.cartoLabGroupeAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                 </td>
                 <!--<td *ngIf="!avantMissionCollapsed">
                   <div class="recap-dossier" [innerHTML]="getGroupeRecap(group, 'avantMission', 'qac')"></div>
@@ -380,21 +405,29 @@ interface InsertFile {
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.conflitCheck == 'oui' ? 'fa-check-circle' : client.missions[0].avantMission.conflitCheck == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.conflitCheck == 'oui'"></i>
+                    <i *ngIf="client.missions[0].avantMission.conflitCheckAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="client.missions[0].avantMission.conflitCheckAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LAB documentaire', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.labDossier, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.labDossier == 'oui' ? 'fa-check-circle' : client.missions[0].avantMission.labDossier == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.labDossier == 'oui'"></i>
+                    <i *ngIf="client.missions[0].avantMission.labDossierAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="client.missions[0].avantMission.labDossierAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('Cartographie LAB', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.cartoLabDossier, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon fa-person-digging"></i>
                        <!--[ngClass]="client.missions[0].avantMission.cartoLabDossier == 'oui' ? 'fa-check-circle' : client.missions[0].avantMission.cartoLabDossier == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.cartoLabDossier == 'oui'"></i>-->
+                    <i *ngIf="client.missions[0].avantMission.cartoLabDossierAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="client.missions[0].avantMission.cartoLabDossierAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   <!--<td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('QAC', client.missions[0].numeroGroupe + '-' + client.missions[0].numeroClient + '-' + client.missions[0].mission, client.missions[0].avantMission.qac, client.missions[0].numeroClient, client.missions[0].profilId, 'Dossier')">
                     <i class="fas status-icon" 
                        [ngClass]="client.missions[0].avantMission.qac == 'oui' ? 'fa-check-circle' : client.missions[0].avantMission.qac == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="client.missions[0].avantMission.qac == 'oui'"></i>
+                    <i *ngIf="client.missions[0].avantMission.qacAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="client.missions[0].avantMission.qacAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>-->
                   <td *ngIf="!avantMissionCollapsed">
                     <div class="recap-dossier" [innerHTML]="getClientRecap(client, 'avantMission', 'qam')">
@@ -506,11 +539,15 @@ interface InsertFile {
                     <i class="fas status-icon" 
                        [ngClass]="mission.avantMission.qam == 'oui' ? 'fa-check-circle' : mission.avantMission.qam == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.avantMission.qam == 'oui'"></i>
+                    <i *ngIf="mission.avantMission.qamAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.avantMission.qamAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   <td *ngIf="!avantMissionCollapsed" class="status-cell" (click)="openStatusModal('LDM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.avantMission.ldm, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.avantMission.ldm == 'oui' ? 'fa-check-circle' : mission.avantMission.ldm == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.avantMission.ldm == 'oui'"></i>
+                    <i *ngIf="mission.avantMission.ldmAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.avantMission.ldmAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   
                   <!-- Pendant la mission -->
@@ -523,21 +560,29 @@ interface InsertFile {
                     <i class="fas status-icon" 
                        [ngClass]="mission.pendantMission.nog == 'oui' ? 'fa-check-circle' : mission.pendantMission.nog == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.nog == 'oui'"></i>
+                    <i *ngIf="mission.pendantMission.nogAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.pendantMission.nogAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Checklist', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.checklist, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon fa-person-digging"></i>
                        <!--[ngClass]="mission.pendantMission.checklist == 'oui' ? 'fa-check-circle' : mission.pendantMission.checklist == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.checklist == 'oui'"></i>-->
+                    <!--<i *ngIf="mission.pendantMission.checklistAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.pendantMission.checklistAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>-->
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Revision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.revision, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.pendantMission.revision == 'oui' ? 'fa-check-circle' : mission.pendantMission.revision == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.revision == 'oui'"></i>
+                    <i *ngIf="mission.pendantMission.revisionAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.pendantMission.revisionAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('Supervision', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.pendantMission.supervision, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.pendantMission.supervision == 'oui' ? 'fa-check-circle' : mission.pendantMission.supervision == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.pendantMission.supervision == 'oui'"></i>
+                    <i *ngIf="mission.pendantMission.supervisionAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.pendantMission.supervisionAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   
                   <!-- Fin de mission -->
@@ -550,31 +595,43 @@ interface InsertFile {
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.nds == 'oui' ? 'fa-check-circle' : mission.finMission.nds == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.finMission.nds == 'oui'"></i>
+                    <i *ngIf="mission.finMission.ndsAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.finMission.ndsAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   <!--<td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('CR mission ou Attestation', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.cr, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.cr == 'oui' ? 'fa-check-circle' : mission.finMission.cr == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.finMission.cr == 'oui'"></i>
+                    <i *ngIf="mission.finMission.crAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.finMission.crAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>-->
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('QMM', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.qmm, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.qmm == 'oui' ? 'fa-check-circle' : mission.finMission.qmm == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.finMission.qmm == 'oui'"></i>
+                    <i *ngIf="mission.finMission.qmmAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.finMission.qmmAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Plaquette', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.plaquette, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.plaquette == 'oui' ? 'fa-check-circle' : mission.finMission.plaquette == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.finMission.plaquette == 'oui'"></i>
+                    <i *ngIf="mission.finMission.plaquetteAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.finMission.plaquetteAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Restitution', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.restitution, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon" 
                        [ngClass]="mission.finMission.restitution == 'oui' ? 'fa-check-circle' : mission.finMission.restitution == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.finMission.restitution == 'oui'"></i>
+                    <i *ngIf="mission.finMission.restitutionAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.finMission.restitutionAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                   <td *ngIf="!finMissionCollapsed" class="status-cell" (click)="openStatusModal('Fin relation client', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.mission, mission.finMission.finRelationClient, mission.missionId, mission.profilId, 'Mission')">
                     <i class="fas status-icon fa-person-digging"></i>
                        <!--[ngClass]="mission.finMission.finRelationClient == 'oui' ? 'fa-check-circle' : mission.finMission.finRelationClient == 'encours' ? 'fa-hourglass' : 'fa-pen'"
                        [class.completed]="mission.finMission.finRelationClient == 'oui'"></i>-->
+                    <i *ngIf="mission.finMission.finRelationClientAccess != 'modif'" class="icon-access-module fa-regular"
+                      [ngClass]="mission.finMission.finRelationClientAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
                 </tr>
               </ng-container>
@@ -1574,6 +1631,15 @@ interface InsertFile {
       transition: all 0.2s;
     }
 
+    .icon-access-module {
+      font-size: 0.55vw;
+      position: absolute;
+      top: 0.7vh;
+      left: 0.8vw;
+      color: var(--primary-dark);
+      opacity: 0.5;
+    }
+
     .file-input:hover {
       border-color: var(--primary-color);
       background: rgba(34, 109, 104, 0.05);
@@ -1595,6 +1661,10 @@ interface InsertFile {
       margin-top: 8px;
       font-size: var(--font-size-sm);
       color: var(--gray-600);
+    }
+
+    table.mission-table td {
+      position: relative;
     }
 
     .upload-placeholder {
