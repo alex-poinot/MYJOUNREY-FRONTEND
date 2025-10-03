@@ -253,6 +253,7 @@ interface InsertFile {
             </tr>
           </thead>
           <tbody>
+            <tr *ngIf="paginatedData.length == 0" class="row-no-data"><td colspan="100%">Pas de donnée</td></tr>
             <ng-container *ngFor="let group of paginatedData; let groupIndex = index">
               <!-- Ligne de groupe -->
               <tr class="group-row main-group" (click)="toggleMainGroup($event, groupIndex)">
@@ -1122,6 +1123,7 @@ interface InsertFile {
       border-radius: 12px;
       box-shadow: var(--shadow-md);
       border: 1px solid var(--gray-200);
+      position: relative;
     }
 
     .mission-table {
@@ -1133,14 +1135,14 @@ interface InsertFile {
 
     .background-table-load {
       position: absolute;
-      background-color: #0000002e;
+      background-color: #d7d7d7;
       width: 98vw;
-      height: 79vh;
+      height: 67vh;
       z-index: 100;
-      border-radius: 0.5vw;
       display: flex;
       justify-content: center;
       align-items: center;
+      top: 11vh;
     }
 
     .background-table-load i {
@@ -1182,6 +1184,12 @@ interface InsertFile {
       min-width: 0.8vw;
       max-width: 0.8vw;
       text-align: left;
+    }
+
+    tr.row-no-data td {
+      height: 5vh;
+      font-size: 0.8vw;
+      text-align: center;
     }
 
     .mission-table thead tr:nth-child(2) th:nth-child(5),
