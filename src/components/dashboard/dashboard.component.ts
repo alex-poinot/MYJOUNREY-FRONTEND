@@ -183,6 +183,7 @@ interface InsertFile {
       </app-filter-panel>
 
       <div class="table-wrapper">
+        <div *ngIf="!tableDisplay" class="background-table-load"><i class="fa-solid fa-spinner-scale fa-spin-pulse" aria-hidden="true"></i></div>
         <table class="mission-table">
           <thead>
             <tr>
@@ -1130,6 +1131,23 @@ interface InsertFile {
       min-width: 100%;
     }
 
+    .background-table-load {
+      position: absolute;
+      background-color: #0000002e;
+      width: 98vw;
+      height: 79vh;
+      z-index: 100;
+      border-radius: 0.5vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .background-table-load i {
+      font-size: 3vw;
+      color: var(--primary-light);
+    }
+
     .mission-table thead tr:nth-child(1) th:nth-child(n+2) {
       min-width: 8vw;
     }
@@ -1987,6 +2005,8 @@ export class DashboardComponent implements OnInit {
   missionIdDosPgiDosGroupeGlobal = '';
   sourceGlobal = '';
 
+  tableDisplay = false;
+
   constructor(
     private http: HttpClient,
     private authService: AuthService,
@@ -2016,6 +2036,7 @@ export class DashboardComponent implements OnInit {
   }
 
   private loadData(): void {
+    this.tableDisplay = false;
     // Récupérer les données des missions depuis l'API
     console.log('Email api:', this.userEmail);
     this.http.get<{ success: boolean; data: MissionData[]; count: number; timestamp: string }>(`${environment.apiUrl}/missions/getAllMissionsDashboard/${this.userEmail}`)
@@ -2139,6 +2160,8 @@ export class DashboardComponent implements OnInit {
     
     // Mettre à jour l'état du bouton
     this.updateAllGroupsExpandedState();
+
+    this.tableDisplay = true;
   }
 
   goToPage(page: number): void {
