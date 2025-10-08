@@ -50,30 +50,11 @@ else
     exit 1
 fi
 
-# Recharger Nginx pour appliquer la configuration
-echo "🔄 Rechargement de Nginx..."
-if command -v nginx &> /dev/null; then
-    sudo nginx -t && sudo systemctl reload nginx
-    echo "✅ Nginx rechargé avec succès"
-fi
-
 # Afficher les informations de déploiement
 echo ""
 echo "📊 Informations de déploiement:"
-echo "- URL HTTPS: https://myjourney.grant-thronton.fr"
-echo "- URL HTTP: http://myjourney.grant-thronton.fr (redirige vers HTTPS)"
-echo "- IP: 10.100.6.40"
+echo "- URL: http://10.100.6.40"
 echo "- Environnement: production"
 echo "- Conteneur: myjourney-production"
-echo "- Port Docker: 8081"
 echo ""
 echo "📋 Commandes utiles:"
-echo "- Voir les logs: docker compose -f docker-compose.prod.yml logs -f myjourney-app"
-echo "- Redémarrer: docker compose -f docker-compose.prod.yml restart"
-echo "- Arrêter: docker compose -f docker-compose.prod.yml down"
-echo "- Logs Nginx: sudo tail -f /var/log/nginx/myjourney-prod-access.log"
-echo ""
-echo "🔒 Vérification SSL:"
-echo "- Certificat: /etc/ssl/certs/myjourney.crt"
-echo "- Clé privée: /etc/ssl/private/myjourney.key"
-echo ""
