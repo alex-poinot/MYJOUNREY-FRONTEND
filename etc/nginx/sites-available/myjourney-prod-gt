@@ -5,14 +5,14 @@ server {
     return 301 https://$server_name$request_uri;
 }
 
-# Configuration HTTPS pour MyJourney Test - ASSETS CORRIGÉS
+# Configuration HTTPS pour MyJourney Production
 server {
     listen 443 ssl http2;
     server_name myjourney.grant-thornton.fr;
     
     # Certificats SSL
-    ssl_certificate /etc/nginx/ssl/myjourney-gt.crt;
-    ssl_certificate_key /etc/nginx/ssl/myjourney-gt.key;
+    ssl_certificate /etc/nginx/ssl/myjourney-prod-gt.crt;
+    ssl_certificate_key /etc/nginx/ssl/myjourney-prod-gt.key;
     
     # Configuration SSL moderne
     ssl_protocols TLSv1.2 TLSv1.3;
@@ -22,14 +22,14 @@ server {
     ssl_session_timeout 10m;
     
     # Headers de sécurité pour MSAL
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains\" always;
-    add_header X-Frame-Options "SAMEORIGIN\" always;
-    add_header X-Content-Type-Options "nosniff\" always;
-    add_header Referrer-Policy "strict-origin-when-cross-origin\" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     
     # Page de test
     location /test {
-        return 200 "MyJourney Test Server OK - Assets routing fixed\n";
+        return 200 "MyJourney Production Server OK\n";
         add_header Content-Type text/plain;
     }
     
@@ -38,19 +38,12 @@ server {
         return 301 https://$server_name/myjourney/;
     }
     
-    # CORRECTION: Gestion des assets avec le bon chemin /myjourney/
+    # Gestion des assets avec le bon chemin /myjourney/
     location ~ ^/myjourney/(.*\.(js|mjs|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))$ {
         proxy_pass http://127.0.0.1:8080/$1;
         proxy_set_header Host $host;
         
-        # Content-Type correct selon l'extension
-        location ~ \.(js|mjs)$ {
-            add_header Content-Type application/javascript;
-        }
-        location ~ \.css$ {
-            add_header Content-Type text/css;
-        }
-        
+        # Headers pour les assets
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
@@ -104,10 +97,10 @@ server {
         proxy_read_timeout 30s;
         
         # CORS headers pour l'API
-        add_header Access-Control-Allow-Origin "https://myjourney.grant-thornton.fr\" always;
-        add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS\" always;
-        add_header Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With\" always;
-        add_header Access-Control-Allow-Credentials "true\" always;
+        add_header Access-Control-Allow-Origin "https://myjourney.grant-thornton.fr" always;
+        add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With" always;
+        add_header Access-Control-Allow-Credentials "true" always;
         
         # Gestion des requêtes OPTIONS (preflight CORS)
         if ($request_method = 'OPTIONS') {
