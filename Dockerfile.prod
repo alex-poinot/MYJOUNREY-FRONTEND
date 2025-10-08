@@ -62,7 +62,3 @@ RUN nginx -t && echo "Configuration Nginx OK" && \
     cat /etc/nginx/conf.d/default.conf
 
 # Exposer le port 80
-EXPOSE 80
-
-# Démarrer Nginx
-CMD ["nginx", "-g", "daemon off;"]

@@ -5,17 +5,17 @@ services:
       dockerfile: Dockerfile.prod
     container_name: myjourney-production
     ports:
-      - "8081:80"
+      - "8080:80"
     restart: unless-stopped
     environment:
       - NODE_ENV=production
       - API_URL=http://10.100.6.40:3000
     volumes:
       # Optionnel: pour persister les logs
-      - ./logs-prod:/var/log/nginx
+      - ./logs:/var/log/nginx
     networks:
-      - myjourney-network-prod
+      - myjourney-network
 
 networks:
-  myjourney-network-prod:
+  myjourney-network:
     driver: bridge
