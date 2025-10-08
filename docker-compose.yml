@@ -1,0 +1,21 @@
+services:
+  myjourney-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myjourney-staging
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=staging
+      - API_URL=http://10.100.9.40:3000
+    volumes:
+      # Optionnel: pour persister les logs
+      - ./logs:/var/log/nginx
+    networks:
+      - myjourney-network
+
+networks:
+  myjourney-network:
+    driver: bridge
