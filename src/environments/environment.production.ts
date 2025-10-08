@@ -4,7 +4,7 @@ export const environment = {
   name: 'production',
   apiUrl: 'https://myjourney.grant-thornton.fr/api/myjourney',
   azure: {
-    clientId: 'LFT8Q~xYFEeO-3qrnH-DpD-i1OZnaBp3xlynsbNo',
+    clientId: '634d3680-46b5-48e4-bdae-b7c6ed6b218a',
     tenantId: 'e1029da6-a2e7-449b-b816-9dd31f7c2d83',
     redirectUri: 'https://myjourney.grant-thronton.fr',
     postLogoutRedirectUri: 'https://myjourney.grant-thronton.fr'
