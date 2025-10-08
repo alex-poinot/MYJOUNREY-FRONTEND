@@ -22,10 +22,10 @@ server {
     ssl_session_timeout 10m;
     
     # Headers de sécurité pour MSAL
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains\" always;
+    add_header X-Frame-Options "SAMEORIGIN\" always;
+    add_header X-Content-Type-Options "nosniff\" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin\" always;
     
     # Page de test
     location /test {
@@ -104,10 +104,10 @@ server {
         proxy_read_timeout 30s;
         
         # CORS headers pour l'API
-        add_header Access-Control-Allow-Origin "https://myjourney.grant-thornton.fr" always;
-        add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
-        add_header Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With" always;
-        add_header Access-Control-Allow-Credentials "true" always;
+        add_header Access-Control-Allow-Origin "https://myjourney.grant-thornton.fr\" always;
+        add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS\" always;
+        add_header Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With\" always;
+        add_header Access-Control-Allow-Credentials "true\" always;
         
         # Gestion des requêtes OPTIONS (preflight CORS)
         if ($request_method = 'OPTIONS') {
