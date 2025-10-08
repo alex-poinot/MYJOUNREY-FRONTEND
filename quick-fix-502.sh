@@ -45,7 +45,13 @@ fi
 
 # Étape 3: Recharger Nginx
 info "Rechargement de Nginx..."
-sudo systemctl reload nginx
+if systemctl is-active --quiet nginx; then
+    sudo systemctl reload nginx
+else
+    info "Nginx n'est pas actif, démarrage du service..."
+    sudo systemctl start nginx
+    sudo systemctl enable nginx
+fi
 
 # Étape 4: Attendre un peu
 info "Attente de la propagation des changements..."
