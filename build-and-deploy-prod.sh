@@ -40,7 +40,7 @@ sleep 10
 
 # Vérifier que l'application répond
 echo "🔍 Vérification de l'état de l'application..."
-if curl -f http://localhost:8081 > /dev/null 2>&1; then
+if curl -f http://localhost:80 > /dev/null 2>&1; then
     echo "✅ Application déployée avec succès!"
     echo "🌐 Accessible sur: https://myjourney.grant-thronton.fr"
 else
