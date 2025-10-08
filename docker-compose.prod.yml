@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.prod
     container_name: myjourney-production
     ports:
-      - "8081:80"
+      - "8080:80"
     restart: unless-stopped
     environment:
       - NODE_ENV=production
