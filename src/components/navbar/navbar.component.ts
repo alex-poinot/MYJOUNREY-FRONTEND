@@ -39,7 +39,7 @@ export interface TabGroup {
       <!-- Logo et titre -->
       <div class="navbar-brand" (click)="goToHome()">
         <!--<div class="logo-robot">🤖</div>-->
-        <div class="logo-robot"><img src="/assets/images/logo_MyJourney.png" alt="Logo MyJourney"></div>
+        <div class="logo-robot"><img src="assets/images/logo_MyJourney.png" alt="Logo MyJourney"></div>
         <h1 class="brand-title">MyJourney</h1>
       </div>
 

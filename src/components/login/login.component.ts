@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
         <div class="login-header">
           <div class="logo">
             <!--<div class="logo-robot">🤖</div>-->
-            <div class="logo-robot"><img src="/assets/images/logo_MyJourney.png" alt="Logo MyJourney"></div>
+            <div class="logo-robot"><img src="assets/images/logo_MyJourney.png" alt="Logo MyJourney"></div>
             <h1 class="brand-title">MyJourney</h1>
           </div>
           <h2>Connexion requise</h2>

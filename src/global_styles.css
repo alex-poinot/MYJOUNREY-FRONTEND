@@ -317,7 +317,7 @@ input:focus, textarea:focus, select:focus {
 
 @font-face {
   font-family: 'MilkyHoney';
-  src: url('/assets/fonts/MilkyHoney.woff') format('truetype');
+  src: url('assets/fonts/MilkyHoney.woff') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
