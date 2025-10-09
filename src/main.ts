@@ -9,6 +9,7 @@ import { msalConfig } from './auth/auth.config';
 import { AuthService } from './services/auth.service';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { TestEditorComponent } from './components/test-editor/test-editor.component';
 import { NogEditorComponent } from './components/nog-editor/nog-editor.component';
 import { LoginComponent } from './components/login/login.component';
 import { environment } from './environments/environment';
@@ -73,7 +74,14 @@ export function initializeMsal(msalService: MsalService): () => Promise<void> {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, NavbarComponent, DashboardComponent, NogEditorComponent, LoginComponent],
+  imports: [
+    CommonModule,
+    NavbarComponent,
+    DashboardComponent,
+    TestEditorComponent,
+    NogEditorComponent,
+    LoginComponent
+  ],
   template: `
     <!-- Page de connexion si non authentifié -->
     <app-login *ngIf="!isAuthenticated && !shouldSkipAuth"></app-login>
@@ -86,8 +94,9 @@ export function initializeMsal(msalService: MsalService): () => Promise<void> {
       </app-navbar>
       <main class="main-content">
         <app-dashboard *ngIf="currentTab === 'dashboard'"></app-dashboard>
+        <app-test-editor *ngIf="currentTab === 'TEST'"></app-test-editor>
         <app-nog-editor *ngIf="currentTab === 'NOG'"></app-nog-editor>
-        <div *ngIf="currentTab !== 'dashboard' && currentTab !== 'NOG'" class="coming-soon">
+        <div *ngIf="currentTab !== 'dashboard' && currentTab !== 'TEST' && currentTab !== 'NOG'" class="coming-soon">
           <h2>{{ currentTab }}</h2>
           <p>Cette fonctionnalité sera bientôt disponible.</p>
         </div>

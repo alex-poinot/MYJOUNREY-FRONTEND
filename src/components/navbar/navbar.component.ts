@@ -47,7 +47,6 @@ export interface TabGroup {
       <div class="navbar-menu">
         <div *ngFor="let group of tabGroups" 
              class="menu-group"
-             style="display:none"
              (mouseenter)="onGroupHover(group, true)"
              (mouseleave)="onGroupHover(group, false)">
           
@@ -623,7 +622,7 @@ export class NavbarComponent {
     },
     {
       name: 'Pendant la mission',
-      tabs: ['NOG', 'Checklist', 'Révision', 'Supervision'],
+      tabs: ['NOG', 'Checklist', 'Révision', 'Supervision', 'TEST'],
       icon: '⚙️',
       collapsed: true
     },
