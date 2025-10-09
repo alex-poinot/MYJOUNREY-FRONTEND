@@ -6,8 +6,8 @@ export const environment = {
   azure: {
     clientId: 'c1a41f6c-3d28-45a0-bfde-a6fdd413b61b',
     tenantId: 'e1029da6-a2e7-449b-b816-9dd31f7c2d83',
-    redirectUri: 'https://myjourney.grant-thronton.fr/myjourney/',
-    postLogoutRedirectUri: 'https://myjourney.grant-thronton.fr/myjourney/'
+    redirectUri: 'https://myjourney.grant-thornton.fr/myjourney/',
+    postLogoutRedirectUri: 'https://myjourney.grant-thornton.fr/myjourney/'
   },
   features: {
     enableLogging: true,
