@@ -13,6 +13,15 @@ interface Dossier {
   LIBELLE_MISSIONS: string;
 }
 
+interface Mission {
+  MD_MISSION: string;
+  LIBELLE_MISSIONS: string;
+}
+
+interface Millesime {
+  MD_MILLESIME: string;
+}
+
 interface NogPartie1 {
   coordonnees: Coordonnees;
   contacts: Contacts[];
@@ -69,11 +78,12 @@ interface ApiResponse {
   template: `
     <div id="container-select-dossier">
       <div class="form-group">
-        <label for="email-input">Choisissez votre dossier :</label>
+        <label for="dossier-input">Choisissez votre dossier :</label>
         <div class="autocomplete-container">
           <input 
             type="text" 
             id="dossier-input"
+            [value]="selectedDossierDisplay"
             (input)="onDossierInputChange($event.target.value)"
             (blur)="hideDossierDropdown()"
             placeholder="Tapez pour rechercher un dossier..."
@@ -81,7 +91,7 @@ interface ApiResponse {
             autocomplete="off">
           
           <!-- Dropdown des suggestions -->
-          <div class="dossier-dropdown">
+          <div *ngIf="showDossierDropdown" class="dossier-dropdown">
             <div *ngIf="isSearchingDossiers" class="loading-item">
               <i class="fas fa-spinner fa-spin"></i>
               Recherche en cours...
@@ -101,9 +111,76 @@ interface ApiResponse {
           </div>
         </div>
       </div>
+
+      <!-- Dropdown des missions -->
+      <div class="form-group" *ngIf="selectedDossier">
+        <label for="mission-select">Choisissez votre mission :</label>
+        <select 
+          id="mission-select"
+          [(ngModel)]="selectedMission"
+          (change)="onMissionChange()"
+          class="mission-select">
+          <option value="">-- Sélectionnez une mission --</option>
+          <option *ngFor="let mission of availableMissions" 
+                  [value]="mission.MD_MISSION">
+            {{ mission.MD_MISSION + ' - ' + mission.LIBELLE_MISSIONS }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Dropdown des millésimes -->
+      <div class="form-group" *ngIf="selectedDossier && selectedMission">
+        <label for="millesime-select">Choisissez votre millésime :</label>
+        <select 
+          id="millesime-select"
+          [(ngModel)]="selectedMillesime"
+          (change)="onMillesimeChange()"
+          class="millesime-select">
+          <option value="">-- Sélectionnez un millésime --</option>
+          <option *ngFor="let millesime of availableMillesimes" 
+                  [value]="millesime.MD_MILLESIME">
+            {{ millesime.MD_MILLESIME }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Bouton de validation -->
+      <div class="form-group" *ngIf="selectedDossier && selectedMission && selectedMillesime">
+        <button 
+          class="validate-btn"
+          (click)="validateSelection()"
+          [disabled]="!canValidate()">
+          Valider la sélection
+        </button>
+      </div>
+
+      <!-- Affichage de la sélection -->
+      <div class="selection-summary" *ngIf="selectedDossier && selectedMission && selectedMillesime">
+        <h3>Sélection actuelle :</h3>
+        <p><strong>Dossier :</strong> {{ selectedDossier.DOS_PGI }} - {{ selectedDossier.DOS_NOM }}</p>
+        <p><strong>Mission :</strong> {{ selectedMission }} - {{ getSelectedMissionLabel() }}</p>
+        <p><strong>Millésime :</strong> {{ selectedMillesime }}</p>
+      </div>
     </div>
   `,
   styles: [`
+    #container-select-dossier {
+      padding: 2vh 2vw;
+      max-width: 50vw;
+    }
+
+    .form-group {
+      margin-bottom: 2vh;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 1vh;
+      font-weight: 500;
+      color: var(--gray-700);
+      font-size: var(--font-size-lg);
+    }
+
     .dossier-input {
       width: 100%;
       padding: 1vh 1vw;
@@ -117,6 +194,69 @@ interface ApiResponse {
       outline: none;
       border-color: var(--secondary-color);
       box-shadow: 0 0 0 3px rgba(100, 206, 199, 0.1);
+    }
+
+    .mission-select,
+    .millesime-select {
+      width: 100%;
+      padding: 1vh 1vw;
+      border: 0.2vh solid var(--gray-300);
+      border-radius: 0.5vw;
+      font-size: var(--font-size-md);
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .mission-select:focus,
+    .millesime-select:focus {
+      outline: none;
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(100, 206, 199, 0.1);
+    }
+
+    .validate-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 1.5vh 2vw;
+      border-radius: 0.5vw;
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .validate-btn:hover:not(:disabled) {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .validate-btn:disabled {
+      background: var(--gray-400);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .selection-summary {
+      background: var(--gray-50);
+      border: 0.1vh solid var(--gray-200);
+      border-radius: 0.5vw;
+      padding: 1.5vh 1.5vw;
+      margin-top: 2vh;
+    }
+
+    .selection-summary h3 {
+      margin: 0 0 1vh 0;
+      color: var(--primary-color);
+      font-size: var(--font-size-lg);
+    }
+
+    .selection-summary p {
+      margin: 0.5vh 0;
+      font-size: var(--font-size-md);
+      color: var(--gray-700);
     }
 
     .autocomplete-container {
@@ -186,16 +326,13 @@ interface ApiResponse {
       font-style: italic;
       text-align: center;
     }
-
-    .autocomplete-container {
-      position: relative;
-    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
 
   filteredDossiers: Dossier[] = [];
   allDossiers: Dossier[] = [];
+  allMissionsData: Dossier[] = []; // Stocke toutes les données de l'API
   dossiersLoaded = false;
   showDossierDropdown = false;
   isLoadingAllDossiers = false;
@@ -204,7 +341,16 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   currentUser: UserProfile | null = null;
   userEmail: string = '';
   usrMailCollab: string = '';
-  dossierSelected: string = '';
+  
+  // Variables pour les sélections
+  selectedDossier: Dossier | null = null;
+  selectedDossierDisplay: string = '';
+  selectedMission: string = '';
+  selectedMillesime: string = '';
+  
+  // Listes filtrées
+  availableMissions: Mission[] = [];
+  availableMillesimes: Millesime[] = [];
 
   private searchSubject = new Subject<string>();
 
@@ -260,8 +406,101 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   selectDossier(dossier: Dossier): void {
+    this.selectedDossier = dossier;
+    this.selectedDossierDisplay = `${dossier.DOS_PGI.trim()} - ${dossier.DOS_NOM.trim()}`;
     this.showDossierDropdown = false;
     this.filteredDossiers = [];
+    
+    // Réinitialiser les sélections suivantes
+    this.selectedMission = '';
+    this.selectedMillesime = '';
+    this.availableMillesimes = [];
+    
+    // Charger les missions pour ce dossier
+    this.loadMissionsForDossier();
+  }
+
+  loadMissionsForDossier(): void {
+    if (!this.selectedDossier) return;
+    
+    // Filtrer les missions uniques pour le dossier sélectionné
+    const missionsForDossier = this.allMissionsData.filter(
+      item => item.DOS_PGI === this.selectedDossier!.DOS_PGI
+    );
+    
+    // Créer une liste unique de missions
+    const uniqueMissions = new Map<string, Mission>();
+    missionsForDossier.forEach(item => {
+      if (!uniqueMissions.has(item.MD_MISSION)) {
+        uniqueMissions.set(item.MD_MISSION, {
+          MD_MISSION: item.MD_MISSION,
+          LIBELLE_MISSIONS: item.LIBELLE_MISSIONS
+        });
+      }
+    });
+    
+    this.availableMissions = Array.from(uniqueMissions.values());
+  }
+
+  onMissionChange(): void {
+    // Réinitialiser le millésime
+    this.selectedMillesime = '';
+    
+    if (this.selectedMission) {
+      this.loadMillesimesForMission();
+    } else {
+      this.availableMillesimes = [];
+    }
+  }
+
+  loadMillesimesForMission(): void {
+    if (!this.selectedDossier || !this.selectedMission) return;
+    
+    // Filtrer les millésimes pour le dossier et la mission sélectionnés
+    const millesimesForMission = this.allMissionsData.filter(
+      item => item.DOS_PGI === this.selectedDossier!.DOS_PGI && 
+              item.MD_MISSION === this.selectedMission
+    );
+    
+    // Créer une liste unique de millésimes
+    const uniqueMillesimes = new Map<string, Millesime>();
+    millesimesForMission.forEach(item => {
+      if (!uniqueMillesimes.has(item.MD_MILLESIME)) {
+        uniqueMillesimes.set(item.MD_MILLESIME, {
+          MD_MILLESIME: item.MD_MILLESIME
+        });
+      }
+    });
+    
+    this.availableMillesimes = Array.from(uniqueMillesimes.values())
+      .sort((a, b) => b.MD_MILLESIME.localeCompare(a.MD_MILLESIME)); // Tri décroissant
+  }
+
+  onMillesimeChange(): void {
+    // Rien de spécial à faire pour l'instant
+  }
+
+  canValidate(): boolean {
+    return !!(this.selectedDossier && this.selectedMission && this.selectedMillesime);
+  }
+
+  validateSelection(): void {
+    if (!this.canValidate()) return;
+    
+    console.log('Sélection validée:', {
+      dossier: this.selectedDossier,
+      mission: this.selectedMission,
+      millesime: this.selectedMillesime
+    });
+    
+    // Ici vous pouvez ajouter la logique pour traiter la sélection
+    // Par exemple, naviguer vers l'éditeur NOG avec ces paramètres
+    alert(`Sélection validée !\nDossier: ${this.selectedDossier!.DOS_PGI} - ${this.selectedDossier!.DOS_NOM}\nMission: ${this.selectedMission}\nMillésime: ${this.selectedMillesime}`);
+  }
+
+  getSelectedMissionLabel(): string {
+    const mission = this.availableMissions.find(m => m.MD_MISSION === this.selectedMission);
+    return mission ? mission.LIBELLE_MISSIONS : '';
   }
 
   private searchDossiersInCache(searchTerm: string): Dossier[] {
@@ -302,7 +541,17 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   onDossierInputChange(value: string): void {
-    this.dossierSelected = value;
+    this.selectedDossierDisplay = value;
+    
+    // Si l'utilisateur tape quelque chose de différent, réinitialiser la sélection
+    if (this.selectedDossier && 
+        value !== `${this.selectedDossier.DOS_PGI.trim()} - ${this.selectedDossier.DOS_NOM.trim()}`) {
+      this.selectedDossier = null;
+      this.selectedMission = '';
+      this.selectedMillesime = '';
+      this.availableMissions = [];
+      this.availableMillesimes = [];
+    }
     
     // S'assurer que les utilisateurs sont chargés
     if (!this.dossiersLoaded && !this.isLoadingAllDossiers) {
@@ -325,6 +574,9 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     try {
       const response = await this.http.get<ApiResponse>(`${environment.apiUrl}/missions/getAllMissionAccessModuleEditor/${this.userEmail}&NOG`).toPromise();
       if (response && response.success && response.data) {
+        // Stocker toutes les données pour les filtres en cascade
+        this.allMissionsData = response.data;
+        
         // Filtrer les dossiers avec DOS_PGI et DOS_NOM non vide, puis rendre DOS_PGI unique
         const filtered = response.data.filter(dossier => dossier.DOS_PGI && dossier.DOS_NOM.trim() !== '');
         const uniqueDossiersMap = new Map<string, Dossier>();
@@ -338,7 +590,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         console.log(`${this.allDossiers.length} dossiers chargés depuis l'API`);
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des utilisateurs:', error);
+      console.error('Erreur lors du chargement des dossiers:', error);
       this.allDossiers = [];
     } finally {
       this.isLoadingAllDossiers = false;
