@@ -192,28 +192,28 @@ interface ApiResponse {
       <div id="part-bottom-page-nog">
         <div id="part-bottom-left-page-nog">
           <div id="container-menu-nog">
-            <div class="container-element-menu-nog selected">
+            <div class="container-element-menu-nog selected" (click)="changePartNog('1', $event)">
               <div class="text-element-menu-nog">1. Présentation de la société</div>
             </div>
-            <div class="container-element-menu-nog">
+            <div class="container-element-menu-nog" (click)="changePartNog('2', $event)">
               <div class="text-element-menu-nog">2. Présentation de la mission</div>
             </div>
-            <div class="container-element-menu-nog">
+            <div class="container-element-menu-nog" (click)="changePartNog('3', $event)">
               <div class="text-element-menu-nog">3. Organisation administrative et comptable</div>
             </div>
-            <div class="container-element-menu-nog">
+            <div class="container-element-menu-nog" (click)="changePartNog('4', $event)">
               <div class="text-element-menu-nog">4. Zones de risque</div>
             </div>
-            <div class="container-element-menu-nog">
+            <div class="container-element-menu-nog" (click)="changePartNog('5', $event)">
               <div class="text-element-menu-nog">5. Diligences</div>
             </div>
-            <div class="container-element-menu-nog">
+            <div class="container-element-menu-nog" (click)="changePartNog('6', $event)">
               <div class="text-element-menu-nog">6. Restitution clients</div>
             </div>
-            <div class="container-element-menu-nog">
+            <div class="container-element-menu-nog" (click)="changePartNog('7', $event)">
               <div class="text-element-menu-nog">7. Déontologie</div>
             </div>
-            <div class="container-element-menu-nog">
+            <div class="container-element-menu-nog" (click)="changePartNog('annexes', $event)">
               <div class="text-element-menu-nog">Annexes</div>
             </div>
           </div>
@@ -255,6 +255,7 @@ interface ApiResponse {
 
               <div id="container-part-1-2-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.2. Contacts</div>
+                <button class="btn-add-row" (click)="addContact()"><i class="fa-solid fa-plus"></i> Ajouter un contact</button>
                 <div class="body-element-nog">
                   <table class="table-nog">
                     <thead>
@@ -297,7 +298,6 @@ interface ApiResponse {
                       </ng-container>
                     </tbody>
                   </table>
-                  <button class="btn-add-row" (click)="addContact()"><i class="fa-solid fa-plus"></i> Ajouter un contact</button>
                 </div>
               </div>
             </div>
@@ -305,6 +305,7 @@ interface ApiResponse {
             <div class="row-part-nog">
               <div id="container-part-1-3-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.3. Associés</div>
+                <button class="btn-add-row" (click)="addAssocie()"><i class="fa-solid fa-plus"></i> Ajouter un associé</button>
                 <div class="body-element-nog">
                   <table class="table-nog">
                     <thead>
@@ -343,7 +344,6 @@ interface ApiResponse {
                       </ng-container>
                     </tbody>
                   </table>
-                  <button class="btn-add-row" (click)="addAssocie()"><i class="fa-solid fa-plus"></i> Ajouter un associé</button>
                 </div>
               </div>
             </div>
@@ -415,7 +415,6 @@ interface ApiResponse {
                     <div
                       contenteditable="true"
                       class="editor-content"
-                      [(ngModel)]="nogPartie1.activiteExHisto"
                       [innerHTML]="nogPartie1.activiteExHisto"
                       (input)="onEditorContentChange($event)">
                     </div>
@@ -713,6 +712,7 @@ interface ApiResponse {
       display: flex;
       flex-direction: column;
       height: 100%;
+      position: relative;
     }
 
     .body-element-nog {
@@ -743,7 +743,8 @@ interface ApiResponse {
       font-size: var(--font-size-lg);
       color: var(--primary-dark);
       font-weight: 600;
-      height: 10%;
+      height: 16%;
+      padding: 1vh 0;
     }
 
     .icon-coordonnees-nog {
@@ -943,7 +944,6 @@ interface ApiResponse {
     }
 
     .btn-add-row {
-      margin-top: 1vh;
       padding: 0.8vh 1vw;
       background-color: var(--primary-color);
       color: white;
@@ -952,6 +952,10 @@ interface ApiResponse {
       cursor: pointer;
       font-size: var(--font-size-md);
       transition: all 0.2s;
+      width: 11vw;
+      position: absolute;
+      top: 0;
+      right: 0;
     }
 
     .btn-add-row:hover {
@@ -1472,5 +1476,20 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   onEditorContentChange(event: Event): void {
     const target = event.target as HTMLElement;
     this.nogPartie1.activiteExHisto = target.innerHTML;
+  }
+
+  changePartNog(value: string, event: MouseEvent): void {
+    if(this.selectedPartNog == value) {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+    if (target.parentElement && target.parentElement.parentElement) {
+      Array.from(target.parentElement.parentElement.children).forEach(child => {
+        child.classList.remove('selected');
+      });
+      target.parentElement.classList.add('selected');
+    }
+    this.selectedPartNog = value;
   }
 }
