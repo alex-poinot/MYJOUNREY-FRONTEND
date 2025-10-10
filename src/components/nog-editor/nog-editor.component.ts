@@ -347,10 +347,11 @@ interface ApiResponse {
 
                     <div class="colonne-chiffres-sign-nog">
                       <div class="titre-colonne-chiffres-sign-nog">Variation</div>
-                      <div class="libelle-chiffres-sign-nog"></div>
-                      <div class="libelle-chiffres-sign-nog"></div>
-                      <div class="libelle-chiffres-sign-nog"></div>
-                      <div class="libelle-chiffres-sign-nog"></div>
+                      <div class="montant-chiffres-sign-nog"></div>
+                      <div class="montant-chiffres-sign-nog"></div>
+                      <div class="montant-chiffres-sign-nog"></div>
+                      <div class="montant-chiffres-sign-nog"></div>
+                      <div class="montant-chiffres-sign-nog"></div>
                     </div>
                   </div>
                 </div>
