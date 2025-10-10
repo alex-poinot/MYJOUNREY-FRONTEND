@@ -3,6 +3,7 @@ export const environment = {
   production: false,
   name: 'staging',
   apiUrl: 'https://myjourney-test.grant-thornton.fr/api/myjourney',
+  apiUrlMyVision: 'https://ec-test.grant-thornton.fr/transformapi/api',
   azure: {
     clientId: '61afef70-d6d1-45cd-a015-82063f882824',
     tenantId: 'e1029da6-a2e7-449b-b816-9dd31f7c2d83',

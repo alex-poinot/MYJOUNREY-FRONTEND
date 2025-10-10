@@ -173,7 +173,7 @@ export interface TabGroup {
       color: var(--gray-800);
       box-shadow: var(--shadow-md);
       border-bottom: 0.2vh solid var(--primary-color);
-      z-index: 100;
+      z-index: 99999;
       display: flex;
       align-items: center;
       padding: 0 1vw;
