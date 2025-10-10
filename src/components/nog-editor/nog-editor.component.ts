@@ -345,7 +345,7 @@ interface ApiResponse {
                       </div>
                     </ng-container>
 
-                    <div class="colonne-chiffres-sign-nog">
+                    <div class="colonne-chiffres-sign-nog" id="colonne-variation-cs">
                       <div class="titre-colonne-chiffres-sign-nog">Variation</div>
                       <div class="montant-chiffres-sign-nog"></div>
                       <div class="montant-chiffres-sign-nog"></div>
