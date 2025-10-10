@@ -50,12 +50,14 @@ interface Contacts {
   telephone: string;
   fonction: string;
   libelle: string;
+  isEditing?: boolean;
 }
 
 interface Associes {
   nom: string;
   nbPart: number;
   pourcPart: number;
+  isEditing?: boolean;
 }
 
 interface ChiffresSignificatifs {
@@ -265,22 +267,37 @@ interface ApiResponse {
                       </tr>
                     </thead>
                     <tbody>
-                      <ng-container *ngFor="let contact of nogPartie1.contacts">
+                      <ng-container *ngFor="let contact of nogPartie1.contacts; let i = index">
                         <tr>
-                          <td> {{ contact.prenom }} {{ contact.nom }} </td>
-                          <td> {{ contact.libelle }} </td>
-                          <td> {{ contact.telephone }} </td>
-                          <td> {{ contact.mail }} </td>
+                          <td>
+                            <input *ngIf="contact.isEditing" type="text" [(ngModel)]="contact.prenom" class="input-table-nog" style="width: 45%; display: inline-block;">
+                            <input *ngIf="contact.isEditing" type="text" [(ngModel)]="contact.nom" class="input-table-nog" style="width: 45%; display: inline-block; margin-left: 5%;">
+                            <span *ngIf="!contact.isEditing">{{ contact.prenom }} {{ contact.nom }}</span>
+                          </td>
+                          <td>
+                            <input *ngIf="contact.isEditing" type="text" [(ngModel)]="contact.libelle" class="input-table-nog">
+                            <span *ngIf="!contact.isEditing">{{ contact.libelle }}</span>
+                          </td>
+                          <td>
+                            <input *ngIf="contact.isEditing" type="text" [(ngModel)]="contact.telephone" class="input-table-nog">
+                            <span *ngIf="!contact.isEditing">{{ contact.telephone }}</span>
+                          </td>
+                          <td>
+                            <input *ngIf="contact.isEditing" type="email" [(ngModel)]="contact.mail" class="input-table-nog">
+                            <span *ngIf="!contact.isEditing">{{ contact.mail }}</span>
+                          </td>
                           <td>
                             <div class="action-tableau">
-                              <i class="fa-solid fa-pen-to-square action-edit"></i>
-                              <i class="fa-solid fa-trash action-delete"></i>
+                              <i *ngIf="!contact.isEditing" class="fa-solid fa-pen-to-square action-edit" (click)="toggleEditContact(i)"></i>
+                              <i *ngIf="contact.isEditing" class="fa-solid fa-check action-validate" (click)="toggleEditContact(i)"></i>
+                              <i class="fa-solid fa-trash action-delete" (click)="deleteContact(i)"></i>
                             </div>
                           </td>
                         </tr>
                       </ng-container>
                     </tbody>
                   </table>
+                  <button class="btn-add-row" (click)="addContact()"><i class="fa-solid fa-plus"></i> Ajouter un contact</button>
                 </div>
               </div>
             </div>
@@ -300,22 +317,33 @@ interface ApiResponse {
                       </tr>
                     </thead>
                     <tbody>
-                      <ng-container *ngFor="let associe of nogPartie1.associes">
+                      <ng-container *ngFor="let associe of nogPartie1.associes; let i = index">
                         <tr>
-                          <td> {{ associe.nom }} </td>
-                          <td> {{ formatNumber(associe.nbPart) }} </td>
+                          <td>
+                            <input *ngIf="associe.isEditing" type="text" [(ngModel)]="associe.nom" class="input-table-nog">
+                            <span *ngIf="!associe.isEditing">{{ associe.nom }}</span>
+                          </td>
+                          <td>
+                            <input *ngIf="associe.isEditing" type="number" [(ngModel)]="associe.nbPart" class="input-table-nog">
+                            <span *ngIf="!associe.isEditing">{{ formatNumber(associe.nbPart) }}</span>
+                          </td>
                           <td></td>
-                          <td> {{ formatNumber(associe.pourcPart) }} </td>
+                          <td>
+                            <input *ngIf="associe.isEditing" type="number" [(ngModel)]="associe.pourcPart" class="input-table-nog">
+                            <span *ngIf="!associe.isEditing">{{ formatNumber(associe.pourcPart) }}</span>
+                          </td>
                           <td>
                             <div class="action-tableau">
-                              <i class="fa-solid fa-pen-to-square action-edit"></i>
-                              <i class="fa-solid fa-trash action-delete"></i>
+                              <i *ngIf="!associe.isEditing" class="fa-solid fa-pen-to-square action-edit" (click)="toggleEditAssocie(i)"></i>
+                              <i *ngIf="associe.isEditing" class="fa-solid fa-check action-validate" (click)="toggleEditAssocie(i)"></i>
+                              <i class="fa-solid fa-trash action-delete" (click)="deleteAssocie(i)"></i>
                             </div>
                           </td>
                         </tr>
                       </ng-container>
                     </tbody>
                   </table>
+                  <button class="btn-add-row" (click)="addAssocie()"><i class="fa-solid fa-plus"></i> Ajouter un associé</button>
                 </div>
               </div>
             </div>
@@ -334,24 +362,34 @@ interface ApiResponse {
                       <div class="libelle-chiffres-sign-nog">Résultat net (ou avant impôt)</div>
                     </div>
 
-                    <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs">
+                    <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
                       <div class="colonne-chiffres-sign-nog">
                         <div class="titre-colonne-chiffres-sign-nog"> {{ formatDate(cs.datePeriode) }} ({{ cs.dureeExercice }} mois) </div>
-                        <div class="montant-chiffres-sign-nog"> {{ formatNumber(cs.effectif) }} </div>
-                        <div class="montant-chiffres-sign-nog"> {{ formatNumber(cs.capitauxPropres) }} </div>
-                        <div class="montant-chiffres-sign-nog"> {{ formatNumber(cs.bilanNet) }} </div>
-                        <div class="montant-chiffres-sign-nog"> {{ formatNumber(cs.ca) }} </div>
-                        <div class="montant-chiffres-sign-nog"> {{ formatNumber(cs.beneficePerte) }} </div>
+                        <div class="montant-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="cs.effectif" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        </div>
+                        <div class="montant-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="cs.capitauxPropres" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        </div>
+                        <div class="montant-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="cs.bilanNet" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        </div>
+                        <div class="montant-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="cs.ca" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        </div>
+                        <div class="montant-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="cs.beneficePerte" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        </div>
                       </div>
                     </ng-container>
 
                     <div class="colonne-chiffres-sign-nog" id="colonne-variation-cs">
                       <div class="titre-colonne-chiffres-sign-nog">Variation</div>
-                      <div class="montant-chiffres-sign-nog"></div>
-                      <div class="montant-chiffres-sign-nog"></div>
-                      <div class="montant-chiffres-sign-nog"></div>
-                      <div class="montant-chiffres-sign-nog"></div>
-                      <div class="montant-chiffres-sign-nog"></div>
+                      <div class="montant-chiffres-sign-nog">{{ calculateVariation('effectif') }}</div>
+                      <div class="montant-chiffres-sign-nog">{{ calculateVariation('capitauxPropres') }}</div>
+                      <div class="montant-chiffres-sign-nog">{{ calculateVariation('bilanNet') }}</div>
+                      <div class="montant-chiffres-sign-nog">{{ calculateVariation('ca') }}</div>
+                      <div class="montant-chiffres-sign-nog">{{ calculateVariation('beneficePerte') }}</div>
                     </div>
                   </div>
                 </div>
@@ -363,6 +401,24 @@ interface ApiResponse {
                 <div class="title-element-nog">1.5. Activité exercée et historique</div>
                 <div class="body-element-nog">
                   <div id="editeur-texte-activite-exerce">
+                    <div class="toolbar-editor">
+                      <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                      <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                      <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                      <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                      <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                      <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                      <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                      <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                      <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                    </div>
+                    <div
+                      contenteditable="true"
+                      class="editor-content"
+                      [(ngModel)]="nogPartie1.activiteExHisto"
+                      [innerHTML]="nogPartie1.activiteExHisto"
+                      (input)="onEditorContentChange($event)">
+                    </div>
                   </div>
                 </div>
               </div>
@@ -863,6 +919,113 @@ interface ApiResponse {
     div#container-part-1-5-nog .body-element-nog {
       width: 81vw;
     }
+
+    .input-table-nog {
+      width: 100%;
+      padding: 0.3vh 0.3vw;
+      border: 0.1vh solid var(--gray-300);
+      border-radius: 0.3vw;
+      font-size: var(--font-size-md);
+    }
+
+    .input-table-nog:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    .action-tableau .action-validate {
+      color: var(--gray-400);
+      cursor: pointer;
+    }
+
+    .action-tableau .action-validate:hover {
+      color: #10b981;
+    }
+
+    .btn-add-row {
+      margin-top: 1vh;
+      padding: 0.8vh 1vw;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 0.3vw;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      transition: all 0.2s;
+    }
+
+    .btn-add-row:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-add-row i {
+      margin-right: 0.5vw;
+    }
+
+    .input-chiffres-sign-nog {
+      width: 100%;
+      padding: 0.3vh 0.3vw;
+      border: 0.1vh solid var(--gray-300);
+      border-radius: 0.3vw;
+      font-size: var(--font-size-md);
+      text-align: right;
+    }
+
+    .input-chiffres-sign-nog:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    #editeur-texte-activite-exerce {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toolbar-editor {
+      display: flex;
+      gap: 0.5vw;
+      padding: 0.5vh 0.5vw;
+      background-color: var(--gray-100);
+      border-bottom: 0.1vh solid var(--gray-300);
+      flex-wrap: wrap;
+    }
+
+    .btn-toolbar {
+      padding: 0.5vh 0.8vw;
+      background-color: white;
+      border: 0.1vh solid var(--gray-300);
+      border-radius: 0.3vw;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      transition: all 0.2s;
+    }
+
+    .btn-toolbar:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .color-picker {
+      width: 3vw;
+      height: 3vh;
+      border: 0.1vh solid var(--gray-300);
+      border-radius: 0.3vw;
+      cursor: pointer;
+    }
+
+    .editor-content {
+      flex: 1;
+      padding: 1vh 1vw;
+      overflow-y: auto;
+      font-size: var(--font-size-md);
+      line-height: 1.6;
+      outline: none;
+    }
+
+    .editor-content:focus {
+      background-color: var(--gray-50);
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -1235,5 +1398,79 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     const [year, month, day] = value.split('-');
     if (!year || !month || !day) return value;
     return `${day}/${month}/${year}`;
+  }
+
+  toggleEditContact(index: number): void {
+    this.nogPartie1.contacts[index].isEditing = !this.nogPartie1.contacts[index].isEditing;
+  }
+
+  deleteContact(index: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce contact ?')) {
+      this.nogPartie1.contacts.splice(index, 1);
+    }
+  }
+
+  addContact(): void {
+    this.nogPartie1.contacts.push({
+      id: Date.now(),
+      nom: '',
+      prenom: '',
+      mail: '',
+      telephone: '',
+      fonction: '',
+      libelle: '',
+      isEditing: true
+    });
+  }
+
+  toggleEditAssocie(index: number): void {
+    this.nogPartie1.associes[index].isEditing = !this.nogPartie1.associes[index].isEditing;
+  }
+
+  deleteAssocie(index: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet associé ?')) {
+      this.nogPartie1.associes.splice(index, 1);
+    }
+  }
+
+  addAssocie(): void {
+    this.nogPartie1.associes.push({
+      nom: '',
+      nbPart: 0,
+      pourcPart: 0,
+      isEditing: true
+    });
+  }
+
+  updateVariations(): void {
+    // Cette fonction sera appelée automatiquement lors de la modification des inputs
+  }
+
+  calculateVariation(field: keyof ChiffresSignificatifs): string {
+    if (this.nogPartie1.chiffresSignificatifs.length < 2) return '';
+    const cs0 = this.nogPartie1.chiffresSignificatifs[0];
+    const cs1 = this.nogPartie1.chiffresSignificatifs[1];
+
+    const val0 = cs0[field] as number;
+    const val1 = cs1[field] as number;
+
+    if (val0 === null || val0 === undefined || val1 === null || val1 === undefined) return '';
+
+    const difference = val1 - val0;
+    return this.formatNumber(difference);
+  }
+
+  execCommand(command: string): void {
+    document.execCommand(command, false, '');
+  }
+
+  changeColor(event: Event): void {
+    const color = (event.target as HTMLInputElement).value;
+    document.execCommand('foreColor', false, color);
+  }
+
+  onEditorContentChange(event: Event): void {
+    const target = event.target as HTMLElement;
+    this.nogPartie1.activiteExHisto = target.innerHTML;
   }
 }
