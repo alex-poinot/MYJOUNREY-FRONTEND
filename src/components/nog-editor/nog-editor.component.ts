@@ -466,7 +466,7 @@ interface ApiResponse {
       <div class="apercu-popup" (click)="$event.stopPropagation()">
         <div class="apercu-header">
           <h3>Aperçu du document NOG</h3>
-          <button class="apercu-close" (click)="exportToPdf()">
+          <button class="download-pdf" (click)="exportToPdf()">
             Download PDF
           </button>
           <button class="apercu-close" (click)="closeApercuPopup()">
