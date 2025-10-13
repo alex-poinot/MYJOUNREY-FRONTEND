@@ -466,11 +466,14 @@ interface ApiResponse {
       <div class="apercu-popup" (click)="$event.stopPropagation()">
         <div class="apercu-header">
           <h3>Aperçu du document NOG</h3>
+          <button class="apercu-close" (click)="exportToPdf()">
+            Download PDF
+          </button>
           <button class="apercu-close" (click)="closeApercuPopup()">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <div class="apercu-content">
+        <div id="apercu-pdf-nog" class="apercu-content">
           <div class="titre-nog-apercu">1. Présentation de la société</div>
           <div class="sous-titre-nog-apercu">1.1. Coordonnées</div>
           <div class="contenu-nog-apercu">
@@ -1370,7 +1373,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private pdfService: PdfService
   ) {
     // Configuration de la recherche avec debounce
     this.searchSubject.pipe(
@@ -1796,22 +1800,13 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.showApercuPopup = false;
   }
 
-  async exportToPdf(): Promise<void> {
-    if (this.modules.length === 0) {
-      alert('Ajoutez au moins un module avant d\'exporter le PDF');
-      return;
-    }
-
-    this.isExporting = true;
-    
+  async exportToPdf(): Promise<void> {   
     try {
       const filename = `nog-document-${new Date().toISOString().split('T')[0]}.pdf`;
-      await this.pdfService.exportToPdf('apercu-content', filename);
+      await this.pdfService.exportToPdf('apercu-pdf-nog', filename);
     } catch (error) {
       console.error('Erreur lors de l\'export PDF:', error);
       alert('Une erreur est survenue lors de la génération du PDF');
-    } finally {
-      this.isExporting = false;
     }
   }
 }
