@@ -470,7 +470,124 @@ interface ApiResponse {
           </button>
         </div>
         <div class="apercu-content">
-          <p>Aperçu du document NOG en cours de développement...</p>
+          <div class="titre-nog-apercu">1. Présentation de la société</div>
+          <div class="sous-titre-nog-apercu">1.1. Coordonnées</div>
+          <div class="contenu-nog-apercu">
+            <div class="row-coordonnees-nog">
+              <div class="icon-coordonnees-nog">
+                <i class="fa-regular fa-building-memo"></i>
+              </div>
+              <div class="text-coordonnees-nog"><strong> {{ nogPartie1.coordonnees.DOS_NOM }} </strong></div>
+            </div>
+            <div class="row-coordonnees-nog">
+              <div class="icon-coordonnees-nog">
+                <i class="fa-regular fa-location-dot"></i>
+              </div>
+              <div class="text-coordonnees-nog"> {{ nogPartie1.coordonnees.DOS_ADRESSE }} {{ nogPartie1.coordonnees.DOS_CP }} {{ nogPartie1.coordonnees.DOS_VILLE }} </div>
+            </div>
+            <div class="row-coordonnees-nog">
+              <div class="icon-coordonnees-nog">
+                <i class="fa-regular fa-fingerprint"></i>
+                <strong>Siret :</strong>
+              </div>
+              <div class="text-coordonnees-nog"> {{ nogPartie1.coordonnees.DOS_SIRET }} </div>
+            </div>
+            <div class="row-coordonnees-nog">
+              <div class="icon-coordonnees-nog">
+                <i class="fa-regular fa-memo-circle-info"></i>
+                <strong>APE :</strong>
+              </div>
+              <div class="text-coordonnees-nog"> {{ nogPartie1.coordonnees.NAF_LIBELLE }} </div>
+            </div>
+          </div>
+
+          <div class="sous-titre-nog-apercu">1.2. Contacts</div>
+          <div class="contenu-nog-apercu">
+            <table class="table-nog">
+              <thead>
+                <tr>
+                  <th>Prénom</th>
+                  <th>Nom</th>
+                  <th>Fonction</th>
+                  <th>Télephone</th>
+                  <th>Adresse mail</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let contact of nogPartie1.contacts; let i = index">
+                  <tr>
+                    <td>{{ contact.prenom }}</td>
+                    <td>{{ contact.nom }}</td>
+                    <td>{{ contact.libelle }}</td>
+                    <td>{{ contact.telephone }}</td>
+                    <td>{{ contact.mail }}</td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="sous-titre-nog-apercu">1.3. Associés</div>
+          <div class="contenu-nog-apercu">
+            <table class="table-nog">
+              <thead>
+                <tr>
+                  <th>Nom de l'associé</th>
+                  <th>Nombre de titres détenus</th>
+                  <th>Montant du capital détenu</th>
+                  <th>% de détention</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let associe of nogPartie1.associes; let i = index">
+                  <tr>
+                    <td>{{ associe.nom }}</td>
+                    <td>{{ formatNumber(associe.nbPart) }}</td>
+                    <td>{{ formatNumber(associe.partCapital) }}</td>
+                    <td>{{ formatNumber(associe.pourcPart) }}</td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="sous-titre-nog-apercu">1.4. Chiffres significatifs</div>
+          <div class="contenu-nog-apercu">
+            <div id="container-chiffres-sign-nog">
+              <div class="colonne-chiffres-sign-nog">
+                <div></div>
+                <div class="libelle-chiffres-sign-nog">Effectif</div>
+                <div class="libelle-chiffres-sign-nog">Capitaux propres</div>
+                <div class="libelle-chiffres-sign-nog">Total bilan</div>
+                <div class="libelle-chiffres-sign-nog">Chiffres d'affaires</div>
+                <div class="libelle-chiffres-sign-nog">Résultat net (ou avant impôt)</div>
+              </div>
+
+              <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
+                <div class="colonne-chiffres-sign-nog">
+                  <div class="titre-colonne-chiffres-sign-nog"> {{ formatDate(cs.datePeriode) }} ({{ cs.dureeExercice }} mois) </div>
+                  <div class="montant-chiffres-sign-nog">{{ cs.effectif }}</div>
+                  <div class="montant-chiffres-sign-nog">{{ cs.capitauxPropres }}</div>
+                  <div class="montant-chiffres-sign-nog">{{ cs.bilanNet }}</div>
+                  <div class="montant-chiffres-sign-nog">{{ cs.ca }}</div>
+                  <div class="montant-chiffres-sign-nog">{{ cs.beneficePerte }}</div>
+                </div>
+              </ng-container>
+
+              <div class="colonne-chiffres-sign-nog" id="colonne-variation-cs">
+                <div class="titre-colonne-chiffres-sign-nog">Variation</div>
+                <div class="montant-chiffres-sign-nog">{{ calculateVariation('effectif') }}</div>
+                <div class="montant-chiffres-sign-nog">{{ calculateVariation('capitauxPropres') }}</div>
+                <div class="montant-chiffres-sign-nog">{{ calculateVariation('bilanNet') }}</div>
+                <div class="montant-chiffres-sign-nog">{{ calculateVariation('ca') }}</div>
+                <div class="montant-chiffres-sign-nog">{{ calculateVariation('beneficePerte') }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sous-titre-nog-apercu">1.5. Activité exercée et historique</div>
+          <div class="contenu-nog-apercu">{{ nogPartie1.activiteExHisto }}</div>
+
         </div>
       </div>
     </div>
@@ -760,9 +877,9 @@ interface ApiResponse {
 
     .apercu-popup {
       position: fixed;
-      top: 0;
+      top: 8vh;
       right: 0;
-      height: 100vh;
+      height: 92vh;
       width: 60vw;
       background: white;
       box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
@@ -810,7 +927,7 @@ interface ApiResponse {
 
     .apercu-content {
       flex: 1;
-      padding: 2vh 1vw;
+      padding: 3vh 4vw;
       overflow-y: auto;
     }
 
@@ -1147,6 +1264,29 @@ interface ApiResponse {
 
     .editor-content:focus {
       background-color: var(--gray-50);
+    }
+
+    .titre-nog-apercu {
+      font-size: 16px;
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .sous-titre-nog-apercu {
+        font-size: 14px;
+        color: var(--primary-color);
+        margin-left: 15px;
+        margin-bottom: 10px;
+    }
+
+    .contenu-nog-apercu {
+        font-size: 14px !important;
+        margin-bottom: 20px;
+    }
+
+    .contenu-nog-apercu .colonne-chiffres-sign-nog div {
+      width: 11vw !important;
     }
   `]
 })
