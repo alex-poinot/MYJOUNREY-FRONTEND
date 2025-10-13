@@ -52,3 +52,24 @@ export interface FileWithExpiration {
   lastModified: number;
   expirationDate: Date;
 }
+
+export interface NogPartie1 {
+  informationsGenerales: string;
+  activite: string;
+  organisation: string;
+  environnement: string;
+  systemesInformation: string;
+  donneesFinancieres: string;
+  processusMetiers: string;
+  gouvernance: string;
+  risques: string;
+  conformite: string;
+  controleInterne: string;
+  auditInterne: string;
+  relationsExternes: string;
+  objectifsStrategiques: string;
+  indicateursPerformance: string;
+  projetsDeveloppement: string;
+  defisOpportunites: string;
+  conclusionGenerale: string;
+}
