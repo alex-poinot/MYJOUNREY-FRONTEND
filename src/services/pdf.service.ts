@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { Module } from '../models/module.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +15,6 @@ export class PdfService {
         throw new Error('Element not found');
       }
 
-      // Attendre que toutes les images soient chargées
-      await this.waitForImages(element);
-
       // Format A4
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = 210; // A4 width in mm
@@ -26,7 +24,8 @@ export class PdfService {
       const headerHeight = 20;
       const footerHeight = 20;
       const contentHeight = pageHeight - headerHeight - footerHeight;
-      const margin = 10;
+      const margin = 15;
+      const contentWidth = pageWidth - (2 * margin);
 
       let currentY = headerHeight + margin;
       let pageNumber = 1;
@@ -42,8 +41,8 @@ export class PdfService {
         pdf.line(margin, headerHeight, pageWidth - margin, headerHeight);
       };
 
-      // Fonction pour ajouter footer avec numérotation temporaire
-      const addFooter = (currentPage: number) => {
+      // Fonction pour ajouter footer
+      const addFooter = (currentPage: number, totalPages: number) => {
         const footerY = pageHeight - 10;
         
         // Ligne de séparation au-dessus du footer
@@ -52,16 +51,22 @@ export class PdfService {
         
         pdf.setFontSize(10);
         pdf.setFont('helvetica', 'normal');
-        pdf.text(`Page ${currentPage}`, pageWidth / 2, footerY, { align: 'center' });
+        pdf.text(`Page ${currentPage} sur ${totalPages}`, pageWidth / 2, footerY, { align: 'center' });
       };
 
       // Fonction pour créer une nouvelle page
       const addNewPage = () => {
-        addFooter(pageNumber);
         pdf.addPage();
         pageNumber++;
         addHeader();
         currentY = headerHeight + margin;
+      };
+
+      // Fonction pour vérifier si on a assez d'espace
+      const checkSpace = (neededHeight: number) => {
+        if (currentY + neededHeight > pageHeight - footerHeight - margin) {
+          addNewPage();
+        }
       };
 
       // Première page
@@ -74,132 +79,330 @@ export class PdfService {
         const moduleElement = modules[i] as HTMLElement;
         
         try {
-          // Créer un canvas pour ce module spécifique avec options robustes
-          const canvas = await html2canvas(moduleElement, {
-            scale: 1.5, // Réduire le scale pour éviter les problèmes de mémoire
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#ffffff',
-            width: moduleElement.scrollWidth,
-            height: moduleElement.scrollHeight,
-            logging: false, // Désactiver les logs
-            imageTimeout: 5000, // Timeout pour les images
-            removeContainer: true,
-            foreignObjectRendering: false, // Désactiver le rendu des objets étrangers
-            ignoreElements: (element) => {
-              // Ignorer les éléments problématiques
-              return element.tagName === 'IFRAME' || 
-                     element.tagName === 'OBJECT' || 
-                     element.tagName === 'EMBED' ||
-                     element.classList.contains('ignore-pdf');
-            }
+          await this.processModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, (newY) => {
+            currentY = newY;
           });
-
-          // Vérifier que le canvas est valide
-          if (!canvas || canvas.width === 0 || canvas.height === 0) {
-            console.warn(`Module ${i} ignoré: canvas invalide`);
-            continue;
-          }
-
-          // Convertir en image avec gestion d'erreur
-          let imgData: string;
-          try {
-            imgData = canvas.toDataURL('image/png', 0.8); // Réduire la qualité
-          } catch (canvasError) {
-            console.warn(`Erreur lors de la conversion canvas pour le module ${i}:`, canvasError);
-            // Essayer avec JPEG en fallback
-            try {
-              imgData = canvas.toDataURL('image/jpeg', 0.8);
-            } catch (jpegError) {
-              console.warn(`Module ${i} ignoré: impossible de convertir en image`);
-              continue;
-            }
-          }
-
-          const imgWidth = pageWidth - (2 * margin);
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-          // Vérifier si le module peut tenir sur la page actuelle
-          if (currentY + imgHeight > pageHeight - footerHeight - margin) {
-            // Le module ne peut pas tenir, créer une nouvelle page
-            addNewPage();
-          }
-
-          // Ajouter l'image du module
-          const imageFormat = imgData.startsWith('data:image/jpeg') ? 'JPEG' : 'PNG';
-          pdf.addImage(imgData, imageFormat, margin, currentY, imgWidth, imgHeight);
-          currentY += imgHeight + 5; // Ajouter un petit espacement entre les modules
-
         } catch (moduleError) {
           console.warn(`Erreur lors du traitement du module ${i}:`, moduleError);
-          // Continuer avec le module suivant
           continue;
         }
       }
 
-      // Ajouter le footer à la dernière page
-      addFooter(pageNumber);
-
-      // Maintenant, mettre à jour tous les footers avec le nombre total de pages
+      // Calculer le nombre total de pages
       const totalPages = pageNumber;
+      
+      // Ajouter les footers à toutes les pages
       for (let page = 1; page <= totalPages; page++) {
         pdf.setPage(page);
-        
-        // Effacer l'ancien footer
-        pdf.setFillColor(255, 255, 255);
-        pdf.rect(0, pageHeight - footerHeight, pageWidth, footerHeight, 'F');
-        
-        // Ligne de séparation au-dessus du footer
-        pdf.setDrawColor(0, 0, 0);
-        pdf.setLineWidth(0.5);
-        pdf.line(margin, pageHeight - footerHeight, pageWidth - margin, pageHeight - footerHeight);
-        
-        // Nouveau footer avec le total
-        pdf.setFontSize(10);
-        pdf.setFont('helvetica', 'normal');
-        pdf.setTextColor(0, 0, 0);
-        pdf.text(`Page ${page} sur ${totalPages}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+        addFooter(page, totalPages);
       }
 
       pdf.save(filename);
     } catch (error) {
       console.error('Erreur lors de la génération du PDF:', error);
-      // Ne pas relancer l'erreur, mais informer l'utilisateur
-      throw new Error('Erreur lors de la génération du PDF. Veuillez réessayer ou vérifier que toutes les images sont accessibles.');
+      throw new Error('Erreur lors de la génération du PDF. Veuillez réessayer.');
     }
   }
 
-  private async waitForImages(element: HTMLElement): Promise<void> {
-    const images = element.querySelectorAll('img');
-    const imagePromises = Array.from(images).map(img => {
-      return new Promise<void>((resolve) => {
-        if (img.complete) {
-          resolve();
+  private async processModule(
+    pdf: jsPDF, 
+    moduleElement: HTMLElement, 
+    margin: number, 
+    contentWidth: number, 
+    currentY: number,
+    checkSpace: (height: number) => void,
+    updateY: (newY: number) => void
+  ): Promise<void> {
+    
+    // Identifier le type de module
+    const moduleType = moduleElement.getAttribute('data-module-type');
+    
+    switch (moduleType) {
+      case 'title':
+        await this.processTitleModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
+        break;
+      case 'subtitle':
+        await this.processSubtitleModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
+        break;
+      case 'text':
+        await this.processTextModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
+        break;
+      case 'table':
+        await this.processTableModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
+        break;
+      case 'image':
+        await this.processImageModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
+        break;
+      default:
+        // Fallback: traiter comme texte
+        await this.processTextModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
+    }
+  }
+
+  private async processTitleModule(
+    pdf: jsPDF, 
+    moduleElement: HTMLElement, 
+    margin: number, 
+    contentWidth: number, 
+    currentY: number,
+    checkSpace: (height: number) => void,
+    updateY: (newY: number) => void
+  ): Promise<void> {
+    const titleElement = moduleElement.querySelector('h1, h2, h3');
+    if (!titleElement) return;
+
+    const text = titleElement.textContent || '';
+    const tagName = titleElement.tagName.toLowerCase();
+    
+    let fontSize = 16;
+    let fontWeight = 'bold';
+    
+    switch (tagName) {
+      case 'h1':
+        fontSize = 18;
+        break;
+      case 'h2':
+        fontSize = 16;
+        break;
+      case 'h3':
+        fontSize = 14;
+        break;
+    }
+
+    const lineHeight = fontSize * 0.5; // Conversion approximative mm
+    checkSpace(lineHeight + 10);
+
+    pdf.setFontSize(fontSize);
+    pdf.setFont('helvetica', fontWeight);
+    pdf.setTextColor(102, 74, 133); // Couleur primaire
+    
+    const lines = pdf.splitTextToSize(text, contentWidth);
+    pdf.text(lines, margin, currentY);
+    
+    updateY(currentY + (lines.length * lineHeight) + 10);
+
+    // Ligne de séparation pour h1
+    if (tagName === 'h1') {
+      pdf.setLineWidth(0.5);
+      pdf.setDrawColor(149, 126, 170); // Couleur primaire claire
+      pdf.line(margin, currentY - 5, margin + contentWidth, currentY - 5);
+    }
+  }
+
+  private async processSubtitleModule(
+    pdf: jsPDF, 
+    moduleElement: HTMLElement, 
+    margin: number, 
+    contentWidth: number, 
+    currentY: number,
+    checkSpace: (height: number) => void,
+    updateY: (newY: number) => void
+  ): Promise<void> {
+    const subtitleElement = moduleElement.querySelector('h4');
+    if (!subtitleElement) return;
+
+    const text = subtitleElement.textContent || '';
+    const lineHeight = 6;
+    
+    checkSpace(lineHeight + 8);
+
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(107, 114, 128); // Couleur grise
+    
+    const lines = pdf.splitTextToSize(text, contentWidth);
+    pdf.text(lines, margin, currentY);
+    
+    updateY(currentY + (lines.length * lineHeight) + 8);
+  }
+
+  private async processTextModule(
+    pdf: jsPDF, 
+    moduleElement: HTMLElement, 
+    margin: number, 
+    contentWidth: number, 
+    currentY: number,
+    checkSpace: (height: number) => void,
+    updateY: (newY: number) => void
+  ): Promise<void> {
+    const textElement = moduleElement.querySelector('p, div');
+    if (!textElement) return;
+
+    const text = textElement.textContent || '';
+    const lineHeight = 5;
+    
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(0, 0, 0);
+    
+    const lines = pdf.splitTextToSize(text, contentWidth);
+    const totalHeight = lines.length * lineHeight;
+    
+    checkSpace(totalHeight + 8);
+    
+    pdf.text(lines, margin, currentY);
+    updateY(currentY + totalHeight + 8);
+  }
+
+  private async processTableModule(
+    pdf: jsPDF, 
+    moduleElement: HTMLElement, 
+    margin: number, 
+    contentWidth: number, 
+    currentY: number,
+    checkSpace: (height: number) => void,
+    updateY: (newY: number) => void
+  ): Promise<void> {
+    const table = moduleElement.querySelector('table');
+    if (!table) return;
+
+    const rows = Array.from(table.querySelectorAll('tr'));
+    if (rows.length === 0) return;
+
+    // Calculer les largeurs des colonnes
+    const firstRow = rows[0];
+    const cells = Array.from(firstRow.querySelectorAll('th, td'));
+    const colCount = cells.length;
+    const colWidth = contentWidth / colCount;
+    
+    const rowHeight = 8;
+    const tableHeight = rows.length * rowHeight + 10;
+    
+    checkSpace(tableHeight);
+
+    pdf.setFontSize(10);
+    pdf.setLineWidth(0.1);
+    pdf.setDrawColor(0, 0, 0);
+
+    let tableY = currentY;
+
+    rows.forEach((row, rowIndex) => {
+      const cells = Array.from(row.querySelectorAll('th, td'));
+      const isHeader = row.querySelector('th') !== null;
+      
+      if (isHeader) {
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFillColor(243, 244, 246); // Gris clair
+      } else {
+        pdf.setFont('helvetica', 'normal');
+        if (rowIndex % 2 === 0) {
+          pdf.setFillColor(249, 250, 251); // Gris très clair
         } else {
-          const onLoad = () => {
-            img.removeEventListener('load', onLoad);
-            img.removeEventListener('error', onError);
-            resolve();
-          };
-          const onError = () => {
-            img.removeEventListener('load', onLoad);
-            img.removeEventListener('error', onError);
-            console.warn('Image failed to load:', img.src);
-            resolve(); // Résoudre même en cas d'erreur pour ne pas bloquer
-          };
-          img.addEventListener('load', onLoad);
-          img.addEventListener('error', onError);
-          
-          // Timeout de sécurité
-          setTimeout(() => {
-            img.removeEventListener('load', onLoad);
-            img.removeEventListener('error', onError);
-            resolve();
-          }, 5000);
+          pdf.setFillColor(255, 255, 255); // Blanc
         }
+      }
+
+      // Dessiner le fond de la ligne
+      pdf.rect(margin, tableY, contentWidth, rowHeight, 'F');
+
+      cells.forEach((cell, colIndex) => {
+        const cellX = margin + (colIndex * colWidth);
+        const cellText = cell.textContent || '';
+        
+        // Dessiner la bordure de la cellule
+        pdf.rect(cellX, tableY, colWidth, rowHeight, 'S');
+        
+        // Ajouter le texte
+        const lines = pdf.splitTextToSize(cellText, colWidth - 4);
+        pdf.text(lines[0] || '', cellX + 2, tableY + 5);
       });
+
+      tableY += rowHeight;
     });
 
-    await Promise.all(imagePromises);
+    updateY(tableY + 10);
+  }
+
+  private async processImageModule(
+    pdf: jsPDF, 
+    moduleElement: HTMLElement, 
+    margin: number, 
+    contentWidth: number, 
+    currentY: number,
+    checkSpace: (height: number) => void,
+    updateY: (newY: number) => void
+  ): Promise<void> {
+    const img = moduleElement.querySelector('img');
+    if (!img) return;
+
+    try {
+      // Attendre que l'image soit chargée
+      await this.waitForImage(img);
+
+      // Créer un canvas pour l'image seulement
+      const canvas = await html2canvas(img, {
+        scale: 1,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        logging: false,
+        imageTimeout: 5000
+      });
+
+      if (canvas.width === 0 || canvas.height === 0) {
+        console.warn('Image ignorée: canvas invalide');
+        return;
+      }
+
+      // Calculer les dimensions pour le PDF
+      const maxWidth = contentWidth;
+      const maxHeight = 100; // Hauteur max en mm
+      
+      let imgWidth = maxWidth;
+      let imgHeight = (canvas.height * maxWidth) / canvas.width;
+      
+      if (imgHeight > maxHeight) {
+        imgHeight = maxHeight;
+        imgWidth = (canvas.width * maxHeight) / canvas.height;
+      }
+
+      checkSpace(imgHeight + 10);
+
+      // Convertir en image
+      const imgData = canvas.toDataURL('image/jpeg', 0.8);
+      
+      // Centrer l'image
+      const imgX = margin + (contentWidth - imgWidth) / 2;
+      
+      pdf.addImage(imgData, 'JPEG', imgX, currentY, imgWidth, imgHeight);
+      updateY(currentY + imgHeight + 10);
+
+    } catch (error) {
+      console.warn('Erreur lors du traitement de l\'image:', error);
+      // Ajouter un placeholder texte
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'italic');
+      pdf.setTextColor(128, 128, 128);
+      pdf.text('[Image non disponible]', margin, currentY);
+      updateY(currentY + 10);
+    }
+  }
+
+  private async waitForImage(img: HTMLImageElement): Promise<void> {
+    return new Promise<void>((resolve) => {
+      if (img.complete && img.naturalHeight !== 0) {
+        resolve();
+      } else {
+        const onLoad = () => {
+          img.removeEventListener('load', onLoad);
+          img.removeEventListener('error', onError);
+          resolve();
+        };
+        const onError = () => {
+          img.removeEventListener('load', onLoad);
+          img.removeEventListener('error', onError);
+          resolve(); // Résoudre même en cas d'erreur
+        };
+        img.addEventListener('load', onLoad);
+        img.addEventListener('error', onError);
+        
+        // Timeout de sécurité
+        setTimeout(() => {
+          img.removeEventListener('load', onLoad);
+          img.removeEventListener('error', onError);
+          resolve();
+        }, 5000);
+      }
+    });
   }
 }
