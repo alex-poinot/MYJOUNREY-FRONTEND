@@ -230,88 +230,139 @@ export class PdfService {
     const rows = Array.from(table.querySelectorAll('tr'));
     if (rows.length === 0) return 0;
 
-    // Calculer la largeur des colonnes
-    const headerCells = rows[0].querySelectorAll('th, td');
-    const colCount = headerCells.length;
-    const colWidth = contentWidth / colCount;
+    // Préparer les données du tableau
+    let headers: string[] = [];
+    let data: string[][] = [];
     
-    let currentTableY = startY + 5;
+    // Extraire les en-têtes
+    const headerRow = rows.find(row => row.querySelector('th'));
+    if (headerRow) {
+      const headerCells = headerRow.querySelectorAll('th');
+      headers = Array.from(headerCells).map(cell => cell.textContent?.trim() || '');
+      
+      // Extraire les données (exclure la ligne d'en-tête)
+      const dataRows = rows.filter(row => !row.querySelector('th'));
+      data = dataRows.map(row => {
+        const cells = row.querySelectorAll('td');
+        return Array.from(cells).map(cell => cell.textContent?.trim() || '');
+      });
+    } else {
+      // Pas d'en-têtes, toutes les lignes sont des données
+      data = rows.map(row => {
+        const cells = row.querySelectorAll('td, th');
+        return Array.from(cells).map(cell => cell.textContent?.trim() || '');
+      });
+    }
+
+    if (data.length === 0) return 0;
+
+    // Importer autoTable si disponible
+    const autoTable = (pdf as any).autoTable;
+    if (autoTable) {
+      // Utiliser autoTable pour un vrai tableau structuré
+      autoTable({
+        head: headers.length > 0 ? [headers] : undefined,
+        body: data,
+        startY: startY + 5,
+        margin: { left: margin, right: margin },
+        styles: {
+          fontSize: 10,
+          cellPadding: 3,
+          textColor: [0, 0, 0],
+          lineColor: [209, 213, 219],
+          lineWidth: 0.3
+        },
+        headStyles: {
+          fillColor: [249, 250, 251],
+          textColor: [55, 65, 81],
+          fontStyle: 'bold',
+          fontSize: 11
+        },
+        alternateRowStyles: {
+          fillColor: [249, 250, 251]
+        },
+        tableLineColor: [209, 213, 219],
+        tableLineWidth: 0.3
+      });
+      
+      // Calculer la hauteur du tableau
+      const finalY = (pdf as any).lastAutoTable?.finalY || startY + 20;
+      return finalY - startY + 5;
+    } else {
+      // Fallback : dessiner manuellement le tableau
+      return await this.drawManualTable(pdf, headers, data, margin, contentWidth, startY);
+    }
+  }
+
+  private async drawManualTable(
+    pdf: jsPDF, 
+    headers: string[], 
+    data: string[][], 
+    margin: number, 
+    contentWidth: number, 
+    startY: number
+  ): Promise<number> {
+    const colCount = Math.max(headers.length, data[0]?.length || 0);
+    if (colCount === 0) return 0;
+    
+    const colWidth = contentWidth / colCount;
+    let currentY = startY + 5;
     const rowHeight = 8;
     const cellPadding = 2;
 
-    // Dessiner les en-têtes
-    if (rows[0].querySelector('th')) {
-      // Fond gris pour l'en-tête
+    // Dessiner les en-têtes si présents
+    if (headers.length > 0) {
       pdf.setFillColor(249, 250, 251);
-      pdf.rect(margin, currentTableY, contentWidth, rowHeight, 'F');
+      pdf.rect(margin, currentY, contentWidth, rowHeight, 'F');
       
-      // Bordures
       pdf.setLineWidth(0.3);
       pdf.setDrawColor(209, 213, 219);
-      pdf.rect(margin, currentTableY, contentWidth, rowHeight);
+      pdf.rect(margin, currentY, contentWidth, rowHeight);
 
-      // Texte des en-têtes
       pdf.setFontSize(11);
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(55, 65, 81);
 
-      headerCells.forEach((cell, index) => {
-        const text = cell.textContent?.trim() || '';
+      headers.forEach((header, index) => {
         const cellX = margin + (index * colWidth);
-        
-        // Bordure verticale
         if (index > 0) {
-          pdf.line(cellX, currentTableY, cellX, currentTableY + rowHeight);
+          pdf.line(cellX, currentY, cellX, currentY + rowHeight);
         }
-        
-        // Texte centré dans la cellule
-        const lines = pdf.splitTextToSize(text, colWidth - (cellPadding * 2));
-        pdf.text(lines, cellX + cellPadding, currentTableY + 5);
+        const lines = pdf.splitTextToSize(header, colWidth - (cellPadding * 2));
+        pdf.text(lines, cellX + cellPadding, currentY + 5);
       });
 
-      currentTableY += rowHeight;
+      currentY += rowHeight;
     }
 
-    // Dessiner les lignes de données
-    const dataRows = rows[0].querySelector('th') ? rows.slice(1) : rows;
-    
-    dataRows.forEach((row, rowIndex) => {
-      const cells = row.querySelectorAll('td, th');
-      
-      // Fond alterné pour les lignes
+    // Dessiner les données
+    data.forEach((row, rowIndex) => {
       if (rowIndex % 2 === 0) {
         pdf.setFillColor(249, 250, 251);
-        pdf.rect(margin, currentTableY, contentWidth, rowHeight, 'F');
+        pdf.rect(margin, currentY, contentWidth, rowHeight, 'F');
       }
       
-      // Bordures
       pdf.setLineWidth(0.3);
       pdf.setDrawColor(209, 213, 219);
-      pdf.rect(margin, currentTableY, contentWidth, rowHeight);
+      pdf.rect(margin, currentY, contentWidth, rowHeight);
 
-      // Texte des cellules
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(0, 0, 0);
 
-      cells.forEach((cell, cellIndex) => {
-        const text = cell.textContent?.trim() || '';
+      row.forEach((cell, cellIndex) => {
         const cellX = margin + (cellIndex * colWidth);
-        
-        // Bordure verticale
         if (cellIndex > 0) {
-          pdf.line(cellX, currentTableY, cellX, currentTableY + rowHeight);
+          pdf.line(cellX, currentY, cellX, currentY + rowHeight);
         }
-        
-        // Texte dans la cellule
-        const lines = pdf.splitTextToSize(text, colWidth - (cellPadding * 2));
-        pdf.text(lines, cellX + cellPadding, currentTableY + 5);
+        const lines = pdf.splitTextToSize(cell, colWidth - (cellPadding * 2));
+        pdf.text(lines, cellX + cellPadding, currentY + 5);
       });
 
-      currentTableY += rowHeight;
+      currentY += rowHeight;
     });
 
-    return currentTableY - startY + 5;
+    return currentY - startY + 5;
   }
 
   private async processImageModule(pdf: jsPDF, element: HTMLElement, margin: number, contentWidth: number, startY: number): Promise<number> {
