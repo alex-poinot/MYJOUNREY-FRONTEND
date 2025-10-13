@@ -1330,6 +1330,35 @@ interface ApiResponse {
     .contenu-nog-apercu .colonne-chiffres-sign-nog div {
       width: 11vw !important;
     }
+
+    .download-pdf {
+      background: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .download-pdf:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .download-pdf:disabled {
+      background: var(--gray-400);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
