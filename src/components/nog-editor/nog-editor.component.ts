@@ -1317,7 +1317,6 @@ interface ApiResponse {
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
 
-  isExporting = false;
   isDossierMissionMillesimeSelected = false;
   isAllDataNogLoaded = false;
   isCoordonneesLoaded = false;
@@ -1371,8 +1370,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService,
-    private pdfService: PdfService
+    private authService: AuthService
   ) {
     // Configuration de la recherche avec debounce
     this.searchSubject.pipe(
@@ -1796,5 +1794,24 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   closeApercuPopup(): void {
     this.showApercuPopup = false;
+  }
+
+  async exportToPdf(): Promise<void> {
+    if (this.modules.length === 0) {
+      alert('Ajoutez au moins un module avant d\'exporter le PDF');
+      return;
+    }
+
+    this.isExporting = true;
+    
+    try {
+      const filename = `nog-document-${new Date().toISOString().split('T')[0]}.pdf`;
+      await this.pdfService.exportToPdf('apercu-content', filename);
+    } catch (error) {
+      console.error('Erreur lors de l\'export PDF:', error);
+      alert('Une erreur est survenue lors de la génération du PDF');
+    } finally {
+      this.isExporting = false;
+    }
   }
 }
