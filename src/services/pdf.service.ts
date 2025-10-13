@@ -15,6 +15,9 @@ export class PdfService {
         throw new Error('Element not found');
       }
 
+      // Attendre que toutes les images soient chargées
+      await this.waitForImages(element);
+
       // Format A4
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = 210; // A4 width in mm
@@ -62,26 +65,25 @@ export class PdfService {
         currentY = headerHeight + margin;
       };
 
-      // Fonction pour vérifier si on a assez d'espace
-      const checkSpace = (neededHeight: number) => {
-        if (currentY + neededHeight > pageHeight - footerHeight - margin) {
-          addNewPage();
-        }
-      };
-
       // Première page
       addHeader();
 
-      // Traiter chaque module séparément
+      // Traiter chaque module séparément avec approche hybride
       const modules = element.children;
       
       for (let i = 0; i < modules.length; i++) {
         const moduleElement = modules[i] as HTMLElement;
         
         try {
-          await this.processModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, (newY) => {
-            currentY = newY;
-          });
+          // Vérifier si on a assez d'espace (estimation)
+          const moduleHeight = moduleElement.offsetHeight * 0.264583; // Conversion px to mm
+          if (currentY + moduleHeight > pageHeight - footerHeight - margin) {
+            addNewPage();
+          }
+
+          await this.processModuleHybrid(pdf, moduleElement, margin, contentWidth, currentY);
+          currentY += moduleHeight + 5; // Espacement entre modules
+          
         } catch (moduleError) {
           console.warn(`Erreur lors du traitement du module ${i}:`, moduleError);
           continue;
@@ -104,277 +106,161 @@ export class PdfService {
     }
   }
 
-  private async processModule(
+  private async processModuleHybrid(
     pdf: jsPDF, 
     moduleElement: HTMLElement, 
     margin: number, 
     contentWidth: number, 
-    currentY: number,
-    checkSpace: (height: number) => void,
-    updateY: (newY: number) => void
+    currentY: number
   ): Promise<void> {
     
-    // Identifier le type de module
-    const moduleType = moduleElement.getAttribute('data-module-type');
-    
-    switch (moduleType) {
-      case 'title':
-        await this.processTitleModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
-        break;
-      case 'subtitle':
-        await this.processSubtitleModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
-        break;
-      case 'text':
-        await this.processTextModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
-        break;
-      case 'table':
-        await this.processTableModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
-        break;
-      case 'image':
-        await this.processImageModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
-        break;
-      default:
-        // Fallback: traiter comme texte
-        await this.processTextModule(pdf, moduleElement, margin, contentWidth, currentY, checkSpace, updateY);
-    }
-  }
-
-  private async processTitleModule(
-    pdf: jsPDF, 
-    moduleElement: HTMLElement, 
-    margin: number, 
-    contentWidth: number, 
-    currentY: number,
-    checkSpace: (height: number) => void,
-    updateY: (newY: number) => void
-  ): Promise<void> {
-    const titleElement = moduleElement.querySelector('h1, h2, h3');
-    if (!titleElement) return;
-
-    const text = titleElement.textContent || '';
-    const tagName = titleElement.tagName.toLowerCase();
-    
-    let fontSize = 16;
-    let fontWeight = 'bold';
-    
-    switch (tagName) {
-      case 'h1':
-        fontSize = 18;
-        break;
-      case 'h2':
-        fontSize = 16;
-        break;
-      case 'h3':
-        fontSize = 14;
-        break;
-    }
-
-    const lineHeight = fontSize * 0.5; // Conversion approximative mm
-    checkSpace(lineHeight + 10);
-
-    pdf.setFontSize(fontSize);
-    pdf.setFont('helvetica', fontWeight);
-    pdf.setTextColor(102, 74, 133); // Couleur primaire
-    
-    const lines = pdf.splitTextToSize(text, contentWidth);
-    pdf.text(lines, margin, currentY);
-    
-    updateY(currentY + (lines.length * lineHeight) + 10);
-
-    // Ligne de séparation pour h1
-    if (tagName === 'h1') {
-      pdf.setLineWidth(0.5);
-      pdf.setDrawColor(149, 126, 170); // Couleur primaire claire
-      pdf.line(margin, currentY - 5, margin + contentWidth, currentY - 5);
-    }
-  }
-
-  private async processSubtitleModule(
-    pdf: jsPDF, 
-    moduleElement: HTMLElement, 
-    margin: number, 
-    contentWidth: number, 
-    currentY: number,
-    checkSpace: (height: number) => void,
-    updateY: (newY: number) => void
-  ): Promise<void> {
-    const subtitleElement = moduleElement.querySelector('h4');
-    if (!subtitleElement) return;
-
-    const text = subtitleElement.textContent || '';
-    const lineHeight = 6;
-    
-    checkSpace(lineHeight + 8);
-
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(107, 114, 128); // Couleur grise
-    
-    const lines = pdf.splitTextToSize(text, contentWidth);
-    pdf.text(lines, margin, currentY);
-    
-    updateY(currentY + (lines.length * lineHeight) + 8);
-  }
-
-  private async processTextModule(
-    pdf: jsPDF, 
-    moduleElement: HTMLElement, 
-    margin: number, 
-    contentWidth: number, 
-    currentY: number,
-    checkSpace: (height: number) => void,
-    updateY: (newY: number) => void
-  ): Promise<void> {
-    const textElement = moduleElement.querySelector('p, div');
-    if (!textElement) return;
-
-    const text = textElement.textContent || '';
-    const lineHeight = 5;
-    
-    pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(0, 0, 0);
-    
-    const lines = pdf.splitTextToSize(text, contentWidth);
-    const totalHeight = lines.length * lineHeight;
-    
-    checkSpace(totalHeight + 8);
-    
-    pdf.text(lines, margin, currentY);
-    updateY(currentY + totalHeight + 8);
-  }
-
-  private async processTableModule(
-    pdf: jsPDF, 
-    moduleElement: HTMLElement, 
-    margin: number, 
-    contentWidth: number, 
-    currentY: number,
-    checkSpace: (height: number) => void,
-    updateY: (newY: number) => void
-  ): Promise<void> {
-    const table = moduleElement.querySelector('table');
-    if (!table) return;
-
-    const rows = Array.from(table.querySelectorAll('tr'));
-    if (rows.length === 0) return;
-
-    // Calculer les largeurs des colonnes
-    const firstRow = rows[0];
-    const cells = Array.from(firstRow.querySelectorAll('th, td'));
-    const colCount = cells.length;
-    const colWidth = contentWidth / colCount;
-    
-    const rowHeight = 8;
-    const tableHeight = rows.length * rowHeight + 10;
-    
-    checkSpace(tableHeight);
-
-    pdf.setFontSize(10);
-    pdf.setLineWidth(0.1);
-    pdf.setDrawColor(0, 0, 0);
-
-    let tableY = currentY;
-
-    rows.forEach((row, rowIndex) => {
-      const cells = Array.from(row.querySelectorAll('th, td'));
-      const isHeader = row.querySelector('th') !== null;
-      
-      if (isHeader) {
-        pdf.setFont('helvetica', 'bold');
-        pdf.setFillColor(243, 244, 246); // Gris clair
-      } else {
-        pdf.setFont('helvetica', 'normal');
-        if (rowIndex % 2 === 0) {
-          pdf.setFillColor(249, 250, 251); // Gris très clair
-        } else {
-          pdf.setFillColor(255, 255, 255); // Blanc
-        }
-      }
-
-      // Dessiner le fond de la ligne
-      pdf.rect(margin, tableY, contentWidth, rowHeight, 'F');
-
-      cells.forEach((cell, colIndex) => {
-        const cellX = margin + (colIndex * colWidth);
-        const cellText = cell.textContent || '';
-        
-        // Dessiner la bordure de la cellule
-        pdf.rect(cellX, tableY, colWidth, rowHeight, 'S');
-        
-        // Ajouter le texte
-        const lines = pdf.splitTextToSize(cellText, colWidth - 4);
-        pdf.text(lines[0] || '', cellX + 2, tableY + 5);
-      });
-
-      tableY += rowHeight;
-    });
-
-    updateY(tableY + 10);
-  }
-
-  private async processImageModule(
-    pdf: jsPDF, 
-    moduleElement: HTMLElement, 
-    margin: number, 
-    contentWidth: number, 
-    currentY: number,
-    checkSpace: (height: number) => void,
-    updateY: (newY: number) => void
-  ): Promise<void> {
-    const img = moduleElement.querySelector('img');
-    if (!img) return;
-
     try {
-      // Attendre que l'image soit chargée
-      await this.waitForImage(img);
-
-      // Créer un canvas pour l'image seulement
-      const canvas = await html2canvas(img, {
-        scale: 1,
+      // 1. Capturer l'apparence visuelle avec html2canvas
+      const canvas = await html2canvas(moduleElement, {
+        scale: 2,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: null,
+        backgroundColor: '#ffffff',
         logging: false,
-        imageTimeout: 5000
+        imageTimeout: 5000,
+        removeContainer: true,
+        foreignObjectRendering: false,
+        ignoreElements: (element) => {
+          return element.classList.contains('drag-handle') || 
+                 element.classList.contains('module-actions');
+        }
       });
 
       if (canvas.width === 0 || canvas.height === 0) {
-        console.warn('Image ignorée: canvas invalide');
+        console.warn('Module ignoré: canvas invalide');
         return;
       }
 
       // Calculer les dimensions pour le PDF
-      const maxWidth = contentWidth;
-      const maxHeight = 100; // Hauteur max en mm
-      
-      let imgWidth = maxWidth;
-      let imgHeight = (canvas.height * maxWidth) / canvas.width;
-      
-      if (imgHeight > maxHeight) {
-        imgHeight = maxHeight;
-        imgWidth = (canvas.width * maxHeight) / canvas.height;
+      const imgWidth = contentWidth;
+      const imgHeight = (canvas.height * contentWidth) / canvas.width;
+
+      // Ajouter l'image de fond (apparence visuelle)
+      let imgData: string;
+      try {
+        imgData = canvas.toDataURL('image/jpeg', 0.9);
+      } catch (pngError) {
+        console.warn('Erreur PNG, tentative en JPEG:', pngError);
+        imgData = canvas.toDataURL('image/jpeg', 0.8);
       }
-
-      checkSpace(imgHeight + 10);
-
-      // Convertir en image
-      const imgData = canvas.toDataURL('image/jpeg', 0.8);
       
-      // Centrer l'image
-      const imgX = margin + (contentWidth - imgWidth) / 2;
-      
-      pdf.addImage(imgData, 'JPEG', imgX, currentY, imgWidth, imgHeight);
-      updateY(currentY + imgHeight + 10);
+      pdf.addImage(imgData, 'JPEG', margin, currentY, imgWidth, imgHeight);
+
+      // 2. Ajouter le texte invisible sélectionnable par-dessus
+      await this.addSelectableTextOverlay(pdf, moduleElement, margin, currentY, contentWidth, imgHeight);
 
     } catch (error) {
-      console.warn('Erreur lors du traitement de l\'image:', error);
-      // Ajouter un placeholder texte
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'italic');
-      pdf.setTextColor(128, 128, 128);
-      pdf.text('[Image non disponible]', margin, currentY);
-      updateY(currentY + 10);
+      console.warn('Erreur lors du traitement hybride du module:', error);
+      // Fallback: ajouter juste le texte visible
+      await this.addFallbackText(pdf, moduleElement, margin, currentY, contentWidth);
+    }
+  }
+
+  private async addSelectableTextOverlay(
+    pdf: jsPDF,
+    moduleElement: HTMLElement,
+    margin: number,
+    startY: number,
+    contentWidth: number,
+    moduleHeight: number
+  ): Promise<void> {
+    
+    // Extraire tout le texte du module
+    const textContent = this.extractTextContent(moduleElement);
+    
+    if (!textContent.trim()) return;
+
+    // Configurer le texte invisible
+    pdf.setTextColor(255, 255, 255, 0); // Texte transparent
+    pdf.setFontSize(1); // Très petite taille pour être invisible
+    
+    // Diviser le texte en lignes qui correspondent à la largeur
+    const lines = pdf.splitTextToSize(textContent, contentWidth);
+    
+    // Calculer l'espacement vertical pour couvrir toute la hauteur du module
+    const lineSpacing = moduleHeight / Math.max(lines.length, 1);
+    
+    // Ajouter chaque ligne de texte invisible
+    lines.forEach((line: string, index: number) => {
+      const y = startY + (index * lineSpacing) + 5;
+      pdf.text(line, margin, y);
+    });
+    
+    // Remettre la couleur normale pour les prochains éléments
+    pdf.setTextColor(0, 0, 0, 1);
+    pdf.setFontSize(12);
+  }
+
+  private extractTextContent(element: HTMLElement): string {
+    // Extraire le texte de manière intelligente selon le type d'élément
+    const texts: string[] = [];
+    
+    // Titres
+    const titles = element.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    titles.forEach(title => {
+      const text = title.textContent?.trim();
+      if (text) texts.push(text);
+    });
+    
+    // Paragraphes et texte
+    const paragraphs = element.querySelectorAll('p, div.text-content');
+    paragraphs.forEach(p => {
+      const text = p.textContent?.trim();
+      if (text && !texts.includes(text)) texts.push(text);
+    });
+    
+    // Tableaux
+    const tables = element.querySelectorAll('table');
+    tables.forEach(table => {
+      const rows = table.querySelectorAll('tr');
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('th, td');
+        const rowText = Array.from(cells).map(cell => cell.textContent?.trim() || '').join(' | ');
+        if (rowText.trim()) texts.push(rowText);
+      });
+    });
+    
+    // Si aucun texte spécifique trouvé, prendre tout le contenu textuel
+    if (texts.length === 0) {
+      const allText = element.textContent?.trim();
+      if (allText) texts.push(allText);
+    }
+    
+    return texts.join('\n');
+  }
+
+  private async addFallbackText(
+    pdf: jsPDF,
+    moduleElement: HTMLElement,
+    margin: number,
+    currentY: number,
+    contentWidth: number
+  ): Promise<void> {
+    
+    const textContent = this.extractTextContent(moduleElement);
+    if (!textContent.trim()) return;
+
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(0, 0, 0);
+    
+    const lines = pdf.splitTextToSize(textContent, contentWidth);
+    pdf.text(lines, margin, currentY + 10);
+  }
+
+  private async waitForImages(element: HTMLElement): Promise<void> {
+    const images = element.querySelectorAll('img');
+    const imagePromises = Array.from(images).map(img => this.waitForImage(img));
+    
+    try {
+      await Promise.allSettled(imagePromises);
+    } catch (error) {
+      console.warn('Certaines images n\'ont pas pu être chargées:', error);
     }
   }
 
