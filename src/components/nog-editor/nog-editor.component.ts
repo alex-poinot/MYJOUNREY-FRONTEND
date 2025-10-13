@@ -909,6 +909,30 @@ interface ApiResponse {
       font-size: var(--font-size-lg);
       font-weight: 600;
     }
+    
+    .export-pdf-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: var(--font-size-md);
+    }
+    
+    .export-pdf-btn:hover:not(:disabled) {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .export-pdf-btn:disabled {
+      background: var(--gray-400);
+      cursor: not-allowed;
+      transform: none;
+    }
 
     .apercu-close {
       background: none;
