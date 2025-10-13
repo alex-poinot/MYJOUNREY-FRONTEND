@@ -1315,7 +1315,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       { title: '1.2 Activité', content: this.nogPartie1.activite || 'Contenu à définir' },
       { title: '1.3 Organisation', content: this.nogPartie1.organisation || 'Contenu à définir' },
       { title: '1.4 Environnement économique', content: this.nogPartie1.environnementEconomique || 'Contenu à définir' },
-      { title: '1.5 Autres informations', content: this.nogPartie1.autresInformations || 'Contenu à définir' }
+      { title: '1.5 Autres informations', content: this.nogPartie1.autres_informations || 'Contenu à définir' }
     ];
   }
   
