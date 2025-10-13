@@ -1096,6 +1096,10 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   selectedPartNog: string = '1';
   
   showPdfPreview = false;
+
+  openPdfPreview(): void {
+    this.showPdfPreview = true;
+  }
   isGeneratingPdf = false;
 
   // Listes filtrées
