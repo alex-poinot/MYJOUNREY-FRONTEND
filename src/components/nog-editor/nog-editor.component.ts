@@ -418,8 +418,9 @@ interface ApiResponse {
                       #editorContent
                       (input)="onEditorContentChange($event)"
                       (keyup)="onEditorContentChange($event)"
-                      (paste)="onEditorContentChange($event)"
-                      [textContent]="nogPartie1.activiteExHisto"></div>
+                      (paste)="onEditorContentChange($event)">
+                      {{ nogPartie1.activiteExHisto }}
+                    </div>
                   </div>
                 </div>
               </div>
