@@ -1541,4 +1541,26 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     }
     this.selectedPartNog = value;
   }
+
+  openPdfPreview(): void {
+    this.showPdfPreview = true;
+  }
+
+  closePdfPreview(): void {
+    this.showPdfPreview = false;
+  }
+
+  async downloadPdf(): Promise<void> {
+    this.isGeneratingPdf = true;
+    
+    try {
+      const filename = `NOG_${this.selectedDossier?.DOS_PGI}_${this.selectedMission}_${this.selectedMillesime}.pdf`;
+      await this.pdfService.exportToPdf('pdf-preview-content', filename);
+    } catch (error) {
+      console.error('Erreur lors de la génération du PDF:', error);
+      alert('Une erreur est survenue lors de la génération du PDF');
+    } finally {
+      this.isGeneratingPdf = false;
+    }
+  }
 }
