@@ -1098,7 +1098,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   showPdfPreview = false;
 
   openPdfPreview(): void {
+    console.log('Opening PDF preview...');
     this.showPdfPreview = true;
+  }
+
+  closePdfPreview(): void {
+    this.showPdfPreview = false;
   }
   isGeneratingPdf = false;
 
