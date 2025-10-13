@@ -190,7 +190,7 @@ interface ApiResponse {
           <div><strong>Millésime :</strong> {{ selectedMillesime }}</div>
         </div>
         <div id="container-bouton-pdf">
-          <div id="btn-apercu-pdf">Aperçu</div>
+          <div id="btn-apercu-pdf" (click)="openApercuPopup()">Aperçu</div>
         </div>
       </div>
       <div id="part-bottom-page-nog">
@@ -459,6 +459,21 @@ interface ApiResponse {
         </div>
       </div>
     </div>
+
+    <!-- Pop-up d'aperçu PDF -->
+    <div *ngIf="showApercuPopup" class="apercu-overlay" (click)="closeApercuPopup()">
+      <div class="apercu-popup" (click)="$event.stopPropagation()">
+        <div class="apercu-header">
+          <h3>Aperçu du document NOG</h3>
+          <button class="apercu-close" (click)="closeApercuPopup()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="apercu-content">
+          <p>Aperçu du document NOG en cours de développement...</p>
+        </div>
+      </div>
+    </div>
   `,
   styles: [`
     #container-select-dossier {
@@ -724,6 +739,79 @@ interface ApiResponse {
       display: flex;
       flex-direction: column;
       gap: 0.5vh;
+    }
+
+    /* Styles pour le pop-up d'aperçu */
+    .apercu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      opacity: 0;
+      animation: fadeInOverlay 0.3s ease forwards;
+    }
+
+    @keyframes fadeInOverlay {
+      to { opacity: 1; }
+    }
+
+    .apercu-popup {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: 60vw;
+      background: white;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+      z-index: 2001;
+      transform: translateX(100%);
+      animation: slideInFromRight 0.3s ease forwards;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes slideInFromRight {
+      to { transform: translateX(0); }
+    }
+
+    .apercu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5vh 1vw;
+      border-bottom: 1px solid var(--gray-200);
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .apercu-header h3 {
+      margin: 0;
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+    }
+
+    .apercu-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: var(--font-size-lg);
+      cursor: pointer;
+      padding: 0.5vh 0.5vw;
+      border-radius: 0.5vw;
+      transition: background-color 0.2s;
+    }
+
+    .apercu-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .apercu-content {
+      flex: 1;
+      padding: 2vh 1vw;
+      overflow-y: auto;
     }
 
     .row-part-nog {
@@ -1090,6 +1178,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   selectedMillesime: string = '';
 
   selectedPartNog: string = '1';
+  showApercuPopup: boolean = false;
   
   // Listes filtrées
   availableMissions: Mission[] = [];
@@ -1532,5 +1621,13 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       target.parentElement.classList.add('selected');
     }
     this.selectedPartNog = value;
+  }
+
+  openApercuPopup(): void {
+    this.showApercuPopup = true;
+  }
+
+  closeApercuPopup(): void {
+    this.showApercuPopup = false;
   }
 }
