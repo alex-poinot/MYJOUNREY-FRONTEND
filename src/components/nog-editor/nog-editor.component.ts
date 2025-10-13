@@ -915,29 +915,6 @@ interface ApiResponse {
       background: var(--primary-color);
       color: white;
       border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: var(--font-size-sm);
-    }
-    
-    .export-pdf-btn:hover:not(:disabled) {
-      background: var(--primary-dark);
-      transform: translateY(-1px);
-    }
-    
-    .export-pdf-btn:disabled {
-      background: var(--gray-400);
-      cursor: not-allowed;
-      transform: none;
-    }
-    
-    .export-pdf-btn {
-      background: var(--primary-color);
-      color: white;
-      border: none;
       padding: 10px 16px;
       border-radius: 6px;
       font-weight: 600;
@@ -1340,6 +1317,7 @@ interface ApiResponse {
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
 
+  isExporting = false;
   isDossierMissionMillesimeSelected = false;
   isAllDataNogLoaded = false;
   isCoordonneesLoaded = false;
@@ -1393,7 +1371,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private pdfService: PdfService
   ) {
     // Configuration de la recherche avec debounce
     this.searchSubject.pipe(
