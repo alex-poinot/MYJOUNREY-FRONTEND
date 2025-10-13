@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { PdfService } from '../../services/pdf.service';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { debounceTime, distinctUntilChanged, switchMap, of, Subject } from 'rxjs';
@@ -190,7 +191,10 @@ interface ApiResponse {
           <div><strong>Millésime :</strong> {{ selectedMillesime }}</div>
         </div>
         <div id="container-bouton-pdf">
-          <div id="btn-apercu-pdf">Aperçu</div>
+          <div id="btn-apercu-pdf" (click)="openPdfPreview()">
+            <i class="fas fa-file-pdf"></i>
+            Aperçu PDF
+          </div>
         </div>
       </div>
       <div id="part-bottom-page-nog">
@@ -1091,6 +1095,9 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   selectedPartNog: string = '1';
   
+  showPdfPreview = false;
+  isGeneratingPdf = false;
+
   // Listes filtrées
   availableMissions: Mission[] = [];
   availableMillesimes: Millesime[] = [];
@@ -1116,7 +1123,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private pdfService: PdfService
   ) {
     // Configuration de la recherche avec debounce
     this.searchSubject.pipe(
