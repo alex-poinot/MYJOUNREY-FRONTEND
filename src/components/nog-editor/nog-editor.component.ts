@@ -1303,35 +1303,20 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
   
   getMainTitle(): string {
+    // Récupère le titre depuis .text-element-menu-nog ou utilise un titre par défaut
     const titleElement = document.querySelector('.text-element-menu-nog');
-    return titleElement ? titleElement.textContent || '1. Présentation de la société' : '1. Présentation de la société';
+    return titleElement?.textContent || '1. Présentation de la société';
   }
   
   getPdfSections(): Array<{title: string, content: string}> {
-    const sections = [
-      {
-        title: '1.1 Informations générales',
-        content: this.nogPartie1.informationsGenerales || 'Contenu non disponible'
-      },
-      {
-        title: '1.2 Activité de l\'entreprise',
-        content: this.nogPartie1.activiteEntreprise || 'Contenu non disponible'
-      },
-      {
-        title: '1.3 Organisation',
-        content: this.nogPartie1.organisation || 'Contenu non disponible'
-      },
-      {
-        title: '1.4 Environnement informatique',
-        content: this.nogPartie1.environnementInformatique || 'Contenu non disponible'
-      },
-      {
-        title: '1.5 Autres informations',
-        content: this.nogPartie1.autresInformations || 'Contenu non disponible'
-      }
+    // Retourne les sections basées sur nogPartie1
+    return [
+      { title: '1.1 Informations générales', content: this.nogPartie1.informationsGenerales || 'Contenu à définir' },
+      { title: '1.2 Activité', content: this.nogPartie1.activite || 'Contenu à définir' },
+      { title: '1.3 Organisation', content: this.nogPartie1.organisation || 'Contenu à définir' },
+      { title: '1.4 Environnement économique', content: this.nogPartie1.environnementEconomique || 'Contenu à définir' },
+      { title: '1.5 Autres informations', content: this.nogPartie1.autresInformations || 'Contenu à définir' }
     ];
-    
-    return sections;
   }
   
   async downloadPdf(): Promise<void> {
@@ -1367,7 +1352,6 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   };
 
   private searchSubject = new Subject<string>();
-  showPdfPreview = false;
 
   constructor(
     private http: HttpClient,
@@ -1788,19 +1772,5 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       target.parentElement.classList.add('selected');
     }
     this.selectedPartNog = value;
-  }
-
-  async downloadPdf(): Promise<void> {
-    this.isGeneratingPdf = true;
-    
-    try {
-      const filename = `NOG_${this.selectedDossier?.DOS_PGI}_${this.selectedMission}_${this.selectedMillesime}.pdf`;
-      await this.pdfService.exportToPdf('pdf-preview-content', filename);
-    } catch (error) {
-      console.error('Erreur lors de la génération du PDF:', error);
-      alert('Une erreur est survenue lors de la génération du PDF');
-    } finally {
-      this.isGeneratingPdf = false;
-    }
   }
 }
