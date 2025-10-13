@@ -14,6 +14,9 @@ export class PdfService {
         throw new Error('Element not found');
       }
 
+      // Attendre que toutes les images soient chargées
+      await this.waitForImages(element);
+
       // Format A4
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = 210; // A4 width in mm
@@ -70,47 +73,67 @@ export class PdfService {
       for (let i = 0; i < modules.length; i++) {
         const moduleElement = modules[i] as HTMLElement;
         
-        // Créer un canvas pour ce module spécifique
-        const canvas = await html2canvas(moduleElement, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          width: moduleElement.scrollWidth,
-          height: moduleElement.scrollHeight
-        });
-
-        const imgData = canvas.toDataURL('image/png');
-        const imgWidth = pageWidth - (2 * margin);
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        // Vérifier si le module peut tenir sur la page actuelle
-        if (currentY + imgHeight > pageHeight - footerHeight - margin) {
-          // Le module ne peut pas tenir, créer une nouvelle page
-          addNewPage();
-        }
-
-        // Ajouter l'image du module
-        pdf.addImage(imgData, 'PNG', margin, currentY, imgWidth, imgHeight);
-        currentY += imgHeight + 5; // Ajouter un petit espacement entre les modules
-
-        // Vérifier si on a besoin d'une nouvelle page pour le prochain module
-        if (i < modules.length - 1) {
-          const nextModule = modules[i + 1] as HTMLElement;
-          const nextCanvas = await html2canvas(nextModule, {
-            scale: 1,
+        try {
+          // Créer un canvas pour ce module spécifique avec options robustes
+          const canvas = await html2canvas(moduleElement, {
+            scale: 1.5, // Réduire le scale pour éviter les problèmes de mémoire
             useCORS: true,
             allowTaint: true,
             backgroundColor: '#ffffff',
-            width: nextModule.scrollWidth,
-            height: nextModule.scrollHeight
+            width: moduleElement.scrollWidth,
+            height: moduleElement.scrollHeight,
+            logging: false, // Désactiver les logs
+            imageTimeout: 5000, // Timeout pour les images
+            removeContainer: true,
+            foreignObjectRendering: false, // Désactiver le rendu des objets étrangers
+            ignoreElements: (element) => {
+              // Ignorer les éléments problématiques
+              return element.tagName === 'IFRAME' || 
+                     element.tagName === 'OBJECT' || 
+                     element.tagName === 'EMBED' ||
+                     element.classList.contains('ignore-pdf');
+            }
           });
-          
-          const nextImgHeight = (nextCanvas.height * imgWidth) / nextCanvas.width;
-          
-          if (currentY + nextImgHeight > pageHeight - footerHeight - margin) {
+
+          // Vérifier que le canvas est valide
+          if (!canvas || canvas.width === 0 || canvas.height === 0) {
+            console.warn(`Module ${i} ignoré: canvas invalide`);
+            continue;
+          }
+
+          // Convertir en image avec gestion d'erreur
+          let imgData: string;
+          try {
+            imgData = canvas.toDataURL('image/png', 0.8); // Réduire la qualité
+          } catch (canvasError) {
+            console.warn(`Erreur lors de la conversion canvas pour le module ${i}:`, canvasError);
+            // Essayer avec JPEG en fallback
+            try {
+              imgData = canvas.toDataURL('image/jpeg', 0.8);
+            } catch (jpegError) {
+              console.warn(`Module ${i} ignoré: impossible de convertir en image`);
+              continue;
+            }
+          }
+
+          const imgWidth = pageWidth - (2 * margin);
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+          // Vérifier si le module peut tenir sur la page actuelle
+          if (currentY + imgHeight > pageHeight - footerHeight - margin) {
+            // Le module ne peut pas tenir, créer une nouvelle page
             addNewPage();
           }
+
+          // Ajouter l'image du module
+          const imageFormat = imgData.startsWith('data:image/jpeg') ? 'JPEG' : 'PNG';
+          pdf.addImage(imgData, imageFormat, margin, currentY, imgWidth, imgHeight);
+          currentY += imgHeight + 5; // Ajouter un petit espacement entre les modules
+
+        } catch (moduleError) {
+          console.warn(`Erreur lors du traitement du module ${i}:`, moduleError);
+          // Continuer avec le module suivant
+          continue;
         }
       }
 
@@ -141,7 +164,42 @@ export class PdfService {
       pdf.save(filename);
     } catch (error) {
       console.error('Erreur lors de la génération du PDF:', error);
-      throw error;
+      // Ne pas relancer l'erreur, mais informer l'utilisateur
+      throw new Error('Erreur lors de la génération du PDF. Veuillez réessayer ou vérifier que toutes les images sont accessibles.');
     }
+  }
+
+  private async waitForImages(element: HTMLElement): Promise<void> {
+    const images = element.querySelectorAll('img');
+    const imagePromises = Array.from(images).map(img => {
+      return new Promise<void>((resolve) => {
+        if (img.complete) {
+          resolve();
+        } else {
+          const onLoad = () => {
+            img.removeEventListener('load', onLoad);
+            img.removeEventListener('error', onError);
+            resolve();
+          };
+          const onError = () => {
+            img.removeEventListener('load', onLoad);
+            img.removeEventListener('error', onError);
+            console.warn('Image failed to load:', img.src);
+            resolve(); // Résoudre même en cas d'erreur pour ne pas bloquer
+          };
+          img.addEventListener('load', onLoad);
+          img.addEventListener('error', onError);
+          
+          // Timeout de sécurité
+          setTimeout(() => {
+            img.removeEventListener('load', onLoad);
+            img.removeEventListener('error', onError);
+            resolve();
+          }, 5000);
+        }
+      });
+    });
+
+    await Promise.all(imagePromises);
   }
 }
