@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { PdfService } from '../../services/pdf.service';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { debounceTime, distinctUntilChanged, switchMap, of, Subject } from 'rxjs';
@@ -191,10 +190,7 @@ interface ApiResponse {
           <div><strong>Millésime :</strong> {{ selectedMillesime }}</div>
         </div>
         <div id="container-bouton-pdf">
-          <div id="btn-apercu-pdf" (click)="openPdfPreview()">
-            <i class="fas fa-file-pdf"></i>
-            Aperçu PDF
-          </div>
+          <div id="btn-apercu-pdf">Aperçu</div>
         </div>
       </div>
       <div id="part-bottom-page-nog">
@@ -1095,18 +1091,6 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   selectedPartNog: string = '1';
   
-  showPdfPreview = false;
-
-  openPdfPreview(): void {
-    console.log('Opening PDF preview...');
-    this.showPdfPreview = true;
-  }
-
-  closePdfPreview(): void {
-    this.showPdfPreview = false;
-  }
-  isGeneratingPdf = false;
-
   // Listes filtrées
   availableMissions: Mission[] = [];
   availableMillesimes: Millesime[] = [];
@@ -1132,8 +1116,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
-    private authService: AuthService,
-    private pdfService: PdfService
+    private authService: AuthService
   ) {
     // Configuration de la recherche avec debounce
     this.searchSubject.pipe(
@@ -1549,19 +1532,5 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       target.parentElement.classList.add('selected');
     }
     this.selectedPartNog = value;
-  }
-
-  async downloadPdf(): Promise<void> {
-    this.isGeneratingPdf = true;
-    
-    try {
-      const filename = `NOG_${this.selectedDossier?.DOS_PGI}_${this.selectedMission}_${this.selectedMillesime}.pdf`;
-      await this.pdfService.exportToPdf('pdf-preview-content', filename);
-    } catch (error) {
-      console.error('Erreur lors de la génération du PDF:', error);
-      alert('Une erreur est survenue lors de la génération du PDF');
-    } finally {
-      this.isGeneratingPdf = false;
-    }
   }
 }
