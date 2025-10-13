@@ -56,6 +56,7 @@ interface Contacts {
 interface Associes {
   nom: string;
   nbPart: number;
+  partCapital: number;
   pourcPart: number;
   isEditing?: boolean;
 }
@@ -188,6 +189,9 @@ interface ApiResponse {
           <div><strong>Mission :</strong> {{ selectedMission }} - {{ getSelectedMissionLabel() }}</div>
           <div><strong>Millésime :</strong> {{ selectedMillesime }}</div>
         </div>
+        <div id="container-bouton-pdf">
+          <div id="btn-apercu-pdf">Aperçu</div>
+        </div>
       </div>
       <div id="part-bottom-page-nog">
         <div id="part-bottom-left-page-nog">
@@ -260,6 +264,7 @@ interface ApiResponse {
                   <table class="table-nog">
                     <thead>
                       <tr>
+                        <th>Prénom</th>
                         <th>Nom</th>
                         <th>Fonction</th>
                         <th>Télephone</th>
@@ -270,10 +275,13 @@ interface ApiResponse {
                     <tbody>
                       <ng-container *ngFor="let contact of nogPartie1.contacts; let i = index">
                         <tr>
+                           <td>
+                            <input *ngIf="contact.isEditing" type="text" [(ngModel)]="contact.prenom" class="input-table-nog">
+                            <span *ngIf="!contact.isEditing">{{ contact.prenom }}</span>
+                          </td>
                           <td>
-                            <input *ngIf="contact.isEditing" type="text" [(ngModel)]="contact.prenom" class="input-table-nog" style="width: 45%; display: inline-block;">
-                            <input *ngIf="contact.isEditing" type="text" [(ngModel)]="contact.nom" class="input-table-nog" style="width: 45%; display: inline-block; margin-left: 5%;">
-                            <span *ngIf="!contact.isEditing">{{ contact.prenom }} {{ contact.nom }}</span>
+                            <input *ngIf="contact.isEditing" type="text" [(ngModel)]="contact.nom" class="input-table-nog">
+                            <span *ngIf="!contact.isEditing">{{ contact.nom }}</span>
                           </td>
                           <td>
                             <input *ngIf="contact.isEditing" type="text" [(ngModel)]="contact.libelle" class="input-table-nog">
@@ -328,7 +336,10 @@ interface ApiResponse {
                             <input *ngIf="associe.isEditing" type="number" [(ngModel)]="associe.nbPart" class="input-table-nog">
                             <span *ngIf="!associe.isEditing">{{ formatNumber(associe.nbPart) }}</span>
                           </td>
-                          <td></td>
+                          <td>
+                            <input *ngIf="associe.isEditing" type="number" [(ngModel)]="associe.partCapital" class="input-table-nog">
+                            <span *ngIf="!associe.isEditing">{{ formatNumber(associe.partCapital) }}</span>
+                          </td>
                           <td>
                             <input *ngIf="associe.isEditing" type="number" [(ngModel)]="associe.pourcPart" class="input-table-nog">
                             <span *ngIf="!associe.isEditing">{{ formatNumber(associe.pourcPart) }}</span>
@@ -608,6 +619,18 @@ interface ApiResponse {
       height: 6vh;
       background-color: var(--primary-light);
       padding: 1vh 1vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    div#btn-apercu-pdf {
+      background-color: #ffffff;
+      color: var(--primary-dark);
+      border: 0.1vh solid var(--primary-dark);
+      padding: 0.2vh 0.5vw;
+      border-radius: 0.5vw;
+      cursor: pointer;
     }
 
     div#part-bottom-page-nog {
@@ -820,13 +843,13 @@ interface ApiResponse {
 
     div#container-part-1-2-nog .table-nog th:nth-child(1),
     div#container-part-1-2-nog .table-nog td:nth-child(1){
-      width: 13vw;
+      width: 7vw;
       white-space: nowrap;
     }
 
     div#container-part-1-2-nog .table-nog th:nth-child(2),
     div#container-part-1-2-nog .table-nog td:nth-child(2){
-      width: 8vw;
+      width: 7vw;
       white-space: nowrap;
     }
 
@@ -838,12 +861,18 @@ interface ApiResponse {
 
     div#container-part-1-2-nog .table-nog th:nth-child(4),
     div#container-part-1-2-nog .table-nog td:nth-child(4){
-      width: 12vw;
+      width: 8vw;
       white-space: nowrap;
     }
 
     div#container-part-1-2-nog .table-nog th:nth-child(5),
     div#container-part-1-2-nog .table-nog td:nth-child(5){
+      width: 12vw;
+      white-space: nowrap;
+    }
+
+    div#container-part-1-2-nog .table-nog th:nth-child(6),
+    div#container-part-1-2-nog .table-nog td:nth-child(6){
       width: 3.5vw;
       white-space: nowrap;
     }
@@ -1442,6 +1471,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.nogPartie1.associes.push({
       nom: '',
       nbPart: 0,
+      partCapital: 0,
       pourcPart: 0,
       isEditing: true
     });
