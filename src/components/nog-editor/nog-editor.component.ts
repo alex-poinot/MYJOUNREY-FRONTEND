@@ -1546,10 +1546,6 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.selectedPartNog = value;
   }
 
-  openPdfPreview(): void {
-    this.showPdfPreview = true;
-  }
-
   closePdfPreview(): void {
     this.showPdfPreview = false;
   }
