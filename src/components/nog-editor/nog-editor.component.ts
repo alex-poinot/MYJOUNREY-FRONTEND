@@ -1490,8 +1490,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     // Restaurer la position du curseur après un court délai
     setTimeout(() => {
       if (selection && range && parentNode && cursorPosition !== undefined) {
-        try {
-          // Vérifier que le nœud parent existe encore
+    // Mettre à jour le contenu seulement si différent pour éviter la duplication
+    const newContent = target.textContent || '';
+    if (this.nogPartie1.activiteExHisto !== newContent) {
+      this.nogPartie1.activiteExHisto = newContent;
+    }
           if (target.contains(parentNode as Node) || target === parentNode) {
             const newRange = document.createRange();
             newRange.setStart(parentNode, Math.min(cursorPosition, (parentNode as Text).length || 0));
