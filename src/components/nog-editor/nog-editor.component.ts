@@ -474,40 +474,36 @@ interface ApiResponse {
           </button>
         </div>
         <div id="apercu-pdf-nog" class="apercu-content">
-          <div class="titre-nog-apercu">1. Présentation de la société</div>
-          <div class="sous-titre-nog-apercu">1.1. Coordonnées</div>
-          <div class="contenu-nog-apercu">
-            <div class="row-coordonnees-nog">
-              <div class="icon-coordonnees-nog">
-                <i class="fa-regular fa-building-memo"></i>
-              </div>
-              <div class="text-coordonnees-nog"><strong> {{ nogPartie1.coordonnees.DOS_NOM }} </strong></div>
-            </div>
-            <div class="row-coordonnees-nog">
-              <div class="icon-coordonnees-nog">
-                <i class="fa-regular fa-location-dot"></i>
-              </div>
-              <div class="text-coordonnees-nog"> {{ nogPartie1.coordonnees.DOS_ADRESSE }} {{ nogPartie1.coordonnees.DOS_CP }} {{ nogPartie1.coordonnees.DOS_VILLE }} </div>
-            </div>
-            <div class="row-coordonnees-nog">
-              <div class="icon-coordonnees-nog">
-                <i class="fa-regular fa-fingerprint"></i>
-                <strong>Siret :</strong>
-              </div>
-              <div class="text-coordonnees-nog"> {{ nogPartie1.coordonnees.DOS_SIRET }} </div>
-            </div>
-            <div class="row-coordonnees-nog">
-              <div class="icon-coordonnees-nog">
-                <i class="fa-regular fa-memo-circle-info"></i>
-                <strong>APE :</strong>
-              </div>
-              <div class="text-coordonnees-nog"> {{ nogPartie1.coordonnees.NAF_LIBELLE }} </div>
-            </div>
+          <div data-module-type="title" class="titre-nog-apercu"><h3>1. Présentation de la société</h3></div>
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>1.1. Coordonnées</h4></div>
+          <div data-module-type="table" class="contenu-nog-apercu">
+
+
+            <table class="table-nog preview-table">
+              <tbody>
+                <tr>
+                  <td>Nom</td>
+                  <td>{{ nogPartie1.coordonnees.DOS_NOM }}</td>
+                </tr>
+                <tr>
+                  <td>Adresse</td>
+                  <td>{{ nogPartie1.coordonnees.DOS_ADRESSE }} {{ nogPartie1.coordonnees.DOS_CP }} {{ nogPartie1.coordonnees.DOS_VILLE }}</td>
+                </tr>
+                <tr>
+                  <td>Siret</td>
+                  <td>{{ nogPartie1.coordonnees.DOS_SIRET }}</td>
+                </tr>
+                <tr>
+                  <td>APE</td>
+                  <td>{{ nogPartie1.coordonnees.NAF_LIBELLE }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="sous-titre-nog-apercu">1.2. Contacts</div>
-          <div class="contenu-nog-apercu">
-            <table class="table-nog">
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>1.2. Contacts</h4></div>
+          <div data-module-type="table" class="contenu-nog-apercu">
+            <table class="table-nog preview-table">
               <thead>
                 <tr>
                   <th>Prénom</th>
@@ -531,9 +527,9 @@ interface ApiResponse {
             </table>
           </div>
 
-          <div class="sous-titre-nog-apercu">1.3. Associés</div>
-          <div class="contenu-nog-apercu">
-            <table class="table-nog">
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>1.3. Associés</h4></div>
+          <div data-module-type="table" class="contenu-nog-apercu">
+            <table class="table-nog preview-table">
               <thead>
                 <tr>
                   <th>Nom de l'associé</th>
@@ -555,42 +551,60 @@ interface ApiResponse {
             </table>
           </div>
 
-          <div class="sous-titre-nog-apercu">1.4. Chiffres significatifs</div>
-          <div class="contenu-nog-apercu">
-            <div id="container-chiffres-sign-nog">
-              <div class="colonne-chiffres-sign-nog">
-                <div></div>
-                <div class="libelle-chiffres-sign-nog">Effectif</div>
-                <div class="libelle-chiffres-sign-nog">Capitaux propres</div>
-                <div class="libelle-chiffres-sign-nog">Total bilan</div>
-                <div class="libelle-chiffres-sign-nog">Chiffres d'affaires</div>
-                <div class="libelle-chiffres-sign-nog">Résultat net (ou avant impôt)</div>
-              </div>
-
-              <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
-                <div class="colonne-chiffres-sign-nog">
-                  <div class="titre-colonne-chiffres-sign-nog"> {{ formatDate(cs.datePeriode) }} ({{ cs.dureeExercice }} mois) </div>
-                  <div class="montant-chiffres-sign-nog">{{ cs.effectif }}</div>
-                  <div class="montant-chiffres-sign-nog">{{ cs.capitauxPropres }}</div>
-                  <div class="montant-chiffres-sign-nog">{{ cs.bilanNet }}</div>
-                  <div class="montant-chiffres-sign-nog">{{ cs.ca }}</div>
-                  <div class="montant-chiffres-sign-nog">{{ cs.beneficePerte }}</div>
-                </div>
-              </ng-container>
-
-              <div class="colonne-chiffres-sign-nog" id="colonne-variation-cs">
-                <div class="titre-colonne-chiffres-sign-nog">Variation</div>
-                <div class="montant-chiffres-sign-nog">{{ calculateVariation('effectif') }}</div>
-                <div class="montant-chiffres-sign-nog">{{ calculateVariation('capitauxPropres') }}</div>
-                <div class="montant-chiffres-sign-nog">{{ calculateVariation('bilanNet') }}</div>
-                <div class="montant-chiffres-sign-nog">{{ calculateVariation('ca') }}</div>
-                <div class="montant-chiffres-sign-nog">{{ calculateVariation('beneficePerte') }}</div>
-              </div>
-            </div>
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>1.4. Chiffres significatifs</h4></div>
+          <div data-module-type="table" class="contenu-nog-apercu">
+            <table class="table-nog preview-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
+                    <th>{{ formatDate(cs.datePeriode) }} ({{ cs.dureeExercice }} mois)</th>
+                  </ng-container>
+                  <th>Variation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Effectif</td>
+                  <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
+                    <td>{{ cs.effectif }}</td>
+                  </ng-container>
+                  <td>{{ calculateVariation('effectif') }}</td>
+                </tr>
+                <tr>
+                  <td>Capitaux propres</td>
+                  <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
+                    <td>{{ cs.capitauxPropres }}</td>
+                  </ng-container>
+                  <td>{{ calculateVariation('capitauxPropres') }}</td>
+                </tr>
+                <tr>
+                  <td>Total bilan</td>
+                  <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
+                    <td>{{ cs.bilanNet }}</td>
+                  </ng-container>
+                  <td>{{ calculateVariation('bilanNet') }}</td>
+                </tr>
+                <tr>
+                  <td>Chiffres d'affaires</td>
+                  <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
+                    <td>{{ cs.ca }}</td>
+                  </ng-container>
+                  <td>{{ calculateVariation('ca') }}</td>
+                </tr>
+                <tr>
+                  <td>Résultat net (ou avant impôt)</td>
+                  <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
+                    <td>{{ cs.beneficePerte }}</td>
+                  </ng-container>
+                  <td>{{ calculateVariation('beneficePerte') }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="sous-titre-nog-apercu">1.5. Activité exercée et historique</div>
-          <div class="contenu-nog-apercu">{{ nogPartie1.activiteExHisto }}</div>
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>1.5. Activité exercée et historique</h4></div>
+          <div data-module-type="text" class="contenu-nog-apercu"><p>{{ nogPartie1.activiteExHisto }}</p></div>
 
         </div>
       </div>
