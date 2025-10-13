@@ -463,6 +463,36 @@ interface ApiResponse {
         </div>
       </div>
     </div>
+    
+    <!-- Pop-up d'aperçu PDF -->
+    <div *ngIf="showPdfPreview" class="pdf-preview-overlay" (click)="closePdfPreview()">
+      <div class="pdf-preview-popup" (click)="$event.stopPropagation()">
+        <div class="pdf-preview-header">
+          <h3>Aperçu PDF - NOG</h3>
+          <div class="pdf-preview-actions">
+            <button class="download-pdf-btn" (click)="downloadPdf()">
+              <i class="fas fa-download"></i> Télécharger PDF
+            </button>
+            <button class="close-preview-btn" (click)="closePdfPreview()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="pdf-preview-content" id="pdf-preview-content">
+          <div class="pdf-page">
+            <!-- Titre principal -->
+            <h1 class="pdf-main-title">{{ getMainTitle() }}</h1>
+            
+            <!-- Sections -->
+            <div class="pdf-section" *ngFor="let section of getPdfSections()">
+              <h2 class="pdf-section-title">{{ section.title }}</h2>
+              <div class="pdf-section-content" [innerHTML]="section.content"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   `,
   styles: [`
     #container-select-dossier {
@@ -1064,6 +1094,171 @@ interface ApiResponse {
     .editor-content:focus {
       background-color: var(--gray-50);
     }
+    
+    /* Styles pour le pop-up d'aperçu PDF */
+    .pdf-preview-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10000;
+      display: flex;
+      justify-content: flex-end;
+      align-items: stretch;
+    }
+    
+    .pdf-preview-popup {
+      width: 21cm;
+      background: white;
+      box-shadow: -2px 0 20px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      animation: slideInFromRight 0.3s ease-out;
+    }
+    
+    @keyframes slideInFromRight {
+      from {
+        transform: translateX(100%);
+      }
+      to {
+        transform: translateX(0);
+      }
+    }
+    
+    .pdf-preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: var(--primary-color);
+      color: white;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .pdf-preview-header h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .pdf-preview-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .download-pdf-btn {
+      background: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s;
+    }
+    
+    .download-pdf-btn:hover {
+      background: var(--primary-dark);
+    }
+    
+    .close-preview-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s;
+    }
+    
+    .close-preview-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .pdf-preview-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    
+    .pdf-page {
+      background: white;
+      padding: 40px;
+      margin: 0 auto;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      min-height: 29.7cm;
+      width: 100%;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+    
+    .pdf-main-title {
+      color: var(--primary-color);
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      text-align: center;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+    }
+    
+    .pdf-section {
+      margin-bottom: 25px;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    
+    .pdf-section-title {
+      color: var(--primary-color);
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      border-left: 4px solid var(--secondary-color);
+      padding-left: 15px;
+    }
+    
+    .pdf-section-content {
+      font-size: 14px;
+      color: #333;
+      margin-left: 19px;
+    }
+    
+    .pdf-section-content p {
+      margin-bottom: 10px;
+    }
+    
+    .pdf-section-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    
+    .pdf-section-content table th,
+    .pdf-section-content table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    
+    .pdf-section-content table th {
+      background-color: var(--gray-100);
+      font-weight: 600;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -1098,12 +1293,55 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   showPdfPreview = false;
 
   openPdfPreview(): void {
+    console.log('Ouverture de l\'aperçu PDF');
     console.log('Opening PDF preview...');
     this.showPdfPreview = true;
   }
 
   closePdfPreview(): void {
     this.showPdfPreview = false;
+  }
+  
+  getMainTitle(): string {
+    const titleElement = document.querySelector('.text-element-menu-nog');
+    return titleElement ? titleElement.textContent || '1. Présentation de la société' : '1. Présentation de la société';
+  }
+  
+  getPdfSections(): Array<{title: string, content: string}> {
+    const sections = [
+      {
+        title: '1.1 Informations générales',
+        content: this.nogPartie1.informationsGenerales || 'Contenu non disponible'
+      },
+      {
+        title: '1.2 Activité de l\'entreprise',
+        content: this.nogPartie1.activiteEntreprise || 'Contenu non disponible'
+      },
+      {
+        title: '1.3 Organisation',
+        content: this.nogPartie1.organisation || 'Contenu non disponible'
+      },
+      {
+        title: '1.4 Environnement informatique',
+        content: this.nogPartie1.environnementInformatique || 'Contenu non disponible'
+      },
+      {
+        title: '1.5 Autres informations',
+        content: this.nogPartie1.autresInformations || 'Contenu non disponible'
+      }
+    ];
+    
+    return sections;
+  }
+  
+  async downloadPdf(): Promise<void> {
+    try {
+      const filename = `NOG-${new Date().toISOString().split('T')[0]}.pdf`;
+      await this.pdfService.exportToPdf('pdf-preview-content', filename);
+    } catch (error) {
+      console.error('Erreur lors de la génération du PDF:', error);
+      alert('Une erreur est survenue lors de la génération du PDF');
+    }
   }
   isGeneratingPdf = false;
 
@@ -1129,6 +1367,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   };
 
   private searchSubject = new Subject<string>();
+  showPdfPreview = false;
 
   constructor(
     private http: HttpClient,
