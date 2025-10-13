@@ -145,3 +145,102 @@ export class PdfService {
     }
   }
 }
+  async exportNogToPdf(elementId: string, filename: string = 'nog-document.pdf'): Promise<void> {
+    try {
+      const element = document.getElementById(elementId);
+      if (!element) {
+        throw new Error('Element not found');
+      }
+
+      // Format A4
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = 210; // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
+      
+      // Marges pour header et footer
+      const headerHeight = 25;
+      const footerHeight = 20;
+      const margin = 15;
+
+      let currentY = headerHeight + margin;
+      let pageNumber = 1;
+
+      // Fonction pour ajouter header NOG
+      const addNogHeader = () => {
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Grant Thornton', margin, 15);
+        pdf.text('NOG', pageWidth / 2, 15, { align: 'center' });
+        
+        // Ligne de séparation sous le header
+        pdf.setLineWidth(0.5);
+        pdf.line(margin, headerHeight, pageWidth - margin, headerHeight);
+      };
+
+      // Fonction pour ajouter footer avec numérotation
+      const addNogFooter = (currentPage: number, totalPages: number) => {
+        const footerY = pageHeight - 10;
+        
+        // Ligne de séparation au-dessus du footer
+        pdf.setLineWidth(0.5);
+        pdf.line(margin, pageHeight - footerHeight, pageWidth - margin, pageHeight - footerHeight);
+        
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(`${currentPage} / ${totalPages}`, pageWidth / 2, footerY, { align: 'center' });
+      };
+
+      // Première page
+      addNogHeader();
+
+      // Traiter chaque section séparément pour éviter les coupures
+      const sections = element.querySelectorAll('.document-title, .section');
+      const totalSections = sections.length;
+      let processedSections = 0;
+
+      for (let i = 0; i < sections.length; i++) {
+        const sectionElement = sections[i] as HTMLElement;
+        
+        // Créer un canvas pour cette section spécifique
+        const canvas = await html2canvas(sectionElement, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          width: sectionElement.scrollWidth,
+          height: sectionElement.scrollHeight
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = pageWidth - (2 * margin);
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        // Vérifier si la section peut tenir sur la page actuelle
+        if (currentY + imgHeight > pageHeight - footerHeight - margin) {
+          // La section ne peut pas tenir, créer une nouvelle page
+          pdf.addPage();
+          pageNumber++;
+          addNogHeader();
+          currentY = headerHeight + margin;
+        }
+
+        // Ajouter l'image de la section
+        pdf.addImage(imgData, 'PNG', margin, currentY, imgWidth, imgHeight);
+        currentY += imgHeight + 8; // Espacement entre les sections
+
+        processedSections++;
+      }
+
+      // Ajouter les footers avec le nombre total de pages
+      const totalPages = pageNumber;
+      for (let page = 1; page <= totalPages; page++) {
+        pdf.setPage(page);
+        addNogFooter(page, totalPages);
+      }
+
+      pdf.save(filename);
+    } catch (error) {
+      console.error('Erreur lors de la génération du PDF NOG:', error);
+      throw error;
+    }
+  }
