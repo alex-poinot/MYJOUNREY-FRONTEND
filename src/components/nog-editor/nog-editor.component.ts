@@ -418,8 +418,9 @@ interface ApiResponse {
                       #editorContent
                       (input)="onEditorContentChange($event)"
                       (keyup)="onEditorContentChange($event)"
-                      (paste)="onEditorContentChange($event)"
-                      [textContent]="nogPartie1.activiteExHisto"></div>
+                      (paste)="onEditorContentChange($event)">
+                      {{ nogPartie1.activiteExHisto }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -690,7 +691,7 @@ interface ApiResponse {
       font-size: 3vw;
       height: 6vh;
       width: 3vw;
-      color: var(--primary-color)
+      color: var(--primary-color);
     }
 
     .text-loader-nog {
@@ -1233,7 +1234,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.loadContacts();
     this.loadChiffresSignificatifs();
     this.loadAssocies();
- }
+  }
 
   getSelectedMissionLabel(): string {
     const mission = this.availableMissions.find(m => m.MD_MISSION === this.selectedMission);
@@ -1489,11 +1490,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     // Restaurer la position du curseur après un court délai
     setTimeout(() => {
       if (selection && range && parentNode && cursorPosition !== undefined) {
-    // Mettre à jour le contenu seulement si différent pour éviter la duplication
-    const newContent = target.textContent || '';
-    if (this.nogPartie1.activiteExHisto !== newContent) {
-      this.nogPartie1.activiteExHisto = newContent;
-    }
+        try {
+          // Mettre à jour le contenu seulement si différent pour éviter la duplication
+          const newContent = target.textContent || '';
+          if (this.nogPartie1.activiteExHisto !== newContent) {
+            this.nogPartie1.activiteExHisto = newContent;
+          }
           if (target.contains(parentNode as Node) || target === parentNode) {
             const newRange = document.createRange();
             newRange.setStart(parentNode, Math.min(cursorPosition, (parentNode as Text).length || 0));
