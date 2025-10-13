@@ -418,9 +418,8 @@ interface ApiResponse {
                       #editorContent
                       (input)="onEditorContentChange($event)"
                       (keyup)="onEditorContentChange($event)"
-                      (paste)="onEditorContentChange($event)">
-                      {{ nogPartie1.activiteExHisto }}
-                    </div>
+                      (paste)="onEditorContentChange($event)"
+                      [textContent]="nogPartie1.activiteExHisto"></div>
                   </div>
                 </div>
               </div>
@@ -1483,7 +1482,6 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     const range = selection?.getRangeAt(0);
     const cursorPosition = range?.startOffset;
     const parentNode = range?.startContainer;
-  }
     
     // Mettre à jour le contenu
     this.nogPartie1.activiteExHisto = target.innerHTML;
