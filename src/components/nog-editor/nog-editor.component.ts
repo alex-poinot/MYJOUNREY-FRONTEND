@@ -415,8 +415,11 @@ interface ApiResponse {
                     <div
                       contenteditable="true"
                       class="editor-content"
-                      [innerHTML]="nogPartie1.activiteExHisto"
-                      (input)="onEditorContentChange($event)">
+                      #editorContent
+                      (input)="onEditorContentChange($event)"
+                      (keyup)="onEditorContentChange($event)"
+                      (paste)="onEditorContentChange($event)">
+                      {{ nogPartie1.activiteExHisto }}
                     </div>
                   </div>
                 </div>
@@ -1475,7 +1478,44 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onEditorContentChange(event: Event): void {
     const target = event.target as HTMLElement;
+    // Sauvegarder la position du curseur
+    const selection = window.getSelection();
+    const range = selection?.getRangeAt(0);
+    const cursorPosition = range?.startOffset;
+    const parentNode = range?.startContainer;
+    
+    // Mettre à jour le contenu
     this.nogPartie1.activiteExHisto = target.innerHTML;
+    
+    // Restaurer la position du curseur après un court délai
+    setTimeout(() => {
+      if (selection && range && parentNode && cursorPosition !== undefined) {
+        try {
+          // Vérifier que le nœud parent existe encore
+          if (target.contains(parentNode as Node) || target === parentNode) {
+            const newRange = document.createRange();
+            newRange.setStart(parentNode, Math.min(cursorPosition, (parentNode as Text).length || 0));
+            newRange.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+          } else {
+            // Si le nœud n'existe plus, placer le curseur à la fin
+            const newRange = document.createRange();
+            newRange.selectNodeContents(target);
+            newRange.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+          }
+        } catch (e) {
+          // En cas d'erreur, placer le curseur à la fin
+          const newRange = document.createRange();
+          newRange.selectNodeContents(target);
+          newRange.collapse(false);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+      }
+    }, 0);
   }
 
   changePartNog(value: string, event: MouseEvent): void {
