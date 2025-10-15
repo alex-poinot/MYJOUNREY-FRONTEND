@@ -2396,7 +2396,9 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       editorElement.textContent = this.nogPartie1.activiteExHisto;
     }
 
-    this.initializeDiligenceCollapse();
+    setTimeout(() => {
+      this.initializeDiligenceCollapse();
+    }, 0);
   }
 
   initializeDiligenceCollapse(): void {
@@ -2452,6 +2454,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       target.parentElement.classList.add('selected');
     }
     this.selectedPartNog = value;
+
+    if (value === '5') {
+      setTimeout(() => {
+        this.initializeDiligenceCollapse();
+      }, 0);
+    }
   }
 
   openApercuPopup(): void {
