@@ -588,6 +588,7 @@ interface TabDiligence {
                                 <ng-container *ngFor="let column of nogPartie2.planning[0].listeLib">
                                   <th>{{ replaceNameLibelleListeLib(column) }}</th>
                                 </ng-container>
+                                <th></th>
                               </tr>
                             </thead>
                             <tbody>
@@ -597,6 +598,13 @@ interface TabDiligence {
                                 <ng-container *ngFor="let value of row.listeValue">
                                   <td>{{ mathCeil(value) }}</td>
                                 </ng-container>
+                                 <td>
+                                  <div class="action-tableau">
+                                    <i *ngIf="!row.isEditing" class="fa-solid fa-pen-to-square action-edit" (click)="toggleEditPlanning(i)"></i>
+                                    <i *ngIf="row.isEditing" class="fa-solid fa-check action-validate" (click)="toggleEditPlanning(i)"></i>
+                                    <i class="fa-solid fa-trash action-delete" (click)="deletePlanning(i)"></i>
+                                  </div>
+                                </td>
                               </tr>
                             </tbody>
                           </table>
