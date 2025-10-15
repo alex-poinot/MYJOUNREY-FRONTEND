@@ -46,6 +46,10 @@ interface NogPartie2 {
   precisionTravaux: string;
 }
 
+interface NogPartie5 {
+  diligence: Diligence[];
+}
+
 interface Planning {
   nom: string;
   fonction: string;
@@ -111,6 +115,19 @@ interface ApiResponse {
   data: Dossier[];
   count: number;
   timestamp: string;
+}
+interface Diligence {
+  groupe: string;
+  libelleGroupe: string;
+  tabDiligence: TabDiligence[];
+}
+
+interface TabDiligence {
+  diligence: string;
+  titre: string;
+  activation: boolean;
+  objectif: string;
+  controle: string;
 }
 
 @Component({
@@ -691,90 +708,39 @@ interface ApiResponse {
             </div>
             <div id="part-bottom-diligence">
               <div id="container-liste-diligence">
-                <div class="container-diligence">
-                  <div class="row-title-diligence" style="cursor: pointer;">
-                    <div class="title-diligence">A - Préparation et finalisation de la mission</div>
-                    <div class="icon-collapse-diligence"><i class="fa-solid fa-chevron-down"></i></div>
+                <ng-container *ngFor="let diligence of nogPartie5.diligence">
+                  <div class="container-diligence">
+                    <div class="row-title-diligence" style="cursor: pointer;">
+                      <div class="title-diligence">{{ diligence.groupe }} - {{ diligence.libelleGroupe }}</div>
+                      <div class="icon-collapse-diligence"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="row-table-diligence">
+                      <table class="table-diligence">
+                        <thead>
+                          <tr>
+                            <th>Diligence</th>
+                            <th>Titre</th>
+                            <th>Activation</th>
+                            <th>Objectif</th>
+                            <th>Contrôle</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+
+                          <ng-container *ngFor="let rowDiligence of diligence.tabDiligence">
+                            <tr>
+                              <td>{{ rowDiligence.diligence }}</td>
+                              <td>{{ rowDiligence.titre }}</td>
+                              <td>{{ rowDiligence.activation }}</td>
+                              <td>{{ rowDiligence.objectif }}</td>
+                              <td>{{ rowDiligence.controle }}</td>
+                            </tr>
+                          </ng-container>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                  <div class="row-table-diligence">
-                    <table class="table-diligence">
-                      <thead>
-                        <tr>
-                          <th>Diligence</th>
-                          <th>Titre</th>
-                          <th>Activation</th>
-                          <th>Objectif</th>
-                          <th>Contrôle</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div class="container-diligence">
-                  <div class="row-title-diligence" style="cursor: pointer;">
-                    <div class="title-diligence">B - Trésorerie / Financement</div>
-                    <div class="icon-collapse-diligence"><i class="fa-solid fa-chevron-down"></i></div>
-                  </div>
-                  <div class="row-table-diligence">
-                    <table class="table-diligence">
-                      <thead>
-                        <tr>
-                          <th>Diligence</th>
-                          <th>Titre</th>
-                          <th>Activation</th>
-                          <th>Objectif</th>
-                          <th>Contrôle</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div class="container-diligence">
-                  <div class="row-title-diligence" style="cursor: pointer;">
-                    <div class="title-diligence">C - Fournisseurs - Achats et charges externes</div>
-                    <div class="icon-collapse-diligence"><i class="fa-solid fa-chevron-down"></i></div>
-                  </div>
-                  <div class="row-table-diligence">
-                    <table class="table-diligence">
-                      <thead>
-                        <tr>
-                          <th>Diligence</th>
-                          <th>Titre</th>
-                          <th>Activation</th>
-                          <th>Objectif</th>
-                          <th>Contrôle</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                </ng-container>
               </div>
             </div>
           </div>
@@ -1852,6 +1818,70 @@ interface ApiResponse {
     div#part-bottom-diligence {
       padding: 2vh 2vw;
     }
+
+    table.table-diligence th, table.table-diligence td {
+      padding: 0.4vh 0.2vw;
+      font-size: var(--font-size-md);
+      text-align: left;
+    }
+
+    table.table-diligence th {
+      font-weight: normal;
+      color: white;
+      background-color: var(--primary-light);
+    }
+
+    table.table-diligence tbody tr:nth-child(even) {
+      background-color: var(--gray-100);
+    }
+
+    div#container-liste-diligence {
+      display: flex;
+      flex-direction: column;
+      gap: 1vh;
+    }
+
+    .container-diligence {
+      background-color: white;
+      border-radius: 0.5vw;
+    }
+
+    table.table-diligence th:nth-child(1),
+    table.table-diligence td:nth-child(1) {
+      width: 3.5vw;
+    }
+
+    table.table-diligence th:nth-child(2),
+    table.table-diligence td:nth-child(2) {
+      width: 10vw;
+    }
+
+    table.table-diligence th:nth-child(3),
+    table.table-diligence td:nth-child(3) {
+      width: 4vw;
+    }
+
+    table.table-diligence th:nth-child(4),
+    table.table-diligence td:nth-child(4) {
+      width: 27vw;
+    }
+
+    table.table-diligence th:nth-child(5),
+    table.table-diligence td:nth-child(5) {
+      width: 27vw;
+    }
+
+    .row-table-diligence {
+      border-top: 0.1vh solid var(--gray-200);
+    }
+
+    .title-diligence {
+      font-size: var(--font-size-lg);
+    }
+
+    .icon-collapse-diligence i {
+      font-size: 0.8vw;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -1922,6 +1952,71 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     equipeInter: [],
     precisionTravaux: ''
   };
+
+  nogPartie5: NogPartie5 = {
+    diligence: [
+      {
+        groupe: 'A',
+        libelleGroupe: 'Préparation et finalisation de la mission',
+        tabDiligence: [
+          {
+            diligence: 'A001-O',
+            titre: 'Notes d\'entretien et faits marquants',
+            activation: true,
+            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
+            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
+          },
+          {
+            diligence: 'A001-O',
+            titre: 'Notes d\'entretien et faits marquants',
+            activation: true,
+            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
+            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
+          }
+        ]
+      },
+      {
+        groupe: 'B',
+        libelleGroupe: 'Trésorerie / Financement',
+        tabDiligence: [
+          {
+            diligence: 'A001-O',
+            titre: 'Notes d\'entretien et faits marquants',
+            activation: true,
+            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
+            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
+          },
+          {
+            diligence: 'A001-O',
+            titre: 'Notes d\'entretien et faits marquants',
+            activation: true,
+            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
+            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
+          }
+        ]
+      },
+      {
+        groupe: 'C',
+        libelleGroupe: 'Fournisseurs - Achats et charges externes',
+        tabDiligence: [
+          {
+            diligence: 'A001-O',
+            titre: 'Notes d\'entretien et faits marquants',
+            activation: true,
+            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
+            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
+          },
+          {
+            diligence: 'A001-O',
+            titre: 'Notes d\'entretien et faits marquants',
+            activation: true,
+            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
+            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
+          }
+        ]
+      }
+    ]
+  }
 
   private searchSubject = new Subject<string>();
 
