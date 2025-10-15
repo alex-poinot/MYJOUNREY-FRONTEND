@@ -514,7 +514,10 @@ interface TabDiligence {
                 <div class="body-element-nog">
                   <div class="container-input-title-nog">
                     <div class="input-bloc-nog">
-                      <span>{{ nogPartie2.typeMission }}</span>
+                      <select [(ngModel)]="nogPartie2.typeMission" (change)="onTypeMissionChange()" class="select-type-mission">
+                        <option value="">Sélectionner un type de mission</option>
+                        <option *ngFor="let type of getDistinctTypeMissions()" [value]="type">{{ type }}</option>
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -524,7 +527,10 @@ interface TabDiligence {
                 <div class="body-element-nog">
                   <div class="container-input-title-nog">
                     <div class="input-bloc-nog">
-                      <span>{{ nogPartie2.natureMission }}</span>
+                      <select [(ngModel)]="nogPartie2.natureMission" class="select-nature-mission">
+                        <option value="">Sélectionner une nature de mission</option>
+                        <option *ngFor="let nature of getNatureMissionsByType()" [value]="nature">{{ nature }}</option>
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -1793,6 +1799,23 @@ interface TabDiligence {
       font-size: var(--font-size-md);
     }
 
+    .select-type-mission,
+    .select-nature-mission {
+      width: 100%;
+      padding: 0.5vh 0.5vw;
+      font-size: var(--font-size-md);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .select-type-mission:focus,
+    .select-nature-mission:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
     div#container-part-2-2-nog,
     div#container-part-2-3-nog {
       width: 34vw;
@@ -2534,6 +2557,25 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         icon.classList.add('fa-chevron-down');
       }
     }
+  }
+
+  getDistinctTypeMissions(): string[] {
+    const types = this.objTypeNatureMission.map(item => item.TypeMission);
+    return [...new Set(types)].filter(type => type);
+  }
+
+  getNatureMissionsByType(): string[] {
+    if (!this.nogPartie2.typeMission) {
+      return [];
+    }
+    return this.objTypeNatureMission
+      .filter(item => item.TypeMission === this.nogPartie2.typeMission)
+      .map(item => item.NatureMission)
+      .filter(nature => nature);
+  }
+
+  onTypeMissionChange(): void {
+    this.nogPartie2.natureMission = '';
   }
 
   changePartNog(value: string, event: MouseEvent): void {
