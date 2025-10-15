@@ -603,7 +603,7 @@ interface TabDiligence {
                                   <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.nom" class="input-table-nog">
                                   <span *ngIf="!row.isEditing">{{ row.nom }}</span>
                                 </td>
-                                <ng-container *ngFor="let value of row.listeValue; let j = index">
+                                <ng-container *ngFor="let value of row.listeValue; let j = index; trackBy: trackByValueIndex">
                                   <td>
                                     <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.listeValue[j]" class="input-table-nog">
                                     <span *ngIf="!row.isEditing">{{ mathCeil(value) }}</span>
@@ -2860,6 +2860,10 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   trackByIndex(index: number, item: Planning): number {
     return item.id !== undefined ? item.id : index;
+  }
+
+  trackByValueIndex(index: number): number {
+    return index;
   }
 
   changePartNog(value: string, event: MouseEvent): void {
