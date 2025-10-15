@@ -32,6 +32,39 @@ interface NogPartie1 {
   activiteExHisto: string;
 }
 
+interface NogPartie2 {
+  dateMiseAJour: string;
+  montantHonoraire: number;
+  typeMission: string;
+  natureMission: string;
+  consultationPro: string;
+  interim: string;
+  final: string;
+  delaiRespecter: string;
+  planning: Planning[];
+  equipeInter: EquipeInter[];
+  precisionTravaux: string;
+}
+
+interface Planning {
+  nom: string;
+  fonction: string;
+  listeLib: string[];
+  listeValue: string[];
+}
+
+interface EquipeInter {
+  respMission: string;
+  dmcm: string;
+  factureur: string;
+  respMissionStatut: string;
+  dmcmStatut: string;
+  factureurStatut: string;
+  isEditingRespMission: boolean;
+  isEditingDmcm: boolean;
+  isEditingFactureur: boolean;
+}
+
 interface Coordonnees {
   DOS_PGI: string;
   DOS_NOM: string;
@@ -191,7 +224,7 @@ interface ApiResponse {
           <div><strong>Millésime :</strong> {{ selectedMillesime }}</div>
         </div>
         <div id="container-bouton-pdf">
-          <div id="btn-apercu-pdf" (click)="openApercuPopup()">Aperçu</div>
+          <div id="btn-apercu-pdf" (click)="openApercuPopup()"><i class="fa-solid fa-files"></i> Aperçu</div>
         </div>
       </div>
       <div id="part-bottom-page-nog">
@@ -436,8 +469,215 @@ interface ApiResponse {
               </div>
             </div>
           </div>
+
           <div *ngIf="selectedPartNog=='2'" id="container-part-2-nog" class="container-part-nog">
-          
+            <div class="row-part-nog">
+              <div id="container-part-2-1-nog" class="containter-element-nog">
+                <div class="title-element-nog">2.1. Lettre de mission</div>
+                <div class="body-element-nog">
+                  <div class="container-input-title-nog">
+                    <div class="title-bloc-nog">Date de mise à jour</div> 
+                    <div class="input-bloc-nog">
+                      <input type="date" [(ngModel)]="nogPartie2.dateMiseAJour" class="input-date-nog">
+                    </div>
+                  </div>
+                  <div class="container-input-title-nog">
+                    <div class="title-bloc-nog">Montant des honoraires pour la mission</div> 
+                    <div class="input-bloc-nog">
+                      <input type="number" [(ngModel)]="nogPartie2.montantHonoraire" class="input-number-nog">
+                    </div> 
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row-part-nog">
+              <div id="container-part-2-2-nog" class="containter-element-nog">
+                <div class="title-element-nog">2.2. Type de la mission</div>
+                <div class="body-element-nog">
+                  <div class="container-input-title-nog">
+                    <div class="input-bloc-nog">
+                      <span>{{ nogPartie2.typeMission }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="container-part-2-3-nog" class="containter-element-nog">
+                <div class="title-element-nog">2.3. Nature de la mission</div>
+                <div class="body-element-nog">
+                  <div class="container-input-title-nog">
+                    <div class="input-bloc-nog">
+                      <span>{{ nogPartie2.natureMission }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row-part-nog">
+              <div id="container-part-2-4-nog" class="containter-element-nog">
+                <div class="title-element-nog">2.4. Planning d'intervention</div>
+                <div class="body-element-nog">
+                  <div id="part-top-planning-inter-nog">
+                    <div id="part-left-planning-inter-nog">
+                      <div class="container-input-title-nog">
+                        <div class="title-bloc-nog">Consultations d'autres professionnels à prévoir</div> 
+                        <div class="input-bloc-nog">
+                          <input type="text" [(ngModel)]="nogPartie2.consultationPro" class="input-text-nog">
+                        </div> 
+                      </div>
+                      <div class="container-input-title-nog">
+                        <div class="title-bloc-nog">Consultations d'autres professionnels à prévoir</div> 
+                        <div class="input-bloc-nog">
+                          <select>
+                            <option value="Anuelle">Anuelle</option>
+                            <option value="Trimestrielle">Trimestrielle</option>
+                            <option value="Mensuelle">Mensuelle</option>
+                          </select>
+                        </div> 
+                      </div>
+                    </div>
+                    <div id="part-right-planning-inter-nog">
+                      <div class="container-input-title-nog">
+                        <div class="title-bloc-nog">Final</div> 
+                        <div class="input-bloc-nog">
+                          <input type="text" [(ngModel)]="nogPartie2.final" class="input-text-nog">
+                        </div> 
+                      </div>
+                      <div class="container-input-title-nog">
+                        <div class="title-bloc-nog">Délai à respecter</div> 
+                        <div class="input-bloc-nog">
+                          <input type="text" [(ngModel)]="nogPartie2.delaiRespecter" class="input-text-nog">
+                        </div> 
+                      </div>
+                    </div>
+                  </div>
+                  <div id="part-bottom-planning-inter-nog">
+                    <div class="container-input-title-nog">
+                        <div class="title-bloc-nog">Planning</div> 
+                        <div class="input-bloc-nog">
+                          <table class="table-nog">
+                            <thead>
+                              <tr>
+                                <th>Fonction</th>
+                                <th>Nom</th>
+                                <ng-container *ngFor="let column of nogPartie2.planning[0].listeLib">
+                                  <th>{{ replaceNameLibelleListeLib(column) }}</th>
+                                </ng-container>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let row of nogPartie2.planning">
+                                <td>{{ row.fonction }}</td>
+                                <td>{{ row.nom }}</td>
+                                <ng-container *ngFor="let value of row.listeValue">
+                                  <td>{{ value }}</td>
+                                </ng-container>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row-part-nog">
+              <div id="container-part-2-5-nog" class="containter-element-nog">
+                <div class="title-element-nog">2.5. Equipe d'intervention</div>
+                <div class="body-element-nog">
+                  <table class="table-nog">
+                    <thead>
+                      <tr>
+                        <th>Fonction</th>
+                        <th>Nom</th>
+                        <th>Actif</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Responsable mission</td>
+                        <td>
+                          <input *ngIf="nogPartie2.equipeInter[0].isEditingRespMission" type="text" [(ngModel)]="nogPartie2.equipeInter[0].respMission" class="input-table-nog">
+                          <span *ngIf="!nogPartie2.equipeInter[0].isEditingRespMission">{{ nogPartie2.equipeInter[0].respMission }}</span>
+                        </td>
+                        <td>
+                          <input *ngIf="nogPartie2.equipeInter[0].isEditingRespMission" type="text" [(ngModel)]="nogPartie2.equipeInter[0].respMissionStatut" class="input-table-nog">
+                          <span *ngIf="!nogPartie2.equipeInter[0].isEditingRespMission">{{ nogPartie2.equipeInter[0].respMissionStatut }}</span>
+                        </td>
+                        <td>
+                          <div class="action-tableau">
+                            <i *ngIf="!nogPartie2.equipeInter[0].isEditingRespMission" class="fa-solid fa-pen-to-square action-edit" (click)="toggleEditRespMission()"></i>
+                            <i *ngIf="nogPartie2.equipeInter[0].isEditingRespMission" class="fa-solid fa-check action-validate" (click)="toggleEditRespMission()"></i>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>DMCM</td>
+                        <td>
+                          <input *ngIf="nogPartie2.equipeInter[0].isEditingDmcm" type="text" [(ngModel)]="nogPartie2.equipeInter[0].dmcm" class="input-table-nog">
+                          <span *ngIf="!nogPartie2.equipeInter[0].isEditingDmcm">{{ nogPartie2.equipeInter[0].dmcm }}</span>
+                        </td>
+                        <td>
+                          <input *ngIf="nogPartie2.equipeInter[0].isEditingDmcm" type="text" [(ngModel)]="nogPartie2.equipeInter[0].dmcmStatut" class="input-table-nog">
+                          <span *ngIf="!nogPartie2.equipeInter[0].isEditingDmcm">{{ nogPartie2.equipeInter[0].dmcmStatut }}</span>
+                        </td>
+                        <td>
+                          <div class="action-tableau">
+                            <i *ngIf="!nogPartie2.equipeInter[0].isEditingDmcm" class="fa-solid fa-pen-to-square action-edit" (click)="toggleEditDmcm()"></i>
+                            <i *ngIf="nogPartie2.equipeInter[0].isEditingDmcm" class="fa-solid fa-check action-validate" (click)="toggleEditDmcm()"></i>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Factureur</td>
+                        <td>
+                          <input *ngIf="nogPartie2.equipeInter[0].isEditingFactureur" type="text" [(ngModel)]="nogPartie2.equipeInter[0].factureur" class="input-table-nog">
+                          <span *ngIf="!nogPartie2.equipeInter[0].isEditingFactureur">{{ nogPartie2.equipeInter[0].factureur }}</span>
+                        </td>
+                        <td>
+                          <input *ngIf="nogPartie2.equipeInter[0].isEditingFactureur" type="text" [(ngModel)]="nogPartie2.equipeInter[0].factureurStatut" class="input-table-nog">
+                          <span *ngIf="!nogPartie2.equipeInter[0].isEditingFactureur">{{ nogPartie2.equipeInter[0].factureurStatut }}</span>
+                        </td>
+                        <td>
+                          <div class="action-tableau">
+                            <i *ngIf="!nogPartie2.equipeInter[0].isEditingFactureur" class="fa-solid fa-pen-to-square action-edit" (click)="toggleEditFactureur()"></i>
+                            <i *ngIf="nogPartie2.equipeInter[0].isEditingFactureur" class="fa-solid fa-check action-validate" (click)="toggleEditFactureur()"></i>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div id="container-part-2-6-nog" class="containter-element-nog">
+                <div class="title-element-nog">2.6. Précision sur les travaux à réaliser en interim</div>
+                <div class="body-element-nog">
+                  <div id="editeur-texte-precision-travaux">
+                    <div class="toolbar-editor">
+                      <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                      <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                      <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                      <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                      <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                      <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                      <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                      <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                      <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                    </div>
+                    <div
+                      contenteditable="true"
+                      class="editor-content"
+                      #editorContentPrecisionTravaux
+                      (input)="onEditorContentChangePrecisionTravaux($event)"
+                      (keyup)="onEditorContentChangePrecisionTravaux($event)"
+                      (paste)="onEditorContentChangePrecisionTravaux($event)"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div *ngIf="selectedPartNog=='3'" id="container-part-3-nog" class="container-part-nog">
           
@@ -446,7 +686,97 @@ interface ApiResponse {
           
           </div>
           <div *ngIf="selectedPartNog=='5'" id="container-part-5-nog" class="container-part-nog">
-          
+            <div id="part-top-diligence">
+            
+            </div>
+            <div id="part-bottom-diligence">
+              <div id="container-liste-diligence">
+                <div class="container-diligence">
+                  <div class="row-title-diligence">
+                    <div class="title-diligence">A - Préparation et finalisation de la mission</div>
+                    <div class="icon-collapse-diligence"><i class="fa-solid fa-chevron-down"></i></div>
+                  </div>
+                  <div class="row-table-diligence">
+                    <table class="table-diligence">
+                      <thead>
+                        <tr>
+                          <th>Diligence</th>
+                          <th>Titre</th>
+                          <th>Activation</th>
+                          <th>Objectif</th>
+                          <th>Contrôle</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="container-diligence">
+                  <div class="row-title-diligence">
+                    <div class="title-diligence">B - Trésorerie / Financement</div>
+                    <div class="icon-collapse-diligence"><i class="fa-solid fa-chevron-down"></i></div>
+                  </div>
+                  <div class="row-table-diligence">
+                    <table class="table-diligence">
+                      <thead>
+                        <tr>
+                          <th>Diligence</th>
+                          <th>Titre</th>
+                          <th>Activation</th>
+                          <th>Objectif</th>
+                          <th>Contrôle</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="container-diligence">
+                  <div class="row-title-diligence">
+                    <div class="title-diligence">C - Fournisseurs - Achats et charges externes</div>
+                    <div class="icon-collapse-diligence"><i class="fa-solid fa-chevron-down"></i></div>
+                  </div>
+                  <div class="row-table-diligence">
+                    <table class="table-diligence">
+                      <thead>
+                        <tr>
+                          <th>Diligence</th>
+                          <th>Titre</th>
+                          <th>Activation</th>
+                          <th>Objectif</th>
+                          <th>Contrôle</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div *ngIf="selectedPartNog=='6'" id="container-part-6-nog" class="container-part-nog">
           
@@ -467,7 +797,7 @@ interface ApiResponse {
         <div class="apercu-header">
           <h3>Aperçu du document NOG</h3>
           <button class="download-pdf" (click)="exportToPdf()">
-            Download PDF
+            <i class="fa-solid fa-file-arrow-down"></i> Télecharger PDF
           </button>
           <button class="apercu-close" (click)="closeApercuPopup()">
             <i class="fas fa-times"></i>
@@ -775,12 +1105,18 @@ interface ApiResponse {
     }
 
     div#btn-apercu-pdf {
-      background-color: #ffffff;
-      color: var(--primary-dark);
-      border: 0.1vh solid var(--primary-dark);
-      padding: 0.2vh 0.5vw;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 1vh 1vw;
       border-radius: 0.5vw;
+      font-weight: 600;
       cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: var(--font-size-md);
+      display: flex;
+      align-items: center;
+      gap: 0.3vw;
     }
 
     div#part-bottom-page-nog {
@@ -1014,7 +1350,7 @@ interface ApiResponse {
       font-size: var(--font-size-lg);
       color: var(--primary-dark);
       font-weight: 600;
-      height: 16%;
+      height: 4vh;
       padding: 1vh 0;
     }
 
@@ -1330,6 +1666,191 @@ interface ApiResponse {
     .contenu-nog-apercu .colonne-chiffres-sign-nog div {
       width: 11vw !important;
     }
+
+    .download-pdf {
+      background: var(--primary-light);
+      color: white;
+      border: none;
+      padding: 1vh 1vw;
+      border-radius: 0.5vw;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: var(--font-size-md);
+      display: flex;
+      align-items: center;
+      gap: 0.3vw;
+      margin-left: auto;
+      margin-right: 5vw;
+    }
+
+    div#container-part-2-1-nog .body-element-nog {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    div#container-part-2-1-nog {
+      width: 100%;
+    }
+
+    .container-input-title-nog {
+      width: 32vw;
+    }
+
+    .input-bloc-nog {
+      width: 100%;
+    }
+
+    .input-bloc-nog input {
+      width: 65%;
+    }
+
+    input.input-date-nog {
+      padding: 0.3vh 0.3vw;
+      border: 0.1vh solid var(--gray-300);
+      border-radius: 0.3vw;
+      font-size: var(--font-size-md);
+    }
+
+    input.input-number-nog {
+      padding: 0.3vh 0.3vw;
+      border: 0.1vh solid var(--gray-300);
+      border-radius: 0.3vw;
+      font-size: var(--font-size-md);
+      text-align: right;
+    }
+
+    div#container-part-2-1-nog .body-element-nog {
+      padding: 2vh 1vw;
+    }
+
+    div#container-part-2-nog .row-part-nog {
+      height: fit-content;
+    }
+
+    div#container-part-2-4-nog {
+      height: 47vh;
+      width: 100%;
+    }
+
+    input.input-text-nog {
+      padding: 0.3vh 0.3vw;
+      border: 0.1vh solid var(--gray-300);
+      border-radius: 0.3vw;
+      font-size: var(--font-size-md);
+    }
+
+    div#container-part-2-4-nog .body-element-nog {
+      padding: 2vh 1vw;
+      display: flex;
+      gap: 2vh;
+      flex-direction: column;
+    }
+
+    div#part-left-planning-inter-nog,
+    div#part-right-planning-inter-nog {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      height: 100%;
+      width: 32vw;
+    }
+
+    .title-bloc-nog {
+      font-size: var(--font-size-md);
+      font-weight: 600;
+    }
+
+    div#part-top-planning-inter-nog {
+      display: flex;
+      height: 12vh;
+      justify-content: space-between;
+    }
+
+    div#part-bottom-planning-inter-nog .container-input-title-nog {
+      width: 100%;
+    }
+
+    div#part-bottom-planning-inter-nog .container-input-title-nog .input-bloc-nog {
+      height: 22vh;
+      overflow: auto;
+    }
+
+    table.table-nog thead {
+      position: sticky;
+      top: 0;
+    }
+
+    div#part-bottom-planning-inter-nog .table-nog th:nth-child(1),
+    div#part-bottom-planning-inter-nog .table-nog td:nth-child(1) {
+      width: 9vw;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    div#part-bottom-planning-inter-nog .table-nog th:nth-child(2),
+    div#part-bottom-planning-inter-nog .table-nog td:nth-child(2) {
+      width: 13vw;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    div#container-part-2-5-nog {
+      width: 30vw;
+    }
+
+    div#container-part-2-6-nog {
+        width: 46vw;
+    }
+
+    div#container-part-2-5-nog .body-element-nog {
+        height: 20vh;
+        padding: 1vh 1vw;
+    }
+
+    div#container-part-2-6-nog .body-element-nog {
+        height: 20vh;
+    }
+
+    div#editeur-texte-precision-travaux {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    div#container-part-2-2-nog .body-element-nog,
+    div#container-part-2-3-nog .body-element-nog{
+      padding: 2vh 1vw;
+      font-size: var(--font-size-md);
+    }
+
+    div#container-part-2-2-nog,
+    div#container-part-2-3-nog {
+      width: 34vw;
+    }
+
+    .row-title-diligence {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      padding: 1vh 1vw;
+    }
+
+    .row-table-diligence {
+      width: 100%;
+      padding: 1vh 1vw;
+    }
+
+    table.table-diligence {
+      width: 100%;
+    }
+
+    div#part-bottom-diligence {
+      padding: 2vh 2vw;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -1340,6 +1861,9 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   isContactsLoaded = false;
   isChiffresSignificatifsLoaded = false;
   isAssociesLoaded = false;
+  isEquipeInterLoaded = false;
+  isPlanningsLoaded = false;
+  isTypeMissionNaureLoaded = false;
 
   filteredDossiers: Dossier[] = [];
   allDossiers: Dossier[] = [];
@@ -1352,6 +1876,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   currentUser: UserProfile | null = null;
   userEmail: string = '';
   usrMailCollab: string = '';
+  objTypeNatureMission: any[] = [];
   
   // Variables pour les sélections
   selectedDossier: Dossier | null = null;
@@ -1381,6 +1906,20 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     associes: [],
     chiffresSignificatifs: [],
     activiteExHisto: ''
+  };
+
+  nogPartie2: NogPartie2 = {
+    dateMiseAJour: '',
+    montantHonoraire: 0,
+    typeMission: '',
+    natureMission: '',
+    consultationPro: '',
+    interim: '',
+    final: '',
+    delaiRespecter: '',
+    planning: [],
+    equipeInter: [],
+    precisionTravaux: ''
   };
 
   private searchSubject = new Subject<string>();
@@ -1533,6 +2072,9 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.loadContacts();
     this.loadChiffresSignificatifs();
     this.loadAssocies();
+    this.loadTypeMissionNaureNog();
+    this.loadPlannings();
+    this.loadEquipeInter();
   }
 
   getSelectedMissionLabel(): string {
@@ -1686,8 +2228,52 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadTypeMissionNaureNog(): void {
+    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getTypeMissionNaureNog`)
+    .subscribe(response => {
+      for (let mission of response.data) {
+        if (mission.CodeMission == this.selectedMission) {
+          this.nogPartie2.typeMission = mission.TypeMission;
+          this.nogPartie2.natureMission = mission.NatureMission;
+        }
+      }
+
+      this.objTypeNatureMission = response.data;
+      this.isTypeMissionNaureLoaded = true;
+      this.checkIdAllDataLoaded();
+      console.log('response.data',response.data);
+    });
+  }
+
+  loadPlannings(): void {
+    this.http.get<Planning[]>(`${environment.apiUrlMyVision}/dossierDetail/getPlanningNogMyJourney/${this.selectedDossier?.DOS_PGI}&${this.selectedMission}&${this.selectedMillesime}`)
+    .subscribe(response => {
+      this.nogPartie2.planning = this.transformDataEquipeInter(response);
+      this.isPlanningsLoaded = true;
+      this.checkIdAllDataLoaded();
+      console.log('NOG PARTIE 2',this.nogPartie2);
+    });
+  }
+
+  loadEquipeInter(): void {
+    this.http.get<EquipeInter>(`${environment.apiUrlMyVision}/dossierDetail/getEquipeInterNogMyJourney/${this.selectedDossier?.DOS_PGI}&${this.selectedMission}&${this.selectedMillesime}`)
+    .subscribe(response => {
+      let obj = Object(response);
+      obj.isEditingRespMission = false;
+      obj.isEditingDmcm = false;
+      obj.isEditingFactureur = false;
+
+      let tab : EquipeInter[] = [];
+      tab.push(obj); 
+      this.nogPartie2.equipeInter = tab;
+      this.isEquipeInterLoaded = true;
+      this.checkIdAllDataLoaded();
+      console.log('NOG PARTIE 2',this.nogPartie2);
+    });
+  }
+
   checkIdAllDataLoaded(): void {
-    if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded) {
+    if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNaureLoaded) {
       this.isAllDataNogLoaded = true;
     }
   }
@@ -1708,6 +2294,18 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   toggleEditContact(index: number): void {
     this.nogPartie1.contacts[index].isEditing = !this.nogPartie1.contacts[index].isEditing;
+  }
+
+  toggleEditRespMission(): void {
+    this.nogPartie2.equipeInter[0].isEditingRespMission = !this.nogPartie2.equipeInter[0].isEditingRespMission;
+  }
+
+  toggleEditDmcm(): void {
+    this.nogPartie2.equipeInter[0].isEditingDmcm = !this.nogPartie2.equipeInter[0].isEditingDmcm;
+  }
+
+  toggleEditFactureur(): void {
+    this.nogPartie2.equipeInter[0].isEditingFactureur = !this.nogPartie2.equipeInter[0].isEditingFactureur;
   }
 
   deleteContact(index: number): void {
@@ -1763,7 +2361,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
     if (val0 === null || val0 === undefined || val1 === null || val1 === undefined) return '';
 
-    const difference = val1 - val0;
+    const difference = val0 - val1;
     return this.formatNumber(difference);
   }
 
@@ -1781,6 +2379,13 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     const newContent = target.textContent || '';
     
     this.nogPartie1.activiteExHisto = newContent;
+  }
+
+  onEditorContentChangePrecisionTravaux(event: Event): void {
+    const target = event.target as HTMLElement;
+    const newContent = target.textContent || '';
+    
+    this.nogPartie2.precisionTravaux = newContent;
   }
 
   ngAfterViewInit(): void {
@@ -1822,5 +2427,28 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       console.error('Erreur lors de l\'export PDF:', error);
       alert('Une erreur est survenue lors de la génération du PDF');
     }
+  }
+
+  transformDataEquipeInter(obj: any[]): Planning[] {
+    return obj.map(item => {
+        const listeLib = Object.keys(item).filter(key => key !== 'nom' && key !== 'fonction');
+        const listeValue = listeLib.map(lib => item[lib]);
+        return {
+            nom: item.nom,
+            fonction: item.fonction,
+            listeLib,
+            listeValue
+        };
+    });
+  }
+
+  replaceNameLibelleListeLib(value: string): string {
+    let str = '';
+    let mois =value.split('-')[0];
+    let annee = value.split('-')[1];
+    if(parseInt(mois) < 10) {
+      mois = '0' + mois;
+    }
+    return mois+'/'+annee.substring(2,4);
   }
 }
