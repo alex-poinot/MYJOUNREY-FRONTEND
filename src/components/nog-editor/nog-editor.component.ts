@@ -426,23 +426,68 @@ interface TabDiligence {
                       <div class="libelle-chiffres-sign-nog">Résultat net (ou avant impôt)</div>
                     </div>
 
-                    <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
+                    <ng-container *ngIf="nogPartie1.chiffresSignificatifs.length != 0">
+                      <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
+                        <div class="colonne-chiffres-sign-nog">
+                          <div class="titre-colonne-chiffres-sign-nog"> {{ formatDate(cs.datePeriode) }} ({{ cs.dureeExercice }} mois) </div>
+                          <div class="montant-chiffres-sign-nog">
+                            <input type="number" [(ngModel)]="cs.effectif" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                          </div>
+                          <div class="montant-chiffres-sign-nog">
+                            <input type="number" [(ngModel)]="cs.capitauxPropres" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                          </div>
+                          <div class="montant-chiffres-sign-nog">
+                            <input type="number" [(ngModel)]="cs.bilanNet" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                          </div>
+                          <div class="montant-chiffres-sign-nog">
+                            <input type="number" [(ngModel)]="cs.ca" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                          </div>
+                          <div class="montant-chiffres-sign-nog">
+                            <input type="number" [(ngModel)]="cs.beneficePerte" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                          </div>
+                        </div>
+                      </ng-container>
+                    </ng-container>
+
+                    <ng-container *ngIf="nogPartie1.chiffresSignificatifs.length == 0">
                       <div class="colonne-chiffres-sign-nog">
-                        <div class="titre-colonne-chiffres-sign-nog"> {{ formatDate(cs.datePeriode) }} ({{ cs.dureeExercice }} mois) </div>
-                        <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="cs.effectif" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        <div class="titre-colonne-chiffres-sign-nog">
+                          <input type="text" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].datePeriode" class="input-text">
                         </div>
                         <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="cs.capitauxPropres" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].effectif" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
                         </div>
                         <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="cs.bilanNet" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].capitauxPropres" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
                         </div>
                         <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="cs.ca" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].bilanNet" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
                         </div>
                         <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="cs.beneficePerte" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].ca" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        </div>
+                        <div class="montant-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].beneficePerte" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        </div>
+                      </div>
+                      <div class="colonne-chiffres-sign-nog">
+                        <div class="titre-colonne-chiffres-sign-nog">
+                          <input type="text" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].datePeriode" class="input-text">
+                        </div>
+                        <div class="montant-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].effectif" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        </div>
+                        <div class="montant-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].capitauxPropres" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        </div>
+                        <div class="montant-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].bilanNet" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        </div>
+                        <div class="montant-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].ca" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
+                        </div>
+                        <div class="montant-chiffres-sign-nog">
+                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].beneficePerte" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
                         </div>
                       </div>
                     </ng-container>
@@ -581,6 +626,7 @@ interface TabDiligence {
                   <div id="part-bottom-planning-inter-nog">
                     <div class="container-input-title-nog">
                         <div class="title-bloc-nog">Planning</div> 
+                        <button class="btn-add-row" (click)="addPlanning()"><i class="fa-solid fa-plus"></i> Ajouter un planning</button>
                         <div class="input-bloc-nog">
                           <table class="table-nog">
                             <thead>
@@ -605,7 +651,7 @@ interface TabDiligence {
                                 </td>
                                 <ng-container *ngFor="let value of row.listeValue; let j = index; trackBy: trackByValueIndex">
                                   <td>
-                                    <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.listeValue[j]" class="input-table-nog">
+                                    <input *ngIf="row.isEditing" type="number" [(ngModel)]="row.listeValue[j]" class="input-table-nog">
                                     <span *ngIf="!row.isEditing">{{ mathCeil(value) }}</span>
                                   </td>
                                 </ng-container>
@@ -2091,6 +2137,16 @@ interface TabDiligence {
     table.table-nog input {
       width: 100% !important;
     }
+
+    .container-input-title-nog {
+      position: relative;
+    }
+
+    div#part-bottom-planning-inter-nog .title-bloc-nog {
+      height: 3.5vh;
+      display: flex;
+      align-items: flex-end;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -2117,6 +2173,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   userEmail: string = '';
   usrMailCollab: string = '';
   objTypeNatureMission: any[] = [];
+  listeLibPlanningSauv: string[] = [];
   
   // Variables pour les sélections
   selectedDossier: Dossier | null = null;
@@ -2580,8 +2637,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   loadPlannings(): void {
     this.http.get<Planning[]>(`${environment.apiUrlMyVision}/dossierDetail/getPlanningNogMyJourney/${this.selectedDossier?.DOS_PGI}&${this.selectedMission}&${this.selectedMillesime}`)
     .subscribe(response => {
-      this.nogPartie2.planning = this.transformDataEquipeInter(response);
+      let data = this.transformDataEquipeInter(response);
+      if(response[0].nom != null){
+        this.nogPartie2.planning = data;
+      }
       this.isPlanningsLoaded = true;
+      this.listeLibPlanningSauv = data[0].listeLib;
       this.checkIdAllDataLoaded();
       console.log('NOG PARTIE 2',this.nogPartie2);
     });
@@ -2612,9 +2673,28 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   formatNumber(value: number | null | undefined): string {
     if (value === null || value === undefined || isNaN(value)) return '';
-    return value
-      .toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-      .replace(/\u202F/g, ' ');
+
+    // Rounding to 2 decimal places
+    const roundedValue = Math.round(value * 100) / 100;
+
+    // Split integer and decimal parts
+    let parts = roundedValue.toString().split('.');
+
+    // Format integer part with thousand separators
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+    // Combine the parts back with a comma separator for the decimal part
+    let formattedValue = parts.join(',');
+
+    // Ensure two decimals: add zeros if necessary
+    if (parts.length > 1 && parts[1].length < 2) {
+      formattedValue += '0';
+    } else if (parts.length === 1) {
+      // If there is no decimal part, add ",00"
+      formattedValue += ',00';
+    }
+
+    return formattedValue;
   }
 
   formatDate(value: string): string {
@@ -2655,6 +2735,16 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       telephone: '',
       fonction: '',
       libelle: '',
+      isEditing: true
+    });
+  }
+
+  addPlanning(): void {
+    this.nogPartie2.planning.push({
+      nom: '',
+      fonction: '',
+      listeLib: this.listeLibPlanningSauv,
+      listeValue: Array(this.listeLibPlanningSauv.length).fill(0),
       isEditing: true
     });
   }
