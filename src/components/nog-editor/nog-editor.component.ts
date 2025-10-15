@@ -55,6 +55,7 @@ interface Planning {
   fonction: string;
   listeLib: string[];
   listeValue: string[];
+  isEditing?: boolean;
 }
 
 interface EquipeInter {
@@ -592,11 +593,20 @@ interface TabDiligence {
                               </tr>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let row of nogPartie2.planning">
-                                <td>{{ row.fonction }}</td>
-                                <td>{{ row.nom }}</td>
-                                <ng-container *ngFor="let value of row.listeValue">
-                                  <td>{{ mathCeil(value) }}</td>
+                              <tr *ngFor="let row of nogPartie2.planning; let i = index">
+                                <td>
+                                  <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.fonction" class="input-table-nog">
+                                  <span *ngIf="!row.isEditing">{{ row.fonction }}</span>
+                                </td>
+                                <td>
+                                  <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.nom" class="input-table-nog">
+                                  <span *ngIf="!row.isEditing">{{ row.nom }}</span>
+                                </td>
+                                <ng-container *ngFor="let value of row.listeValue; let j = index">
+                                  <td>
+                                    <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.listeValue[j]" class="input-table-nog">
+                                    <span *ngIf="!row.isEditing">{{ mathCeil(value) }}</span>
+                                  </td>
                                 </ng-container>
                                  <td>
                                   <div class="action-tableau">
@@ -2830,6 +2840,16 @@ export class NogEditorComponent implements OnInit, OnDestroy {
           this.nogPartie5.diligence.splice(groupeIndex, 1);
         }
       }
+    }
+  }
+
+  toggleEditPlanning(index: number): void {
+    this.nogPartie2.planning[index].isEditing = !this.nogPartie2.planning[index].isEditing;
+  }
+
+  deletePlanning(index: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette ligne de planning ?')) {
+      this.nogPartie2.planning.splice(index, 1);
     }
   }
 
