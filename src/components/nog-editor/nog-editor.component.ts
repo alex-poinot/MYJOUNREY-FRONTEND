@@ -550,9 +550,10 @@ interface TabDiligence {
                         </div> 
                       </div>
                       <div class="container-input-title-nog">
-                        <div class="title-bloc-nog">Consultations d'autres professionnels à prévoir</div> 
+                        <div class="title-bloc-nog">Interim</div> 
                         <div class="input-bloc-nog">
-                          <select>
+                          <select [(ngModel)]="nogPartie2.interim" class="select-interim">
+                            <option value="">Sélectionner une interim</option>
                             <option value="Anuelle">Anuelle</option>
                             <option value="Trimestrielle">Trimestrielle</option>
                             <option value="Mensuelle">Mensuelle</option>
@@ -594,7 +595,7 @@ interface TabDiligence {
                                 <td>{{ row.fonction }}</td>
                                 <td>{{ row.nom }}</td>
                                 <ng-container *ngFor="let value of row.listeValue">
-                                  <td>{{ value }}</td>
+                                  <td>{{ mathCeil(value) }}</td>
                                 </ng-container>
                               </tr>
                             </tbody>
@@ -1679,14 +1680,14 @@ interface TabDiligence {
     }
 
     input.input-date-nog {
-      padding: 0.3vh 0.3vw;
+      padding: 0.6vh 0.3vw;
       border: 0.1vh solid var(--gray-300);
       border-radius: 0.3vw;
       font-size: var(--font-size-md);
     }
 
     input.input-number-nog {
-      padding: 0.3vh 0.3vw;
+      padding: 0.6vh 0.3vw;
       border: 0.1vh solid var(--gray-300);
       border-radius: 0.3vw;
       font-size: var(--font-size-md);
@@ -1707,7 +1708,7 @@ interface TabDiligence {
     }
 
     input.input-text-nog {
-      padding: 0.3vh 0.3vw;
+      padding: 0.6vh 0.3vw;
       border: 0.1vh solid var(--gray-300);
       border-radius: 0.3vw;
       font-size: var(--font-size-md);
@@ -1800,7 +1801,7 @@ interface TabDiligence {
     }
 
     .select-type-mission,
-    .select-nature-mission {
+    .select-nature-mission{
       width: 100%;
       padding: 0.5vh 0.5vw;
       font-size: var(--font-size-md);
@@ -1810,8 +1811,19 @@ interface TabDiligence {
       cursor: pointer;
     }
 
+    .select-interim {
+      width: 65%;
+      padding: 0.5vh 0.5vw;
+      font-size: var(--font-size-md);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: white;
+      cursor: pointer;
+    }
+
     .select-type-mission:focus,
-    .select-nature-mission:focus {
+    .select-nature-mission:focus,
+    .select-interim:focus {
       outline: none;
       border-color: #007bff;
     }
@@ -2638,5 +2650,10 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       mois = '0' + mois;
     }
     return mois+'/'+annee.substring(2,4);
+  }
+
+  mathCeil(value: any): number {
+    const num = parseFloat(value);
+    return isNaN(num) ? 0 : Math.ceil(num);
   }
 }
