@@ -711,7 +711,7 @@ interface TabDiligence {
           </div>
           <div *ngIf="selectedPartNog=='5'" id="container-part-5-nog" class="container-part-nog">
             <div id="part-top-diligence">
-            
+              <div id="container-add-diligence"></div>
             </div>
             <div id="part-bottom-diligence">
               <div id="container-liste-diligence">
@@ -1951,6 +1951,7 @@ interface TabDiligence {
     table.table-diligence th:nth-child(3),
     table.table-diligence td:nth-child(3) {
       width: 4vw;
+      text-align: center;
     }
 
     table.table-diligence th:nth-child(4),
@@ -2072,14 +2073,14 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         libelleGroupe: 'Trésorerie / Financement',
         tabDiligence: [
           {
-            diligence: 'A001-O',
+            diligence: 'B001-O',
             titre: 'Notes d\'entretien et faits marquants',
             activation: true,
             objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
             controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
           },
           {
-            diligence: 'A001-O',
+            diligence: 'B001-O',
             titre: 'Notes d\'entretien et faits marquants',
             activation: true,
             objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
@@ -2092,14 +2093,14 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         libelleGroupe: 'Fournisseurs - Achats et charges externes',
         tabDiligence: [
           {
-            diligence: 'A001-O',
+            diligence: 'C001-O',
             titre: 'Notes d\'entretien et faits marquants',
             activation: true,
             objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
             controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
           },
           {
-            diligence: 'A001-O',
+            diligence: 'C001-O',
             titre: 'Notes d\'entretien et faits marquants',
             activation: true,
             objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
@@ -2109,6 +2110,30 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       }
     ]
   }
+
+  tabDiligenceImport: TabDiligence[] = [
+      {
+        diligence: 'A021-O',
+        titre: 'Planification de la mission',
+        activation: true,
+        objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
+        controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
+      },
+      {
+        diligence: 'B002-O',
+        titre: 'Personnes détenant la signature',
+        activation: true,
+        objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
+        controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
+      },
+      {
+        diligence: 'B003-O',
+        titre: 'Etats de rapprochement bancaires',
+        activation: true,
+        objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
+        controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
+      }
+    ];
 
   private searchSubject = new Subject<string>();
 
