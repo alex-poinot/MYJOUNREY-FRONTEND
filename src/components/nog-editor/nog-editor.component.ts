@@ -51,6 +51,7 @@ interface NogPartie5 {
 }
 
 interface Planning {
+  id?: number;
   nom: string;
   fonction: string;
   listeLib: string[];
@@ -2857,8 +2858,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  trackByIndex(index: number, item: any): number {
-    return index;
+  trackByIndex(index: number, item: Planning): number {
+    return item.id !== undefined ? item.id : index;
   }
 
   changePartNog(value: string, event: MouseEvent): void {
@@ -2901,14 +2902,16 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   transformDataEquipeInter(obj: any[]): Planning[] {
-    return obj.map(item => {
+    return obj.map((item, index) => {
         const listeLib = Object.keys(item).filter(key => key !== 'nom' && key !== 'fonction');
         const listeValue = listeLib.map(lib => item[lib]);
         return {
+            id: Date.now() + index,
             nom: item.nom,
             fonction: item.fonction,
             listeLib,
-            listeValue
+            listeValue,
+            isEditing: false
         };
     });
   }
