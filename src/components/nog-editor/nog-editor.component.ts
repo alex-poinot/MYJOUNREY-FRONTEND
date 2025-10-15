@@ -692,7 +692,7 @@ interface ApiResponse {
             <div id="part-bottom-diligence">
               <div id="container-liste-diligence">
                 <div class="container-diligence">
-                  <div class="row-title-diligence">
+                  <div class="row-title-diligence" style="cursor: pointer;">
                     <div class="title-diligence">A - Préparation et finalisation de la mission</div>
                     <div class="icon-collapse-diligence"><i class="fa-solid fa-chevron-down"></i></div>
                   </div>
@@ -720,7 +720,7 @@ interface ApiResponse {
                   </div>
                 </div>
                 <div class="container-diligence">
-                  <div class="row-title-diligence">
+                  <div class="row-title-diligence" style="cursor: pointer;">
                     <div class="title-diligence">B - Trésorerie / Financement</div>
                     <div class="icon-collapse-diligence"><i class="fa-solid fa-chevron-down"></i></div>
                   </div>
@@ -748,7 +748,7 @@ interface ApiResponse {
                   </div>
                 </div>
                 <div class="container-diligence">
-                  <div class="row-title-diligence">
+                  <div class="row-title-diligence" style="cursor: pointer;">
                     <div class="title-diligence">C - Fournisseurs - Achats et charges externes</div>
                     <div class="icon-collapse-diligence"><i class="fa-solid fa-chevron-down"></i></div>
                   </div>
@@ -1842,6 +1842,7 @@ interface ApiResponse {
     .row-table-diligence {
       width: 100%;
       padding: 1vh 1vw;
+      display: none;
     }
 
     table.table-diligence {
@@ -2393,6 +2394,48 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     const editorElement = document.querySelector('.editor-content') as HTMLElement;
     if (editorElement && this.nogPartie1.activiteExHisto) {
       editorElement.textContent = this.nogPartie1.activiteExHisto;
+    }
+
+    this.initializeDiligenceCollapse();
+  }
+
+  initializeDiligenceCollapse(): void {
+    const container = document.querySelector('#container-part-5-nog');
+    if (!container) return;
+
+    const rowTables = container.querySelectorAll('.row-table-diligence');
+    rowTables.forEach(rowTable => {
+      (rowTable as HTMLElement).style.display = 'none';
+    });
+
+    const rowTitles = container.querySelectorAll('.row-title-diligence');
+    rowTitles.forEach(rowTitle => {
+      rowTitle.addEventListener('click', this.toggleDiligence.bind(this));
+    });
+  }
+
+  toggleDiligence(event: Event): void {
+    const rowTitle = event.currentTarget as HTMLElement;
+    const container = rowTitle.closest('.container-diligence');
+    if (!container) return;
+
+    const rowTable = container.querySelector('.row-table-diligence') as HTMLElement;
+    const icon = rowTitle.querySelector('.icon-collapse-diligence i');
+
+    if (!rowTable) return;
+
+    if (rowTable.style.display === 'none') {
+      rowTable.style.display = 'block';
+      if (icon) {
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+      }
+    } else {
+      rowTable.style.display = 'none';
+      if (icon) {
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+      }
     }
   }
 
