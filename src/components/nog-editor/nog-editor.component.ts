@@ -593,7 +593,7 @@ interface TabDiligence {
                               </tr>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let row of nogPartie2.planning; let i = index">
+                              <tr *ngFor="let row of nogPartie2.planning; let i = index; trackBy: trackByIndex">
                                 <td>
                                   <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.fonction" class="input-table-nog">
                                   <span *ngIf="!row.isEditing">{{ row.fonction }}</span>
@@ -2855,6 +2855,10 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette ligne de planning ?')) {
       this.nogPartie2.planning.splice(index, 1);
     }
+  }
+
+  trackByIndex(index: number, item: any): number {
+    return index;
   }
 
   changePartNog(value: string, event: MouseEvent): void {
