@@ -711,7 +711,24 @@ interface TabDiligence {
           </div>
           <div *ngIf="selectedPartNog=='5'" id="container-part-5-nog" class="container-part-nog">
             <div id="part-top-diligence">
-              <div id="container-add-diligence"></div>
+              <div id="container-add-diligence">
+                <div class="multiselect-diligence">
+                  <div class="multiselect-label">Ajouter des diligences :</div>
+                  <div class="multiselect-wrapper">
+                    <div class="multiselect-dropdown" (click)="toggleDiligenceDropdown()">
+                      <span *ngIf="selectedDiligences.length === 0" class="placeholder">Sélectionner des diligences...</span>
+                      <span *ngIf="selectedDiligences.length > 0" class="selected-count">{{ selectedDiligences.length }} diligence(s) sélectionnée(s)</span>
+                      <i class="fa-solid" [class.fa-chevron-down]="!showDiligenceDropdown" [class.fa-chevron-up]="showDiligenceDropdown"></i>
+                    </div>
+                    <div class="multiselect-options" *ngIf="showDiligenceDropdown">
+                      <div class="multiselect-option" *ngFor="let diligence of tabDiligenceImport" (click)="toggleDiligenceSelection(diligence)">
+                        <input type="checkbox" [checked]="isDiligenceSelected(diligence)" (click)="$event.stopPropagation()">
+                        <label>{{ diligence.diligence }} - {{ diligence.titre }}</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div id="part-bottom-diligence">
               <div id="container-liste-diligence">
@@ -1885,6 +1902,82 @@ interface TabDiligence {
       box-shadow: 0 0 1px #4CAF50;
     }
 
+    .multiselect-diligence {
+      padding: 2vh 2vw;
+    }
+
+    .multiselect-label {
+      font-size: var(--font-size-md);
+      font-weight: 600;
+      margin-bottom: 1vh;
+    }
+
+    .multiselect-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .multiselect-dropdown {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1vh 1vw;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: white;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+    }
+
+    .multiselect-dropdown:hover {
+      border-color: #007bff;
+    }
+
+    .multiselect-dropdown .placeholder {
+      color: #999;
+    }
+
+    .multiselect-dropdown .selected-count {
+      color: #333;
+    }
+
+    .multiselect-options {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 300px;
+      overflow-y: auto;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      z-index: 1000;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .multiselect-option {
+      display: flex;
+      align-items: center;
+      padding: 1vh 1vw;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+    }
+
+    .multiselect-option:hover {
+      background-color: #f0f0f0;
+    }
+
+    .multiselect-option input[type="checkbox"] {
+      margin-right: 0.5vw;
+      cursor: pointer;
+    }
+
+    .multiselect-option label {
+      cursor: pointer;
+      user-select: none;
+    }
+
     div#container-part-2-2-nog,
     div#container-part-2-3-nog {
       width: 34vw;
@@ -2110,6 +2203,9 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       }
     ]
   }
+
+  selectedDiligences: TabDiligence[] = [];
+  showDiligenceDropdown = false;
 
   tabDiligenceImport: TabDiligence[] = [
       {
@@ -2670,6 +2766,63 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onTypeMissionChange(): void {
     this.nogPartie2.natureMission = '';
+  }
+
+  toggleDiligenceDropdown(): void {
+    this.showDiligenceDropdown = !this.showDiligenceDropdown;
+  }
+
+  isDiligenceSelected(diligence: TabDiligence): boolean {
+    return this.selectedDiligences.some(d => d.diligence === diligence.diligence);
+  }
+
+  toggleDiligenceSelection(diligence: TabDiligence): void {
+    const index = this.selectedDiligences.findIndex(d => d.diligence === diligence.diligence);
+
+    if (index > -1) {
+      this.selectedDiligences.splice(index, 1);
+      this.removeDiligenceFromNog(diligence);
+    } else {
+      this.selectedDiligences.push(diligence);
+      this.addDiligenceToNog(diligence);
+    }
+  }
+
+  addDiligenceToNog(diligence: TabDiligence): void {
+    const groupe = diligence.diligence.charAt(0);
+    let groupeObj = this.nogPartie5.diligence.find(d => d.groupe === groupe);
+
+    if (!groupeObj) {
+      groupeObj = {
+        groupe: groupe,
+        libelleGroupe: `Groupe ${groupe}`,
+        tabDiligence: []
+      };
+      this.nogPartie5.diligence.push(groupeObj);
+    }
+
+    if (!groupeObj.tabDiligence.some(d => d.diligence === diligence.diligence)) {
+      groupeObj.tabDiligence.push({ ...diligence });
+    }
+  }
+
+  removeDiligenceFromNog(diligence: TabDiligence): void {
+    const groupe = diligence.diligence.charAt(0);
+    const groupeObj = this.nogPartie5.diligence.find(d => d.groupe === groupe);
+
+    if (groupeObj) {
+      const index = groupeObj.tabDiligence.findIndex(d => d.diligence === diligence.diligence);
+      if (index > -1) {
+        groupeObj.tabDiligence.splice(index, 1);
+      }
+
+      if (groupeObj.tabDiligence.length === 0) {
+        const groupeIndex = this.nogPartie5.diligence.findIndex(d => d.groupe === groupe);
+        if (groupeIndex > -1) {
+          this.nogPartie5.diligence.splice(groupeIndex, 1);
+        }
+      }
+    }
   }
 
   changePartNog(value: string, event: MouseEvent): void {
