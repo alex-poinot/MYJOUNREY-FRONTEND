@@ -2086,6 +2086,10 @@ interface TabDiligence {
     .icon-collapse-diligence i {
       font-size: 0.8vw;
     }
+
+    table.table-nog input {
+      width: 100% !important;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
