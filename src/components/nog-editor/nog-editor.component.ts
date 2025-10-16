@@ -775,6 +775,7 @@ interface TabDiligence {
           
           </div>
           <div *ngIf="selectedPartNog=='5'" id="container-part-5-nog" class="container-part-nog">
+            <div class="title-element-nog">Diligences :</div>
             <div id="part-top-diligence">
               <div id="container-add-diligence">
                 <div class="multiselect-diligence">
@@ -840,6 +841,26 @@ interface TabDiligence {
                   </div>
                 </ng-container>
               </div>
+            </div>
+            <div id="part-bottom-diligence-lab">
+              <div class="title-element-nog">Diligences LAB :</div>
+              <button class="btn-add-row" (click)="addDiligenceLabManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence LAB</button>
+              <table class="table-diligence">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Libelle</th>
+                    <th>Activation</th>
+                    <th>Objectif</th>
+                    <th>Contrôle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngIf="tabDiligenceLab.length == 0" class="row-no-data">
+                    <td colspan="100%">Aucune diligence LAB ajoutée</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
           <div *ngIf="selectedPartNog=='6'" id="container-part-6-nog" class="container-part-nog">
@@ -2310,6 +2331,25 @@ interface TabDiligence {
     div#container-add-diligence .btn-add-row {
       right: 2vw;
     }
+
+    div#part-bottom-diligence-lab {
+      padding-top: 2vh;
+      position: relative;
+    }
+
+    div#container-part-5-nog {
+      gap: 0 !important;
+    }
+
+    div#part-bottom-diligence-lab .btn-add-row {
+      width: 12.5vw;
+      top: 2vh;
+    }
+
+    tr.row-no-data td {
+      color: var(--gray-500);
+      text-align: center !important;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -2401,6 +2441,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   showDiligenceDropdown = false;
 
   tabDiligenceImport: TabDiligence[] = [];
+  tabDiligenceLab: TabDiligence[] = [];
 
   private searchSubject = new Subject<string>();
 
