@@ -855,6 +855,40 @@ interface TabDiligence {
       </div>
     </div>
 
+    <!-- Modal Ajout Diligence Manuelle -->
+    <div *ngIf="showAddDiligenceModal" class="apercu-overlay" (click)="closeAddDiligenceModal()">
+      <div class="diligence-modal" (click)="$event.stopPropagation()">
+        <div class="diligence-modal-header">
+          <h3>Ajouter une diligence manuelle</h3>
+          <button class="apercu-close" (click)="closeAddDiligenceModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="diligence-modal-content">
+          <div class="form-group">
+            <label for="diligence-code">Diligence *</label>
+            <input id="diligence-code" type="text" [(ngModel)]="newDiligence.diligence" placeholder="Code ou identifiant de la diligence">
+          </div>
+          <div class="form-group">
+            <label for="diligence-titre">Titre *</label>
+            <input id="diligence-titre" type="text" [(ngModel)]="newDiligence.titre" placeholder="Titre de la diligence">
+          </div>
+          <div class="form-group">
+            <label for="diligence-objectif">Objectif</label>
+            <textarea id="diligence-objectif" [(ngModel)]="newDiligence.objectif" placeholder="Objectif de la diligence" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="diligence-controle">Contrôle</label>
+            <textarea id="diligence-controle" [(ngModel)]="newDiligence.controle" placeholder="Contrôle de la diligence" rows="4"></textarea>
+          </div>
+        </div>
+        <div class="diligence-modal-footer">
+          <button class="btn-cancel" (click)="closeAddDiligenceModal()">Annuler</button>
+          <button class="btn-validate" (click)="validateNewDiligence()">Valider</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Pop-up d'aperçu PDF -->
     <div *ngIf="showApercuPopup" class="apercu-overlay" (click)="closeApercuPopup()">
       <div class="apercu-popup" (click)="$event.stopPropagation()">
@@ -1371,6 +1405,119 @@ interface TabDiligence {
       flex: 1;
       padding: 3vh 4vw;
       overflow-y: auto;
+    }
+
+    /* Modal Ajout Diligence */
+    .diligence-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50vw;
+      max-width: 600px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      z-index: 2001;
+      display: flex;
+      flex-direction: column;
+      max-height: 80vh;
+    }
+
+    .diligence-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5vh 1.5vw;
+      border-bottom: 1px solid var(--gray-200);
+      background: var(--primary-color);
+      color: white;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .diligence-modal-header h3 {
+      margin: 0;
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+    }
+
+    .diligence-modal-content {
+      flex: 1;
+      padding: 2vh 1.5vw;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5vh;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5vh;
+    }
+
+    .form-group label {
+      font-size: var(--font-size-md);
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      padding: 0.8vh 0.8vw;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      font-size: var(--font-size-md);
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .diligence-modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1vw;
+      padding: 1.5vh 1.5vw;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .btn-cancel,
+    .btn-validate {
+      padding: 0.8vh 1.5vw;
+      border-radius: 4px;
+      font-size: var(--font-size-md);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .btn-cancel {
+      background: var(--gray-200);
+      color: var(--gray-700);
+    }
+
+    .btn-cancel:hover {
+      background: var(--gray-300);
+    }
+
+    .btn-validate {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn-validate:hover {
+      background: var(--primary-dark);
     }
 
     .row-part-nog {
@@ -2201,6 +2348,15 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   selectedPartNog: string = '1';
   showApercuPopup: boolean = false;
+  showAddDiligenceModal: boolean = false;
+
+  newDiligence: TabDiligence = {
+    diligence: '',
+    titre: '',
+    objectif: '',
+    controle: '',
+    activation: true
+  };
   
   // Listes filtrées
   availableMissions: Mission[] = [];
@@ -2943,6 +3099,32 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   closeApercuPopup(): void {
     this.showApercuPopup = false;
+  }
+
+  addDiligenceManuelle(): void {
+    this.newDiligence = {
+      diligence: '',
+      titre: '',
+      objectif: '',
+      controle: '',
+      activation: true
+    };
+    this.showAddDiligenceModal = true;
+  }
+
+  closeAddDiligenceModal(): void {
+    this.showAddDiligenceModal = false;
+  }
+
+  validateNewDiligence(): void {
+    if (!this.newDiligence.diligence || !this.newDiligence.titre) {
+      alert('Veuillez remplir au minimum les champs "Diligence" et "Titre"');
+      return;
+    }
+
+    this.tabDiligenceImport.push({...this.newDiligence});
+    this.selectedDiligences.push({...this.newDiligence});
+    this.showAddDiligenceModal = false;
   }
 
   async exportToPdf(): Promise<void> {   
