@@ -2399,6 +2399,10 @@ interface TabDiligence {
       color: var(--gray-500);
       text-align: center !important;
     }
+
+    div#part-bottom-diligence-lab .table-diligence {
+      background-color: white;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
