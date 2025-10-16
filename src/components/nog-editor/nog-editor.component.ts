@@ -3122,8 +3122,10 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.tabDiligenceImport.push({...this.newDiligence});
-    this.selectedDiligences.push({...this.newDiligence});
+    const newDiligenceCopy = {...this.newDiligence};
+    this.tabDiligenceImport.push(newDiligenceCopy);
+    this.selectedDiligences.push(newDiligenceCopy);
+    this.addDiligenceToNog(newDiligenceCopy);
     this.showAddDiligenceModal = false;
   }
 
