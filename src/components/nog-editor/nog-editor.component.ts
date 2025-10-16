@@ -779,6 +779,7 @@ interface TabDiligence {
               <div id="container-add-diligence">
                 <div class="multiselect-diligence">
                   <div class="multiselect-label">Ajouter des diligences :</div>
+                  <button class="btn-add-row" (click)="addDiligenceManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence</button>
                   <div class="multiselect-wrapper">
                     <div class="multiselect-dropdown" (click)="toggleDiligenceDropdown()">
                       <span *ngIf="selectedDiligences.length === 0" class="placeholder">Sélectionner des diligences...</span>
@@ -829,8 +830,8 @@ interface TabDiligence {
                                   <span class="toggle-slider"></span>
                                 </label>
                               </td>
-                              <td>{{ rowDiligence.objectif }}</td>
-                              <td>{{ rowDiligence.controle }}</td>
+                              <td [innerHTML]="rowDiligence.objectif"></td>
+                              <td [innerHTML]="rowDiligence.controle"></td>
                             </tr>
                           </ng-container>
                         </tbody>
@@ -1969,6 +1970,7 @@ interface TabDiligence {
 
     .multiselect-diligence {
       padding: 2vh 2vw;
+      position: relative;
     }
 
     .multiselect-label {
@@ -2053,6 +2055,11 @@ interface TabDiligence {
       width: 100%;
       justify-content: space-between;
       padding: 1vh 1vw;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: white;
+      border-radius: 0.5vw;
     }
 
     .row-table-diligence {
@@ -2066,7 +2073,10 @@ interface TabDiligence {
     }
 
     div#part-bottom-diligence {
-      padding: 2vh 2vw;
+      padding: 0vh 2vw;
+      max-height: 69vh;
+      overflow: auto;
+      position: relative;
     }
 
     table.table-diligence th, table.table-diligence td {
@@ -2089,6 +2099,8 @@ interface TabDiligence {
       display: flex;
       flex-direction: column;
       gap: 1vh;
+      position: relative;
+      height: 100%;
     }
 
     .container-diligence {
@@ -2147,6 +2159,10 @@ interface TabDiligence {
       display: flex;
       align-items: flex-end;
     }
+
+    div#container-add-diligence .btn-add-row {
+      right: 2vw;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -2159,7 +2175,9 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   isAssociesLoaded = false;
   isEquipeInterLoaded = false;
   isPlanningsLoaded = false;
-  isTypeMissionNaureLoaded = false;
+  isTypeMissionNatureLoaded = false;
+  isDiligencesDefaultLoaded = false;
+  isDiligencesBibliothequeLoaded = false;
 
   filteredDossiers: Dossier[] = [];
   allDossiers: Dossier[] = [];
@@ -2220,96 +2238,13 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   };
 
   nogPartie5: NogPartie5 = {
-    diligence: [
-      {
-        groupe: 'A',
-        libelleGroupe: 'Préparation et finalisation de la mission',
-        tabDiligence: [
-          {
-            diligence: 'A001-O',
-            titre: 'Notes d\'entretien et faits marquants',
-            activation: true,
-            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
-            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
-          },
-          {
-            diligence: 'A001-O',
-            titre: 'Notes d\'entretien et faits marquants',
-            activation: true,
-            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
-            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
-          }
-        ]
-      },
-      {
-        groupe: 'B',
-        libelleGroupe: 'Trésorerie / Financement',
-        tabDiligence: [
-          {
-            diligence: 'B001-O',
-            titre: 'Notes d\'entretien et faits marquants',
-            activation: true,
-            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
-            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
-          },
-          {
-            diligence: 'B001-O',
-            titre: 'Notes d\'entretien et faits marquants',
-            activation: true,
-            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
-            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
-          }
-        ]
-      },
-      {
-        groupe: 'C',
-        libelleGroupe: 'Fournisseurs - Achats et charges externes',
-        tabDiligence: [
-          {
-            diligence: 'C001-O',
-            titre: 'Notes d\'entretien et faits marquants',
-            activation: true,
-            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
-            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
-          },
-          {
-            diligence: 'C001-O',
-            titre: 'Notes d\'entretien et faits marquants',
-            activation: true,
-            objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
-            controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
-          }
-        ]
-      }
-    ]
+    diligence: []
   }
 
   selectedDiligences: TabDiligence[] = [];
   showDiligenceDropdown = false;
 
-  tabDiligenceImport: TabDiligence[] = [
-      {
-        diligence: 'A021-O',
-        titre: 'Planification de la mission',
-        activation: true,
-        objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
-        controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
-      },
-      {
-        diligence: 'B002-O',
-        titre: 'Personnes détenant la signature',
-        activation: true,
-        objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
-        controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
-      },
-      {
-        diligence: 'B003-O',
-        titre: 'Etats de rapprochement bancaires',
-        activation: true,
-        objectif: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions',
-        controle: 'Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions. Tableau : Date, Interlocuteur, Synthèse de l\'entretien, Suites données, décisions'
-      }
-    ];
+  tabDiligenceImport: TabDiligence[] = [];
 
   private searchSubject = new Subject<string>();
 
@@ -2461,9 +2396,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.loadContacts();
     this.loadChiffresSignificatifs();
     this.loadAssocies();
-    this.loadTypeMissionNaureNog();
+    this.loadTypeMissionNatureNog();
     this.loadPlannings();
     this.loadEquipeInter();
+    this.loadDiligencesDefault();
+    this.loadDiligencesBibliotheque();
   }
 
   getSelectedMissionLabel(): string {
@@ -2617,8 +2554,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadTypeMissionNaureNog(): void {
-    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getTypeMissionNaureNog`)
+  loadTypeMissionNatureNog(): void {
+    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getTypeMissionNatureNog`)
     .subscribe(response => {
       for (let mission of response.data) {
         if (mission.CodeMission == this.selectedMission) {
@@ -2628,7 +2565,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       }
 
       this.objTypeNatureMission = response.data;
-      this.isTypeMissionNaureLoaded = true;
+      this.isTypeMissionNatureLoaded = true;
       this.checkIdAllDataLoaded();
       console.log('response.data',response.data);
     });
@@ -2665,8 +2602,31 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadDiligencesDefault(): void {
+    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getListeDiligenceDefault`)
+    .subscribe(response => {
+      let data = this.transformDataDiligence(response.data);
+      this.isDiligencesDefaultLoaded = true;
+      this.checkIdAllDataLoaded();
+      this.nogPartie5.diligence = data;
+      console.log('this.nogPartie5',this.nogPartie5);
+    });
+  }
+
+  loadDiligencesBibliotheque(): void {
+    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getListeDiligenceBibliotheque`)
+    .subscribe(response => {
+      let data = this.transformDataDiligenceBibliotheque(response.data);
+      this.isDiligencesBibliothequeLoaded = true;
+      this.checkIdAllDataLoaded();
+      this.tabDiligenceImport = data;
+    });
+  }
+
   checkIdAllDataLoaded(): void {
-    if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNaureLoaded) {
+    if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded 
+      && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNatureLoaded 
+      && this.isDiligencesDefaultLoaded && this.isDiligencesBibliothequeLoaded) {
       this.isAllDataNogLoaded = true;
     }
   }
@@ -3023,5 +2983,47 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   mathCeil(value: any): number {
     const num = parseFloat(value);
     return isNaN(num) ? 0 : Math.ceil(num);
+  }
+
+  transformDataDiligence(data: any[]): Diligence[] {
+    const diligenceMap: { [key: string]: Diligence } = {};
+    
+    data.forEach(item => {
+      if (!diligenceMap[item.GROUPE]) {
+        diligenceMap[item.GROUPE] = {
+          groupe: item.GROUPE,
+          libelleGroupe: item.GROUPELIBELLE,
+          tabDiligence: []
+        };
+      }
+
+      diligenceMap[item.GROUPE].tabDiligence.push({
+        diligence: item.DILIGENCE,
+        titre: item.TITRE,
+        activation: true,
+        objectif: item.OBJECTIF,
+        controle: item.CONTROLE
+      });
+    });
+
+    return Object.values(diligenceMap);
+  }
+
+  transformDataDiligenceBibliotheque(data: any[]): TabDiligence[] {
+    let objReturn: TabDiligence[] = [];
+    let obj = Object();
+    
+    data.forEach(item => {
+      obj = {
+        diligence: item.DILIGENCE,
+        titre: item.TITRE,
+        activation: true,
+        objectif: item.OBJECTIF,
+        controle: item.CONTROLE
+      }
+      objReturn.push(obj);
+    });
+
+    return objReturn;
   }
 }
