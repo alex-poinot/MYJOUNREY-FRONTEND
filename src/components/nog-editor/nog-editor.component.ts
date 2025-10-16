@@ -859,6 +859,13 @@ interface TabDiligence {
                   <tr *ngIf="tabDiligenceLab.length == 0" class="row-no-data">
                     <td colspan="100%">Aucune diligence LAB ajoutée</td>
                   </tr>
+                  <tr *ngFor="let diligence of tabDiligenceLab">
+                    <td>{{ diligence.diligence }}</td>
+                    <td>{{ diligence.titre }}</td>
+                    <td><input type="checkbox" [(ngModel)]="diligence.activation"></td>
+                    <td [innerHTML]="diligence.objectif"></td>
+                    <td [innerHTML]="diligence.controle"></td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -906,6 +913,40 @@ interface TabDiligence {
         <div class="diligence-modal-footer">
           <button class="btn-cancel" (click)="closeAddDiligenceModal()">Annuler</button>
           <button class="btn-validate" (click)="validateNewDiligence()">Valider</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Ajout Diligence LAB Manuelle -->
+    <div *ngIf="showAddDiligenceLabModal" class="apercu-overlay" (click)="closeAddDiligenceLabModal()">
+      <div class="diligence-modal" (click)="$event.stopPropagation()">
+        <div class="diligence-modal-header">
+          <h3>Ajouter une diligence LAB</h3>
+          <button class="apercu-close" (click)="closeAddDiligenceLabModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="diligence-modal-content">
+          <div class="form-group">
+            <label for="diligence-lab-code">Diligence *</label>
+            <input id="diligence-lab-code" type="text" [(ngModel)]="newDiligenceLab.diligence" placeholder="Code ou identifiant de la diligence">
+          </div>
+          <div class="form-group">
+            <label for="diligence-lab-titre">Titre *</label>
+            <input id="diligence-lab-titre" type="text" [(ngModel)]="newDiligenceLab.titre" placeholder="Titre de la diligence">
+          </div>
+          <div class="form-group">
+            <label for="diligence-lab-objectif">Objectif</label>
+            <textarea id="diligence-lab-objectif" [(ngModel)]="newDiligenceLab.objectif" placeholder="Objectif de la diligence" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="diligence-lab-controle">Contrôle</label>
+            <textarea id="diligence-lab-controle" [(ngModel)]="newDiligenceLab.controle" placeholder="Contrôle de la diligence" rows="4"></textarea>
+          </div>
+        </div>
+        <div class="diligence-modal-footer">
+          <button class="btn-cancel" (click)="closeAddDiligenceLabModal()">Annuler</button>
+          <button class="btn-validate" (click)="validateNewDiligenceLab()">Valider</button>
         </div>
       </div>
     </div>
@@ -2389,8 +2430,17 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   selectedPartNog: string = '1';
   showApercuPopup: boolean = false;
   showAddDiligenceModal: boolean = false;
+  showAddDiligenceLabModal: boolean = false;
 
   newDiligence: TabDiligence = {
+    diligence: '',
+    titre: '',
+    objectif: '',
+    controle: '',
+    activation: true
+  };
+
+  newDiligenceLab: TabDiligence = {
     diligence: '',
     titre: '',
     objectif: '',
@@ -3172,6 +3222,36 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.selectedDiligences.push(newDiligenceCopy);
     this.addDiligenceToNog(newDiligenceCopy);
     this.showAddDiligenceModal = false;
+  }
+
+  addDiligenceLabManuelle(): void {
+    this.newDiligenceLab = {
+      diligence: '',
+      titre: '',
+      objectif: '',
+      controle: '',
+      activation: true
+    };
+    this.showAddDiligenceLabModal = true;
+  }
+
+  closeAddDiligenceLabModal(): void {
+    this.showAddDiligenceLabModal = false;
+  }
+
+  validateNewDiligenceLab(): void {
+    if (!this.newDiligenceLab.diligence || !this.newDiligenceLab.titre) {
+      alert('Veuillez remplir au minimum les champs "Diligence" et "Titre"');
+      return;
+    }
+
+    const newDiligenceLabCopy = {
+      ...this.newDiligenceLab,
+      objectif: this.newDiligenceLab.objectif.replace(/\n/g, '<br>'),
+      controle: this.newDiligenceLab.controle.replace(/\n/g, '<br>')
+    };
+    this.tabDiligenceLab.push(newDiligenceLabCopy);
+    this.showAddDiligenceLabModal = false;
   }
 
   async exportToPdf(): Promise<void> {   
