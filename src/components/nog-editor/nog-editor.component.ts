@@ -862,7 +862,15 @@ interface TabDiligence {
                   <tr *ngFor="let diligence of tabDiligenceLab">
                     <td>{{ diligence.diligence }}</td>
                     <td>{{ diligence.titre }}</td>
-                    <td><input type="checkbox" [(ngModel)]="diligence.activation"></td>
+                    <td>
+                      <label class="toggle-switch">
+                        <input
+                          type="checkbox"
+                          [(ngModel)]="diligence.activation"
+                          class="toggle-checkbox">
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </td>
                     <td [innerHTML]="diligence.objectif"></td>
                     <td [innerHTML]="diligence.controle"></td>
                   </tr>
