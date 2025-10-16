@@ -2872,6 +2872,24 @@ interface TabDiligence {
     .libelle-appreciation-risque-vigilance {
       font-size: var(--font-size-md);
     }
+
+    div#editeur-organisation-service-admin {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    div#editeur-synthese-entretient-dir {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    div#editeur-appreciation-risque-vigilance {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
