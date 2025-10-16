@@ -46,8 +46,54 @@ interface NogPartie2 {
   precisionTravaux: string;
 }
 
+interface NogPartie3 {
+  tabLogicielGT: Logiciel[];
+  tabLogicielClient: Logiciel[];
+  orgaServiceAdmin: string;
+  syntheseEntretientDir: string;
+}
+
+interface NogPartie4 {
+  checkboxVigilance: string;
+  appreciationRisqueVigilence: string;
+  principeComptable: PrincipeComptable;
+}
+
 interface NogPartie5 {
   diligence: Diligence[];
+}
+
+interface NogPartie6 {
+  checkboxEtage1: string;
+  checkboxEtage2: string;
+  libelleAutreEtage1?: string;
+  commAutreEtage1?: string;
+  libelleAutreEtage2?: string;
+  commGeneral: string;
+}
+
+interface NogPartie7 {
+  checkboxFormInit: boolean;
+  libelleFormInit: string;
+  checkboxFormAnn: boolean;
+  libelleFormAnn: string;
+  checkboxConflictCheck: boolean;
+  libelleConflictCheck: string;
+}
+
+interface PrincipeComptable {
+  aspectsComptables: string;
+  aspectsFiscaux: string;
+  aspectsSociaux: string;
+  aspectsJuridiques: string;
+  comptesAnnuels: string;
+}
+
+interface Logiciel {
+  type: string;
+  logiciel: string;
+  montant?: number;
+  isEditing: boolean;
 }
 
 interface Planning {
@@ -769,10 +815,183 @@ interface TabDiligence {
             </div>
           </div>
           <div *ngIf="selectedPartNog=='3'" id="container-part-3-nog" class="container-part-nog">
-          
+            <div class="row-part-nog">
+              <div id="container-part-3-1-nog" class="containter-element-nog">
+                <div class="title-element-nog">3.1. Logiciels utilisés</div>
+                <div class="body-element-nog">
+                  <div id="container-tab-logiciel-gt">
+                    <div class="titre-tab-logiciel">Logiciels interne</div>
+                    <button class="btn-add-row" (click)="addLogicielGT()"><i class="fa-solid fa-plus"></i> Ajouter un logiciel</button>
+                    <div class="container-table-logiciel-nog">
+                      <table class="table-nog">
+                        <thead>
+                          <tr>
+                            <th>Type</th>
+                            <th>Outil</th>
+                            <th>Coût</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of nogPartie3.tabLogicielGT; let i = index;">
+                            <td>
+                              <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.type" class="input-table-nog">
+                              <span *ngIf="!row.isEditing">{{ row.type }}</span>
+                            </td>
+                            <td>
+                              <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.logiciel" class="input-table-nog">
+                              <span *ngIf="!row.isEditing">{{ row.logiciel }}</span>
+                            </td>
+                            <td>
+                              <input *ngIf="row.isEditing" type="number" [(ngModel)]="row.montant" class="input-table-nog">
+                              <span *ngIf="!row.isEditing">{{ formatNumber(row.montant) }}</span>
+                            </td>
+                            <td>
+                              <div class="action-tableau">
+                                <i *ngIf="!row.isEditing" class="fa-solid fa-pen-to-square action-edit" (click)="toggleEditLogicielGT(i)"></i>
+                                <i *ngIf="row.isEditing" class="fa-solid fa-check action-validate" (click)="toggleEditLogicielGT(i)"></i>
+                                <i class="fa-solid fa-trash action-delete" (click)="deleteLogicielGT(i)"></i>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div id="container-tab-logiciel-client">
+                    <div class="titre-tab-logiciel">Logiciels client</div>
+                    <button class="btn-add-row" (click)="addLogicielClient()"><i class="fa-solid fa-plus"></i> Ajouter un logiciel</button>
+                    <div class="container-table-logiciel-nog">
+                      <table class="table-nog">
+                        <thead>
+                          <tr>
+                            <th>Type</th>
+                            <th>Outil</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let row of nogPartie3.tabLogicielClient; let i = index;">
+                            <td>
+                              <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.type" class="input-table-nog">
+                              <span *ngIf="!row.isEditing">{{ row.type }}</span>
+                            </td>
+                            <td>
+                              <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.logiciel" class="input-table-nog">
+                              <span *ngIf="!row.isEditing">{{ row.logiciel }}</span>
+                            </td>
+                            <td>
+                              <div class="action-tableau">
+                                <i *ngIf="!row.isEditing" class="fa-solid fa-pen-to-square action-edit" (click)="toggleEditLogicielClient(i)"></i>
+                                <i *ngIf="row.isEditing" class="fa-solid fa-check action-validate" (click)="toggleEditLogicielClient(i)"></i>
+                                <i class="fa-solid fa-trash action-delete" (click)="deleteLogicielClient(i)"></i>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row-part-nog">
+              <div id="container-part-3-2-nog" class="containter-element-nog">
+                <div class="title-element-nog">3.2. Organisation du service administratif</div>
+                <div class="body-element-nog">
+                  <div id="editeur-organisation-service-admin">
+                    <div class="toolbar-editor">
+                      <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                      <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                      <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                      <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                      <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                      <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                      <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                      <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                      <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                    </div>
+                    <div
+                      contenteditable="true"
+                      class="editor-content"
+                      #editorContentOrgaServiceAdmin
+                      (input)="onEditorContentChangeOrgaServiceAdmin($event)"
+                      (keyup)="onEditorContentChangeOrgaServiceAdmin($event)"
+                      (paste)="onEditorContentChangeOrgaServiceAdmin($event)"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row-part-nog">
+              <div id="container-part-3-4-nog" class="containter-element-nog">
+                <div class="title-element-nog">3.4. Synthèse de l'entretien avec la direction (faits marquants)</div>
+                <div class="body-element-nog">
+                  <div id="editeur-synthese-entretient-dir">
+                    <div class="toolbar-editor">
+                      <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                      <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                      <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                      <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                      <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                      <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                      <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                      <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                      <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                    </div>
+                    <div
+                      contenteditable="true"
+                      class="editor-content"
+                      #editorContentSyntheseEntretientDir
+                      (input)="onEditorContentChangeSyntheseEntretientDir($event)"
+                      (keyup)="onEditorContentChangeSyntheseEntretientDir($event)"
+                      (paste)="onEditorContentChangeSyntheseEntretientDir($event)"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div *ngIf="selectedPartNog=='4'" id="container-part-4-nog" class="container-part-nog">
-          
+            <div class="row-part-nog">
+              <div id="container-part-4-1-nog" class="containter-element-nog">
+                <div class="title-element-nog">4.1. Appréciation des risques et du niveau de vigilance à appliquer</div>
+                <div class="body-element-nog">
+                  <div id="container-checkbox-vigilance">
+                    <div class="container-element-appreciation-risque-vigilance">
+                      <div class="container-checkbox-appreciation-risque-vigilance">
+                        <input type="checkbox" class="checkbox-appreciation-risque-vigilance" [checked]="nogPartie4.checkboxVigilance == 'Normal'" (change)="updateCheckboxVigilance('Normal')"/>
+                      </div>
+                      <div class="libelle-appreciation-risque-vigilance">Vigilance normal</div>
+                    </div>
+                    <div class="container-element-appreciation-risque-vigilance">
+                      <div class="container-checkbox-appreciation-risque-vigilance">
+                        <input type="checkbox" class="checkbox-appreciation-risque-vigilance" [checked]="nogPartie4.checkboxVigilance == 'Renforcee'" (change)="updateCheckboxVigilance('Renforcee')"/>
+                      </div>
+                      <div class="libelle-appreciation-risque-vigilance">Vigilance normal</div>
+                    </div>
+                  </div>
+                  <div id="editeur-appreciation-risque-vigilance">
+                    <div class="toolbar-editor">
+                      <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                      <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                      <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                      <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                      <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                      <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                      <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                      <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                      <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                    </div>
+                    <div
+                      contenteditable="true"
+                      class="editor-content"
+                      #editorContentAppreciationRisqueVigilence
+                      (input)="onEditorContentChangeAppreciationRisqueVigilence($event)"
+                      (keyup)="onEditorContentChangeAppreciationRisqueVigilence($event)"
+                      (paste)="onEditorContentChangeAppreciationRisqueVigilence($event)"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div *ngIf="selectedPartNog=='5'" id="container-part-5-nog" class="container-part-nog">
             <div class="title-element-nog">Diligences :</div>
@@ -842,7 +1061,7 @@ interface TabDiligence {
                 </ng-container>
               </div>
             </div>
-            <div id="part-bottom-diligence-lab">
+            <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee'" id="part-bottom-diligence-lab">
               <div class="title-element-nog">Diligences LAB :</div>
               <button class="btn-add-row" (click)="addDiligenceLabManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence LAB</button>
               <table class="table-diligence">
@@ -879,10 +1098,90 @@ interface TabDiligence {
             </div>
           </div>
           <div *ngIf="selectedPartNog=='6'" id="container-part-6-nog" class="container-part-nog">
-          
+            <div id="container-liste-checkbox-rest-client">
+              <div class="container-element-rest-client">
+                <div class="container-checkbox-rest-client">
+                  <input type="checkbox" class="checkbox-rest-client" [checked]="nogPartie6.checkboxEtage1 == 'PPT'" (change)="updateCheckboxRestClient('PPT')"/>
+                </div>
+                <div class="libelle-rest-client">Présentation PPT</div>
+              </div>
+              <div class="container-element-rest-client">
+                <div class="container-checkbox-rest-client">
+                  <input type="checkbox" class="checkbox-rest-client" [checked]="nogPartie6.checkboxEtage1 == 'OutilReport'" (change)="updateCheckboxRestClient('OutilReport')"/>
+                </div>
+                <div class="libelle-rest-client">Présentation via un outil de reporting</div>
+              </div>
+              <div *ngIf="nogPartie6.checkboxEtage1 == 'OutilReport'" id="container-element-rest-client-etage-2">
+                <div class="container-element-rest-client">
+                  <div class="container-checkbox-rest-client">
+                    <input type="checkbox" class="checkbox-rest-client" [checked]="nogPartie6.checkboxEtage2 == 'Emasphere'" (change)="updateCheckboxRestClientOutil('Emasphere')"/>
+                  </div>
+                  <div class="libelle-rest-client">Emasphère</div>
+                </div>
+                <div class="container-element-rest-client">
+                  <div class="container-checkbox-rest-client">
+                    <input type="checkbox" class="checkbox-rest-client" [checked]="nogPartie6.checkboxEtage2 == 'PowerBI'" (change)="updateCheckboxRestClientOutil('PowerBI')"/>
+                  </div>
+                  <div class="libelle-rest-client">PowerBI</div>
+                </div>
+                <div class="container-element-rest-client">
+                  <div class="container-checkbox-rest-client">
+                    <input type="checkbox" class="checkbox-rest-client" [checked]="nogPartie6.checkboxEtage2 == 'Autre'" (change)="updateCheckboxRestClientOutil('Autre')"/>
+                  </div>
+                  <div class="libelle-rest-client">Autre</div>
+                </div>
+              </div>
+              <div *ngIf="nogPartie6.checkboxEtage2 == 'Autre'" id="container-autre-etage-2">
+                <div class="container-element-deontologie">
+                  <div class="libelle-deontologie">Autre : </div>
+                  <input type="text" [(ngModel)]="nogPartie6.libelleAutreEtage2" class="input-text"/>
+                </div>
+              </div>
+              <div class="container-element-rest-client">
+                <div class="container-checkbox-rest-client">
+                  <input type="checkbox" class="checkbox-rest-client" [checked]="nogPartie6.checkboxEtage1 == 'Autre'" (change)="updateCheckboxRestClient('Autre')"/>
+                </div>
+                <div class="libelle-rest-client">Autre</div>
+              </div>
+              <div *ngIf="nogPartie6.checkboxEtage1 == 'Autre'" id="container-autre-etage-1">
+                <div class="container-element-deontologie">
+                  <div class="libelle-deontologie">Autre : </div>
+                  <input type="text" [(ngModel)]="nogPartie6.libelleAutreEtage1" class="input-text"/>
+                </div>
+                <div class="container-element-deontologie">
+                  <div class="libelle-deontologie">Commentaire autre : </div>
+                  <input type="text" [(ngModel)]="nogPartie6.commAutreEtage1" class="input-text"/>
+                </div>
+              </div>
+              <div id="container-commentaire-general">
+                <div class="container-element-deontologie">
+                  <div class="libelle-deontologie">Commentaire général : </div>
+                  <input type="text" [(ngModel)]="nogPartie6.commGeneral" class="input-text"/>
+                </div>
+              </div>
+            </div>
           </div>
           <div *ngIf="selectedPartNog=='7'" id="container-part-7-nog" class="container-part-nog">
-          
+            <div id="container-liste-checkbox-deontologie">
+              <div class="container-element-deontologie">
+                <div class="container-checkbox-deontologie">
+                  <input type="checkbox" class="checkbox-deontologie" [(ngModel)]="nogPartie7.checkboxFormInit" (change)="updateCheckboxDeontologie('checkboxFormInit')"/>
+                </div>
+                <div class="libelle-deontologie">{{ nogPartie7.libelleFormInit }}</div>
+              </div>
+              <div class="container-element-deontologie">
+                <div class="container-checkbox-deontologie">
+                  <input type="checkbox" class="checkbox-deontologie" [(ngModel)]="nogPartie7.checkboxFormAnn" (change)="updateCheckboxDeontologie('checkboxFormAnn')"/>
+                </div>
+                <div class="libelle-deontologie">{{ nogPartie7.libelleFormAnn }}</div>
+              </div>
+              <div class="container-element-deontologie">
+                <div class="container-checkbox-deontologie">
+                  <input type="checkbox" class="checkbox-deontologie" [(ngModel)]="nogPartie7.checkboxConflictCheck" (change)="updateCheckboxDeontologie('checkboxConflictCheck')"/>
+                </div>
+                <div class="libelle-deontologie">{{ nogPartie7.libelleConflictCheck }}</div>
+              </div>
+            </div>
           </div>
           <div *ngIf="selectedPartNog=='annexes'" id="container-part-annexes-nog" class="container-part-nog">
           
@@ -2403,6 +2702,176 @@ interface TabDiligence {
     div#part-bottom-diligence-lab .table-diligence {
       background-color: white;
     }
+
+    .container-element-deontologie {
+      display: flex;
+      gap: 0.5vw;
+      align-items: center;
+    }
+
+    .libelle-deontologie {
+      font-size: var(--font-size-md);
+    }
+
+    div#container-liste-checkbox-deontologie {
+      display: flex;
+      flex-direction: column;
+      gap: 1vh;
+    }
+
+    div#container-liste-checkbox-rest-client {
+      display: flex;
+      flex-direction: column;
+      gap: 1vh;
+    }
+
+    .container-element-rest-client {
+      display: flex;
+      align-items: center;
+      gap: 0.5vw;
+    }
+
+    .libelle-rest-client {
+      font-size: var(--font-size-md);
+    }
+
+    div#container-element-rest-client-etage-2 {
+      padding-left: 2vw;
+      padding-bottom: 1vh;
+    }
+
+    div#container-autre-etage-1 {
+      padding-left: 3vw;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5vh;
+    }
+
+    div#container-autre-etage-1 .libelle-deontologie {
+      width: 8vw;
+    }
+
+    div#container-autre-etage-1 .input-text {
+      width: 20vw;
+    }
+
+    div#container-commentaire-general {
+      margin-top: 2vh;
+    }
+
+    div#container-commentaire-general .input-text {
+      width: 20vw;
+    }
+
+    div#container-part-3-1-nog {
+      width: 100%;
+    }
+
+    div#container-part-3-1-nog .body-element-nog {
+      display: flex;
+      justify-content: space-between;
+      padding: 1vh 1vw;
+    }
+
+    div#container-tab-logiciel-gt {
+      width: 36vw;
+      position: relative;
+    }
+
+    div#container-tab-logiciel-client {
+      width: 30vw;
+      position: relative;
+    }
+
+    .titre-tab-logiciel {
+      font-size: var(--font-size-lg);
+      height: 3.8vh;
+      padding-top: 1vh;
+      font-weight: 600;
+    }
+
+    .container-table-logiciel-nog {
+      position: relative;
+      height: 22vh;
+      overflow-y: auto;
+    }
+
+    .container-table-logiciel-nog .table-nog thead {
+      position: sticky;
+      top: 0;
+    }
+
+    div#container-part-3-nog .row-part-nog {
+      height: 31vh;
+    }
+
+    div#container-tab-logiciel-gt .table-nog th:nth-child(1), 
+    div#container-tab-logiciel-gt .table-nog td:nth-child(1) {
+      width: 12vw;
+    }
+
+    div#container-tab-logiciel-gt .table-nog th:nth-child(2), 
+    div#container-tab-logiciel-gt .table-nog td:nth-child(2) {
+      width: 10vw;
+    }
+
+    div#container-tab-logiciel-gt .table-nog th:nth-child(3), 
+    div#container-tab-logiciel-gt .table-nog td:nth-child(3) {
+      width: 8vw;
+      text-align: right;
+    }
+
+    div#container-tab-logiciel-gt .table-nog th:nth-child(4), 
+    div#container-tab-logiciel-gt .table-nog td:nth-child(4) {
+      width: 4vw;
+    }
+
+    div#container-tab-logiciel-client .table-nog th:nth-child(1), 
+    div#container-tab-logiciel-client .table-nog td:nth-child(1) {
+      width: 12vw;
+    }
+
+    div#container-tab-logiciel-client .table-nog th:nth-child(2), 
+    div#container-tab-logiciel-client .table-nog td:nth-child(2) {
+      width: 10vw;
+    }
+
+    div#container-tab-logiciel-client .table-nog th:nth-child(3), 
+    div#container-tab-logiciel-client .table-nog td:nth-child(3) {
+      width: 4vw;
+    }
+
+    div#container-part-3-2-nog {
+      width: 100%;
+    }
+
+    div#container-part-3-4-nog {
+      width: 100%;
+    }
+
+    div#container-part-4-1-nog {
+      width: 100%;
+    }
+
+    div#container-part-4-nog .row-part-nog {
+      height: 30vh;
+    }
+
+    div#container-checkbox-vigilance {
+      display: flex;
+      background-color: var(--gray-100);
+      gap: 3vw;
+      padding: 1vh 0;
+    }
+
+    .container-element-appreciation-risque-vigilance {
+      display: flex;
+      gap: 0.5vw;
+    }
+
+    .libelle-appreciation-risque-vigilance {
+      font-size: var(--font-size-md);
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -2418,6 +2887,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   isTypeMissionNatureLoaded = false;
   isDiligencesDefaultLoaded = false;
   isDiligencesBibliothequeLoaded = false;
+  isMontantLogicielLoaded = false;
+  isModuleFELoaded = false;
 
   filteredDossiers: Dossier[] = [];
   allDossiers: Dossier[] = [];
@@ -2495,8 +2966,42 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     precisionTravaux: ''
   };
 
+  nogPartie3: NogPartie3 = {
+    tabLogicielGT: [],
+    tabLogicielClient: [],
+    orgaServiceAdmin: '',
+    syntheseEntretientDir: ''
+  }
+
+  nogPartie4: NogPartie4 = {
+    checkboxVigilance: 'Normal',
+    appreciationRisqueVigilence: '',
+    principeComptable: {
+      aspectsComptables: '',
+      aspectsFiscaux: '',
+      aspectsSociaux: '',
+      aspectsJuridiques: '',
+      comptesAnnuels: ''
+    }
+  }
+
   nogPartie5: NogPartie5 = {
     diligence: []
+  }
+
+  nogPartie6: NogPartie6 = {
+    checkboxEtage1: '',
+    checkboxEtage2: '',
+    commGeneral: ''
+  }
+
+  nogPartie7: NogPartie7 = {
+    checkboxFormInit: false,
+    libelleFormInit: 'L\'associé responsable de la mission s\'est assuré que l\'ensemble des collaborateurs présents sur la mission a bien suivi la formation initiale sur les règles du code éthique de GT et d\'indépendance',
+    checkboxFormAnn: false,
+    libelleFormAnn: 'L\'associé responsable de la mission s\'est assuré que l\'ensemble des collaborateurs a bien suivi la formation annuelle sur les règles du code éthique de GT et d\'indépendance',
+    checkboxConflictCheck: false,
+    libelleConflictCheck: 'L\'associé responsable de la mission s\'est assuré que les collaborateurs n\'étaient pas en situation de conflit d\'intérêt sur la mission'
   }
 
   selectedDiligences: TabDiligence[] = [];
@@ -2660,6 +3165,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.loadEquipeInter();
     this.loadDiligencesDefault();
     this.loadDiligencesBibliotheque();
+    this.loadMontantLogiciel();
+    this.loadModuleFE();
   }
 
   getSelectedMissionLabel(): string {
@@ -2817,7 +3324,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getTypeMissionNatureNog`)
     .subscribe(response => {
       for (let mission of response.data) {
-        if (mission.CodeMission == this.selectedMission) {
+        if (this.selectedMission.startsWith(mission.CodeMission)) {
           this.nogPartie2.typeMission = mission.TypeMission;
           this.nogPartie2.natureMission = mission.NatureMission;
         }
@@ -2861,6 +3368,15 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadModuleFE(): void {
+    this.http.get<any>(`${environment.apiUrlMyVision}/dossierDetail/getModuleFENog/${this.selectedDossier?.DOS_PGI}`)
+    .subscribe(response => {
+      this.isModuleFELoaded = true;
+      this.checkIdAllDataLoaded();
+      console.log('response',response);
+    });
+  }
+
   loadDiligencesDefault(): void {
     this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getListeDiligenceDefault`)
     .subscribe(response => {
@@ -2882,9 +3398,30 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadMontantLogiciel(): void {
+    this.http.get<any>(`${environment.apiUrlMyVision}/dossierDetail/getMontantLogicielNogMyJourney/${this.selectedDossier?.DOS_PGI}&${this.selectedMission}&${this.selectedMillesime}`)
+    .subscribe(response => {
+      let listeLogiciel = Object.keys(response);
+      listeLogiciel.forEach(element => {
+        this.nogPartie3.tabLogicielGT.push(
+          {
+            type: '',
+            logiciel: element,
+            montant: response[element],
+            isEditing: false
+          }
+        )
+      });
+      this.isMontantLogicielLoaded = true;
+      this.checkIdAllDataLoaded();
+      console.log('NOG PARTIE 3',this.nogPartie3);
+    });
+  }
+
   checkIdAllDataLoaded(): void {
     if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded 
       && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNatureLoaded 
+      && this.isMontantLogicielLoaded && this.isModuleFELoaded
       && this.isDiligencesDefaultLoaded && this.isDiligencesBibliothequeLoaded) {
       this.isAllDataNogLoaded = true;
     }
@@ -2939,9 +3476,29 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.nogPartie2.equipeInter[0].isEditingFactureur = !this.nogPartie2.equipeInter[0].isEditingFactureur;
   }
 
+  toggleEditLogicielGT(index: number): void {
+    this.nogPartie3.tabLogicielGT[index].isEditing = !this.nogPartie3.tabLogicielGT[index].isEditing;
+  }
+
+  toggleEditLogicielClient(index: number): void {
+    this.nogPartie3.tabLogicielClient[index].isEditing = !this.nogPartie3.tabLogicielClient[index].isEditing;
+  }
+
   deleteContact(index: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce contact ?')) {
       this.nogPartie1.contacts.splice(index, 1);
+    }
+  }
+
+  deleteLogicielGT(index: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce logiciel ?')) {
+      this.nogPartie3.tabLogicielGT.splice(index, 1);
+    }
+  }
+
+  deleteLogicielClient(index: number): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce logiciel ?')) {
+      this.nogPartie3.tabLogicielClient.splice(index, 1);
     }
   }
 
@@ -2964,6 +3521,23 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       fonction: '',
       listeLib: this.listeLibPlanningSauv,
       listeValue: Array(this.listeLibPlanningSauv.length).fill(0),
+      isEditing: true
+    });
+  }
+
+  addLogicielGT(): void {
+    this.nogPartie3.tabLogicielGT.push({
+      type: '',
+      logiciel: '',
+      montant: 0,
+      isEditing: true
+    });
+  }
+
+  addLogicielClient(): void {
+    this.nogPartie3.tabLogicielClient.push({
+      type: '',
+      logiciel: '',
       isEditing: true
     });
   }
@@ -3027,6 +3601,27 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     const newContent = target.textContent || '';
     
     this.nogPartie2.precisionTravaux = newContent;
+  }
+
+  onEditorContentChangeOrgaServiceAdmin(event: Event): void {
+    const target = event.target as HTMLElement;
+    const newContent = target.textContent || '';
+    
+    this.nogPartie3.orgaServiceAdmin = newContent;
+  }
+
+  onEditorContentChangeSyntheseEntretientDir(event: Event): void {
+    const target = event.target as HTMLElement;
+    const newContent = target.textContent || '';
+    
+    this.nogPartie3.syntheseEntretientDir = newContent;
+  }
+
+  onEditorContentChangeAppreciationRisqueVigilence(event: Event): void {
+    const target = event.target as HTMLElement;
+    const newContent = target.textContent || '';
+    
+    this.nogPartie4.appreciationRisqueVigilence = newContent;
   }
 
   ngAfterViewInit(): void {
@@ -3346,5 +3941,46 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     });
 
     return objReturn;
+  }
+
+  updateCheckboxDeontologie(checkbox: string): void {
+    console.log('nogPartie7', this.nogPartie7);
+  }
+
+  updateCheckboxRestClient(checkbox: string): void {
+    if(checkbox == 'PPT'  && this.nogPartie6.checkboxEtage1 == 'PPT') {
+      this.nogPartie6.checkboxEtage1 = '';
+    } else if(checkbox == 'OutilReport' && this.nogPartie6.checkboxEtage1 == 'OutilReport') {
+      this.nogPartie6.checkboxEtage1 = '';
+    } else if(checkbox == 'Autre' && this.nogPartie6.checkboxEtage1 == 'Autre') {
+      this.nogPartie6.checkboxEtage1 = '';
+    } else {
+      this.nogPartie6.checkboxEtage1 = checkbox;
+    }
+    console.log('nogPartie6', this.nogPartie6);
+  }
+
+  updateCheckboxRestClientOutil(checkbox: string): void {
+    if(checkbox == 'Emasphere'  && this.nogPartie6.checkboxEtage2 == 'Emasphere') {
+      this.nogPartie6.checkboxEtage2 = '';
+    } else if(checkbox == 'PowerBI' && this.nogPartie6.checkboxEtage2 == 'PowerBI') {
+      this.nogPartie6.checkboxEtage2 = '';
+    } else if(checkbox == 'Autre' && this.nogPartie6.checkboxEtage2 == 'Autre') {
+      this.nogPartie6.checkboxEtage2 = '';
+    } else {
+      this.nogPartie6.checkboxEtage2 = checkbox;
+    }
+    console.log('nogPartie6', this.nogPartie6);
+  }
+
+  updateCheckboxVigilance(checkbox: string): void {
+    if(checkbox == 'Normal'  && this.nogPartie6.checkboxEtage2 == 'Normal') {
+      this.nogPartie4.checkboxVigilance = '';
+    } else if(checkbox == 'Renforcee' && this.nogPartie6.checkboxEtage2 == 'Renforcee') {
+      this.nogPartie4.checkboxVigilance = '';
+    } else {
+      this.nogPartie4.checkboxVigilance = checkbox;
+    }
+    console.log('nogPartie4', this.nogPartie4);
   }
 }
