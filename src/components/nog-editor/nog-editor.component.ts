@@ -1375,7 +1375,39 @@ interface TabDiligence {
             </div>
           </div>
           <div *ngIf="selectedPartNog=='annexes'" id="container-part-annexes-nog" class="container-part-nog">
-          
+            <div class="title-element-nog">Annexes</div>
+            <div class="body-element-nog">
+              <div class="container-annexes">
+                <div class="section-upload-annexes">
+                  <label for="file-input-annexes" class="btn-upload-annexes">
+                    <i class="fa-solid fa-file-pdf"></i> Ajouter un ou plusieurs PDF
+                  </label>
+                  <input
+                    id="file-input-annexes"
+                    type="file"
+                    accept=".pdf"
+                    multiple
+                    (change)="onFilesSelected($event)"
+                    style="display: none;">
+                </div>
+                <div class="liste-annexes" *ngIf="nogPartieAnnexes.tabFiles.length > 0">
+                  <div class="item-annexe" *ngFor="let file of nogPartieAnnexes.tabFiles; let i = index">
+                    <div class="info-annexe">
+                      <i class="fa-solid fa-file-pdf icon-pdf"></i>
+                      <span class="nom-fichier">{{ file.name }}</span>
+                      <span class="taille-fichier">({{ formatFileSize(file.size) }})</span>
+                    </div>
+                    <button class="btn-supprimer-annexe" (click)="removeFile(i)" title="Supprimer">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="empty-state-annexes" *ngIf="nogPartieAnnexes.tabFiles.length === 0">
+                  <i class="fa-solid fa-folder-open"></i>
+                  <p>Aucun fichier ajouté</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -2008,6 +2040,104 @@ interface TabDiligence {
       display: flex;
       flex-direction: column;
       gap: 1.5vh;
+    }
+
+    .container-annexes {
+      padding: 2vh 2vw;
+    }
+
+    .section-upload-annexes {
+      margin-bottom: 2vh;
+    }
+
+    .btn-upload-annexes {
+      display: inline-block;
+      padding: 1vh 2vw;
+      background-color: #007bff;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      transition: background-color 0.3s;
+    }
+
+    .btn-upload-annexes:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-upload-annexes i {
+      margin-right: 0.5vw;
+    }
+
+    .liste-annexes {
+      display: flex;
+      flex-direction: column;
+      gap: 1vh;
+    }
+
+    .item-annexe {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1vh 1vw;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+    }
+
+    .info-annexe {
+      display: flex;
+      align-items: center;
+      gap: 1vw;
+    }
+
+    .icon-pdf {
+      color: #dc3545;
+      font-size: 1.5rem;
+    }
+
+    .nom-fichier {
+      font-size: var(--font-size-md);
+      font-weight: 500;
+    }
+
+    .taille-fichier {
+      font-size: var(--font-size-sm);
+      color: #6c757d;
+    }
+
+    .btn-supprimer-annexe {
+      padding: 0.5vh 1vw;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: var(--font-size-md);
+      transition: background-color 0.3s;
+    }
+
+    .btn-supprimer-annexe:hover {
+      background-color: #c82333;
+    }
+
+    .empty-state-annexes {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4vh 2vw;
+      color: #6c757d;
+    }
+
+    .empty-state-annexes i {
+      font-size: 3rem;
+      margin-bottom: 1vh;
+    }
+
+    .empty-state-annexes p {
+      font-size: var(--font-size-md);
+      margin: 0;
     }
 
     .form-group {
@@ -3382,6 +3512,31 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   nogPartieAnnexes: NogPartieAnnexes = {
     tabFiles: []
+  }
+
+  onFilesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        if (file.type === 'application/pdf') {
+          this.nogPartieAnnexes.tabFiles.push(file);
+        }
+      }
+      input.value = '';
+    }
+  }
+
+  removeFile(index: number): void {
+    this.nogPartieAnnexes.tabFiles.splice(index, 1);
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   }
 
   selectedDiligences: TabDiligence[] = [];
