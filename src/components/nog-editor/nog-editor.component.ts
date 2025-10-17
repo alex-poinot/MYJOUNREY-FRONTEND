@@ -51,12 +51,24 @@ interface NogPartie3 {
   tabLogicielClient: Logiciel[];
   orgaServiceAdmin: string;
   syntheseEntretientDir: string;
+  eInvoicing: string;
+  eReportingPaiement: string;
+  eReportingTransaction: string;
+  businessDev: string[];
+  mailEnvoi: string;
+  signatureMandat: string;
+  casGestion: string;
+  isFEValidate: boolean;
 }
 
 interface NogPartie4 {
   checkboxVigilance: string;
   appreciationRisqueVigilence: string;
-  principeComptable: PrincipeComptable;
+  aspectsComptables: string;
+  aspectsFiscaux: string;
+  aspectsSociaux: string;
+  aspectsJuridiques: string;
+  comptesAnnuels: string;
 }
 
 interface NogPartie5 {
@@ -67,7 +79,6 @@ interface NogPartie6 {
   checkboxEtage1: string;
   checkboxEtage2: string;
   libelleAutreEtage1?: string;
-  commAutreEtage1?: string;
   libelleAutreEtage2?: string;
   commGeneral: string;
 }
@@ -79,14 +90,6 @@ interface NogPartie7 {
   libelleFormAnn: string;
   checkboxConflictCheck: boolean;
   libelleConflictCheck: string;
-}
-
-interface PrincipeComptable {
-  aspectsComptables: string;
-  aspectsFiscaux: string;
-  aspectsSociaux: string;
-  aspectsJuridiques: string;
-  comptesAnnuels: string;
 }
 
 interface Logiciel {
@@ -879,6 +882,68 @@ interface TabDiligence {
                 </div>
               </div>
             </div>
+            <div class="row-part-nog row-fe-nog">
+              <div id="container-part-3-3-nog" class="containter-element-nog">
+                <div class="title-element-nog">3.3. Facturation électronique</div>
+                <div *ngIf="this.nogPartie3.isFEValidate" class="body-element-nog">
+                  <div class="container-fe-nog">
+                    <div class="container-table-fe-nog">
+                      <table class="table-nog">
+                        <thead>
+                          <tr>
+                            <th>Catégorie</th>
+                            <th>Mission</th>
+                            <th>Outil</th>
+                            <th>BD</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let mission of listeBdFE; let i = index;">
+                            <td>{{ mission.categorie }}</td>
+                            <td>{{ mission.libelle }}</td>
+                            <td>{{ mission.logiciel }}</td>
+                            <td>{{ nogPartie3.businessDev[i] }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="container-fe-nog">
+                    <div class="container-impact-fe">
+                      <div class="element-fe-title-value">
+                        <div class="title-fe">E-Invoicing :</div>
+                        <div class="value-fe">{{ this.nogPartie3.eInvoicing }}</div>
+                      </div>
+                      <div class="element-fe-title-value">
+                        <div class="title-fe">E-Reporting Transaction :</div>
+                        <div class="value-fe">{{ this.nogPartie3.eReportingTransaction }}</div>
+                      </div>
+                      <div class="element-fe-title-value">
+                        <div class="title-fe">E-Reporting Paiement :</div>
+                        <div class="value-fe">{{ this.nogPartie3.eReportingPaiement }}</div>
+                      </div>
+                    </div>
+                    <div class="container-mail-mandat-fe">
+                      <div class="element-fe-title-value">
+                        <div class="title-fe">Cas de gestion :</div>
+                        <div class="value-fe">{{ this.nogPartie3.casGestion }}</div>
+                      </div>
+                      <div class="element-fe-title-value">
+                        <div class="title-fe">Mail envoyé au client :</div>
+                        <div class="value-fe">{{ this.nogPartie3.mailEnvoi }}</div>
+                      </div>
+                      <div class="element-fe-title-value">
+                        <div class="title-fe">Mandat signé :</div>
+                        <div class="value-fe">{{ this.nogPartie3.signatureMandat }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="!this.nogPartie3.isFEValidate" class="body-element-nog">
+                  Merci de bien vouloir remplir la facturation électronique dans MyVision.
+                </div>
+              </div>
+            </div>
             <div class="row-part-nog">
               <div id="container-part-3-4-nog" class="containter-element-nog">
                 <div class="title-element-nog">3.4. Synthèse de l'entretien avec la direction (faits marquants)</div>
@@ -938,6 +1003,155 @@ interface TabDiligence {
                     </div>
                     <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee'" class="texte-appreciation-risque-vigilance">
                       <p>En cas de vigilance renforcée, compléter les contrôles à effectuer en s’appuyant entre autres sur « l’ARPEC » </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row-part-nog">
+              <div id="container-part-4-2-nog" class="containter-element-nog">
+                <div class="title-element-nog">4.2. Principes comptables, régime fiscal ou social particuliers</div>
+                <div class="body-element-nog">
+                  <div class="container-principe-comp">
+                    <div class="container-editeur-principe-comp">
+                      <div class="row-title-principe-comp">
+                        <div class="title-principe-comp">Aspects comptables</div>
+                        <div class="icon-collapse-principe-comp"><i class="fa-solid fa-chevron-down"></i></div>
+                      </div>
+                      <div class="container-editeur-principe-comp">
+                        <div id="editeur-texte-aspects-comptables">
+                          <div class="toolbar-editor">
+                            <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                            <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                            <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                            <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                            <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                            <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                            <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                            <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                            <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                          </div>
+                          <div
+                            contenteditable="true"
+                            class="editor-content"
+                            #editorContentAspectsComptables
+                            (input)="onEditorContentChangeAspectsComptables($event)"
+                            (keyup)="onEditorContentChangeAspectsComptables($event)"
+                            (paste)="onEditorContentChangeAspectsComptables($event)"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="container-editeur-principe-comp">
+                      <div class="row-title-principe-comp">
+                        <div class="title-principe-comp">Aspects fiscaux</div>
+                        <div class="icon-collapse-principe-comp"><i class="fa-solid fa-chevron-down"></i></div>
+                      </div>
+                      <div class="container-editeur-principe-comp">
+                        <div id="editeur-texte-aspects-fiscaux">
+                          <div class="toolbar-editor">
+                            <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                            <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                            <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                            <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                            <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                            <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                            <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                            <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                            <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                          </div>
+                          <div
+                            contenteditable="true"
+                            class="editor-content"
+                            #editorContentAspectsFiscaux
+                            (input)="onEditorContentChangeAspectsFiscaux($event)"
+                            (keyup)="onEditorContentChangeAspectsFiscaux($event)"
+                            (paste)="onEditorContentChangeAspectsFiscaux($event)"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="container-editeur-principe-comp">
+                      <div class="row-title-principe-comp">
+                        <div class="title-principe-comp">Aspects sociaux</div>
+                        <div class="icon-collapse-principe-comp"><i class="fa-solid fa-chevron-down"></i></div>
+                      </div>
+                      <div class="container-editeur-principe-comp">
+                        <div id="editeur-texte-aspects-sociaux">
+                          <div class="toolbar-editor">
+                            <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                            <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                            <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                            <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                            <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                            <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                            <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                            <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                            <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                          </div>
+                          <div
+                            contenteditable="true"
+                            class="editor-content"
+                            #editorContentAspectsSociaux
+                            (input)="onEditorContentChangeAspectsSociaux($event)"
+                            (keyup)="onEditorContentChangeAspectsSociaux($event)"
+                            (paste)="onEditorContentChangeAspectsSociaux($event)"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="container-editeur-principe-comp">
+                      <div class="row-title-principe-comp">
+                        <div class="title-principe-comp">Aspects juridiques</div>
+                        <div class="icon-collapse-principe-comp"><i class="fa-solid fa-chevron-down"></i></div>
+                      </div>
+                      <div class="container-editeur-principe-comp">
+                        <div id="editeur-texte-aspects-juridiques">
+                          <div class="toolbar-editor">
+                            <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                            <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                            <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                            <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                            <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                            <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                            <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                            <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                            <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                          </div>
+                          <div
+                            contenteditable="true"
+                            class="editor-content"
+                            #editorContentAspectsJuridiques
+                            (input)="onEditorContentChangeAspectsJuridiques($event)"
+                            (keyup)="onEditorContentChangeAspectsJuridiques($event)"
+                            (paste)="onEditorContentChangeAspectsJuridiques($event)"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="container-editeur-principe-comp">
+                      <div class="row-title-principe-comp">
+                        <div class="title-principe-comp">Comptes annuels</div>
+                        <div class="icon-collapse-principe-comp"><i class="fa-solid fa-chevron-down"></i></div>
+                      </div>
+                      <div class="container-editeur-principe-comp">
+                        <div id="editeur-texte-comptes-annuels">
+                          <div class="toolbar-editor">
+                            <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                            <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                            <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                            <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                            <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                            <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                            <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                            <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                            <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                          </div>
+                          <div
+                            contenteditable="true"
+                            class="editor-content"
+                            #editorContentComptesAnnuels
+                            (input)="onEditorContentChangeComptesAnnuels($event)"
+                            (keyup)="onEditorContentChangeComptesAnnuels($event)"
+                            (paste)="onEditorContentChangeComptesAnnuels($event)"></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1093,7 +1307,7 @@ interface TabDiligence {
                   <div class="libelle-rest-client">Autre</div>
                 </div>
               </div>
-              <div *ngIf="nogPartie6.checkboxEtage2 == 'Autre'" id="container-autre-etage-2">
+              <div *ngIf="nogPartie6.checkboxEtage2 == 'Autre' && nogPartie6.checkboxEtage1 == 'OutilReport'" id="container-autre-etage-2">
                 <div class="container-element-deontologie">
                   <div class="libelle-deontologie">Autre : </div>
                   <input type="text" [(ngModel)]="nogPartie6.libelleAutreEtage2" class="input-text"/>
@@ -1109,10 +1323,6 @@ interface TabDiligence {
                 <div class="container-element-deontologie">
                   <div class="libelle-deontologie">Autre : </div>
                   <input type="text" [(ngModel)]="nogPartie6.libelleAutreEtage1" class="input-text"/>
-                </div>
-                <div class="container-element-deontologie">
-                  <div class="libelle-deontologie">Commentaire autre : </div>
-                  <input type="text" [(ngModel)]="nogPartie6.commAutreEtage1" class="input-text"/>
                 </div>
               </div>
               <div id="container-commentaire-general">
@@ -2870,6 +3080,44 @@ interface TabDiligence {
       font-size: var(--font-size-md);
       padding: 1vh 1vw;
     }
+
+    div#container-autre-etage-2 {
+      padding-left: 5vw;
+    }
+
+    .row-part-nog.row-fe-nog {
+      height: 42vh !important;
+    }
+
+    div#container-part-3-3-nog .body-element-nog {
+      display: flex;
+      gap: 1vw;
+    }
+
+    .element-fe-title-value {
+      display: flex;
+      font-size: var(--font-size-md);
+    }
+
+    .title-fe {
+      font-weight: 600;
+      width: 10vw;
+    }
+
+    .container-impact-fe, .container-mail-mandat-fe {
+      display: flex;
+      flex-direction: column;
+      gap: 1vh;
+      padding: 1vh 1vw;
+    }
+
+    .container-mail-mandat-fe {
+      margin-top: 4vh;
+    }
+
+    div#container-part-3-3-nog {
+      width: 100%;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -2887,6 +3135,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   isDiligencesBibliothequeLoaded = false;
   isMontantLogicielLoaded = false;
   isModuleFELoaded = false;
+  isListeBDFELoaded = false;
 
   filteredDossiers: Dossier[] = [];
   allDossiers: Dossier[] = [];
@@ -2901,6 +3150,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   usrMailCollab: string = '';
   objTypeNatureMission: any[] = [];
   listeLibPlanningSauv: string[] = [];
+  listeBdFE: any[] = [];
   
   // Variables pour les sélections
   selectedDossier: Dossier | null = null;
@@ -2989,19 +3239,25 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     tabLogicielGT: [],
     tabLogicielClient: [],
     orgaServiceAdmin: '',
-    syntheseEntretientDir: ''
+    syntheseEntretientDir: '',
+    eInvoicing: '',
+    eReportingPaiement: '',
+    eReportingTransaction: '',
+    businessDev: ['','','','','','','','','',''],
+    mailEnvoi: '',
+    signatureMandat: '',
+    casGestion: '',
+    isFEValidate: false
   }
 
   nogPartie4: NogPartie4 = {
     checkboxVigilance: 'Normal',
     appreciationRisqueVigilence: '',
-    principeComptable: {
-      aspectsComptables: '',
-      aspectsFiscaux: '',
-      aspectsSociaux: '',
-      aspectsJuridiques: '',
-      comptesAnnuels: ''
-    }
+    aspectsComptables: '',
+    aspectsFiscaux: '',
+    aspectsSociaux: '',
+    aspectsJuridiques: '',
+    comptesAnnuels: ''
   }
 
   nogPartie5: NogPartie5 = {
@@ -3186,6 +3442,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.loadDiligencesBibliotheque();
     this.loadMontantLogiciel();
     this.loadModuleFE();
+    this.loadListeBDFE();
   }
 
   getSelectedMissionLabel(): string {
@@ -3407,7 +3664,31 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   loadModuleFE(): void {
     this.http.get<any>(`${environment.apiUrlMyVision}/dossierDetail/getModuleFENog/${this.selectedDossier?.DOS_PGI}`)
     .subscribe(response => {
+      if(response.nonValide == 'nonValide') {
+        this.nogPartie3.isFEValidate = false;
+      } else {
+        this.nogPartie3.eInvoicing = response.eInvoicing;
+        this.nogPartie3.eReportingPaiement = response.eReportingPaiement;
+        this.nogPartie3.eReportingTransaction = response.eReportingTransaction;
+        this.nogPartie3.casGestion = response.casGestion;
+        this.nogPartie3.mailEnvoi = response.envoiMail;
+        this.nogPartie3.signatureMandat = response.signatureMandat;
+        this.nogPartie3.businessDev = [response.bd1, response.bd2, response.bd3, response.bd4, response.bd5,
+          response.bd6, response.bd7, response.bd8, response.bd9, response.bd10
+        ];
+        this.nogPartie3.isFEValidate = true;
+      }
       this.isModuleFELoaded = true;
+      this.checkIdAllDataLoaded();
+      console.log('response',response);
+    });
+  }
+
+  loadListeBDFE(): void {
+    this.http.get<any>(`${environment.apiUrlMyVision}/dossierDetail/getListeBDNogFE`)
+    .subscribe(response => {
+      this.listeBdFE = response;
+      this.isListeBDFELoaded = true;
       this.checkIdAllDataLoaded();
       console.log('response',response);
     });
@@ -3457,7 +3738,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   checkIdAllDataLoaded(): void {
     if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded 
       && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNatureLoaded 
-      && this.isMontantLogicielLoaded && this.isModuleFELoaded
+      && this.isMontantLogicielLoaded && this.isModuleFELoaded && this.isListeBDFELoaded
       && this.isDiligencesDefaultLoaded && this.isDiligencesBibliothequeLoaded) {
       this.isAllDataNogLoaded = true;
     }
@@ -3658,6 +3939,41 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     const newContent = target.textContent || '';
     
     this.nogPartie4.appreciationRisqueVigilence = newContent;
+  }
+
+  onEditorContentChangeAspectsComptables(event: Event): void {
+    const target = event.target as HTMLElement;
+    const newContent = target.textContent || '';
+    
+    this.nogPartie4.aspectsComptables = newContent;
+  }
+
+  onEditorContentChangeAspectsFiscaux(event: Event): void {
+    const target = event.target as HTMLElement;
+    const newContent = target.textContent || '';
+    
+    this.nogPartie4.aspectsFiscaux = newContent;
+  }
+
+  onEditorContentChangeAspectsSociaux(event: Event): void {
+    const target = event.target as HTMLElement;
+    const newContent = target.textContent || '';
+    
+    this.nogPartie4.aspectsSociaux = newContent;
+  }
+
+  onEditorContentChangeAspectsJuridiques(event: Event): void {
+    const target = event.target as HTMLElement;
+    const newContent = target.textContent || '';
+    
+    this.nogPartie4.aspectsJuridiques = newContent;
+  }
+
+  onEditorContentChangeComptesAnnuels(event: Event): void {
+    const target = event.target as HTMLElement;
+    const newContent = target.textContent || '';
+    
+    this.nogPartie4.comptesAnnuels = newContent;
   }
 
   ngAfterViewInit(): void {
