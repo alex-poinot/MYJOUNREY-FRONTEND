@@ -1126,7 +1126,7 @@ interface TabDiligence {
                       </div>
                     </div>
                     <div class="container-editeur-principe-comp">
-                      <div class="row-title-principe-comp">
+                      <div class="row-title-principe-comp" style="cursor: pointer;">
                         <div class="title-principe-comp">Comptes annuels</div>
                         <div class="icon-collapse-principe-comp"><i class="fa-solid fa-chevron-down"></i></div>
                       </div>
@@ -3117,6 +3117,35 @@ interface TabDiligence {
 
     div#container-part-3-3-nog {
       width: 100%;
+    }
+
+    .container-principe-comp {
+      display: flex;
+      flex-direction: column;
+      gap: 1vh;
+      position: relative;
+      height: 100%;
+    }
+
+    div#container-part-4-2-nog {
+      width: 100%;
+    }
+
+    .container-editeur-principe-comp {
+      background-color: #fff;
+      border-radius: .5vw;
+    }
+
+    .row-title-principe-comp {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      padding: 1vh 1vw;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: #fff;
+      border-radius: .5vw;
     }
   `]
 })
