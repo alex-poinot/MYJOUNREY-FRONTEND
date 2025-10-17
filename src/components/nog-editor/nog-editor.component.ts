@@ -1391,7 +1391,18 @@ interface TabDiligence {
                     style="display: none;">
                 </div>
                 <div class="liste-annexes" *ngIf="nogPartieAnnexes.tabFiles.length > 0">
-                  <div class="item-annexe" *ngFor="let file of nogPartieAnnexes.tabFiles; let i = index">
+                  <div
+                    class="item-annexe"
+                    *ngFor="let file of nogPartieAnnexes.tabFiles; let i = index"
+                    draggable="true"
+                    (dragstart)="onDragStart($event, i)"
+                    (dragover)="onDragOver($event)"
+                    (drop)="onDrop($event, i)"
+                    (dragend)="onDragEnd($event)"
+                    [class.dragging]="draggedIndex === i">
+                    <div class="drag-handle">
+                      <i class="fa-solid fa-grip-vertical"></i>
+                    </div>
                     <div class="info-annexe">
                       <i class="fa-solid fa-file-pdf icon-pdf"></i>
                       <span class="nom-fichier">{{ file.name }}</span>
@@ -2083,6 +2094,33 @@ interface TabDiligence {
       background-color: #f8f9fa;
       border: 1px solid #dee2e6;
       border-radius: 4px;
+      cursor: move;
+      transition: all 0.2s;
+    }
+
+    .item-annexe:hover {
+      background-color: #e9ecef;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .item-annexe.dragging {
+      opacity: 0.5;
+    }
+
+    .drag-handle {
+      display: flex;
+      align-items: center;
+      color: #6c757d;
+      cursor: grab;
+      margin-right: 1vw;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .drag-handle i {
+      font-size: 1rem;
     }
 
     .info-annexe {
@@ -3537,6 +3575,36 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  }
+
+  draggedIndex: number | null = null;
+
+  onDragStart(event: DragEvent, index: number): void {
+    this.draggedIndex = index;
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/html', index.toString());
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move';
+    }
+  }
+
+  onDrop(event: DragEvent, dropIndex: number): void {
+    event.preventDefault();
+    if (this.draggedIndex !== null && this.draggedIndex !== dropIndex) {
+      const draggedFile = this.nogPartieAnnexes.tabFiles[this.draggedIndex];
+      this.nogPartieAnnexes.tabFiles.splice(this.draggedIndex, 1);
+      this.nogPartieAnnexes.tabFiles.splice(dropIndex, 0, draggedFile);
+    }
+  }
+
+  onDragEnd(event: DragEvent): void {
+    this.draggedIndex = null;
   }
 
   selectedDiligences: TabDiligence[] = [];
