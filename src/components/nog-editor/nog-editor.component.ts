@@ -1130,7 +1130,7 @@ interface TabDiligence {
                         <div class="title-principe-comp">Comptes annuels</div>
                         <div class="icon-collapse-principe-comp"><i class="fa-solid fa-chevron-down"></i></div>
                       </div>
-                      <div class="container-editeur-principe-comp">
+                      <div class="container-content-principe-comp">
                         <div id="editeur-texte-comptes-annuels">
                           <div class="toolbar-editor">
                             <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
