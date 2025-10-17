@@ -69,6 +69,7 @@ interface NogPartie4 {
   aspectsSociaux: string;
   aspectsJuridiques: string;
   comptesAnnuels: string;
+  seuil: number;
 }
 
 interface NogPartie5 {
@@ -90,6 +91,10 @@ interface NogPartie7 {
   libelleFormAnn: string;
   checkboxConflictCheck: boolean;
   libelleConflictCheck: string;
+}
+
+interface NogPartieAnnexes {
+  tabFiles: File[];
 }
 
 interface Logiciel {
@@ -1152,6 +1157,20 @@ interface TabDiligence {
                             (paste)="onEditorContentChangeComptesAnnuels($event)"></div>
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row-part-nog row-part-4-3">
+              <div id="container-part-4-3-nog" class="containter-element-nog">
+                <div class="title-element-nog">4.3. Seuil de signification</div>
+                <div class="body-element-nog">
+                  <div class="text-fixe-4-3">Selon la norme de présentation « l’expert-comptable prend en considération le caractère significatif, ce qui peut le conduire à simplifier certaines opérations d'inventaire »</div>
+                  <div class="container-seuil-4-3">
+                    <div class="title-seuil">Seuil de signification retenu pour les opérations d’inventaire</div>
+                    <div class="container-input-seuil">
+                      <input type="number" class="input-number" [(ngModel)]="nogPartie4.seuil"/>
                     </div>
                   </div>
                 </div>
@@ -3147,6 +3166,58 @@ interface TabDiligence {
       background-color: #fff;
       border-radius: .5vw;
     }
+
+    .container-content-principe-comp {
+      height: 20vh;
+    }
+
+    div#editeur-texte-aspects-comptables,
+    div#editeur-texte-aspects-fiscaux,
+    div#editeur-texte-aspects-sociaux,
+    div#editeur-texte-aspects-juridiques,
+    div#editeur-texte-comptes-annuels {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    div#container-part-4-2-nog .body-element-nog {
+      background-color: var(--gray-100);
+    }
+
+    div#container-part-4-2-nog .toolbar-editor {
+      background-color: white;
+    }
+
+    div#container-part-4-3-nog {
+      width: 100%;
+    }
+
+    div#container-part-4-3-nog .body-element-nog {
+      padding: 1vh 1vw;
+      display: flex;
+      flex-direction: column;
+      gap: 2vh;
+    }
+
+    .row-part-nog.row-part-4-3 {
+      height: 14vh !important;
+    }
+
+    .text-fixe-4-3 {
+      font-size: var(--font-size-md);
+    }
+
+    .container-seuil-4-3 {
+      display: flex;
+      gap: 0.5vw;
+      font-size: var(--font-size-md);
+      align-items: center;
+    }
+
+    .title-seuil {
+      font-weight: 600;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -3286,7 +3357,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     aspectsFiscaux: '',
     aspectsSociaux: '',
     aspectsJuridiques: '',
-    comptesAnnuels: ''
+    comptesAnnuels: '',
+    seuil: 0
   }
 
   nogPartie5: NogPartie5 = {
@@ -3306,6 +3378,10 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     libelleFormAnn: 'L\'associé responsable de la mission s\'est assuré que l\'ensemble des collaborateurs a bien suivi la formation annuelle sur les règles du code éthique de GT et d\'indépendance',
     checkboxConflictCheck: false,
     libelleConflictCheck: 'L\'associé responsable de la mission s\'est assuré que les collaborateurs n\'étaient pas en situation de conflit d\'intérêt sur la mission'
+  }
+
+  nogPartieAnnexes: NogPartieAnnexes = {
+    tabFiles: []
   }
 
   selectedDiligences: TabDiligence[] = [];
