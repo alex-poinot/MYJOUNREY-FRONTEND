@@ -475,7 +475,7 @@ interface TabDiligence {
                     <ng-container *ngIf="nogPartie1.chiffresSignificatifs.length != 0">
                       <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
                         <div class="colonne-chiffres-sign-nog">
-                          <div class="titre-colonne-chiffres-sign-nog"> {{ formatDate(cs.datePeriode) }} ({{ cs.dureeExercice }} mois) </div>
+                          <div class="titre-colonne-chiffres-sign-nog"><input type="text" [(ngModel)]="cs.datePeriode" class="input-date-cs"> (<input type="number" [(ngModel)]="cs.dureeExercice" class="input-nb-mois-cs input-chiffres-sign-nog"> mois) </div>
                           <div class="montant-chiffres-sign-nog">
                             <input type="number" [(ngModel)]="cs.effectif" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
                           </div>
@@ -493,49 +493,6 @@ interface TabDiligence {
                           </div>
                         </div>
                       </ng-container>
-                    </ng-container>
-
-                    <ng-container *ngIf="nogPartie1.chiffresSignificatifs.length == 0">
-                      <div class="colonne-chiffres-sign-nog">
-                        <div class="titre-colonne-chiffres-sign-nog">
-                          <input type="text" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].datePeriode" class="input-text">
-                        </div>
-                        <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].effectif" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
-                        </div>
-                        <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].capitauxPropres" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
-                        </div>
-                        <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].bilanNet" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
-                        </div>
-                        <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].ca" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
-                        </div>
-                        <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[0].beneficePerte" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
-                        </div>
-                      </div>
-                      <div class="colonne-chiffres-sign-nog">
-                        <div class="titre-colonne-chiffres-sign-nog">
-                          <input type="text" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].datePeriode" class="input-text">
-                        </div>
-                        <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].effectif" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
-                        </div>
-                        <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].capitauxPropres" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
-                        </div>
-                        <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].bilanNet" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
-                        </div>
-                        <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].ca" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
-                        </div>
-                        <div class="montant-chiffres-sign-nog">
-                          <input type="number" [(ngModel)]="nogPartie1.chiffresSignificatifs[1].beneficePerte" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
-                        </div>
-                      </div>
                     </ng-container>
 
                     <div class="colonne-chiffres-sign-nog" id="colonne-variation-cs">
@@ -969,25 +926,19 @@ interface TabDiligence {
                       <div class="libelle-appreciation-risque-vigilance">Vigilance normal</div>
                     </div>
                   </div>
-                  <div id="editeur-appreciation-risque-vigilance">
-                    <div class="toolbar-editor">
-                      <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
-                      <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
-                      <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
-                      <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
-                      <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
-                      <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
-                      <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
-                      <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
-                      <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                  <div id="container-text-appreciation-risque-vigilance">
+                    <div *ngIf="nogPartie4.checkboxVigilance == 'Normal'" class="texte-appreciation-risque-vigilance">
+                      <p>En cas de vigilance normale :</p>
+                      <p>Les diligences accomplies dans le cadre des missions normées correspondent normalement à un niveau de vigilance standard, cependant, l’équipe affectée à la mission effectue un examen renforcé de toute opération particulièrement complexe ou d’un montant inhabituellement élevé ou ne paraissant pas avoir de justification économique ou d’objet licite.</p>
+                      <p>Dans ce cas, elle se renseigne auprès du client sur :</p>
+                      <ul>
+                        <li>l’origine et la destination des fonds</li>
+                        <li>ainsi que sur l’objet de l’opération et l’identité de la personne qui en bénéficie.</li>
+                      </ul>
                     </div>
-                    <div
-                      contenteditable="true"
-                      class="editor-content"
-                      #editorContentAppreciationRisqueVigilence
-                      (input)="onEditorContentChangeAppreciationRisqueVigilence($event)"
-                      (keyup)="onEditorContentChangeAppreciationRisqueVigilence($event)"
-                      (paste)="onEditorContentChangeAppreciationRisqueVigilence($event)"></div>
+                    <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee'" class="texte-appreciation-risque-vigilance">
+                      <p>En cas de vigilance renforcée, compléter les contrôles à effectuer en s’appuyant entre autres sur « l’ARPEC » </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1022,6 +973,14 @@ interface TabDiligence {
                   <div class="container-diligence">
                     <div class="row-title-diligence" style="cursor: pointer;">
                       <div class="title-diligence">{{ diligence.groupe }} - {{ diligence.libelleGroupe }}</div>
+                      <div class="switch-activation-groupe-diligence">
+                        <label class="toggle-switch">
+                          <input
+                            type="checkbox"
+                            class="toggle-checkbox">
+                          <span class="toggle-slider"></span>
+                        </label>
+                      </div>
                       <div class="icon-collapse-diligence"><i class="fa-solid fa-chevron-down"></i></div>
                     </div>
                     <div class="row-table-diligence">
@@ -2656,6 +2615,7 @@ interface TabDiligence {
 
     .title-diligence {
       font-size: var(--font-size-lg);
+      width: 30vw;
     }
 
     .icon-collapse-diligence i {
@@ -2890,6 +2850,23 @@ interface TabDiligence {
       display: flex;
       flex-direction: column;
     }
+
+    .input-date-cs {
+      width: 8vw !important;
+      padding: 0.3vh 0.3vw;
+      border: 0.1vh solid var(--gray-300);
+      border-radius: 0.3vw;
+      font-size: var(--font-size-md);
+    }
+
+    .input-nb-mois-cs {
+      width: 3vw !important;
+    }
+
+    .texte-appreciation-risque-vigilance {
+      font-size: var(--font-size-md);
+      padding: 1vh 1vw;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -2966,7 +2943,28 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     },
     contacts: [],
     associes: [],
-    chiffresSignificatifs: [],
+    chiffresSignificatifs: [
+      {
+        dosPgi: '',
+        datePeriode: '',
+        dureeExercice: '',
+        effectif: 0,
+        capitauxPropres: 0,
+        bilanNet: 0,
+        ca: 0,
+        beneficePerte: 0
+      },
+      {
+        dosPgi: '',
+        datePeriode: '',
+        dureeExercice: '',
+        effectif: 0,
+        capitauxPropres: 0,
+        bilanNet: 0,
+        ca: 0,
+        beneficePerte: 0
+      }
+    ],
     activiteExHisto: ''
   };
 
@@ -3321,7 +3319,24 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   loadChiffresSignificatifs(): void {
     this.http.get<ChiffresSignificatifs[]>(`${environment.apiUrlMyVision}/dossierDetail/getChiffresSignificatifsNogMyJourney/${this.selectedDossier?.DOS_PGI}`)
     .subscribe(response => {
-      this.nogPartie1.chiffresSignificatifs = response;
+      if(response.length == 0) {
+        this.nogPartie1.chiffresSignificatifs[0].dosPgi = this.selectedDossier?.DOS_PGI ?? '';
+        this.nogPartie1.chiffresSignificatifs[1].dosPgi = this.selectedDossier?.DOS_PGI ?? '';
+      } else {
+        let index = 0;
+        response.forEach(element => {
+          this.nogPartie1.chiffresSignificatifs[index].dosPgi = element.dosPgi;
+          this.nogPartie1.chiffresSignificatifs[index].datePeriode = this.formatDate(element.datePeriode);
+          this.nogPartie1.chiffresSignificatifs[index].dureeExercice = element.dureeExercice;
+          this.nogPartie1.chiffresSignificatifs[index].effectif = element.effectif;
+          this.nogPartie1.chiffresSignificatifs[index].capitauxPropres = element.capitauxPropres;
+          this.nogPartie1.chiffresSignificatifs[index].bilanNet = element.bilanNet;
+          this.nogPartie1.chiffresSignificatifs[index].ca = element.ca;
+          this.nogPartie1.chiffresSignificatifs[index].beneficePerte = element.beneficePerte;
+          index++;
+        });
+        // this.nogPartie1.chiffresSignificatifs = response;
+      }
       this.isChiffresSignificatifsLoaded = true;
       this.checkIdAllDataLoaded();
       console.log('NOG PARTIE 1',this.nogPartie1);
