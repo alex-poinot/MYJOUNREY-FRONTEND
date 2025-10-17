@@ -1013,7 +1013,7 @@ interface TabDiligence {
                 </div>
               </div>
             </div>
-            <div class="row-part-nog">
+            <div class="row-part-nog row-part-4-2">
               <div id="container-part-4-2-nog" class="containter-element-nog">
                 <div class="title-element-nog">4.2. Principes comptables, régime fiscal ou social particuliers</div>
                 <div class="body-element-nog">
@@ -3311,7 +3311,8 @@ interface TabDiligence {
       flex-direction: column;
       gap: 1vh;
       position: relative;
-      height: 100%;
+      max-height: 50vh;
+      overflow-y: auto;
     }
 
     div#container-part-4-2-nog {
@@ -3385,6 +3386,15 @@ interface TabDiligence {
 
     .title-seuil {
       font-weight: 600;
+    }
+
+    .info-annexe {
+      width: 91%;
+    }
+
+    .row-part-nog.row-part-4-2 {
+      max-height: 55vh !important;
+      height: auto !important;
     }
   `]
 })
