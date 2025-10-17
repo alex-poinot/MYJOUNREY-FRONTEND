@@ -977,6 +977,8 @@ interface TabDiligence {
                         <label class="toggle-switch">
                           <input
                             type="checkbox"
+                            [checked]="isGroupeActivated(diligence)"
+                            (change)="toggleGroupeActivation(diligence)"
                             class="toggle-checkbox">
                           <span class="toggle-slider"></span>
                         </label>
@@ -1005,6 +1007,7 @@ interface TabDiligence {
                                   <input
                                     type="checkbox"
                                     [(ngModel)]="rowDiligence.activation"
+                                    (ngModelChange)="onDiligenceActivationChange()"
                                     class="toggle-checkbox">
                                   <span class="toggle-slider"></span>
                                 </label>
@@ -3892,6 +3895,25 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     };
     this.tabDiligenceLab.push(newDiligenceLabCopy);
     this.showAddDiligenceLabModal = false;
+  }
+
+  isGroupeActivated(diligence: Diligence): boolean {
+    if (!diligence.tabDiligence || diligence.tabDiligence.length === 0) {
+      return true;
+    }
+    return diligence.tabDiligence.every(d => d.activation);
+  }
+
+  toggleGroupeActivation(diligence: Diligence): void {
+    if (!diligence.tabDiligence || diligence.tabDiligence.length === 0) {
+      return;
+    }
+    const allActivated = this.isGroupeActivated(diligence);
+    diligence.tabDiligence.forEach(d => d.activation = !allActivated);
+  }
+
+  onDiligenceActivationChange(): void {
+    // Trigger change detection for groupe toggle switches
   }
 
   async exportToPdf(): Promise<void> {   
