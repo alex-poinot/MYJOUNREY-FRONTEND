@@ -1014,11 +1014,11 @@ interface TabDiligence {
                 <div class="body-element-nog">
                   <div class="container-principe-comp">
                     <div class="container-editeur-principe-comp">
-                      <div class="row-title-principe-comp">
+                      <div class="row-title-principe-comp" style="cursor: pointer;">
                         <div class="title-principe-comp">Aspects comptables</div>
                         <div class="icon-collapse-principe-comp"><i class="fa-solid fa-chevron-down"></i></div>
                       </div>
-                      <div class="container-editeur-principe-comp">
+                      <div class="container-content-principe-comp">
                         <div id="editeur-texte-aspects-comptables">
                           <div class="toolbar-editor">
                             <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
@@ -1042,11 +1042,11 @@ interface TabDiligence {
                       </div>
                     </div>
                     <div class="container-editeur-principe-comp">
-                      <div class="row-title-principe-comp">
+                      <div class="row-title-principe-comp" style="cursor: pointer;">
                         <div class="title-principe-comp">Aspects fiscaux</div>
                         <div class="icon-collapse-principe-comp"><i class="fa-solid fa-chevron-down"></i></div>
                       </div>
-                      <div class="container-editeur-principe-comp">
+                      <div class="container-content-principe-comp">
                         <div id="editeur-texte-aspects-fiscaux">
                           <div class="toolbar-editor">
                             <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
@@ -1070,11 +1070,11 @@ interface TabDiligence {
                       </div>
                     </div>
                     <div class="container-editeur-principe-comp">
-                      <div class="row-title-principe-comp">
+                      <div class="row-title-principe-comp" style="cursor: pointer;">
                         <div class="title-principe-comp">Aspects sociaux</div>
                         <div class="icon-collapse-principe-comp"><i class="fa-solid fa-chevron-down"></i></div>
                       </div>
-                      <div class="container-editeur-principe-comp">
+                      <div class="container-content-principe-comp">
                         <div id="editeur-texte-aspects-sociaux">
                           <div class="toolbar-editor">
                             <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
@@ -1098,11 +1098,11 @@ interface TabDiligence {
                       </div>
                     </div>
                     <div class="container-editeur-principe-comp">
-                      <div class="row-title-principe-comp">
+                      <div class="row-title-principe-comp" style="cursor: pointer;">
                         <div class="title-principe-comp">Aspects juridiques</div>
                         <div class="icon-collapse-principe-comp"><i class="fa-solid fa-chevron-down"></i></div>
                       </div>
-                      <div class="container-editeur-principe-comp">
+                      <div class="container-content-principe-comp">
                         <div id="editeur-texte-aspects-juridiques">
                           <div class="toolbar-editor">
                             <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
@@ -3985,6 +3985,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.initializeDiligenceCollapse();
+      this.initializePrincipeCompCollapse();
     }, 0);
   }
 
@@ -4001,6 +4002,46 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     rowTitles.forEach(rowTitle => {
       rowTitle.addEventListener('click', this.toggleDiligence.bind(this));
     });
+  }
+
+  initializePrincipeCompCollapse(): void {
+    const container = document.querySelector('#container-part-4-2-nog');
+    if (!container) return;
+
+    const contentDivs = container.querySelectorAll('.container-content-principe-comp');
+    contentDivs.forEach(content => {
+      (content as HTMLElement).style.display = 'none';
+    });
+
+    const rowTitles = container.querySelectorAll('.row-title-principe-comp');
+    rowTitles.forEach(rowTitle => {
+      rowTitle.addEventListener('click', this.togglePrincipeComp.bind(this));
+    });
+  }
+
+  togglePrincipeComp(event: Event): void {
+    const rowTitle = event.currentTarget as HTMLElement;
+    const container = rowTitle.closest('.container-editeur-principe-comp');
+    if (!container) return;
+
+    const contentDiv = container.querySelector('.container-content-principe-comp') as HTMLElement;
+    const icon = rowTitle.querySelector('.icon-collapse-principe-comp i');
+
+    if (!contentDiv) return;
+
+    if (contentDiv.style.display === 'none') {
+      contentDiv.style.display = 'block';
+      if (icon) {
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+      }
+    } else {
+      contentDiv.style.display = 'none';
+      if (icon) {
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+      }
+    }
   }
 
   toggleDiligence(event: Event): void {
@@ -4139,6 +4180,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     if (value === '5') {
       setTimeout(() => {
         this.initializeDiligenceCollapse();
+      }, 0);
+    }
+    if (value === '4') {
+      setTimeout(() => {
+        this.initializePrincipeCompCollapse();
       }, 0);
     }
   }
