@@ -4507,7 +4507,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   addDiligenceToNog(diligence: TabDiligence): void {
-    const groupe = diligence.cycle || diligence.diligence.charAt(0);
+    const groupe = diligence.cycle;
     let groupeObj = this.nogPartie5.diligence.find(d => d.groupe === groupe);
 
     if (!groupeObj) {
@@ -4525,7 +4525,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   removeDiligenceFromNog(diligence: TabDiligence): void {
-    const groupe = diligence.cycle || diligence.diligence.charAt(0);
+    const groupe = diligence.cycle;
     const groupeObj = this.nogPartie5.diligence.find(d => d.groupe === groupe);
 
     if (groupeObj) {
@@ -4612,8 +4612,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   validateNewDiligence(): void {
-    if (!this.newDiligence.diligence || !this.newDiligence.titre) {
-      alert('Veuillez remplir au minimum les champs "Diligence" et "Titre"');
+    if (!this.newDiligence.cycle || !this.newDiligence.diligence || !this.newDiligence.titre) {
+      alert('Veuillez remplir au minimum les champs "Cycle", "Diligence" et "Titre"');
       return;
     }
 
@@ -4645,8 +4645,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   validateNewDiligenceLab(): void {
-    if (!this.newDiligenceLab.diligence || !this.newDiligenceLab.titre) {
-      alert('Veuillez remplir au minimum les champs "Diligence" et "Titre"');
+    if (!this.newDiligenceLab.cycle || !this.newDiligenceLab.diligence || !this.newDiligenceLab.titre) {
+      alert('Veuillez remplir au minimum les champs "Cycle", "Diligence" et "Titre"');
       return;
     }
 
