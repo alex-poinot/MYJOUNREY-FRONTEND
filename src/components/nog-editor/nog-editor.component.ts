@@ -1442,6 +1442,22 @@ interface TabDiligence {
         </div>
         <div class="diligence-modal-content">
           <div class="form-group">
+            <label for="diligence-cycle">Cycle</label>
+            <select id="diligence-cycle" [(ngModel)]="newDiligence.cycle">
+              <option value="">Sélectionner un cycle</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+              <option value="G">G</option>
+              <option value="H">H</option>
+              <option value="I">I</option>
+              <option value="J">J</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="diligence-code">Diligence *</label>
             <input id="diligence-code" type="text" [(ngModel)]="newDiligence.diligence" placeholder="Code ou identifiant de la diligence">
           </div>
@@ -1475,6 +1491,22 @@ interface TabDiligence {
           </button>
         </div>
         <div class="diligence-modal-content">
+          <div class="form-group">
+            <label for="diligence-lab-cycle">Cycle</label>
+            <select id="diligence-lab-cycle" [(ngModel)]="newDiligenceLab.cycle">
+              <option value="">Sélectionner un cycle</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+              <option value="G">G</option>
+              <option value="H">H</option>
+              <option value="I">I</option>
+              <option value="J">J</option>
+            </select>
+          </div>
           <div class="form-group">
             <label for="diligence-lab-code">Diligence *</label>
             <input id="diligence-lab-code" type="text" [(ngModel)]="newDiligenceLab.diligence" placeholder="Code ou identifiant de la diligence">
@@ -2216,6 +2248,22 @@ interface TabDiligence {
     .form-group textarea {
       resize: vertical;
       min-height: 80px;
+    }
+
+    .form-group select {
+      padding: 0.8vh 0.8vw;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      font-size: var(--font-size-md);
+      font-family: inherit;
+      transition: border-color 0.2s;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
     }
 
     .diligence-modal-footer {
