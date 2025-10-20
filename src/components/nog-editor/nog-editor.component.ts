@@ -4083,27 +4083,29 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     });
 
     this.selectedCodeAffaire = this.getCodeAffaireSelected();
-    
-    this.isDossierMissionMillesimeSelected = true;
-    
-    let verifNog = this.verifNogLoad();
 
-    if(verifNog.length == 0) {
-      this.loadCoordonnees();
-      this.loadContacts();
-      this.loadChiffresSignificatifs();
-      this.loadAssocies();
-      this.loadTypeMissionNatureNog();
-      this.loadPlannings();
-      this.loadEquipeInter();
-      this.loadDiligencesDefault();
-      this.loadDiligencesBibliotheque();
-      this.loadMontantLogiciel();
-      this.loadModuleFE();
-      this.loadListeBDFE();
-    } else {
-      console.log('DONNEE TABLE NOG');
-    }
+    this.isDossierMissionMillesimeSelected = true;
+
+    this.verifNogLoad().then(verifNog => {
+      if(verifNog.length == 0) {
+        this.loadCoordonnees();
+        this.loadContacts();
+        this.loadChiffresSignificatifs();
+        this.loadAssocies();
+        this.loadTypeMissionNatureNog();
+        this.loadPlannings();
+        this.loadEquipeInter();
+        this.loadDiligencesDefault();
+        this.loadDiligencesBibliotheque();
+        this.loadMontantLogiciel();
+        this.loadModuleFE();
+        this.loadListeBDFE();
+      } else {
+        console.log('DONNEE TABLE NOG');
+      }
+    }).catch(error => {
+      console.error('Erreur lors de la vérification du NOG:', error);
+    });
   }
 
   getSelectedMissionLabel(): string {
@@ -4212,10 +4214,13 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     }, 200);
   }
 
-  verifNogLoad(): void {
-    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/verifNogLoad/${this.selectedCodeAffaire}`)
-    .subscribe(response => {
-      return response.data;
+  verifNogLoad(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/verifNogLoad/${this.selectedCodeAffaire}`)
+      .subscribe({
+        next: (response) => resolve(response.data),
+        error: (error) => reject(error)
+      });
     });
   }
 
