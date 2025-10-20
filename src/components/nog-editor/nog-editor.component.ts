@@ -4610,15 +4610,15 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     if (!diligence.tabDiligence || diligence.tabDiligence.length === 0) {
       return true;
     }
-    return diligence.tabDiligence.every(d => d.activation);
+    return diligence.tabDiligence.some(d => d.activation);
   }
 
   toggleGroupeActivation(diligence: Diligence): void {
     if (!diligence.tabDiligence || diligence.tabDiligence.length === 0) {
       return;
     }
-    const allActivated = this.isGroupeActivated(diligence);
-    diligence.tabDiligence.forEach(d => d.activation = !allActivated);
+    const anyActivated = this.isGroupeActivated(diligence);
+    diligence.tabDiligence.forEach(d => d.activation = !anyActivated);
   }
 
   onDiligenceActivationChange(): void {
