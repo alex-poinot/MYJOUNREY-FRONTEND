@@ -4507,7 +4507,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   addDiligenceToNog(diligence: TabDiligence): void {
-    const groupe = diligence.diligence.charAt(0);
+    const groupe = diligence.cycle || diligence.diligence.charAt(0);
     let groupeObj = this.nogPartie5.diligence.find(d => d.groupe === groupe);
 
     if (!groupeObj) {
@@ -4525,7 +4525,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   removeDiligenceFromNog(diligence: TabDiligence): void {
-    const groupe = diligence.diligence.charAt(0);
+    const groupe = diligence.cycle || diligence.diligence.charAt(0);
     const groupeObj = this.nogPartie5.diligence.find(d => d.groupe === groupe);
 
     if (groupeObj) {
