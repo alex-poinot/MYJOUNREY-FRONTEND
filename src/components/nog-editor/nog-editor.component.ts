@@ -1300,6 +1300,7 @@ interface TabDiligence {
             </div>
           </div>
           <div *ngIf="selectedPartNog=='6'" id="container-part-6-nog" class="container-part-nog">
+            <div class="title-element-nog">Restitution client</div>
             <div id="container-liste-checkbox-rest-client">
               <div class="container-element-rest-client">
                 <div class="container-checkbox-rest-client">
@@ -1360,6 +1361,7 @@ interface TabDiligence {
             </div>
           </div>
           <div *ngIf="selectedPartNog=='7'" id="container-part-7-nog" class="container-part-nog">
+            <div class="title-element-nog">Déontologie</div>
             <div id="container-liste-checkbox-deontologie">
               <div class="container-element-deontologie">
                 <div class="container-checkbox-deontologie">
