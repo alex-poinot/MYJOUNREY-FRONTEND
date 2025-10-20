@@ -13,6 +13,7 @@ interface Dossier {
   MD_MISSION: string;
   MD_MILLESIME: string;
   LIBELLE_MISSIONS: string;
+  CODE_AFFAIRE: string;
 }
 
 interface Mission {
@@ -30,6 +31,11 @@ interface NogPartie1 {
   associes: Associes[];
   chiffresSignificatifs: ChiffresSignificatifs[];
   activiteExHisto: string;
+  dateLastUpdateCoordonnees?: string;
+  dateLastUpdateContacts?: string;
+  dateLastUpdateAssocies?: string;
+  dateLastUpdateCS?: string;
+  dateLastUpdateActiviteExHisto?: string;
 }
 
 interface NogPartie2 {
@@ -44,13 +50,19 @@ interface NogPartie2 {
   planning: Planning[];
   equipeInter: EquipeInter[];
   precisionTravaux: string;
+  dateLastUpdateLettreMission?: string;
+  dateLastUpdateTypeMission?: string;
+  dateLastUpdateNatureMission?: string;
+  dateLastUpdatePlanning?: string;
+  dateLastUpdateEquipeInter?: string;
+  dateLastUpdatePrecisionTravaux?: string;
 }
 
 interface NogPartie3 {
   tabLogicielGT: Logiciel[];
   tabLogicielClient: Logiciel[];
   orgaServiceAdmin: string;
-  syntheseEntretientDir: string;
+  syntheseEntretienDir: string;
   eInvoicing: string;
   eReportingPaiement: string;
   eReportingTransaction: string;
@@ -59,6 +71,10 @@ interface NogPartie3 {
   signatureMandat: string;
   casGestion: string;
   isFEValidate: boolean;
+  dateLastUpdateLogiciel?: string;
+  dateLastUpdateOrgaServiceAdmin?: string;
+  dateLastUpdateFE?: string;
+  dateLastUpdateSyntheseEntretien?: string;
 }
 
 interface NogPartie4 {
@@ -70,10 +86,15 @@ interface NogPartie4 {
   aspectsJuridiques: string;
   comptesAnnuels: string;
   seuil: number;
+  dateLastUpdateVigilance?: string;
+  dateLastUpdatePrincipeComp?: string;
+  dateLastUpdateSeuil?: string;
 }
 
 interface NogPartie5 {
   diligence: Diligence[];
+  dateLastUpdateDiligence?: string;
+  dateLastUpdateDiligenceLab?: string;
 }
 
 interface NogPartie6 {
@@ -82,6 +103,7 @@ interface NogPartie6 {
   libelleAutreEtage1?: string;
   libelleAutreEtage2?: string;
   commGeneral: string;
+  dateLastUpdateRestitutionClient?: string;
 }
 
 interface NogPartie7 {
@@ -91,10 +113,12 @@ interface NogPartie7 {
   libelleFormAnn: string;
   checkboxConflictCheck: boolean;
   libelleConflictCheck: string;
+  dateLastUpdateDeontologie?: string;
 }
 
 interface NogPartieAnnexes {
   tabFiles: File[];
+  dateLastUpdateAnnexe?: string;
 }
 
 interface Logiciel {
@@ -335,7 +359,7 @@ interface TabDiligence {
           <div *ngIf="selectedPartNog=='1'" id="container-part-1-nog" class="container-part-nog">
             <div class="row-part-nog">
               <div id="container-part-1-1-nog" class="containter-element-nog">
-                <div class="title-element-nog">1.1. Coordonnées</div>
+                <div class="title-element-nog">1.1. Coordonnées<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateCoordonnees}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div class="row-coordonnees-nog">
                     <div class="icon-coordonnees-nog">
@@ -367,7 +391,7 @@ interface TabDiligence {
               </div>
 
               <div id="container-part-1-2-nog" class="containter-element-nog">
-                <div class="title-element-nog">1.2. Contacts</div>
+                <div class="title-element-nog">1.2. Contacts<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateContacts}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <button class="btn-add-row" (click)="addContact()"><i class="fa-solid fa-plus"></i> Ajouter un contact</button>
                 <div class="body-element-nog">
                   <table class="table-nog">
@@ -421,7 +445,7 @@ interface TabDiligence {
 
             <div class="row-part-nog">
               <div id="container-part-1-3-nog" class="containter-element-nog">
-                <div class="title-element-nog">1.3. Associés</div>
+                <div class="title-element-nog">1.3. Associés<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateAssocies}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <button class="btn-add-row" (click)="addAssocie()"><i class="fa-solid fa-plus"></i> Ajouter un associé</button>
                 <div class="body-element-nog">
                   <table class="table-nog">
@@ -470,7 +494,7 @@ interface TabDiligence {
 
             <div class="row-part-nog">
               <div id="container-part-1-4-nog" class="containter-element-nog">
-                <div class="title-element-nog">1.4. Chiffres significatifs</div>
+                <div class="title-element-nog">1.4. Chiffres significatifs<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateCS}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div id="container-chiffres-sign-nog">
                     <div class="colonne-chiffres-sign-nog">
@@ -520,7 +544,7 @@ interface TabDiligence {
 
             <div class="row-part-nog">
               <div id="container-part-1-5-nog" class="containter-element-nog">
-                <div class="title-element-nog">1.5. Activité exercée et historique</div>
+                <div class="title-element-nog">1.5. Activité exercée et historique<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateActiviteExHisto}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div id="editeur-texte-activite-exerce">
                     <div class="toolbar-editor">
@@ -550,7 +574,7 @@ interface TabDiligence {
           <div *ngIf="selectedPartNog=='2'" id="container-part-2-nog" class="container-part-nog">
             <div class="row-part-nog">
               <div id="container-part-2-1-nog" class="containter-element-nog">
-                <div class="title-element-nog">2.1. Lettre de mission</div>
+                <div class="title-element-nog">2.1. Lettre de mission<i title="Dernière mise à jour : {{nogPartie2.dateLastUpdateLettreMission}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div class="container-input-title-nog">
                     <div class="title-bloc-nog">Date de mise à jour</div> 
@@ -570,7 +594,7 @@ interface TabDiligence {
 
             <div class="row-part-nog">
               <div id="container-part-2-2-nog" class="containter-element-nog">
-                <div class="title-element-nog">2.2. Type de la mission</div>
+                <div class="title-element-nog">2.2. Type de la mission<i title="Dernière mise à jour : {{nogPartie2.dateLastUpdateTypeMission}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div class="container-input-title-nog">
                     <div class="input-bloc-nog">
@@ -583,7 +607,7 @@ interface TabDiligence {
                 </div>
               </div>
               <div id="container-part-2-3-nog" class="containter-element-nog">
-                <div class="title-element-nog">2.3. Nature de la mission</div>
+                <div class="title-element-nog">2.3. Nature de la mission<i title="Dernière mise à jour : {{nogPartie2.dateLastUpdateNatureMission}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div class="container-input-title-nog">
                     <div class="input-bloc-nog">
@@ -599,7 +623,7 @@ interface TabDiligence {
 
             <div class="row-part-nog">
               <div id="container-part-2-4-nog" class="containter-element-nog">
-                <div class="title-element-nog">2.4. Planning d'intervention</div>
+                <div class="title-element-nog">2.4. Planning d'intervention<i title="Dernière mise à jour : {{nogPartie2.dateLastUpdatePlanning}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div id="part-top-planning-inter-nog">
                     <div id="part-left-planning-inter-nog">
@@ -692,7 +716,7 @@ interface TabDiligence {
 
             <div class="row-part-nog">
               <div id="container-part-2-5-nog" class="containter-element-nog">
-                <div class="title-element-nog">2.5. Equipe d'intervention</div>
+                <div class="title-element-nog">2.5. Equipe d'intervention<i title="Dernière mise à jour : {{nogPartie2.dateLastUpdateEquipeInter}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <table class="table-nog">
                     <thead>
@@ -760,7 +784,7 @@ interface TabDiligence {
                 </div>
               </div>
               <div id="container-part-2-6-nog" class="containter-element-nog">
-                <div class="title-element-nog">2.6. Précision sur les travaux à réaliser en interim</div>
+                <div class="title-element-nog">2.6. Précision sur les travaux à réaliser en interim<i title="Dernière mise à jour : {{nogPartie2.dateLastUpdatePrecisionTravaux}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div id="editeur-texte-precision-travaux">
                     <div class="toolbar-editor">
@@ -789,7 +813,7 @@ interface TabDiligence {
           <div *ngIf="selectedPartNog=='3'" id="container-part-3-nog" class="container-part-nog">
             <div class="row-part-nog">
               <div id="container-part-3-1-nog" class="containter-element-nog">
-                <div class="title-element-nog">3.1. Logiciels utilisés</div>
+                <div class="title-element-nog">3.1. Logiciels utilisés<i title="Dernière mise à jour : {{nogPartie3.dateLastUpdateLogiciel}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div id="container-tab-logiciel-gt">
                     <div class="titre-tab-logiciel">Logiciels interne</div>
@@ -869,7 +893,7 @@ interface TabDiligence {
             </div>
             <div class="row-part-nog">
               <div id="container-part-3-2-nog" class="containter-element-nog">
-                <div class="title-element-nog">3.2. Organisation du service administratif</div>
+                <div class="title-element-nog">3.2. Organisation du service administratif<i title="Dernière mise à jour : {{nogPartie3.dateLastUpdateOrgaServiceAdmin}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div id="editeur-organisation-service-admin">
                     <div class="toolbar-editor">
@@ -958,7 +982,7 @@ interface TabDiligence {
             </div>
             <div class="row-part-nog">
               <div id="container-part-3-4-nog" class="containter-element-nog">
-                <div class="title-element-nog">3.4. Synthèse de l'entretien avec la direction (faits marquants)</div>
+                <div class="title-element-nog">3.4. Synthèse de l'entretien avec la direction (faits marquants)<i title="Dernière mise à jour : {{nogPartie3.dateLastUpdateSyntheseEntretien}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div id="editeur-synthese-entretient-dir">
                     <div class="toolbar-editor">
@@ -975,10 +999,10 @@ interface TabDiligence {
                     <div
                       contenteditable="true"
                       class="editor-content"
-                      #editorContentSyntheseEntretientDir
-                      (input)="onEditorContentChangeSyntheseEntretientDir($event)"
-                      (keyup)="onEditorContentChangeSyntheseEntretientDir($event)"
-                      (paste)="onEditorContentChangeSyntheseEntretientDir($event)"></div>
+                      #editorContentSyntheseEntretienDir
+                      (input)="onEditorContentChangeSyntheseEntretienDir($event)"
+                      (keyup)="onEditorContentChangeSyntheseEntretienDir($event)"
+                      (paste)="onEditorContentChangeSyntheseEntretienDir($event)"></div>
                   </div>
                 </div>
               </div>
@@ -987,7 +1011,7 @@ interface TabDiligence {
           <div *ngIf="selectedPartNog=='4'" id="container-part-4-nog" class="container-part-nog">
             <div class="row-part-nog">
               <div id="container-part-4-1-nog" class="containter-element-nog">
-                <div class="title-element-nog">4.1. Appréciation des risques et du niveau de vigilance à appliquer</div>
+                <div class="title-element-nog">4.1. Appréciation des risques et du niveau de vigilance à appliquer<i title="Dernière mise à jour : {{nogPartie4.dateLastUpdateVigilance}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div id="container-checkbox-vigilance">
                     <div class="container-element-appreciation-risque-vigilance">
@@ -1022,7 +1046,7 @@ interface TabDiligence {
             </div>
             <div class="row-part-nog row-part-4-2">
               <div id="container-part-4-2-nog" class="containter-element-nog">
-                <div class="title-element-nog">4.2. Principes comptables, régime fiscal ou social particuliers</div>
+                <div class="title-element-nog">4.2. Principes comptables, régime fiscal ou social particuliers <i title="Dernière mise à jour : {{nogPartie4.dateLastUpdatePrincipeComp}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div class="container-principe-comp">
                     <div class="container-editeur-principe-comp">
@@ -1171,7 +1195,7 @@ interface TabDiligence {
             </div>
             <div class="row-part-nog row-part-4-3">
               <div id="container-part-4-3-nog" class="containter-element-nog">
-                <div class="title-element-nog">4.3. Seuil de signification</div>
+                <div class="title-element-nog">4.3. Seuil de signification<i title="Dernière mise à jour : {{nogPartie4.dateLastUpdateSeuil}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div class="text-fixe-4-3">Selon la norme de présentation « l’expert-comptable prend en considération le caractère significatif, ce qui peut le conduire à simplifier certaines opérations d'inventaire »</div>
                   <div class="container-seuil-4-3">
@@ -1185,7 +1209,7 @@ interface TabDiligence {
             </div>
           </div>
           <div *ngIf="selectedPartNog=='5'" id="container-part-5-nog" class="container-part-nog">
-            <div class="title-element-nog">Diligences :</div>
+            <div class="title-element-nog">Diligences<i title="Dernière mise à jour : {{nogPartie5.dateLastUpdateDiligence}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
             <div id="part-top-diligence">
               <div id="container-add-diligence">
                 <div class="multiselect-diligence">
@@ -1264,7 +1288,7 @@ interface TabDiligence {
               </div>
             </div>
             <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee'" id="part-bottom-diligence-lab">
-              <div class="title-element-nog">Diligences LAB :</div>
+              <div class="title-element-nog">Diligences LAB<i title="Dernière mise à jour : {{nogPartie5.dateLastUpdateDiligenceLab}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
               <button class="btn-add-row" (click)="addDiligenceLabManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence LAB</button>
               <table class="table-diligence">
                 <thead>
@@ -1300,7 +1324,7 @@ interface TabDiligence {
             </div>
           </div>
           <div *ngIf="selectedPartNog=='6'" id="container-part-6-nog" class="container-part-nog">
-            <div class="title-element-nog">Restitution client</div>
+            <div class="title-element-nog">Restitution client<i title="Dernière mise à jour : {{nogPartie6.dateLastUpdateRestitutionClient}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
             <div id="container-liste-checkbox-rest-client">
               <div class="container-element-rest-client">
                 <div class="container-checkbox-rest-client">
@@ -1361,7 +1385,7 @@ interface TabDiligence {
             </div>
           </div>
           <div *ngIf="selectedPartNog=='7'" id="container-part-7-nog" class="container-part-nog">
-            <div class="title-element-nog">Déontologie</div>
+            <div class="title-element-nog">Déontologie<i title="Dernière mise à jour : {{nogPartie7.dateLastUpdateDeontologie}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
             <div id="container-liste-checkbox-deontologie">
               <div class="container-element-deontologie">
                 <div class="container-checkbox-deontologie">
@@ -1384,7 +1408,7 @@ interface TabDiligence {
             </div>
           </div>
           <div *ngIf="selectedPartNog=='annexes'" id="container-part-annexes-nog" class="container-part-nog">
-            <div class="title-element-nog">Annexes</div>
+            <div class="title-element-nog">Annexes<i title="Dernière mise à jour : {{nogPartieAnnexes.dateLastUpdateAnnexe}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
             <div class="body-element-nog">
               <div class="container-annexes">
                 <div class="section-upload-annexes">
@@ -3453,6 +3477,10 @@ interface TabDiligence {
       max-height: 55vh !important;
       height: auto !important;
     }
+
+    i.fa-solid.fa-circle-info.icon-date-last-modif {
+      margin-left: 1vw;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy {
@@ -3494,6 +3522,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   selectedDossierDisplay: string = '';
   selectedMission: string = '';
   selectedMillesime: string = '';
+  selectedCodeAffaire: string = '';
 
   selectedPartNog: string = '1';
   showApercuPopup: boolean = false;
@@ -3578,7 +3607,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     tabLogicielGT: [],
     tabLogicielClient: [],
     orgaServiceAdmin: '',
-    syntheseEntretientDir: '',
+    syntheseEntretienDir: '',
     eInvoicing: '',
     eReportingPaiement: '',
     eReportingTransaction: '',
@@ -3760,24 +3789,28 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoContact(): void {
     this.debounceLog('contact', () => {
       console.log('Modification dans Contact (partie 1.2):', this.nogPartie1.contacts);
+      this.nogPartie1.dateLastUpdateContacts = this.getDateNow();
     });
   }
 
   setChangeIntoAssocie(): void {
     this.debounceLog('associe', () => {
       console.log('Modification dans Associés (partie 1.3):', this.nogPartie1.associes);
+      this.nogPartie1.dateLastUpdateAssocies = this.getDateNow();
     });
   }
 
   setChangeIntoCS(): void {
     this.debounceLog('cs', () => {
       console.log('Modification dans Chiffres Significatifs (partie 1.4):', this.nogPartie1.chiffresSignificatifs);
+      this.nogPartie1.dateLastUpdateCS = this.getDateNow();
     });
   }
 
   setChangeIntoActiviteHisto(): void {
     this.debounceLog('activiteHisto', () => {
       console.log('Modification dans Activité Historique (partie 1.5):', this.nogPartie1.activiteExHisto);
+      this.nogPartie1.dateLastUpdateActiviteExHisto = this.getDateNow();
     });
   }
 
@@ -3787,36 +3820,42 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         dateMiseAJour: this.nogPartie2.dateMiseAJour,
         montantHonoraire: this.nogPartie2.montantHonoraire
       });
+      this.nogPartie2.dateLastUpdateLettreMission = this.getDateNow();
     });
   }
 
   setChangeIntoTypeMission(): void {
     this.debounceLog('typeMission', () => {
       console.log('Modification dans Type de Mission (partie 2.2):', this.nogPartie2.typeMission);
+      this.nogPartie2.dateLastUpdateTypeMission = this.getDateNow();
     });
   }
 
   setChangeIntoNatureMission(): void {
     this.debounceLog('natureMission', () => {
       console.log('Modification dans Nature de Mission (partie 2.3):', this.nogPartie2.natureMission);
+      this.nogPartie2.dateLastUpdateNatureMission = this.getDateNow();
     });
   }
 
   setChangeIntoPlanning(): void {
     this.debounceLog('planning', () => {
       console.log('Modification dans Planning (partie 2.4):', this.nogPartie2.planning);
+      this.nogPartie2.dateLastUpdatePlanning = this.getDateNow();
     });
   }
 
   setChangeIntoEquipeInter(): void {
     this.debounceLog('equipeInter', () => {
       console.log('Modification dans Équipe Intervention (partie 2.5):', this.nogPartie2.equipeInter);
+      this.nogPartie2.dateLastUpdateEquipeInter = this.getDateNow();
     });
   }
 
   setChangeIntoPrecisionTravaux(): void {
     this.debounceLog('precisionTravaux', () => {
       console.log('Modification dans Précision des Travaux (partie 2.6):', this.nogPartie2.precisionTravaux);
+      this.nogPartie2.dateLastUpdatePrecisionTravaux = this.getDateNow();
     });
   }
 
@@ -3826,18 +3865,20 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         tabLogicielGT: this.nogPartie3.tabLogicielGT,
         tabLogicielClient: this.nogPartie3.tabLogicielClient
       });
+      this.nogPartie3.dateLastUpdateLogiciel = this.getDateNow();
     });
   }
 
   setChangeIntoOrgaServiceAdmin(): void {
     this.debounceLog('orgaServiceAdmin', () => {
       console.log('Modification dans Organisation Service Admin (partie 3.2):', this.nogPartie3.orgaServiceAdmin);
+      this.nogPartie3.dateLastUpdateOrgaServiceAdmin = this.getDateNow();
     });
   }
 
   setChangeIntoFE(): void {
     this.debounceLog('fe', () => {
-      console.log('Modification dans Flux Électroniques (partie 3.3):', {
+      console.log('Modification dans Facture Électroniques (partie 3.3):', {
         eInvoicing: this.nogPartie3.eInvoicing,
         eReportingPaiement: this.nogPartie3.eReportingPaiement,
         eReportingTransaction: this.nogPartie3.eReportingTransaction,
@@ -3847,12 +3888,14 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         casGestion: this.nogPartie3.casGestion,
         isFEValidate: this.nogPartie3.isFEValidate
       });
+      this.nogPartie3.dateLastUpdateFE = this.getDateNow();
     });
   }
 
-  setChangeIntoSyntheseEntretient(): void {
-    this.debounceLog('syntheseEntretient', () => {
-      console.log('Modification dans Synthèse Entretien (partie 3.4):', this.nogPartie3.syntheseEntretientDir);
+  setChangeIntoSyntheseEntretien(): void {
+    this.debounceLog('syntheseEntretien', () => {
+      console.log('Modification dans Synthèse Entretien (partie 3.4):', this.nogPartie3.syntheseEntretienDir);
+      this.nogPartie3.dateLastUpdateSyntheseEntretien = this.getDateNow();
     });
   }
 
@@ -3862,6 +3905,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         checkboxVigilance: this.nogPartie4.checkboxVigilance,
         appreciationRisqueVigilence: this.nogPartie4.appreciationRisqueVigilence
       });
+      this.nogPartie4.dateLastUpdateVigilance = this.getDateNow();
     });
   }
 
@@ -3874,24 +3918,28 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         aspectsJuridiques: this.nogPartie4.aspectsJuridiques,
         comptesAnnuels: this.nogPartie4.comptesAnnuels
       });
+      this.nogPartie4.dateLastUpdatePrincipeComp = this.getDateNow();
     });
   }
 
   setChangeIntoSeuil(): void {
     this.debounceLog('seuil', () => {
       console.log('Modification dans Seuil (partie 4.3):', this.nogPartie4.seuil);
+      this.nogPartie4.dateLastUpdateSeuil = this.getDateNow();
     });
   }
 
   setChangeIntoDiligance(): void {
     this.debounceLog('diligance', () => {
       console.log('Modification dans Diligences (partie 5):', this.nogPartie5.diligence);
+      this.nogPartie5.dateLastUpdateDiligence = this.getDateNow();
     });
   }
 
   setChangeIntoDiliganceLab(): void {
     this.debounceLog('diliganceLab', () => {
       console.log('Modification dans Diligences LAB (partie 5):', this.tabDiligenceLab);
+      this.nogPartie5.dateLastUpdateDiligenceLab = this.getDateNow();
     });
   }
 
@@ -3904,6 +3952,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         libelleAutreEtage2: this.nogPartie6.libelleAutreEtage2,
         commGeneral: this.nogPartie6.commGeneral
       });
+      this.nogPartie6.dateLastUpdateRestitutionClient = this.getDateNow();
     });
   }
 
@@ -3917,12 +3966,14 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         checkboxConflictCheck: this.nogPartie7.checkboxConflictCheck,
         libelleConflictCheck: this.nogPartie7.libelleConflictCheck
       });
+      this.nogPartie7.dateLastUpdateDeontologie = this.getDateNow();
     });
   }
 
   setChangeIntoAnnexe(): void {
     this.debounceLog('annexe', () => {
       console.log('Modification dans Annexes:', this.nogPartieAnnexes.tabFiles);
+      this.nogPartieAnnexes.dateLastUpdateAnnexe = this.getDateNow();
     });
   }
 
@@ -3961,6 +4012,23 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     });
     
     this.availableMissions = Array.from(uniqueMissions.values());
+  }
+
+  getCodeAffaireSelected(): string {
+    if (!this.selectedDossier) return '';
+    
+    const listeMission = this.allMissionsData.filter(
+      item => item.DOS_PGI === this.selectedDossier!.DOS_PGI &&
+        item.MD_MISSION === this.selectedDossier!.MD_MISSION &&
+        item.MD_MILLESIME === this.selectedDossier!.MD_MILLESIME
+    );
+    
+    listeMission.forEach(item => {
+      console.log('CODE_AFFAIRE', item.CODE_AFFAIRE);
+      return item.CODE_AFFAIRE;
+    });
+    
+    return '';
   }
 
   onMissionChange(): void {
@@ -4013,21 +4081,29 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       mission: this.selectedMission,
       millesime: this.selectedMillesime
     });
+
+    this.selectedCodeAffaire = this.getCodeAffaireSelected();
     
     this.isDossierMissionMillesimeSelected = true;
+    
+    let verifNog = this.verifNogLoad();
 
-    this.loadCoordonnees();
-    this.loadContacts();
-    this.loadChiffresSignificatifs();
-    this.loadAssocies();
-    this.loadTypeMissionNatureNog();
-    this.loadPlannings();
-    this.loadEquipeInter();
-    this.loadDiligencesDefault();
-    this.loadDiligencesBibliotheque();
-    this.loadMontantLogiciel();
-    this.loadModuleFE();
-    this.loadListeBDFE();
+    if(verifNog.length == 0) {
+      this.loadCoordonnees();
+      this.loadContacts();
+      this.loadChiffresSignificatifs();
+      this.loadAssocies();
+      this.loadTypeMissionNatureNog();
+      this.loadPlannings();
+      this.loadEquipeInter();
+      this.loadDiligencesDefault();
+      this.loadDiligencesBibliotheque();
+      this.loadMontantLogiciel();
+      this.loadModuleFE();
+      this.loadListeBDFE();
+    } else {
+      console.log('DONNEE TABLE NOG');
+    }
   }
 
   getSelectedMissionLabel(): string {
@@ -4134,6 +4210,13 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.showDossierDropdown = false;
     }, 200);
+  }
+
+  verifNogLoad(): void {
+    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/verifNogLoad/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      return response.data;
+    });
   }
 
   loadCoordonnees(): void {
@@ -4549,12 +4632,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.setChangeIntoOrgaServiceAdmin();
   }
 
-  onEditorContentChangeSyntheseEntretientDir(event: Event): void {
+  onEditorContentChangeSyntheseEntretienDir(event: Event): void {
     const target = event.target as HTMLElement;
     const newContent = target.textContent || '';
 
-    this.nogPartie3.syntheseEntretientDir = newContent;
-    this.setChangeIntoSyntheseEntretient();
+    this.nogPartie3.syntheseEntretienDir = newContent;
+    this.setChangeIntoSyntheseEntretien();
   }
 
   onEditorContentChangeAppreciationRisqueVigilence(event: Event): void {
@@ -5043,4 +5126,19 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     console.log('nogPartie4', this.nogPartie4);
     this.setChangeIntoVigilance();
   }
+
+  getDateNow(): string {
+    const now = new Date();
+
+    // Ajoute un zéro devant les nombres inférieurs à 10
+    const pad = (n: number) => n < 10 ? '0' + n : n;
+
+    const day = pad(now.getDate());
+    const month = pad(now.getMonth() + 1); // Les mois commencent à zéro
+    const year = now.getFullYear();
+    const hours = pad(now.getHours());
+    const minutes = pad(now.getMinutes());
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
 }
