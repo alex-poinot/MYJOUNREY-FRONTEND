@@ -108,6 +108,7 @@ interface Planning {
   id?: number;
   nom: string;
   fonction: string;
+  totalCollab: number,
   listeLib: string[];
   listeValue: string[];
   isEditing?: boolean;
@@ -359,7 +360,7 @@ interface TabDiligence {
                       <i class="fa-regular fa-memo-circle-info"></i>
                       <strong>APE :</strong>
                     </div>
-                    <div class="text-coordonnees-nog"> {{ nogPartie1.coordonnees.NAF_LIBELLE }} </div>
+                    <div class="text-coordonnees-nog">({{ nogPartie1.coordonnees.NAF_ID}}) {{ nogPartie1.coordonnees.NAF_LIBELLE }} </div>
                   </div>
                 </div>
               </div>
@@ -644,6 +645,7 @@ interface TabDiligence {
                               <tr>
                                 <th>Fonction</th>
                                 <th>Nom</th>
+                                <th>Total</th>
                                 <ng-container *ngFor="let column of nogPartie2.planning[0].listeLib">
                                   <th>{{ replaceNameLibelleListeLib(column) }}</th>
                                 </ng-container>
@@ -659,6 +661,10 @@ interface TabDiligence {
                                 <td>
                                   <input *ngIf="row.isEditing" type="text" [(ngModel)]="row.nom" class="input-table-nog">
                                   <span *ngIf="!row.isEditing">{{ row.nom }}</span>
+                                </td>
+                                <td>
+                                  <input *ngIf="row.isEditing" type="number" [(ngModel)]="row.totalCollab" class="input-table-nog">
+                                  <span *ngIf="!row.isEditing">{{ mathCeil(row.totalCollab) }}</span>
                                 </td>
                                 <ng-container *ngFor="let value of row.listeValue; let j = index; trackBy: trackByValueIndex">
                                   <td>
@@ -987,13 +993,13 @@ interface TabDiligence {
                       <div class="container-checkbox-appreciation-risque-vigilance">
                         <input type="checkbox" class="checkbox-appreciation-risque-vigilance" [checked]="nogPartie4.checkboxVigilance == 'Normal'" (change)="updateCheckboxVigilance('Normal')"/>
                       </div>
-                      <div class="libelle-appreciation-risque-vigilance">Vigilance normal</div>
+                      <div class="libelle-appreciation-risque-vigilance">Vigilance normale</div>
                     </div>
                     <div class="container-element-appreciation-risque-vigilance">
                       <div class="container-checkbox-appreciation-risque-vigilance">
                         <input type="checkbox" class="checkbox-appreciation-risque-vigilance" [checked]="nogPartie4.checkboxVigilance == 'Renforcee'" (change)="updateCheckboxVigilance('Renforcee')"/>
                       </div>
-                      <div class="libelle-appreciation-risque-vigilance">Vigilance normal</div>
+                      <div class="libelle-appreciation-risque-vigilance">Vigilance renforcée</div>
                     </div>
                   </div>
                   <div id="container-text-appreciation-risque-vigilance">
@@ -3555,7 +3561,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     checkboxFormAnn: false,
     libelleFormAnn: 'L\'associé responsable de la mission s\'est assuré que l\'ensemble des collaborateurs a bien suivi la formation annuelle sur les règles du code éthique de GT et d\'indépendance',
     checkboxConflictCheck: false,
-    libelleConflictCheck: 'L\'associé responsable de la mission s\'est assuré que les collaborateurs n\'étaient pas en situation de conflit d\'intérêt sur la mission'
+    libelleConflictCheck: 'L\'associé responsable de la mission s\'est assuré que lui et les collaborateurs n\'étaient pas en situation de conflit d\'intérêt sur la mission'
   }
 
   nogPartieAnnexes: NogPartieAnnexes = {
@@ -3898,6 +3904,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       this.nogPartie1.coordonnees.DOS_ADRESSE = response.data[0].DOS_ADRESSE;
       this.nogPartie1.coordonnees.DOS_CP = response.data[0].DOS_CP;
       this.nogPartie1.coordonnees.DOS_ADRESSE = response.data[0].DOS_ADRESSE;
+      this.nogPartie1.coordonnees.NAF_LIBELLE = response.data[0].NAF_LIBELLE;
+      this.nogPartie1.coordonnees.NAF_ID = response.data[0].NAF_ID;
       this.isCoordonneesLoaded = true;
       this.checkIdAllDataLoaded();
       console.log('NOG PARTIE 1',this.nogPartie1);
@@ -4174,6 +4182,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.nogPartie2.planning.push({
       nom: '',
       fonction: '',
+      totalCollab: 0,
       listeLib: this.listeLibPlanningSauv,
       listeValue: Array(this.listeLibPlanningSauv.length).fill(0),
       isEditing: true
@@ -4630,10 +4639,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     return obj.map((item, index) => {
         const listeLib = Object.keys(item).filter(key => key !== 'nom' && key !== 'fonction');
         const listeValue = listeLib.map(lib => item[lib]);
+        const totalCollab = listeValue.filter(value => value !== "").reduce((sum, value) => sum + parseFloat(value), 0);
         return {
             id: Date.now() + index,
             nom: item.nom,
             fonction: item.fonction,
+            totalCollab : totalCollab,
             listeLib,
             listeValue,
             isEditing: false
@@ -4642,13 +4653,9 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   replaceNameLibelleListeLib(value: string): string {
-    let str = '';
-    let mois =value.split('-')[0];
-    let annee = value.split('-')[1];
-    if(parseInt(mois) < 10) {
-      mois = '0' + mois;
-    }
-    return mois+'/'+annee.substring(2,4);
+    let trim =value.split('-')[1];
+    let annee = value.split('-')[0];
+    return trim+' '+annee.substring(2,4);
   }
 
   mathCeil(value: any): number {
