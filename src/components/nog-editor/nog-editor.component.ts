@@ -485,7 +485,7 @@ interface TabDiligence {
                     <ng-container *ngIf="nogPartie1.chiffresSignificatifs.length != 0">
                       <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
                         <div class="colonne-chiffres-sign-nog">
-                          <div class="titre-colonne-chiffres-sign-nog"><input type="text" [(ngModel)]="cs.datePeriode" class="input-date-cs"> (<input type="number" [(ngModel)]="cs.dureeExercice" class="input-nb-mois-cs input-chiffres-sign-nog"> mois) </div>
+                          <div class="titre-colonne-chiffres-sign-nog"><input type="text" [(ngModel)]="cs.datePeriode" (ngModelChange)="setChangeIntoCS()" class="input-date-cs"> (<input type="number" [(ngModel)]="cs.dureeExercice" (ngModelChange)="setChangeIntoCS()" class="input-nb-mois-cs input-chiffres-sign-nog"> mois) </div>
                           <div class="montant-chiffres-sign-nog">
                             <input type="number" [(ngModel)]="cs.effectif" (ngModelChange)="updateVariations()" class="input-chiffres-sign-nog">
                           </div>
@@ -555,13 +555,13 @@ interface TabDiligence {
                   <div class="container-input-title-nog">
                     <div class="title-bloc-nog">Date de mise à jour</div> 
                     <div class="input-bloc-nog">
-                      <input type="date" [(ngModel)]="nogPartie2.dateMiseAJour" class="input-date-nog">
+                      <input type="date" [(ngModel)]="nogPartie2.dateMiseAJour" (ngModelChange)="setChangeIntoLettreMission()" class="input-date-nog">
                     </div>
                   </div>
                   <div class="container-input-title-nog">
                     <div class="title-bloc-nog">Montant des honoraires pour la mission</div> 
                     <div class="input-bloc-nog">
-                      <input type="number" [(ngModel)]="nogPartie2.montantHonoraire" class="input-number-nog">
+                      <input type="number" [(ngModel)]="nogPartie2.montantHonoraire" (ngModelChange)="setChangeIntoLettreMission()" class="input-number-nog">
                     </div> 
                   </div>
                 </div>
@@ -587,7 +587,7 @@ interface TabDiligence {
                 <div class="body-element-nog">
                   <div class="container-input-title-nog">
                     <div class="input-bloc-nog">
-                      <select [(ngModel)]="nogPartie2.natureMission" class="select-nature-mission">
+                      <select [(ngModel)]="nogPartie2.natureMission" (ngModelChange)="setChangeIntoNatureMission()" class="select-nature-mission">
                         <option value="">Sélectionner une nature de mission</option>
                         <option *ngFor="let nature of getNatureMissionsByType()" [value]="nature">{{ nature }}</option>
                       </select>
@@ -1177,7 +1177,7 @@ interface TabDiligence {
                   <div class="container-seuil-4-3">
                     <div class="title-seuil">Seuil de signification retenu pour les opérations d’inventaire</div>
                     <div class="container-input-seuil">
-                      <input type="number" class="input-number" [(ngModel)]="nogPartie4.seuil"/>
+                      <input type="number" class="input-number" [(ngModel)]="nogPartie4.seuil" (ngModelChange)="setChangeIntoSeuil()"/>
                     </div>
                   </div>
                 </div>
@@ -1337,7 +1337,7 @@ interface TabDiligence {
               <div *ngIf="nogPartie6.checkboxEtage2 == 'Autre' && nogPartie6.checkboxEtage1 == 'OutilReport'" id="container-autre-etage-2">
                 <div class="container-element-deontologie">
                   <div class="libelle-deontologie">Autre : </div>
-                  <input type="text" [(ngModel)]="nogPartie6.libelleAutreEtage2" class="input-text"/>
+                  <input type="text" [(ngModel)]="nogPartie6.libelleAutreEtage2" (ngModelChange)="setChangeIntoRestitutionClient()" class="input-text"/>
                 </div>
               </div>
               <div class="container-element-rest-client">
@@ -1349,13 +1349,13 @@ interface TabDiligence {
               <div *ngIf="nogPartie6.checkboxEtage1 == 'Autre'" id="container-autre-etage-1">
                 <div class="container-element-deontologie">
                   <div class="libelle-deontologie">Autre : </div>
-                  <input type="text" [(ngModel)]="nogPartie6.libelleAutreEtage1" class="input-text"/>
+                  <input type="text" [(ngModel)]="nogPartie6.libelleAutreEtage1" (ngModelChange)="setChangeIntoRestitutionClient()" class="input-text"/>
                 </div>
               </div>
               <div id="container-commentaire-general">
                 <div class="container-element-deontologie">
                   <div class="libelle-deontologie">Commentaire général : </div>
-                  <input type="text" [(ngModel)]="nogPartie6.commGeneral" class="input-text"/>
+                  <input type="text" [(ngModel)]="nogPartie6.commGeneral" (ngModelChange)="setChangeIntoRestitutionClient()" class="input-text"/>
                 </div>
               </div>
             </div>
@@ -3631,11 +3631,13 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         }
       }
       input.value = '';
+      this.setChangeIntoAnnexe();
     }
   }
 
   removeFile(index: number): void {
     this.nogPartieAnnexes.tabFiles.splice(index, 1);
+    this.setChangeIntoAnnexe();
   }
 
   formatFileSize(bytes: number): string {
@@ -3669,6 +3671,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       const draggedFile = this.nogPartieAnnexes.tabFiles[this.draggedIndex];
       this.nogPartieAnnexes.tabFiles.splice(this.draggedIndex, 1);
       this.nogPartieAnnexes.tabFiles.splice(dropIndex, 0, draggedFile);
+      this.setChangeIntoAnnexe();
     }
   }
 
@@ -4303,43 +4306,64 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   toggleEditContact(index: number): void {
     this.nogPartie1.contacts[index].isEditing = !this.nogPartie1.contacts[index].isEditing;
+    if (!this.nogPartie1.contacts[index].isEditing) {
+      this.setChangeIntoContact();
+    }
   }
 
   toggleEditRespMission(): void {
     this.nogPartie2.equipeInter[0].isEditingRespMission = !this.nogPartie2.equipeInter[0].isEditingRespMission;
+    if (!this.nogPartie2.equipeInter[0].isEditingRespMission) {
+      this.setChangeIntoEquipeInter();
+    }
   }
 
   toggleEditDmcm(): void {
     this.nogPartie2.equipeInter[0].isEditingDmcm = !this.nogPartie2.equipeInter[0].isEditingDmcm;
+    if (!this.nogPartie2.equipeInter[0].isEditingDmcm) {
+      this.setChangeIntoEquipeInter();
+    }
   }
 
   toggleEditFactureur(): void {
     this.nogPartie2.equipeInter[0].isEditingFactureur = !this.nogPartie2.equipeInter[0].isEditingFactureur;
+    if (!this.nogPartie2.equipeInter[0].isEditingFactureur) {
+      this.setChangeIntoEquipeInter();
+    }
   }
 
   toggleEditLogicielGT(index: number): void {
     this.nogPartie3.tabLogicielGT[index].isEditing = !this.nogPartie3.tabLogicielGT[index].isEditing;
+    if (!this.nogPartie3.tabLogicielGT[index].isEditing) {
+      this.setChangeIntoLogiciel();
+    }
   }
 
   toggleEditLogicielClient(index: number): void {
     this.nogPartie3.tabLogicielClient[index].isEditing = !this.nogPartie3.tabLogicielClient[index].isEditing;
+    if (!this.nogPartie3.tabLogicielClient[index].isEditing) {
+      this.setChangeIntoLogiciel();
+    }
   }
 
   deleteContact(index: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce contact ?')) {
       this.nogPartie1.contacts.splice(index, 1);
+      this.setChangeIntoContact();
     }
   }
 
   deleteLogicielGT(index: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce logiciel ?')) {
       this.nogPartie3.tabLogicielGT.splice(index, 1);
+      this.setChangeIntoLogiciel();
     }
   }
 
   deleteLogicielClient(index: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer ce logiciel ?')) {
       this.nogPartie3.tabLogicielClient.splice(index, 1);
+      this.setChangeIntoLogiciel();
     }
   }
 
@@ -4354,6 +4378,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       libelle: '',
       isEditing: true
     });
+    this.setChangeIntoContact();
   }
 
   addPlanning(): void {
@@ -4365,6 +4390,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       listeValue: Array(this.listeLibPlanningSauv.length).fill(0),
       isEditing: true
     });
+    this.setChangeIntoPlanning();
   }
 
   addLogicielGT(): void {
@@ -4374,6 +4400,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       montant: 0,
       isEditing: true
     });
+    this.setChangeIntoLogiciel();
   }
 
   addLogicielClient(): void {
@@ -4382,15 +4409,20 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       logiciel: '',
       isEditing: true
     });
+    this.setChangeIntoLogiciel();
   }
 
   toggleEditAssocie(index: number): void {
     this.nogPartie1.associes[index].isEditing = !this.nogPartie1.associes[index].isEditing;
+    if (!this.nogPartie1.associes[index].isEditing) {
+      this.setChangeIntoAssocie();
+    }
   }
 
   deleteAssocie(index: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer cet associé ?')) {
       this.nogPartie1.associes.splice(index, 1);
+      this.setChangeIntoAssocie();
     }
   }
 
@@ -4402,10 +4434,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       pourcPart: 0,
       isEditing: true
     });
+    this.setChangeIntoAssocie();
   }
 
   updateVariations(): void {
     // Cette fonction sera appelée automatiquement lors de la modification des inputs
+    this.setChangeIntoCS();
   }
 
   calculateVariation(field: keyof ChiffresSignificatifs): string {
@@ -4434,71 +4468,81 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   onEditorContentChange(event: Event): void {
     const target = event.target as HTMLElement;
     const newContent = target.textContent || '';
-    
+
     this.nogPartie1.activiteExHisto = newContent;
+    this.setChangeIntoActiviteHisto();
   }
 
   onEditorContentChangePrecisionTravaux(event: Event): void {
     const target = event.target as HTMLElement;
     const newContent = target.textContent || '';
-    
+
     this.nogPartie2.precisionTravaux = newContent;
+    this.setChangeIntoPrecisionTravaux();
   }
 
   onEditorContentChangeOrgaServiceAdmin(event: Event): void {
     const target = event.target as HTMLElement;
     const newContent = target.textContent || '';
-    
+
     this.nogPartie3.orgaServiceAdmin = newContent;
+    this.setChangeIntoOrgaServiceAdmin();
   }
 
   onEditorContentChangeSyntheseEntretientDir(event: Event): void {
     const target = event.target as HTMLElement;
     const newContent = target.textContent || '';
-    
+
     this.nogPartie3.syntheseEntretientDir = newContent;
+    this.setChangeIntoSyntheseEntretient();
   }
 
   onEditorContentChangeAppreciationRisqueVigilence(event: Event): void {
     const target = event.target as HTMLElement;
     const newContent = target.textContent || '';
-    
+
     this.nogPartie4.appreciationRisqueVigilence = newContent;
+    this.setChangeIntoVigilance();
   }
 
   onEditorContentChangeAspectsComptables(event: Event): void {
     const target = event.target as HTMLElement;
     const newContent = target.textContent || '';
-    
+
     this.nogPartie4.aspectsComptables = newContent;
+    this.setChangeIntoPrincipeComp();
   }
 
   onEditorContentChangeAspectsFiscaux(event: Event): void {
     const target = event.target as HTMLElement;
     const newContent = target.textContent || '';
-    
+
     this.nogPartie4.aspectsFiscaux = newContent;
+    this.setChangeIntoPrincipeComp();
   }
 
   onEditorContentChangeAspectsSociaux(event: Event): void {
     const target = event.target as HTMLElement;
     const newContent = target.textContent || '';
-    
+
     this.nogPartie4.aspectsSociaux = newContent;
+    this.setChangeIntoPrincipeComp();
   }
 
   onEditorContentChangeAspectsJuridiques(event: Event): void {
     const target = event.target as HTMLElement;
     const newContent = target.textContent || '';
-    
+
     this.nogPartie4.aspectsJuridiques = newContent;
+    this.setChangeIntoPrincipeComp();
   }
 
   onEditorContentChangeComptesAnnuels(event: Event): void {
     const target = event.target as HTMLElement;
     const newContent = target.textContent || '';
-    
+
     this.nogPartie4.comptesAnnuels = newContent;
+    this.setChangeIntoPrincipeComp();
   }
 
   ngAfterViewInit(): void {
@@ -4611,6 +4655,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onTypeMissionChange(): void {
     this.nogPartie2.natureMission = '';
+    this.setChangeIntoTypeMission();
   }
 
   toggleDiligenceDropdown(): void {
@@ -4649,6 +4694,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     if (!groupeObj.tabDiligence.some(d => d.diligence === diligence.diligence)) {
       groupeObj.tabDiligence.push({ ...diligence });
     }
+    this.setChangeIntoDiligance();
   }
 
   removeDiligenceFromNog(diligence: TabDiligence): void {
@@ -4668,15 +4714,20 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         }
       }
     }
+    this.setChangeIntoDiligance();
   }
 
   toggleEditPlanning(index: number): void {
     this.nogPartie2.planning[index].isEditing = !this.nogPartie2.planning[index].isEditing;
+    if (!this.nogPartie2.planning[index].isEditing) {
+      this.setChangeIntoPlanning();
+    }
   }
 
   deletePlanning(index: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette ligne de planning ?')) {
       this.nogPartie2.planning.splice(index, 1);
+      this.setChangeIntoPlanning();
     }
   }
 
@@ -4753,6 +4804,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.selectedDiligences.push(newDiligenceCopy);
     this.addDiligenceToNog(newDiligenceCopy);
     this.showAddDiligenceModal = false;
+    this.setChangeIntoDiligance();
   }
 
   addDiligenceLabManuelle(): void {
@@ -4784,6 +4836,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     };
     this.tabDiligenceLab.push(newDiligenceLabCopy);
     this.showAddDiligenceLabModal = false;
+    this.setChangeIntoDiliganceLab();
   }
 
   isGroupeActivated(diligence: Diligence): boolean {
@@ -4888,6 +4941,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   updateCheckboxDeontologie(checkbox: string): void {
     console.log('nogPartie7', this.nogPartie7);
+    this.setChangeIntoDeontologie();
   }
 
   updateCheckboxRestClient(checkbox: string): void {
@@ -4901,6 +4955,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       this.nogPartie6.checkboxEtage1 = checkbox;
     }
     console.log('nogPartie6', this.nogPartie6);
+    this.setChangeIntoRestitutionClient();
   }
 
   updateCheckboxRestClientOutil(checkbox: string): void {
@@ -4914,6 +4969,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       this.nogPartie6.checkboxEtage2 = checkbox;
     }
     console.log('nogPartie6', this.nogPartie6);
+    this.setChangeIntoRestitutionClient();
   }
 
   updateCheckboxVigilance(checkbox: string): void {
@@ -4925,5 +4981,6 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       this.nogPartie4.checkboxVigilance = checkbox;
     }
     console.log('nogPartie4', this.nogPartie4);
+    this.setChangeIntoVigilance();
   }
 }
