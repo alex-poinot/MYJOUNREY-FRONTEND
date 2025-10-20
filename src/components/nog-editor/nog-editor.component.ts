@@ -180,6 +180,7 @@ interface Diligence {
 }
 
 interface TabDiligence {
+  cycle: string;
   diligence: string;
   titre: string;
   activation: boolean;
@@ -3448,6 +3449,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   showAddDiligenceLabModal: boolean = false;
 
   newDiligence: TabDiligence = {
+    cycle: '',
     diligence: '',
     titre: '',
     objectif: '',
@@ -3456,6 +3458,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   };
 
   newDiligenceLab: TabDiligence = {
+    cycle: '',
     diligence: '',
     titre: '',
     objectif: '',
@@ -4546,6 +4549,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   addDiligenceManuelle(): void {
     this.newDiligence = {
+      cycle: '',
       diligence: '',
       titre: '',
       objectif: '',
@@ -4578,6 +4582,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   addDiligenceLabManuelle(): void {
     this.newDiligenceLab = {
+      cycle: '',
       diligence: '',
       titre: '',
       objectif: '',
@@ -4676,6 +4681,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       }
 
       diligenceMap[item.GROUPE].tabDiligence.push({
+        cycle: item.GROUPE,
         diligence: item.DILIGENCE,
         titre: item.TITRE,
         activation: true,
