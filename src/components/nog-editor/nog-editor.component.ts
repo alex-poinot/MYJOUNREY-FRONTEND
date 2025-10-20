@@ -3738,6 +3738,131 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   }
 
+  setChangeIntoContact(): void {
+    console.log('Modification dans Contact (partie 1.2):', this.nogPartie1.contacts);
+  }
+
+  setChangeIntoAssocie(): void {
+    console.log('Modification dans Associés (partie 1.3):', this.nogPartie1.associes);
+  }
+
+  setChangeIntoCS(): void {
+    console.log('Modification dans Chiffres Significatifs (partie 1.4):', this.nogPartie1.chiffresSignificatifs);
+  }
+
+  setChangeIntoActiviteHisto(): void {
+    console.log('Modification dans Activité Historique (partie 1.5):', this.nogPartie1.activiteExHisto);
+  }
+
+  setChangeIntoLettreMission(): void {
+    console.log('Modification dans Lettre de Mission (partie 2.1):', {
+      dateMiseAJour: this.nogPartie2.dateMiseAJour,
+      montantHonoraire: this.nogPartie2.montantHonoraire
+    });
+  }
+
+  setChangeIntoTypeMission(): void {
+    console.log('Modification dans Type de Mission (partie 2.2):', this.nogPartie2.typeMission);
+  }
+
+  setChangeIntoNatureMission(): void {
+    console.log('Modification dans Nature de Mission (partie 2.3):', this.nogPartie2.natureMission);
+  }
+
+  setChangeIntoPlanning(): void {
+    console.log('Modification dans Planning (partie 2.4):', this.nogPartie2.planning);
+  }
+
+  setChangeIntoEquipeInter(): void {
+    console.log('Modification dans Équipe Intervention (partie 2.5):', this.nogPartie2.equipeInter);
+  }
+
+  setChangeIntoPrecisionTravaux(): void {
+    console.log('Modification dans Précision des Travaux (partie 2.6):', this.nogPartie2.precisionTravaux);
+  }
+
+  setChangeIntoLogiciel(): void {
+    console.log('Modification dans Logiciels (partie 3.1):', {
+      tabLogicielGT: this.nogPartie3.tabLogicielGT,
+      tabLogicielClient: this.nogPartie3.tabLogicielClient
+    });
+  }
+
+  setChangeIntoOrgaServiceAdmin(): void {
+    console.log('Modification dans Organisation Service Admin (partie 3.2):', this.nogPartie3.orgaServiceAdmin);
+  }
+
+  setChangeIntoFE(): void {
+    console.log('Modification dans Flux Électroniques (partie 3.3):', {
+      eInvoicing: this.nogPartie3.eInvoicing,
+      eReportingPaiement: this.nogPartie3.eReportingPaiement,
+      eReportingTransaction: this.nogPartie3.eReportingTransaction,
+      businessDev: this.nogPartie3.businessDev,
+      mailEnvoi: this.nogPartie3.mailEnvoi,
+      signatureMandat: this.nogPartie3.signatureMandat,
+      casGestion: this.nogPartie3.casGestion,
+      isFEValidate: this.nogPartie3.isFEValidate
+    });
+  }
+
+  setChangeIntoSyntheseEntretient(): void {
+    console.log('Modification dans Synthèse Entretien (partie 3.4):', this.nogPartie3.syntheseEntretientDir);
+  }
+
+  setChangeIntoVigilance(): void {
+    console.log('Modification dans Vigilance (partie 4.1):', {
+      checkboxVigilance: this.nogPartie4.checkboxVigilance,
+      appreciationRisqueVigilence: this.nogPartie4.appreciationRisqueVigilence
+    });
+  }
+
+  setChangeIntoPrincipeComp(): void {
+    console.log('Modification dans Principes Comptables (partie 4.2):', {
+      aspectsComptables: this.nogPartie4.aspectsComptables,
+      aspectsFiscaux: this.nogPartie4.aspectsFiscaux,
+      aspectsSociaux: this.nogPartie4.aspectsSociaux,
+      aspectsJuridiques: this.nogPartie4.aspectsJuridiques,
+      comptesAnnuels: this.nogPartie4.comptesAnnuels
+    });
+  }
+
+  setChangeIntoSeuil(): void {
+    console.log('Modification dans Seuil (partie 4.3):', this.nogPartie4.seuil);
+  }
+
+  setChangeIntoDiligance(): void {
+    console.log('Modification dans Diligences (partie 5):', this.nogPartie5.diligence);
+  }
+
+  setChangeIntoDiliganceLab(): void {
+    console.log('Modification dans Diligences LAB (partie 5):', this.tabDiligenceLab);
+  }
+
+  setChangeIntoRestitutionClient(): void {
+    console.log('Modification dans Restitution Client (partie 6):', {
+      checkboxEtage1: this.nogPartie6.checkboxEtage1,
+      checkboxEtage2: this.nogPartie6.checkboxEtage2,
+      libelleAutreEtage1: this.nogPartie6.libelleAutreEtage1,
+      libelleAutreEtage2: this.nogPartie6.libelleAutreEtage2,
+      commGeneral: this.nogPartie6.commGeneral
+    });
+  }
+
+  setChangeIntoDeontologie(): void {
+    console.log('Modification dans Déontologie (partie 7):', {
+      checkboxFormInit: this.nogPartie7.checkboxFormInit,
+      libelleFormInit: this.nogPartie7.libelleFormInit,
+      checkboxFormAnn: this.nogPartie7.checkboxFormAnn,
+      libelleFormAnn: this.nogPartie7.libelleFormAnn,
+      checkboxConflictCheck: this.nogPartie7.checkboxConflictCheck,
+      libelleConflictCheck: this.nogPartie7.libelleConflictCheck
+    });
+  }
+
+  setChangeIntoAnnexe(): void {
+    console.log('Modification dans Annexes:', this.nogPartieAnnexes.tabFiles);
+  }
+
   selectDossier(dossier: Dossier): void {
     this.selectedDossier = dossier;
     this.selectedDossierDisplay = `${dossier.DOS_PGI.trim()} - ${dossier.DOS_NOM.trim()}`;
