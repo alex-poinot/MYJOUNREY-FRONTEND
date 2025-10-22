@@ -93,6 +93,8 @@ interface NogPartie4 {
 
 interface NogPartie5 {
   diligence: Diligence[];
+  diligenceAdd: TabDiligence[];
+  diligenceLab: TabDiligence[];
   dateLastUpdateDiligence?: string;
   dateLastUpdateDiligenceLab?: string;
 }
@@ -157,8 +159,6 @@ interface Coordonnees {
   NAF_LIBELLE: string;
   DOS_SIRET: string;
   DOS_ADRESSE: string;
-  DOS_VILLE: string;
-  DOS_CP: string;
 }
 
 interface Contacts {
@@ -371,7 +371,7 @@ interface TabDiligence {
                     <div class="icon-coordonnees-nog">
                       <i class="fa-regular fa-location-dot"></i>
                     </div>
-                    <div class="text-coordonnees-nog"> {{ nogPartie1.coordonnees.DOS_ADRESSE }} {{ nogPartie1.coordonnees.DOS_CP }} {{ nogPartie1.coordonnees.DOS_VILLE }} </div>
+                    <div class="text-coordonnees-nog"> {{ nogPartie1.coordonnees.DOS_ADRESSE }} </div>
                   </div>
                   <div class="row-coordonnees-nog">
                     <div class="icon-coordonnees-nog">
@@ -816,7 +816,7 @@ interface TabDiligence {
                 <div class="title-element-nog">3.1. Logiciels utilisés<i title="Dernière mise à jour : {{nogPartie3.dateLastUpdateLogiciel}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
                   <div id="container-tab-logiciel-gt">
-                    <div class="titre-tab-logiciel">Logiciels interne</div>
+                    <div class="titre-tab-logiciel">Outils environnement GT</div>
                     <button class="btn-add-row" (click)="addLogicielGT()"><i class="fa-solid fa-plus"></i> Ajouter un logiciel</button>
                     <div class="container-table-logiciel-nog">
                       <table class="table-nog">
@@ -855,7 +855,7 @@ interface TabDiligence {
                     </div>
                   </div>
                   <div id="container-tab-logiciel-client">
-                    <div class="titre-tab-logiciel">Logiciels client</div>
+                    <div class="titre-tab-logiciel">Outils envrionnement client</div>
                     <button class="btn-add-row" (click)="addLogicielClient()"><i class="fa-solid fa-plus"></i> Ajouter un logiciel</button>
                     <div class="container-table-logiciel-nog">
                       <table class="table-nog">
@@ -1213,7 +1213,7 @@ interface TabDiligence {
             <div id="part-top-diligence">
               <div id="container-add-diligence">
                 <div class="multiselect-diligence">
-                  <div class="multiselect-label">Ajouter des diligences :</div>
+                  <div class="multiselect-label">Bibliothèque des diligences :</div>
                   <button class="btn-add-row" (click)="addDiligenceManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence</button>
                   <div class="multiselect-wrapper">
                     <div class="multiselect-dropdown" (click)="toggleDiligenceDropdown()">
@@ -1222,7 +1222,7 @@ interface TabDiligence {
                       <i class="fa-solid" [class.fa-chevron-down]="!showDiligenceDropdown" [class.fa-chevron-up]="showDiligenceDropdown"></i>
                     </div>
                     <div class="multiselect-options" *ngIf="showDiligenceDropdown">
-                      <div class="multiselect-option" *ngFor="let diligence of tabDiligenceImport" (click)="toggleDiligenceSelection(diligence)">
+                      <div class="multiselect-option" *ngFor="let diligence of nogPartie5.diligenceAdd" (click)="toggleDiligenceSelection(diligence)">
                         <input type="checkbox" [checked]="isDiligenceSelected(diligence)" (click)="$event.stopPropagation()">
                         <label>{{ diligence.diligence }} - {{ diligence.titre }}</label>
                       </div>
@@ -1301,10 +1301,10 @@ interface TabDiligence {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngIf="tabDiligenceLab.length == 0" class="row-no-data">
+                  <tr *ngIf="nogPartie5.diligenceLab.length == 0" class="row-no-data">
                     <td colspan="100%">Aucune diligence LAB ajoutée</td>
                   </tr>
-                  <tr *ngFor="let diligence of tabDiligenceLab">
+                  <tr *ngFor="let diligence of nogPartie5.diligenceLab">
                     <td>{{ diligence.diligence }}</td>
                     <td>{{ diligence.titre }}</td>
                     <td>
@@ -1583,7 +1583,7 @@ interface TabDiligence {
                 </tr>
                 <tr>
                   <td>Adresse</td>
-                  <td>{{ nogPartie1.coordonnees.DOS_ADRESSE }} {{ nogPartie1.coordonnees.DOS_CP }} {{ nogPartie1.coordonnees.DOS_VILLE }}</td>
+                  <td>{{ nogPartie1.coordonnees.DOS_ADRESSE }}</td>
                 </tr>
                 <tr>
                   <td>Siret</td>
@@ -2356,6 +2356,7 @@ interface TabDiligence {
 
     .text-coordonnees-nog {
       font-size: var(--font-size-md);
+      max-width: 22vw;
     }
 
     .icon-coordonnees-nog i {
@@ -3558,9 +3559,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       NAF_ID: '',
       NAF_LIBELLE: '',
       DOS_SIRET: '',
-      DOS_ADRESSE: '',
-      DOS_VILLE: '',
-      DOS_CP: ''
+      DOS_ADRESSE: ''
     },
     contacts: [],
     associes: [],
@@ -3630,7 +3629,9 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   nogPartie5: NogPartie5 = {
-    diligence: []
+    diligence: [],
+    diligenceAdd: [],
+    diligenceLab: []
   }
 
   nogPartie6: NogPartie6 = {
@@ -3713,9 +3714,6 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   selectedDiligences: TabDiligence[] = [];
   showDiligenceDropdown = false;
 
-  tabDiligenceImport: TabDiligence[] = [];
-  tabDiligenceLab: TabDiligence[] = [];
-
   private searchSubject = new Subject<string>();
 
   constructor(
@@ -3789,6 +3787,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoContact(): void {
     this.debounceLog('contact', () => {
       console.log('Modification dans Contact (partie 1.2):', this.nogPartie1.contacts);
+      this.insertNogContacts();
       this.nogPartie1.dateLastUpdateContacts = this.getDateNow();
     });
   }
@@ -3796,6 +3795,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoAssocie(): void {
     this.debounceLog('associe', () => {
       console.log('Modification dans Associés (partie 1.3):', this.nogPartie1.associes);
+      this.insertNogAssocies();
       this.nogPartie1.dateLastUpdateAssocies = this.getDateNow();
     });
   }
@@ -3803,6 +3803,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoCS(): void {
     this.debounceLog('cs', () => {
       console.log('Modification dans Chiffres Significatifs (partie 1.4):', this.nogPartie1.chiffresSignificatifs);
+      this.insertNogCS();
       this.nogPartie1.dateLastUpdateCS = this.getDateNow();
     });
   }
@@ -3810,6 +3811,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoActiviteHisto(): void {
     this.debounceLog('activiteHisto', () => {
       console.log('Modification dans Activité Historique (partie 1.5):', this.nogPartie1.activiteExHisto);
+      this.insertNogModuleTexte('MyNogVU_PRESDOSSIER_ActiviteExHisto', 'MyNogVU_PRESDOSSIER_DateLastModifActiviteExHisto', this.nogPartie1.activiteExHisto);
       this.nogPartie1.dateLastUpdateActiviteExHisto = this.getDateNow();
     });
   }
@@ -3820,6 +3822,8 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         dateMiseAJour: this.nogPartie2.dateMiseAJour,
         montantHonoraire: this.nogPartie2.montantHonoraire
       });
+      this.insertNogValue('MyNogVU_PRESMISSION_DateMAJLM', 'MyNogVU_PRESMISSION_DateLastModifLettreMission', this.nogPartie2.dateMiseAJour);
+      this.insertNogValue('MyNogVU_PRESMISSION_MontantHonoraires', 'MyNogVU_PRESMISSION_DateLastModifLettreMission', this.nogPartie2.montantHonoraire.toString());
       this.nogPartie2.dateLastUpdateLettreMission = this.getDateNow();
     });
   }
@@ -3827,6 +3831,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoTypeMission(): void {
     this.debounceLog('typeMission', () => {
       console.log('Modification dans Type de Mission (partie 2.2):', this.nogPartie2.typeMission);
+      this.insertNogValue('MyNogVU_PRESMISSION_TypeMission', 'MyNogVU_PRESMISSION_DateLastModifTypeMission', this.nogPartie2.typeMission);
       this.nogPartie2.dateLastUpdateTypeMission = this.getDateNow();
     });
   }
@@ -3834,6 +3839,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoNatureMission(): void {
     this.debounceLog('natureMission', () => {
       console.log('Modification dans Nature de Mission (partie 2.3):', this.nogPartie2.natureMission);
+      this.insertNogValue('MyNogVU_PRESMISSION_NatureMission', 'MyNogVU_PRESMISSION_DateLastModifNatureMission', this.nogPartie2.natureMission);
       this.nogPartie2.dateLastUpdateNatureMission = this.getDateNow();
     });
   }
@@ -3841,6 +3847,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoPlanning(): void {
     this.debounceLog('planning', () => {
       console.log('Modification dans Planning (partie 2.4):', this.nogPartie2.planning);
+      this.insertNogValue('MyNogVU_PRESMISSION_ConsultAutresPro', 'MyNogVU_PRESMISSION_DateLastModifPlanning', this.nogPartie2.consultationPro);
+      this.insertNogValue('MyNogVU_PRESMISSION_Interim', 'MyNogVU_PRESMISSION_DateLastModifPlanning', this.nogPartie2.interim);
+      this.insertNogValue('MyNogVU_PRESMISSION_Final', 'MyNogVU_PRESMISSION_DateLastModifPlanning', this.nogPartie2.final);
+      this.insertNogValue('MyNogVU_PRESMISSION_DelaiARespecter', 'MyNogVU_PRESMISSION_DateLastModifPlanning', this.nogPartie2.delaiRespecter);
+      this.insertNogPlanning();
       this.nogPartie2.dateLastUpdatePlanning = this.getDateNow();
     });
   }
@@ -3848,6 +3859,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoEquipeInter(): void {
     this.debounceLog('equipeInter', () => {
       console.log('Modification dans Équipe Intervention (partie 2.5):', this.nogPartie2.equipeInter);
+      this.insertNogEquipeInter();
       this.nogPartie2.dateLastUpdateEquipeInter = this.getDateNow();
     });
   }
@@ -3855,6 +3867,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoPrecisionTravaux(): void {
     this.debounceLog('precisionTravaux', () => {
       console.log('Modification dans Précision des Travaux (partie 2.6):', this.nogPartie2.precisionTravaux);
+      this.insertNogModuleTexte('MyNogVU_PRESMISSION_PrecisionTravaux', 'MyNogVU_PRESMISSION_DateLastModifPrecisionTravaux', this.nogPartie2.precisionTravaux);
       this.nogPartie2.dateLastUpdatePrecisionTravaux = this.getDateNow();
     });
   }
@@ -3865,6 +3878,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         tabLogicielGT: this.nogPartie3.tabLogicielGT,
         tabLogicielClient: this.nogPartie3.tabLogicielClient
       });
+      this.insertNogLogiciel();
       this.nogPartie3.dateLastUpdateLogiciel = this.getDateNow();
     });
   }
@@ -3872,29 +3886,15 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoOrgaServiceAdmin(): void {
     this.debounceLog('orgaServiceAdmin', () => {
       console.log('Modification dans Organisation Service Admin (partie 3.2):', this.nogPartie3.orgaServiceAdmin);
+      this.insertNogModuleTexte('MyNogVU_ORGAADMINCOMPTA_OrgaServiceAdmin', 'MyNogVU_ORGAADMINCOMPTA_DateLastModifOrgaServiceAdmin', this.nogPartie3.orgaServiceAdmin);
       this.nogPartie3.dateLastUpdateOrgaServiceAdmin = this.getDateNow();
-    });
-  }
-
-  setChangeIntoFE(): void {
-    this.debounceLog('fe', () => {
-      console.log('Modification dans Facture Électroniques (partie 3.3):', {
-        eInvoicing: this.nogPartie3.eInvoicing,
-        eReportingPaiement: this.nogPartie3.eReportingPaiement,
-        eReportingTransaction: this.nogPartie3.eReportingTransaction,
-        businessDev: this.nogPartie3.businessDev,
-        mailEnvoi: this.nogPartie3.mailEnvoi,
-        signatureMandat: this.nogPartie3.signatureMandat,
-        casGestion: this.nogPartie3.casGestion,
-        isFEValidate: this.nogPartie3.isFEValidate
-      });
-      this.nogPartie3.dateLastUpdateFE = this.getDateNow();
     });
   }
 
   setChangeIntoSyntheseEntretien(): void {
     this.debounceLog('syntheseEntretien', () => {
       console.log('Modification dans Synthèse Entretien (partie 3.4):', this.nogPartie3.syntheseEntretienDir);
+      this.insertNogModuleTexte('MyNogVU_ORGAADMINCOMPTA_SyntheseEntretien', 'MyNogVU_PRESDOSSIER_DateLastModifSyntheseEntretien', this.nogPartie3.syntheseEntretienDir);
       this.nogPartie3.dateLastUpdateSyntheseEntretien = this.getDateNow();
     });
   }
@@ -3905,6 +3905,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         checkboxVigilance: this.nogPartie4.checkboxVigilance,
         appreciationRisqueVigilence: this.nogPartie4.appreciationRisqueVigilence
       });
+      this.insertNogVigilance();
       this.nogPartie4.dateLastUpdateVigilance = this.getDateNow();
     });
   }
@@ -3918,6 +3919,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         aspectsJuridiques: this.nogPartie4.aspectsJuridiques,
         comptesAnnuels: this.nogPartie4.comptesAnnuels
       });
+      this.insertNogModuleTexte('MyNogVU_ZONERISQUE_AspectsComptables', 'MyNogVU_ZONERISQUE_DateLastModifPrincipeComp', this.nogPartie4.aspectsComptables);
+      this.insertNogModuleTexte('MyNogVU_ZONERISQUE_AspectsFiscaux', 'MyNogVU_ZONERISQUE_DateLastModifPrincipeComp', this.nogPartie4.aspectsFiscaux);
+      this.insertNogModuleTexte('MyNogVU_ZONERISQUE_AspectsSociaux', 'MyNogVU_ZONERISQUE_DateLastModifPrincipeComp', this.nogPartie4.aspectsSociaux);
+      this.insertNogModuleTexte('MyNogVU_ZONERISQUE_AspectsJuridiques', 'MyNogVU_ZONERISQUE_DateLastModifPrincipeComp', this.nogPartie4.aspectsJuridiques);
+      this.insertNogModuleTexte('MyNogVU_ZONERISQUE_ComptesAnnuels', 'MyNogVU_ZONERISQUE_DateLastModifPrincipeComp', this.nogPartie4.comptesAnnuels);
       this.nogPartie4.dateLastUpdatePrincipeComp = this.getDateNow();
     });
   }
@@ -3925,6 +3931,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoSeuil(): void {
     this.debounceLog('seuil', () => {
       console.log('Modification dans Seuil (partie 4.3):', this.nogPartie4.seuil);
+      this.insertNogValue('MyNogVU_ZONERISQUE_Seuil', 'MyNogVU_ZONERISQUE_DateLastModifSeuil', this.nogPartie4.seuil.toString());
       this.nogPartie4.dateLastUpdateSeuil = this.getDateNow();
     });
   }
@@ -3932,13 +3939,16 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoDiligance(): void {
     this.debounceLog('diligance', () => {
       console.log('Modification dans Diligences (partie 5):', this.nogPartie5.diligence);
+      this.insertNogDiligence();
+      this.insertNogDiligenceAdd();
       this.nogPartie5.dateLastUpdateDiligence = this.getDateNow();
     });
   }
 
   setChangeIntoDiliganceLab(): void {
     this.debounceLog('diliganceLab', () => {
-      console.log('Modification dans Diligences LAB (partie 5):', this.tabDiligenceLab);
+      console.log('Modification dans Diligences LAB (partie 5):', this.nogPartie5.diligenceLab);
+      this.insertNogDiligenceLab();
       this.nogPartie5.dateLastUpdateDiligenceLab = this.getDateNow();
     });
   }
@@ -3952,6 +3962,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         libelleAutreEtage2: this.nogPartie6.libelleAutreEtage2,
         commGeneral: this.nogPartie6.commGeneral
       });
+
+      this.insertNogValue('MyNogVU_RESTCLIENT_ChoixRestClient', 'MyNogVU_RESTCLIENT_DateLastModifRestClient', this.nogPartie6.checkboxEtage1);
+      this.insertNogValue('MyNogVU_RESTCLIENT_ChoixOutil', 'MyNogVU_RESTCLIENT_DateLastModifRestClient', this.nogPartie6.checkboxEtage2);
+      this.insertNogValue('MyNogVU_RESTCLIENT_LibelleAutreOutil', 'MyNogVU_RESTCLIENT_DateLastModifRestClient', this.nogPartie6.libelleAutreEtage2 ?? '');
+      this.insertNogValue('MyNogVU_RESTCLIENT_LibelleAutreRestClient', 'MyNogVU_RESTCLIENT_DateLastModifRestClient', this.nogPartie6.libelleAutreEtage1 ?? '');
+      this.insertNogModuleTexte('MyNogVU_RESTCLIENT_CommGeneral', 'MyNogVU_RESTCLIENT_DateLastModifRestClient', this.nogPartie6.commGeneral);
       this.nogPartie6.dateLastUpdateRestitutionClient = this.getDateNow();
     });
   }
@@ -3966,6 +3982,9 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         checkboxConflictCheck: this.nogPartie7.checkboxConflictCheck,
         libelleConflictCheck: this.nogPartie7.libelleConflictCheck
       });
+      this.insertNogValue('MyNogVU_DEONTOLOGIE_Coche1', 'MyNogVU_DEONTOLOGIE_DateLastModifCoche', this.nogPartie7.checkboxFormInit ? 'Oui' : 'Non');
+      this.insertNogValue('MyNogVU_DEONTOLOGIE_Coche2', 'MyNogVU_DEONTOLOGIE_DateLastModifCoche', this.nogPartie7.checkboxFormAnn ? 'Oui' : 'Non');
+      this.insertNogValue('MyNogVU_DEONTOLOGIE_Coche3', 'MyNogVU_DEONTOLOGIE_DateLastModifCoche', this.nogPartie7.checkboxConflictCheck ? 'Oui' : 'Non');
       this.nogPartie7.dateLastUpdateDeontologie = this.getDateNow();
     });
   }
@@ -3973,6 +3992,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   setChangeIntoAnnexe(): void {
     this.debounceLog('annexe', () => {
       console.log('Modification dans Annexes:', this.nogPartieAnnexes.tabFiles);
+      this.insertNogFileAnnexe();
       this.nogPartieAnnexes.dateLastUpdateAnnexe = this.getDateNow();
     });
   }
@@ -4022,13 +4042,15 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         item.MD_MISSION === this.selectedDossier!.MD_MISSION &&
         item.MD_MILLESIME === this.selectedDossier!.MD_MILLESIME
     );
-    
+
+    let codeAffaire = '';
+
     listeMission.forEach(item => {
       console.log('CODE_AFFAIRE', item.CODE_AFFAIRE);
-      return item.CODE_AFFAIRE;
+      codeAffaire = item.CODE_AFFAIRE;
     });
     
-    return '';
+    return codeAffaire;
   }
 
   onMissionChange(): void {
@@ -4083,11 +4105,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     });
 
     this.selectedCodeAffaire = this.getCodeAffaireSelected();
+    console.log('CODE_AFFAIRE RETURN',this.selectedCodeAffaire);
 
     this.isDossierMissionMillesimeSelected = true;
 
     this.verifNogLoad().then(verifNog => {
-      if(verifNog.length == 0) {
+      // if(verifNog.length == 0) {
         this.loadCoordonnees();
         this.loadContacts();
         this.loadChiffresSignificatifs();
@@ -4100,9 +4123,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         this.loadMontantLogiciel();
         this.loadModuleFE();
         this.loadListeBDFE();
-      } else {
-        console.log('DONNEE TABLE NOG');
-      }
+
+        this.insertNogVigilance();
+      // } else {
+      //   console.log('DONNEE TABLE NOG');
+      // }
     }).catch(error => {
       console.error('Erreur lors de la vérification du NOG:', error);
     });
@@ -4215,6 +4240,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   verifNogLoad(): Promise<any[]> {
+    console.log('CODE AFFAIRE VERIF',this.selectedCodeAffaire);
     return new Promise((resolve, reject) => {
       this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/verifNogLoad/${this.selectedCodeAffaire}`)
       .subscribe({
@@ -4225,19 +4251,19 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   }
 
   loadCoordonnees(): void {
-    this.http.get<{ success: boolean; data: Coordonnees[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getCoordonneesNog/${this.selectedDossier?.DOS_PGI}`)
+    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getCoordonneesNog/${this.selectedDossier?.DOS_PGI}`)
     .subscribe(response => {
       this.nogPartie1.coordonnees.DOS_PGI = response.data[0].DOS_PGI;
       this.nogPartie1.coordonnees.DOS_NOM = response.data[0].DOS_NOM;
       this.nogPartie1.coordonnees.DOS_SIRET = response.data[0].DOS_SIRET;
-      this.nogPartie1.coordonnees.DOS_ADRESSE = response.data[0].DOS_ADRESSE;
-      this.nogPartie1.coordonnees.DOS_CP = response.data[0].DOS_CP;
-      this.nogPartie1.coordonnees.DOS_ADRESSE = response.data[0].DOS_ADRESSE;
+      this.nogPartie1.coordonnees.DOS_ADRESSE = response.data[0].DOS_ADRESSE + ' ' + response.data[0].DOS_CP + ' ' + response.data[0].DOS_VILLE;
       this.nogPartie1.coordonnees.NAF_LIBELLE = response.data[0].NAF_LIBELLE;
       this.nogPartie1.coordonnees.NAF_ID = response.data[0].NAF_ID;
+      this.nogPartie1.dateLastUpdateCoordonnees = this.getDateNow();
       this.isCoordonneesLoaded = true;
       this.checkIdAllDataLoaded();
       console.log('NOG PARTIE 1',this.nogPartie1);
+      this.insertNogCoordonnees();
     });
   }
 
@@ -4245,9 +4271,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.http.get<Contacts[]>(`${environment.apiUrlMyVision}/dossierDetail/getContactDossierForMyJourney/${this.selectedDossier?.DOS_PGI}`)
     .subscribe(response => {
       this.nogPartie1.contacts = response;
+      this.nogPartie1.dateLastUpdateContacts = this.getDateNow();
       this.isContactsLoaded = true;
       this.checkIdAllDataLoaded();
       console.log('NOG PARTIE 1',this.nogPartie1);
+      this.insertNogContacts();
     });
   }
 
@@ -4272,9 +4300,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         });
         // this.nogPartie1.chiffresSignificatifs = response;
       }
+      this.nogPartie1.dateLastUpdateCS = this.getDateNow();
       this.isChiffresSignificatifsLoaded = true;
       this.checkIdAllDataLoaded();
       console.log('NOG PARTIE 1',this.nogPartie1);
+      this.insertNogCS();
     });
   }
 
@@ -4282,9 +4312,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.http.get<Associes[]>(`${environment.apiUrlMyVision}/dossierDetail/getAssocieNogMyJourney/${this.selectedDossier?.DOS_PGI}`)
     .subscribe(response => {
       this.nogPartie1.associes = response;
+      this.nogPartie1.dateLastUpdateAssocies = this.getDateNow();
       this.isAssociesLoaded = true;
       this.checkIdAllDataLoaded();
       console.log('NOG PARTIE 1',this.nogPartie1);
+      this.insertNogAssocies();
     });
   }
 
@@ -4300,8 +4332,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
       this.objTypeNatureMission = response.data;
       this.isTypeMissionNatureLoaded = true;
+      this.nogPartie2.dateLastUpdateTypeMission = this.getDateNow();
+      this.nogPartie2.dateLastUpdateNatureMission = this.getDateNow();
       this.checkIdAllDataLoaded();
       console.log('response.data',response.data);
+      this.insertNogTypeMission();
+      this.insertNogNatureMission();
     });
   }
 
@@ -4313,9 +4349,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         this.nogPartie2.planning = data;
       }
       this.isPlanningsLoaded = true;
+      this.nogPartie2.dateLastUpdatePlanning = this.getDateNow();
       this.listeLibPlanningSauv = data[0].listeLib;
       this.checkIdAllDataLoaded();
       console.log('NOG PARTIE 2',this.nogPartie2);
+      this.insertNogPlanning();
     });
   }
 
@@ -4331,8 +4369,10 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       tab.push(obj); 
       this.nogPartie2.equipeInter = tab;
       this.isEquipeInterLoaded = true;
+      this.nogPartie2.dateLastUpdateEquipeInter = this.getDateNow();
       this.checkIdAllDataLoaded();
       console.log('NOG PARTIE 2',this.nogPartie2);
+      this.insertNogEquipeInter();
     });
   }
 
@@ -4354,8 +4394,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         this.nogPartie3.isFEValidate = true;
       }
       this.isModuleFELoaded = true;
+      this.nogPartie3.dateLastUpdateFE = this.getDateNow();
       this.checkIdAllDataLoaded();
       console.log('response',response);
+      if(this.isListeBDFELoaded && this.isModuleFELoaded) {
+        this.insertNogFE();
+      }
     });
   }
 
@@ -4366,6 +4410,9 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       this.isListeBDFELoaded = true;
       this.checkIdAllDataLoaded();
       console.log('response',response);
+      if(this.isListeBDFELoaded && this.isModuleFELoaded) {
+        this.insertNogFE();
+      }
     });
   }
 
@@ -4374,9 +4421,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     .subscribe(response => {
       let data = this.transformDataDiligence(response.data);
       this.isDiligencesDefaultLoaded = true;
+      this.nogPartie5.dateLastUpdateDiligence = this.getDateNow();
       this.checkIdAllDataLoaded();
       this.nogPartie5.diligence = data;
       console.log('this.nogPartie5',this.nogPartie5);
+      this.insertNogDiligence();
     });
   }
 
@@ -4386,7 +4435,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       let data = this.transformDataDiligenceBibliotheque(response.data);
       this.isDiligencesBibliothequeLoaded = true;
       this.checkIdAllDataLoaded();
-      this.tabDiligenceImport = data;
+      this.nogPartie5.diligenceAdd = data;
     });
   }
 
@@ -4405,8 +4454,10 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         )
       });
       this.isMontantLogicielLoaded = true;
+      this.nogPartie3.dateLastUpdateLogiciel = this.getDateNow();
       this.checkIdAllDataLoaded();
       console.log('NOG PARTIE 3',this.nogPartie3);
+      this.insertNogLogiciel();
     });
   }
 
@@ -4948,7 +4999,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       objectif: this.newDiligence.objectif.replace(/\n/g, '<br>'),
       controle: this.newDiligence.controle.replace(/\n/g, '<br>')
     };
-    this.tabDiligenceImport.push(newDiligenceCopy);
+    this.nogPartie5.diligenceAdd.push(newDiligenceCopy);
     this.selectedDiligences.push(newDiligenceCopy);
     this.addDiligenceToNog(newDiligenceCopy);
     this.showAddDiligenceModal = false;
@@ -4982,7 +5033,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       objectif: this.newDiligenceLab.objectif.replace(/\n/g, '<br>'),
       controle: this.newDiligenceLab.controle.replace(/\n/g, '<br>')
     };
-    this.tabDiligenceLab.push(newDiligenceLabCopy);
+    this.nogPartie5.diligenceLab.push(newDiligenceLabCopy);
     this.showAddDiligenceLabModal = false;
     this.setChangeIntoDiliganceLab();
   }
@@ -5145,5 +5196,417 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     const minutes = pad(now.getMinutes());
 
     return `${day}/${month}/${year} ${hours}:${minutes}`;
-}
+  }
+
+  insertNogCoordonnees(): void {
+    let obj = {
+      'codeAffaire': this.selectedCodeAffaire,
+      'nomSociete': this.nogPartie1.coordonnees.DOS_NOM,
+      'adresse': this.nogPartie1.coordonnees.DOS_ADRESSE,
+      'siret': this.nogPartie1.coordonnees.DOS_SIRET,
+      'codeAPE': this.nogPartie1.coordonnees.NAF_ID,
+      'libelleAPE': this.nogPartie1.coordonnees.NAF_LIBELLE,
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogCoordonnees`, obj)
+    .subscribe(response => {
+      console.log('insertNogCoordonnees',response);
+    });
+  }
+
+  insertNogContacts(): void {
+    let obj: any[] = [];
+
+    if(this.nogPartie1.contacts.length == 0) {
+      obj.push({codeAffaire: this.selectedCodeAffaire});
+    } else {
+      this.nogPartie1.contacts.forEach(contact => {
+        obj.push({
+          codeAffaire: this.selectedCodeAffaire,
+          prenom: contact.prenom,
+          nom: contact.nom,
+          fonction: contact.fonction,
+          telephone: contact.telephone,
+          adresseMail: contact.mail
+        })
+      });
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogContacts`, obj)
+    .subscribe(response => {
+      console.log('insertNogContacts',response);
+    });
+  }
+
+  insertNogAssocies(): void {
+    let obj: any[] = [];
+
+    if(this.nogPartie1.associes.length == 0) {
+      obj.push({codeAffaire: this.selectedCodeAffaire});
+    } else {
+      this.nogPartie1.associes.forEach(associe => {
+        obj.push({
+          codeAffaire: this.selectedCodeAffaire,
+          nom: associe.nom,
+          nbTitres: associe.nbPart,
+          montantCapital: associe.partCapital,
+          pourcDetention: associe.pourcPart
+        })
+      });
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogAssocies`, obj)
+    .subscribe(response => {
+      console.log('insertNogAssocies',response);
+    });
+  }
+
+  insertNogCS(): void {
+    let obj = {
+      'codeAffaire': this.selectedCodeAffaire,
+      'libelleN1': this.nogPartie1.chiffresSignificatifs[0].datePeriode,
+      'nbMoisN1': this.nogPartie1.chiffresSignificatifs[0].dureeExercice,
+      'effectifN1': this.nogPartie1.chiffresSignificatifs[0].effectif,
+      'capitauxPropresN1': this.nogPartie1.chiffresSignificatifs[0].capitauxPropres,
+      'bilanN1': this.nogPartie1.chiffresSignificatifs[0].bilanNet,
+      'caN1': this.nogPartie1.chiffresSignificatifs[0].ca,
+      'resultatN1': this.nogPartie1.chiffresSignificatifs[0].beneficePerte,
+      'libelleN2': this.nogPartie1.chiffresSignificatifs[1].datePeriode,
+      'nbMoisN2': this.nogPartie1.chiffresSignificatifs[1].dureeExercice,
+      'effectifN2': this.nogPartie1.chiffresSignificatifs[1].effectif,
+      'capitauxPropresN2': this.nogPartie1.chiffresSignificatifs[1].capitauxPropres,
+      'bilanN2': this.nogPartie1.chiffresSignificatifs[1].bilanNet,
+      'caN2': this.nogPartie1.chiffresSignificatifs[1].ca,
+      'resultatN2': this.nogPartie1.chiffresSignificatifs[1].beneficePerte,
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogCS`, obj)
+    .subscribe(response => {
+      console.log('insertNogCS',response);
+    });
+  }
+
+  insertNogTypeMission(): void {
+    let obj = {
+      'codeAffaire': this.selectedCodeAffaire,
+      'typeMission': this.nogPartie2.typeMission
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogTypeMission`, obj)
+    .subscribe(response => {
+      console.log('insertNogTypeMission',response);
+    });
+  }
+
+  insertNogNatureMission(): void {
+    let obj = {
+      'codeAffaire': this.selectedCodeAffaire,
+      'natureMission': this.nogPartie2.natureMission
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogNatureMission`, obj)
+    .subscribe(response => {
+      console.log('insertNogNatureMission',response);
+    });
+  }
+
+  insertNogPlanning(): void {
+    let obj: any[] = [];
+
+    if(this.nogPartie2.planning.length == 0) {
+      obj.push({codeAffaire: this.selectedCodeAffaire});
+    } else {
+      this.nogPartie2.planning.forEach(plan => {
+        for(let i = 0; i < plan.listeLib.length; i++) {
+          obj.push({
+            codeAffaire: this.selectedCodeAffaire,
+            fonction: plan.fonction,
+            nom: plan.nom,
+            periode: plan.listeLib[i],
+            nbHeures: plan.listeValue[i] == "" ? "0" : plan.listeValue[i]
+          })
+        }
+      });
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogPlanning`, obj)
+    .subscribe(response => {
+      console.log('insertNogPlanning',response);
+    });
+  }
+
+  insertNogEquipeInter(): void {
+    let obj: any[] = [];
+
+    if(this.nogPartie2.equipeInter.length == 0) {
+      obj.push({codeAffaire: this.selectedCodeAffaire});
+    } else {
+      this.nogPartie2.equipeInter.forEach(equipe => {
+        obj.push({
+          codeAffaire: this.selectedCodeAffaire,
+          fonction: 'DMCM',
+          nom: equipe.dmcm,
+          actif: equipe.dmcmStatut
+        });
+
+         obj.push({
+          codeAffaire: this.selectedCodeAffaire,
+          fonction: 'Responsable mission',
+          nom: equipe.respMission,
+          actif: equipe.respMissionStatut
+        });
+
+         obj.push({
+          codeAffaire: this.selectedCodeAffaire,
+          fonction: 'Factureur',
+          nom: equipe.factureur,
+          actif: equipe.factureurStatut
+        })
+      });
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogEquipeInter`, obj)
+    .subscribe(response => {
+      console.log('insertNogEquipeInter',response);
+    });
+  }
+
+  insertNogLogiciel(): void {
+    let obj: any[] = [];
+
+    if(this.nogPartie3.tabLogicielClient.length == 0 && this.nogPartie3.tabLogicielGT.length == 0) {
+      obj.push({codeAffaire: this.selectedCodeAffaire});
+    } else {
+      this.nogPartie3.tabLogicielClient.forEach(logiciel => {
+        obj.push({
+          codeAffaire: this.selectedCodeAffaire,
+          interneClient: 'Client',
+          type: logiciel.type,
+          outil: logiciel.logiciel
+        })
+      });
+      this.nogPartie3.tabLogicielGT.forEach(logiciel => {
+        obj.push({
+          codeAffaire: this.selectedCodeAffaire,
+          interneClient: 'Interne',
+          type: logiciel.type,
+          outil: logiciel.logiciel,
+          cout: logiciel.montant
+        })
+      });
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogLogiciel`, obj)
+    .subscribe(response => {
+      console.log('insertNogLogiciel',response);
+    });
+  }
+
+  insertNogFE(): void {
+    let obj: { tableFE: Array<any>; uniqueFE: { codeAffaire: string, eInvoicing: string, eReportingPaiement: string, eReportingTransaction: string, casGestion: string, envoiMail: string, signatureMandat: string } } = {
+      tableFE: [],
+      uniqueFE: {
+        codeAffaire: this.selectedCodeAffaire,
+        eInvoicing: '',
+        eReportingPaiement: '',
+        eReportingTransaction: '',
+        casGestion: '',
+        envoiMail: '',
+        signatureMandat: ''
+      }
+    };
+
+    if(this.nogPartie3.isFEValidate == false) {
+      obj.tableFE.push({codeAffaire: this.selectedCodeAffaire});
+    } else {
+      let i = 0;
+      this.listeBdFE.forEach(bd => {
+        obj.tableFE.push({
+          codeAffaire: this.selectedCodeAffaire,
+          categorie: bd.categorie,
+          mission: bd.logiciel,
+          outil: bd.logiciel,
+          bd: this.nogPartie3.businessDev[i]
+        });
+        i++;
+      });
+
+      obj.uniqueFE.eInvoicing = this.nogPartie3.eInvoicing;
+      obj.uniqueFE.eReportingPaiement = this.nogPartie3.eReportingPaiement;
+      obj.uniqueFE.eReportingTransaction = this.nogPartie3.eReportingTransaction;
+      obj.uniqueFE.casGestion = this.nogPartie3.casGestion;
+      obj.uniqueFE.envoiMail = this.nogPartie3.mailEnvoi;
+      obj.uniqueFE.signatureMandat = this.nogPartie3.signatureMandat;
+    }
+    this.http.post(`${environment.apiUrl}/nogs/insertNogFE`, obj)
+    .subscribe(response => {
+      console.log('insertNogFE',response);
+    });
+  }
+
+  insertNogVigilance(): void {
+    let obj = {
+      'codeAffaire': this.selectedCodeAffaire,
+      'vigilance': this.nogPartie4.checkboxVigilance
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogVigilance`, obj)
+    .subscribe(response => {
+      console.log('insertNogVigilance',response);
+    });
+  }
+
+  insertNogDiligence(): void {
+    let obj: any[] = [];
+
+    if(this.nogPartie5.diligence.length == 0) {
+      obj.push({codeAffaire: this.selectedCodeAffaire});
+    } else {
+      this.nogPartie5.diligence.forEach(dili => {
+        dili.tabDiligence.forEach(d => {
+          obj.push({
+            codeAffaire: this.selectedCodeAffaire,
+            cycle: dili.groupe,
+            cycleLibelle: dili.libelleGroupe,
+            codeDiligence: d.diligence,
+            titreDiligence: d.titre,
+            activation: d.activation ? 'Oui' : 'Non',
+            objectif: d.objectif,
+            controle: d.controle
+          })
+        });
+      });
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogDiligence`, obj)
+    .subscribe(response => {
+      console.log('insertNogDiligence',response);
+    });
+  }
+
+  insertNogModuleTexte(colonne: string, colonneDate: string, texte: string): void {
+    let obj = {
+      'codeAffaire': this.selectedCodeAffaire,
+      'texte': texte,
+      'colonne': colonne,
+      'colonneDate': colonneDate
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogModuleTexte`, obj)
+    .subscribe(response => {
+      console.log('insertNogModuleTexte',response);
+    });
+  }
+
+  insertNogValue(colonne: string, colonneDate: string, value: string): void {
+    let obj = {
+      'codeAffaire': this.selectedCodeAffaire,
+      'value': value,
+      'colonne': colonne,
+      'colonneDate': colonneDate
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogValue`, obj)
+    .subscribe(response => {
+      console.log('insertNogValue',response);
+    });
+  }
+
+  insertNogFileAnnexe(): void {
+    let obj: any[] = [];
+    
+    if (this.nogPartieAnnexes.tabFiles.length == 0) {
+      obj.push({ codeAffaire: this.selectedCodeAffaire });
+      this.http.post(`${environment.apiUrl}/nogs/insertNogFileAnnexe`, obj)
+        .subscribe(response => {
+          console.log('insertNogFileAnnexe', response);
+        });
+    } else {
+      let order = 1;
+      let filePromises = this.nogPartieAnnexes.tabFiles.map(f => {
+        return new Promise<void>((resolve, reject) => {
+          let reader = new FileReader();
+          reader.readAsDataURL(f);
+          reader.onload = () => {
+            let base64File = '';
+            let fileName = '';
+            if (reader.result) {
+              base64File = (reader.result as string).split(',')[1];
+              fileName = f.name;
+            }
+            obj.push({
+              codeAffaire: this.selectedCodeAffaire,
+              titre: fileName,
+              file: base64File,
+              order: order.toString()
+            });
+            order++
+            resolve();
+          };
+          reader.onerror = (error) => {
+            reject(error);
+          };
+        });
+      });
+
+      Promise.all(filePromises).then(() => {
+        this.http.post(`${environment.apiUrl}/nogs/insertNogFileAnnexe`, obj)
+          .subscribe(response => {
+            console.log('insertNogFileAnnexe', response);
+          });
+      }).catch(error => {
+        console.error('Error while reading files', error);
+      });
+    }
+  }
+
+  insertNogDiligenceAdd(): void {
+    let obj: any[] = [];
+
+    if(this.nogPartie5.diligenceAdd.length == 0) {
+      obj.push({codeAffaire: this.selectedCodeAffaire});
+    } else {
+      this.nogPartie5.diligenceAdd.forEach(dili => {
+          obj.push({
+            codeAffaire: this.selectedCodeAffaire,
+            cycle: dili.cycle,
+            codeDiligence: dili.diligence,
+            titreDiligence: dili.titre,
+            objectif: dili.objectif,
+            controle: dili.controle
+          })
+      });
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogDiligenceAdd`, obj)
+    .subscribe(response => {
+      console.log('insertNogDiligenceAdd',response);
+    });
+  }
+
+  insertNogDiligenceLab(): void {
+    let obj: any[] = [];
+
+    if(this.nogPartie5.diligenceLab.length == 0) {
+      obj.push({codeAffaire: this.selectedCodeAffaire});
+    } else {
+      this.nogPartie5.diligenceLab.forEach(dili => {
+          obj.push({
+            codeAffaire: this.selectedCodeAffaire,
+            cycle: dili.cycle,
+            cycleLibelle: '',
+            codeDiligence: dili.diligence,
+            titreDiligence: dili.titre,
+            activation: dili.activation ? 'Oui' : 'Non',
+            objectif: dili.objectif,
+            controle: dili.controle
+          })
+      });
+    }
+
+    this.http.post(`${environment.apiUrl}/nogs/insertNogDiligenceLab`, obj)
+    .subscribe(response => {
+      console.log('insertNogDiligenceLab',response);
+    });
+  }
 }
