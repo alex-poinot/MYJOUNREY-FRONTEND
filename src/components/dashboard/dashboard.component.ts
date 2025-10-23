@@ -3956,7 +3956,7 @@ export class DashboardComponent implements OnInit {
 
     // Construire l'URL avec ou sans port
     const domainAndPort = port ? `${domain}:${port}` : domain;
-    const url = `${protocolUrl}//${domainAndPort}/nog?dossier=${encodeURIComponent(dosPgi)}&mission=${encodeURIComponent(mission)}&millesime=${encodeURIComponent(millesime)}`;
+    const url = `${protocolUrl}//${domainAndPort}/myjourney/nog?dossier=${encodeURIComponent(dosPgi)}&mission=${encodeURIComponent(mission)}&millesime=${encodeURIComponent(millesime)}`;
 
     // Ouvrir l'URL dans un nouvel onglet
     window.open(url, '_blank');
