@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { APP_INITIALIZER } from '@angular/core';
+import { provideRouter, Router } from '@angular/router';
 import { MSAL_INSTANCE, MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import { PublicClientApplication } from '@azure/msal-browser';
 import { msalConfig } from './auth/auth.config';
@@ -140,9 +141,9 @@ export class AppComponent {
   isAuthenticated = false;
   shouldSkipAuth = environment.features.skipAuthentication || !cryptoAvailable;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {
     console.log('🎯 AppComponent - shouldSkipAuth:', this.shouldSkipAuth);
-    
+
     if (this.shouldSkipAuth) {
       // Mode sans authentification : toujours authentifié
       this.isAuthenticated = true;
@@ -151,6 +152,16 @@ export class AppComponent {
       this.authService.isAuthenticated$.subscribe(authenticated => {
         this.isAuthenticated = authenticated;
       });
+    }
+
+    // Gérer la navigation via URL
+    const path = window.location.pathname;
+    if (path === '/nog') {
+      this.currentTab = 'NOG';
+    } else if (path === '/test') {
+      this.currentTab = 'TEST';
+    } else {
+      this.currentTab = 'dashboard';
     }
   }
 
@@ -162,6 +173,7 @@ export class AppComponent {
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(),
+    provideRouter([]),
     ...(environment.features.skipAuthentication || !cryptoAvailable ? [] : [
       {
         provide: MSAL_INSTANCE,

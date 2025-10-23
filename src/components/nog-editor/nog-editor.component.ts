@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { PdfService } from '../../services/pdf.service';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
@@ -3735,7 +3736,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private http: HttpClient,
     private authService: AuthService,
-    private pdfService: PdfService
+    private pdfService: PdfService,
+    private route: ActivatedRoute
   ) {
     // Configuration de la recherche avec debounce
     this.searchSubject.pipe(
@@ -3770,7 +3772,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.setLogConnexion();
       }
     });
-    
+
     // Écouter les changements d'impersonation
     this.authService.impersonatedEmail$.subscribe(() => {
       this.userEmail = this.authService.getEffectiveUserEmail();
@@ -3778,6 +3780,18 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.dossiersLoaded = false;
         this.isLoadingAllDossiers = false;
         this.loadAllDossiers();
+      }
+    });
+
+    // Gérer les paramètres URL
+    this.route.queryParams.subscribe(params => {
+      const dossier = params['dossier'];
+      const mission = params['mission'];
+      const millesime = params['millesime'];
+
+      if (dossier && mission && millesime) {
+        // Attendre que les données soient chargées avant de valider
+        this.waitForDataAndValidate(dossier, mission, millesime);
       }
     });
   }
@@ -4162,6 +4176,48 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   getSelectedMissionLabel(): string {
     const mission = this.availableMissions.find(m => m.MD_MISSION === this.selectedMission);
     return mission ? mission.LIBELLE_MISSIONS : '';
+  }
+
+  private async waitForDataAndValidate(dosPgi: string, mission: string, millesime: string): Promise<void> {
+    // Attendre que les dossiers soient chargés
+    const checkInterval = setInterval(() => {
+      if (this.dossiersLoaded && this.allDossiers.length > 0) {
+        clearInterval(checkInterval);
+
+        // Trouver le dossier correspondant
+        const dossier = this.allDossiers.find(d => d.DOS_PGI === dosPgi);
+
+        if (dossier) {
+          // Sélectionner le dossier
+          this.selectDossier(dossier);
+
+          // Attendre un peu pour que les missions/millésimes se chargent
+          setTimeout(() => {
+            // Sélectionner la mission
+            this.selectedMission = mission;
+            this.onMissionChange();
+
+            // Attendre que les millésimes soient disponibles
+            setTimeout(() => {
+              // Sélectionner le millésime
+              this.selectedMillesime = millesime;
+
+              // Valider la sélection
+              if (this.canValidate()) {
+                this.validateSelection();
+              }
+            }, 100);
+          }, 100);
+        } else {
+          console.error(`Dossier ${dosPgi} introuvable`);
+        }
+      }
+    }, 100);
+
+    // Timeout après 10 secondes
+    setTimeout(() => {
+      clearInterval(checkInterval);
+    }, 10000);
   }
 
   private searchDossiersInCache(searchTerm: string): Dossier[] {
