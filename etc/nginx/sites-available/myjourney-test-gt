@@ -38,11 +38,16 @@ server {
         return 301 https://$server_name/myjourney/;
     }
     
+    # Redirection des routes Angular directes vers /myjourney/
+    location ~ ^/(nog|dashboard|test-editor)(/.*)?$ {
+        return 301 https://$server_name/myjourney$request_uri;
+    }
+
     # CORRECTION: Gestion des assets avec le bon chemin /myjourney/
     location ~ ^/myjourney/(.*\.(js|mjs|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))$ {
         proxy_pass http://127.0.0.1:8080/$1;
         proxy_set_header Host $host;
-        
+
         # Content-Type correct selon l'extension
         location ~ \.(js|mjs)$ {
             add_header Content-Type application/javascript;
@@ -50,7 +55,7 @@ server {
         location ~ \.css$ {
             add_header Content-Type text/css;
         }
-        
+
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
