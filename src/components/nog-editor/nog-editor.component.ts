@@ -5692,7 +5692,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         this.nogPartie1.dateLastUpdateCS = this.formatDateTimeBDD(key.MyNogVU_PRESDOSSIER_DateLastModifChriffresSign);
          
         //1.5
-        this.nogPartie1.activiteExHisto = key.MyNogVU_PRESDOSSIER_ActiviteExHisto;
+        this.nogPartie1.activiteExHisto = key.MyNogVU_PRESDOSSIER_ActiviteExHisto; //load dans l'editeur #editorContent
         this.nogPartie1.dateLastUpdateActiviteExHisto = this.formatDateTimeBDD(key.MyNogVU_PRESDOSSIER_DateLastModifActiviteExHisto);
 
         //PARTIE 2
@@ -5718,12 +5718,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         this.nogPartie2.dateLastUpdatePlanning = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifPlanning);
          
         //2.6
-        this.nogPartie2.precisionTravaux = key.MyNogVU_PRESMISSION_PrecisionTravaux;
+        this.nogPartie2.precisionTravaux = key.MyNogVU_PRESMISSION_PrecisionTravaux; //load dans l'editeur #editorContentPrecisionTravaux
         this.nogPartie2.dateLastUpdatePrecisionTravaux = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifPrecisionTravaux);
          
         //PARTIE 3
         //3.2
-        this.nogPartie3.orgaServiceAdmin = key.MyNogVU_ORGAADMINCOMPTA_OrgaServiceAdmin;
+        this.nogPartie3.orgaServiceAdmin = key.MyNogVU_ORGAADMINCOMPTA_OrgaServiceAdmin; //load dans l'editeur #editorContentOrgaServiceAdmin
         this.nogPartie3.dateLastUpdateOrgaServiceAdmin= this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifOrgaServiceAdmin); 
 
         //3.3
@@ -5736,7 +5736,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         this.nogPartie3.dateLastUpdateFE = this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifFE);  
          
         //3.4
-        this.nogPartie3.syntheseEntretienDir = key.MyNogVU_ORGAADMINCOMPTA_SyntheseEntretien;
+        this.nogPartie3.syntheseEntretienDir = key.MyNogVU_ORGAADMINCOMPTA_SyntheseEntretien; //load dans l'editeur #editorContentSyntheseEntretienDir
         this.nogPartie3.dateLastUpdateSyntheseEntretien = this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifSyntheseEntretien); 
 
         //PARTIE 4
@@ -5745,11 +5745,11 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         this.nogPartie4.dateLastUpdateVigilance = this.formatDateTimeBDD(key.MyNogVU_ZONERISQUE_DateLastModifVigilance); 
          
         //4.2
-        this.nogPartie4.aspectsComptables = key.MyNogVU_ZONERISQUE_AspectsComptables;
-        this.nogPartie4.aspectsFiscaux = key.MyNogVU_ZONERISQUE_AspectsFiscaux;
-        this.nogPartie4.aspectsSociaux = key.MyNogVU_ZONERISQUE_AspectsSociaux;
-        this.nogPartie4.aspectsJuridiques = key.MyNogVU_ZONERISQUE_AspectsJuridiques;
-        this.nogPartie4.comptesAnnuels = key.MyNogVU_ZONERISQUE_ComptesAnnuels;
+        this.nogPartie4.aspectsComptables = key.MyNogVU_ZONERISQUE_AspectsComptables; //load dans l'editeur #editorContentAspectsComptables
+        this.nogPartie4.aspectsFiscaux = key.MyNogVU_ZONERISQUE_AspectsFiscaux; //load dans l'editeur #editorContentAspectsFiscaux
+        this.nogPartie4.aspectsSociaux = key.MyNogVU_ZONERISQUE_AspectsSociaux; //load dans l'editeur #editorContentAspectsSociaux
+        this.nogPartie4.aspectsJuridiques = key.MyNogVU_ZONERISQUE_AspectsJuridiques; //load dans l'editeur #editorContentAspectsJuridiques
+        this.nogPartie4.comptesAnnuels = key.MyNogVU_ZONERISQUE_ComptesAnnuels; //load dans l'editeur #editorContentComptesAnnuels
         this.nogPartie4.dateLastUpdatePrincipeComp = this.formatDateTimeBDD(key.MyNogVU_ZONERISQUE_DateLastModifPrincipeComp); 
          
         //4.3
