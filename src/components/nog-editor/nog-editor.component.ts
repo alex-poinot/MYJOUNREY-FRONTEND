@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
@@ -561,6 +561,7 @@ interface TabDiligence {
                     <div
                       contenteditable="true"
                       class="editor-content"
+                      id="editorContent"
                       #editorContent
                       (input)="onEditorContentChange($event)"
                       (keyup)="onEditorContentChange($event)"
@@ -801,6 +802,7 @@ interface TabDiligence {
                     <div
                       contenteditable="true"
                       class="editor-content"
+                      id="editorContentPrecisionTravaux"
                       #editorContentPrecisionTravaux
                       (input)="onEditorContentChangePrecisionTravaux($event)"
                       (keyup)="onEditorContentChangePrecisionTravaux($event)"
@@ -910,6 +912,7 @@ interface TabDiligence {
                     <div
                       contenteditable="true"
                       class="editor-content"
+                      id="editorContentOrgaServiceAdmin"
                       #editorContentOrgaServiceAdmin
                       (input)="onEditorContentChangeOrgaServiceAdmin($event)"
                       (keyup)="onEditorContentChangeOrgaServiceAdmin($event)"
@@ -999,6 +1002,7 @@ interface TabDiligence {
                     <div
                       contenteditable="true"
                       class="editor-content"
+                      id="editorContentSyntheseEntretienDir"
                       #editorContentSyntheseEntretienDir
                       (input)="onEditorContentChangeSyntheseEntretienDir($event)"
                       (keyup)="onEditorContentChangeSyntheseEntretienDir($event)"
@@ -1070,6 +1074,7 @@ interface TabDiligence {
                           <div
                             contenteditable="true"
                             class="editor-content"
+                            id="editorContentAspectsComptables"
                             #editorContentAspectsComptables
                             (input)="onEditorContentChangeAspectsComptables($event)"
                             (keyup)="onEditorContentChangeAspectsComptables($event)"
@@ -1098,6 +1103,7 @@ interface TabDiligence {
                           <div
                             contenteditable="true"
                             class="editor-content"
+                            id="editorContentAspectsFiscaux"
                             #editorContentAspectsFiscaux
                             (input)="onEditorContentChangeAspectsFiscaux($event)"
                             (keyup)="onEditorContentChangeAspectsFiscaux($event)"
@@ -1126,6 +1132,7 @@ interface TabDiligence {
                           <div
                             contenteditable="true"
                             class="editor-content"
+                            id="editorContentAspectsSociaux"
                             #editorContentAspectsSociaux
                             (input)="onEditorContentChangeAspectsSociaux($event)"
                             (keyup)="onEditorContentChangeAspectsSociaux($event)"
@@ -1154,6 +1161,7 @@ interface TabDiligence {
                           <div
                             contenteditable="true"
                             class="editor-content"
+                            id="editorContentAspectsJuridiques"
                             #editorContentAspectsJuridiques
                             (input)="onEditorContentChangeAspectsJuridiques($event)"
                             (keyup)="onEditorContentChangeAspectsJuridiques($event)"
@@ -1182,6 +1190,7 @@ interface TabDiligence {
                           <div
                             contenteditable="true"
                             class="editor-content"
+                            id="editorContentComptesAnnuels"
                             #editorContentComptesAnnuels
                             (input)="onEditorContentChangeComptesAnnuels($event)"
                             (keyup)="onEditorContentChangeComptesAnnuels($event)"
@@ -3484,7 +3493,7 @@ interface TabDiligence {
     }
   `]
 })
-export class NogEditorComponent implements OnInit, OnDestroy {
+export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   isDossierMissionMillesimeSelected = false;
   isAllDataNogLoaded = false;
@@ -5780,7 +5789,58 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       this.isValeurUniqueLoaded = true;
       this.checkIdAllDataMJLoaded();
       console.log('response.data',response.data);
+
+      setTimeout(() => {
+        this.loadContentIntoEditors();
+      }, 0);
     });
+  }
+
+  loadContentIntoEditors(): void {
+    const editorContent = document.querySelector('#editorContent') as HTMLElement;
+    if (editorContent && this.nogPartie1.activiteExHisto) {
+      editorContent.innerHTML = this.nogPartie1.activiteExHisto;
+    }
+
+    const editorContentPrecisionTravaux = document.querySelector('#editorContentPrecisionTravaux') as HTMLElement;
+    if (editorContentPrecisionTravaux && this.nogPartie2.precisionTravaux) {
+      editorContentPrecisionTravaux.innerHTML = this.nogPartie2.precisionTravaux;
+    }
+
+    const editorContentOrgaServiceAdmin = document.querySelector('#editorContentOrgaServiceAdmin') as HTMLElement;
+    if (editorContentOrgaServiceAdmin && this.nogPartie3.orgaServiceAdmin) {
+      editorContentOrgaServiceAdmin.innerHTML = this.nogPartie3.orgaServiceAdmin;
+    }
+
+    const editorContentSyntheseEntretienDir = document.querySelector('#editorContentSyntheseEntretienDir') as HTMLElement;
+    if (editorContentSyntheseEntretienDir && this.nogPartie3.syntheseEntretienDir) {
+      editorContentSyntheseEntretienDir.innerHTML = this.nogPartie3.syntheseEntretienDir;
+    }
+
+    const editorContentAspectsComptables = document.querySelector('#editorContentAspectsComptables') as HTMLElement;
+    if (editorContentAspectsComptables && this.nogPartie4.aspectsComptables) {
+      editorContentAspectsComptables.innerHTML = this.nogPartie4.aspectsComptables;
+    }
+
+    const editorContentAspectsFiscaux = document.querySelector('#editorContentAspectsFiscaux') as HTMLElement;
+    if (editorContentAspectsFiscaux && this.nogPartie4.aspectsFiscaux) {
+      editorContentAspectsFiscaux.innerHTML = this.nogPartie4.aspectsFiscaux;
+    }
+
+    const editorContentAspectsSociaux = document.querySelector('#editorContentAspectsSociaux') as HTMLElement;
+    if (editorContentAspectsSociaux && this.nogPartie4.aspectsSociaux) {
+      editorContentAspectsSociaux.innerHTML = this.nogPartie4.aspectsSociaux;
+    }
+
+    const editorContentAspectsJuridiques = document.querySelector('#editorContentAspectsJuridiques') as HTMLElement;
+    if (editorContentAspectsJuridiques && this.nogPartie4.aspectsJuridiques) {
+      editorContentAspectsJuridiques.innerHTML = this.nogPartie4.aspectsJuridiques;
+    }
+
+    const editorContentComptesAnnuels = document.querySelector('#editorContentComptesAnnuels') as HTMLElement;
+    if (editorContentComptesAnnuels && this.nogPartie4.comptesAnnuels) {
+      editorContentComptesAnnuels.innerHTML = this.nogPartie4.comptesAnnuels;
+    }
   }
 
   loadTypeMissionNatureListeNog(typeMission: string, natureMission: string): void {
