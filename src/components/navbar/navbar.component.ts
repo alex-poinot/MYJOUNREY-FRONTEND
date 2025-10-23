@@ -64,6 +64,7 @@ export interface TabGroup {
             <div *ngFor="let tab of group.tabs" 
                  class="dropdown-item"
                  [class.active]="activeTab === tab"
+                 [class.pageProjet]="tab != 'NOG'"
                  (click)="onTabClick(tab)">
               {{ tab }}
             </div>
@@ -590,6 +591,13 @@ export interface TabGroup {
       opacity: 0.5;
       cursor: not-allowed;
     }
+
+    .dropdown-item.pageProjet {
+      cursor: not-allowed;
+      color: var(--gray-300);
+      font-style: italic;
+      cursor: not-allowed;
+    }
   `]
 })
 export class NavbarComponent {
@@ -616,19 +624,19 @@ export class NavbarComponent {
   tabGroups: TabGroup[] = [
     {
       name: 'Avant la mission',
-      tabs: ['LAB', 'Conflit Check', 'QAC', 'QAM', 'LDM'],
+      tabs: ['LDM'],
       icon: '📋',
       collapsed: true
     },
     {
       name: 'Pendant la mission',
-      tabs: ['NOG', 'Checklist', 'Révision', 'Supervision', 'TEST'],
+      tabs: ['NOG', 'Checklist d\'actualités', 'Révision', 'Supervision'],
       icon: '⚙️',
       collapsed: true
     },
     {
       name: 'Fin de mission',
-      tabs: ['NDS/CR Mission', 'QMM', 'Plaquette', 'Restitution communication client'],
+      tabs: ['NDS', 'QMM'],
       icon: '✅',
       collapsed: true
     }

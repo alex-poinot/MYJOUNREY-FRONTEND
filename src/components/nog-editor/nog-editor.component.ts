@@ -7,6 +7,7 @@ import { PdfService } from '../../services/pdf.service';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { debounceTime, distinctUntilChanged, switchMap, of, Subject } from 'rxjs';
+import iziToast from 'izitoast';
 
 interface Dossier {
   DOS_PGI: string;
@@ -222,7 +223,7 @@ interface TabDiligence {
     RouterModule
   ],
   template: `
-    <div *ngIf="!isDossierMissionMillesimeSelected" id="container-select-dossier">
+    <div *ngIf="!isDossierMissionMillesimeSelected && isCollabHasMissions" id="container-select-dossier">
       <div class="form-group">
         <label for="dossier-input">Choisissez votre dossier :</label>
         <div class="autocomplete-container">
@@ -309,6 +310,10 @@ interface TabDiligence {
       </div>
     </div>
 
+    <div *ngIf="!isCollabHasMissions" id="container-no-mission">
+      Vous n'avez accès à aucune mission.
+    </div>
+
     <div *ngIf="isDossierMissionMillesimeSelected && !isAllDataNogLoaded" id="container-loader-all-data-nog">
       <i class="fa-solid fa-spinner-scale fa-spin-pulse"></i>
       <div class="container-text-loader-nog">
@@ -325,7 +330,7 @@ interface TabDiligence {
           <div><strong>Millésime :</strong> {{ selectedMillesime }}</div>
         </div>
         <div id="container-bouton-pdf">
-          <div id="btn-apercu-pdf" (click)="openApercuPopup()"><i class="fa-solid fa-files"></i> Aperçu</div>
+          <div id="btn-apercu-pdf" class="btn-disabled" title="Fonctionnalité à venir"><i class="fa-solid fa-files"></i> Aperçu</div>
         </div>
       </div>
       <div id="part-bottom-page-nog">
@@ -353,7 +358,7 @@ interface TabDiligence {
               <div class="text-element-menu-nog">7. Déontologie</div>
             </div>
             <div class="container-element-menu-nog" (click)="changePartNog('annexes', $event)">
-              <div class="text-element-menu-nog">Annexes</div>
+              <div class="text-element-menu-nog">Annexes et finalisation</div>
             </div>
           </div>
         </div>
@@ -362,6 +367,9 @@ interface TabDiligence {
             <div class="row-part-nog">
               <div id="container-part-1-1-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.1. Coordonnées<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateCoordonnees}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
+                <div class="liste-btn-absolute">
+                  <button class="btn-reload-data" (click)="loadCoordonnees()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                </div>
                 <div class="body-element-nog">
                   <div class="row-coordonnees-nog">
                     <div class="icon-coordonnees-nog">
@@ -394,7 +402,10 @@ interface TabDiligence {
 
               <div id="container-part-1-2-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.2. Contacts<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateContacts}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
-                <button class="btn-add-row" (click)="addContact()"><i class="fa-solid fa-plus"></i> Ajouter un contact</button>
+                <div class="liste-btn-absolute">
+                  <button class="btn-reload-data" (click)="loadContacts()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-add-row" (click)="addContact()"><i class="fa-solid fa-plus"></i> Ajouter un contact</button>
+                </div>
                 <div class="body-element-nog">
                   <table class="table-nog">
                     <thead>
@@ -448,7 +459,10 @@ interface TabDiligence {
             <div class="row-part-nog">
               <div id="container-part-1-3-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.3. Associés<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateAssocies}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
-                <button class="btn-add-row" (click)="addAssocie()"><i class="fa-solid fa-plus"></i> Ajouter un associé</button>
+                <div class="liste-btn-absolute">
+                  <button class="btn-reload-data" (click)="loadAssocies()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-add-row" (click)="addAssocie()"><i class="fa-solid fa-plus"></i> Ajouter un associé</button>
+                </div>
                 <div class="body-element-nog">
                   <table class="table-nog">
                     <thead>
@@ -497,6 +511,9 @@ interface TabDiligence {
             <div class="row-part-nog">
               <div id="container-part-1-4-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.4. Chiffres significatifs<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateCS}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
+                <div class="liste-btn-absolute">
+                  <button class="btn-reload-data" (click)="loadChiffresSignificatifs()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                </div>
                 <div class="body-element-nog">
                   <div id="container-chiffres-sign-nog">
                     <div class="colonne-chiffres-sign-nog">
@@ -548,6 +565,7 @@ interface TabDiligence {
               <div id="container-part-1-5-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.5. Activité exercée et historique<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateActiviteExHisto}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
+                  <div class="legende-partie-nog">Présenter l’activité et les éléments importants de l’historique de la société</div>
                   <div id="editeur-texte-activite-exerce">
                     <div class="toolbar-editor">
                       <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
@@ -633,13 +651,13 @@ interface TabDiligence {
                       <div class="container-input-title-nog">
                         <div class="title-bloc-nog">Consultations d'autres professionnels à prévoir</div> 
                         <div class="input-bloc-nog">
-                          <input type="text" [(ngModel)]="nogPartie2.consultationPro" class="input-text-nog">
+                          <input type="text" [(ngModel)]="nogPartie2.consultationPro" (ngModelChange)="setChangeIntoPlanning()" class="input-text-nog">
                         </div> 
                       </div>
                       <div class="container-input-title-nog">
                         <div class="title-bloc-nog">Interim</div> 
                         <div class="input-bloc-nog">
-                          <select [(ngModel)]="nogPartie2.interim" class="select-interim">
+                          <select [(ngModel)]="nogPartie2.interim" (ngModelChange)="setChangeIntoPlanning()" class="select-interim">
                             <option value="">Sélectionner une interim</option>
                             <option value="Anuelle">Anuelle</option>
                             <option value="Trimestrielle">Trimestrielle</option>
@@ -652,21 +670,24 @@ interface TabDiligence {
                       <div class="container-input-title-nog">
                         <div class="title-bloc-nog">Final</div> 
                         <div class="input-bloc-nog">
-                          <input type="text" [(ngModel)]="nogPartie2.final" class="input-text-nog">
+                          <input type="text" [(ngModel)]="nogPartie2.final" (ngModelChange)="setChangeIntoPlanning()" class="input-text-nog">
                         </div> 
                       </div>
                       <div class="container-input-title-nog">
                         <div class="title-bloc-nog">Délai à respecter</div> 
                         <div class="input-bloc-nog">
-                          <input type="text" [(ngModel)]="nogPartie2.delaiRespecter" class="input-text-nog">
+                          <input type="text" [(ngModel)]="nogPartie2.delaiRespecter" (ngModelChange)="setChangeIntoPlanning()" class="input-text-nog">
                         </div> 
                       </div>
                     </div>
                   </div>
                   <div id="part-bottom-planning-inter-nog">
                     <div class="container-input-title-nog">
-                        <div class="title-bloc-nog">Planning</div> 
-                        <button class="btn-add-row" (click)="addPlanning()"><i class="fa-solid fa-plus"></i> Ajouter un planning</button>
+                        <div class="title-bloc-nog">Planning</div>
+                        <div class="liste-btn-absolute"> 
+                          <button class="btn-reload-data" (click)="loadPlannings()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                          <button class="btn-add-row" (click)="addPlanning()"><i class="fa-solid fa-plus"></i> Ajouter un planning</button>
+                        </div>
                         <div class="input-bloc-nog">
                           <table class="table-nog">
                             <thead>
@@ -720,6 +741,9 @@ interface TabDiligence {
             <div class="row-part-nog">
               <div id="container-part-2-5-nog" class="containter-element-nog">
                 <div class="title-element-nog">2.5. Equipe d'intervention<i title="Dernière mise à jour : {{nogPartie2.dateLastUpdateEquipeInter}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
+                <div class="liste-btn-absolute">
+                  <button class="btn-reload-data" (click)="loadEquipeInter()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                </div>
                 <div class="body-element-nog">
                   <table class="table-nog">
                     <thead>
@@ -821,7 +845,10 @@ interface TabDiligence {
                 <div class="body-element-nog">
                   <div id="container-tab-logiciel-gt">
                     <div class="titre-tab-logiciel">Outils environnement GT</div>
-                    <button class="btn-add-row" (click)="addLogicielGT()"><i class="fa-solid fa-plus"></i> Ajouter un logiciel</button>
+                    <div class="liste-btn-absolute">
+                      <button class="btn-reload-data" (click)="loadMontantLogiciel()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                      <button class="btn-add-row" (click)="addLogicielGT()"><i class="fa-solid fa-plus"></i> Ajouter un logiciel</button>
+                    </div>
                     <div class="container-table-logiciel-nog">
                       <table class="table-nog">
                         <thead>
@@ -860,7 +887,9 @@ interface TabDiligence {
                   </div>
                   <div id="container-tab-logiciel-client">
                     <div class="titre-tab-logiciel">Outils envrionnement client</div>
-                    <button class="btn-add-row" (click)="addLogicielClient()"><i class="fa-solid fa-plus"></i> Ajouter un logiciel</button>
+                    <div class="liste-btn-absolute">
+                      <button class="btn-add-row" (click)="addLogicielClient()"><i class="fa-solid fa-plus"></i> Ajouter un logiciel</button>
+                    </div>
                     <div class="container-table-logiciel-nog">
                       <table class="table-nog">
                         <thead>
@@ -926,6 +955,9 @@ interface TabDiligence {
             <div class="row-part-nog row-fe-nog">
               <div id="container-part-3-3-nog" class="containter-element-nog">
                 <div class="title-element-nog">3.3. Facturation électronique</div>
+                <div class="liste-btn-absolute">
+                  <button class="btn-reload-data" (click)="loadListeBDFE()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                </div>
                 <div *ngIf="this.nogPartie3.isFEValidate" class="body-element-nog">
                   <div class="container-fe-nog">
                     <div class="container-table-fe-nog">
@@ -1019,6 +1051,7 @@ interface TabDiligence {
               <div id="container-part-4-1-nog" class="containter-element-nog">
                 <div class="title-element-nog">4.1. Appréciation des risques et du niveau de vigilance à appliquer<i title="Dernière mise à jour : {{nogPartie4.dateLastUpdateVigilance}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="body-element-nog">
+                  <div class="legende-partie-nog">En application de la norme anti-blanchiment, le niveau de vigilance retenu à la suite de l’acceptation de la mission (nouveau client) ou de la synthèse de l’exercice précédent. Si dans les évènements marquants de l’exercice il a été observé des opérations atypiques ou complexes ou si l’entreprise a réalisé des montages fiscaux, sociaux ou juridiques complexes, il conviendra de revoir le cas échéant le niveau de vigilance</div>
                   <div id="container-checkbox-vigilance">
                     <div class="container-element-appreciation-risque-vigilance">
                       <div class="container-checkbox-appreciation-risque-vigilance">
@@ -1045,6 +1078,7 @@ interface TabDiligence {
                     </div>
                     <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee'" class="texte-appreciation-risque-vigilance">
                       <p>En cas de vigilance renforcée, compléter les contrôles à effectuer en s’appuyant entre autres sur « l’ARPEC » </p>
+                      <a href="https://grantthorntonfrance.sharepoint.com/sites/EC-ExpertiseConseil/Normes_pro_EC/Forms/AllItems.aspx?id=%2Fsites%2FEC%2DExpertiseConseil%2FNormes%5Fpro%5FEC%2FB1%20Proc%C3%A9dures%20Lutte%20anti%20Blanchiment%2FAnalyse%5Fdes%5Frisques%5Fde%5Fla%5Fprofession%5Fd%5Fexpert%2Dcomptable%5F%2D%5FARPEC%20%285%29%2Epdf&parent=%2Fsites%2FEC%2DExpertiseConseil%2FNormes%5Fpro%5FEC%2FB1%20Proc%C3%A9dures%20Lutte%20anti%20Blanchiment">Lien de la documentation ARPEC sur la DWP</a>
                     </div>
                   </div>
                 </div>
@@ -1225,7 +1259,9 @@ interface TabDiligence {
               <div id="container-add-diligence">
                 <div class="multiselect-diligence">
                   <div class="multiselect-label">Bibliothèque des diligences :</div>
-                  <button class="btn-add-row" (click)="addDiligenceManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence</button>
+                  <div class="liste-btn-absolute">
+                    <button class="btn-add-row" (click)="addDiligenceManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence</button>
+                  </div>
                   <div class="multiselect-wrapper">
                     <div class="multiselect-dropdown" (click)="toggleDiligenceDropdown()">
                       <span *ngIf="selectedDiligences.length === 0" class="placeholder">Sélectionner des diligences...</span>
@@ -1300,7 +1336,9 @@ interface TabDiligence {
             </div>
             <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee'" id="part-bottom-diligence-lab">
               <div class="title-element-nog">Diligences LAB<i title="Dernière mise à jour : {{nogPartie5.dateLastUpdateDiligenceLab}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
-              <button class="btn-add-row" (click)="addDiligenceLabManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence LAB</button>
+              <div class="liste-btn-absolute">
+                <button class="btn-add-row" (click)="addDiligenceLabManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence LAB</button>
+              </div>
               <table class="table-diligence">
                 <thead>
                   <tr>
@@ -1422,6 +1460,7 @@ interface TabDiligence {
           <div *ngIf="selectedPartNog=='annexes'" id="container-part-annexes-nog" class="container-part-nog">
             <div class="title-element-nog">Annexes<i title="Dernière mise à jour : {{nogPartieAnnexes.dateLastUpdateAnnexe}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
             <div class="body-element-nog">
+              <div class="legende-partie-nog">Joindre les notes ou études d’avocats fiscaux, juridiques et sociaux, rescrits fiscaux ainsi que les garanties fiscales obtenues mais également toute note technique rédigée au client</div>
               <div class="container-annexes">
                 <div class="section-upload-annexes">
                   <label for="file-input-annexes" class="btn-upload-annexes">
@@ -1461,6 +1500,16 @@ interface TabDiligence {
                 <div class="empty-state-annexes" *ngIf="nogPartieAnnexes.tabFiles.length === 0">
                   <i class="fa-solid fa-folder-open"></i>
                   <p>Aucun fichier ajouté</p>
+                </div>
+              </div>
+              <div id="container-validation-finalisation">
+                <div class="container-validation">
+                  <div class="libelle-validation">Validation collab :</div>
+                  <div class="btn-validation"><i class="fa-regular fa-check"></i></div>
+                </div>
+                <div class="container-validation">
+                  <div class="libelle-validation">Validation associé :</div>
+                  <div class="btn-validation"><i class="fa-regular fa-check"></i></div>
                 </div>
               </div>
             </div>
@@ -1529,22 +1578,6 @@ interface TabDiligence {
           </button>
         </div>
         <div class="diligence-modal-content">
-          <div class="form-group">
-            <label for="diligence-lab-cycle">Cycle</label>
-            <select id="diligence-lab-cycle" [(ngModel)]="newDiligenceLab.cycle">
-              <option value="">Sélectionner un cycle</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-              <option value="D">D</option>
-              <option value="E">E</option>
-              <option value="F">F</option>
-              <option value="G">G</option>
-              <option value="H">H</option>
-              <option value="I">I</option>
-              <option value="J">J</option>
-            </select>
-          </div>
           <div class="form-group">
             <label for="diligence-lab-code">Diligence *</label>
             <input id="diligence-lab-code" type="text" [(ngModel)]="newDiligenceLab.diligence" placeholder="Code ou identifiant de la diligence">
@@ -2590,18 +2623,15 @@ interface TabDiligence {
     }
 
     .btn-add-row {
-      padding: 0.8vh 1vw;
+      padding: 0.5vh 0.5vw;
       background-color: var(--primary-color);
       color: white;
       border: none;
       border-radius: 0.3vw;
       cursor: pointer;
-      font-size: var(--font-size-md);
+      font-size: var(--font-size-sm);
       transition: all 0.2s;
-      width: 11vw;
-      position: absolute;
-      top: 0;
-      right: 0;
+      width: fit-content;
     }
 
     .btn-add-row:hover {
@@ -2636,7 +2666,6 @@ interface TabDiligence {
       display: flex;
       gap: 0.5vw;
       padding: 0.5vh 0.5vw;
-      background-color: var(--gray-100);
       border-bottom: 0.1vh solid var(--gray-300);
       flex-wrap: wrap;
     }
@@ -3135,7 +3164,7 @@ interface TabDiligence {
     }
 
     div#part-bottom-diligence-lab {
-      padding-top: 2vh;
+      margin-top: 2vh;
       position: relative;
     }
 
@@ -3308,7 +3337,7 @@ interface TabDiligence {
     }
 
     div#container-part-4-nog .row-part-nog {
-      height: 30vh;
+      height: 34vh;
     }
 
     div#container-checkbox-vigilance {
@@ -3494,6 +3523,89 @@ interface TabDiligence {
     i.fa-solid.fa-circle-info.icon-date-last-modif {
       margin-left: 1vw;
     }
+
+    div#container-no-mission {
+      width: 100%;
+      height: 92vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: var(--font-size-lg);
+    }
+
+    div#container-validation-finalisation {
+      display: flex;
+      align-items: center;
+      padding: 3vh 1vw 1vh 1vw;
+      justify-content: center;
+      background-color: var(--gray-100);
+      gap: 5vw;
+    }
+
+    .container-validation {
+        display: flex;
+        align-items: center;
+        gap: 0.5vw;
+        font-size: var(--font-size-lg);
+    }
+
+    .btn-validation {
+        border: 0.1vh solid #00c300;
+        padding: 0.3vh 1vw;
+        background-color: #00880017;
+        border-radius: 1vw;
+        color: #00c300;
+        cursor: pointer;
+    }
+
+    .btn-validation:hover {
+        background-color: #00c300;
+        color: white;
+    }
+
+    .btn-validation.selected {
+        background-color: #00c300;
+        color: white;
+    }
+
+    .legende-partie-nog {
+      font-size: var(--font-size-md);
+      font-style: italic;
+      padding: 1vh 1vh;
+      color: var(--gray-500);
+    }
+
+    .liste-btn-absolute {
+      position: absolute;
+      top: 0.6vh;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5vw;
+    }
+
+    .btn-reload-data {
+      padding: 0.5vh 0.5vw;
+      background-color: white;
+      color: var(--primary-color);
+      border: none;
+      border-radius: 0.3vw;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: fit-content;
+      font-size: var(--font-size-sm);
+      border: 0.1vh solid var(--primary-color);
+    }
+
+    .btn-reload-data:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    div#btn-apercu-pdf.btn-disabled {
+      cursor: not-allowed;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -3547,6 +3659,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   showApercuPopup: boolean = false;
   showAddDiligenceModal: boolean = false;
   showAddDiligenceLabModal: boolean = false;
+
+  isCollabHasMissions: boolean = true;
 
   newDiligence: TabDiligence = {
     cycle: '',
@@ -4182,18 +4296,29 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private async waitForDataAndValidate(dosPgi: string, mission: string, millesime: string): Promise<void> {
+    let verif = false;
     this.loadAllDossiers().then(() => {
       this.allMissionsData.forEach(element => {
         if(element.DOS_PGI == dosPgi && element.MD_MISSION == mission && element.MD_MILLESIME == millesime) {
             this.selectedDossier = element;
+            this.selectedDossierDisplay = dosPgi;
             this.selectedMission = mission;
             this.selectedMillesime = millesime;
             this.validateSelection();
-        } else {
-          console.log('NO ACCESS');
+            verif = true;
         }
       });
-      console.log('LISTE DOSSIER',this.allMissionsData);
+      if(!verif) {
+        iziToast.error({
+          timeout: 3000,
+          icon: 'fa-regular fa-triangle-exclamation', 
+          title: 'Vous n\'avez pas accès à cette mission.', 
+          close: false, 
+          position: 'bottomCenter', 
+          transitionIn: 'flipInX',
+          transitionOut: 'flipOutX'
+        });
+      }
     });
   }
 
@@ -4268,6 +4393,11 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     try {
       const response = await this.http.get<ApiResponse>(`${environment.apiUrl}/missions/getAllMissionAccessModuleEditor/${this.userEmail}&NOG`).toPromise();
       if (response && response.success && response.data) {
+        if(response.count == 0) {
+          this.isCollabHasMissions = false;
+        } else {
+          this.isCollabHasMissions = true;
+        }
         // Stocker toutes les données pour les filtres en cascade
         this.allMissionsData = response.data;
         
@@ -4521,24 +4651,26 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkIdAllDataLoaded(): void {
-    if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded 
-      && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNatureLoaded 
-      && this.isMontantLogicielLoaded && this.isModuleFELoaded && this.isListeBDFELoaded
-      && this.isDiligencesDefaultLoaded && this.isDiligencesBibliothequeLoaded) {
-      this.isAllDataNogLoaded = true;
-    }
+    // if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded 
+    //   && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNatureLoaded 
+    //   && this.isMontantLogicielLoaded && this.isModuleFELoaded && this.isListeBDFELoaded
+    //   && this.isDiligencesDefaultLoaded && this.isDiligencesBibliothequeLoaded) {
+    //   this.isAllDataNogLoaded = true;
+    // }
+    this.isAllDataNogLoaded = true;
   }
 
   checkIdAllDataMJLoaded(): void {
-    if(this.isValeurUniqueLoaded && this.isTypeMissionNatureLoaded && this.isPlanningsLoaded && this.isEquipeInterLoaded && this.isContactsLoaded
-      && this.isAssociesLoaded && this.isMontantLogicielLoaded && this.isDiligencesDefaultLoaded && this.isDiligenceLabLoaded && this.isDiligenceAddLoaded
-      && this.isDiligencesBibliothequeLoaded && this.isFichiersAnnexeLoaded && this.isFELoaded
-    ) {
-      this.isAllDataNogLoaded = true;
-      setTimeout(() => {
-        this.loadContentIntoEditors();
-      }, 100);
-    }
+    // if(this.isValeurUniqueLoaded && this.isTypeMissionNatureLoaded && this.isPlanningsLoaded && this.isEquipeInterLoaded && this.isContactsLoaded
+    //   && this.isAssociesLoaded && this.isMontantLogicielLoaded && this.isDiligencesDefaultLoaded && this.isDiligenceLabLoaded && this.isDiligenceAddLoaded
+    //   && this.isDiligencesBibliothequeLoaded && this.isFichiersAnnexeLoaded && this.isFELoaded
+    // ) {
+    //   this.isAllDataNogLoaded = true;
+    //   setTimeout(() => {
+    //     this.loadContentIntoEditors();
+    //   }, 100);
+    // }
+    this.isAllDataNogLoaded = true;
   }
 
   formatNumber(value: number | null | undefined): string {
