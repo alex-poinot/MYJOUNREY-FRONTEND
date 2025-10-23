@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { PdfService } from '../../services/pdf.service';
 import { AuthService, UserProfile } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
@@ -218,7 +218,8 @@ interface TabDiligence {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    RouterModule
   ],
   template: `
     <div *ngIf="!isDossierMissionMillesimeSelected" id="container-select-dossier">
@@ -3785,14 +3786,15 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Gérer les paramètres URL
     this.route.queryParams.subscribe(params => {
+      console.log('Query params reçus:', params);
       const dossier = params['dossier'];
       const mission = params['mission'];
       const millesime = params['millesime'];
 
-      console.log('PARAM', dossier);
+      console.log('Dossier:', dossier, 'Mission:', mission, 'Millesime:', millesime);
 
       if (dossier && mission && millesime) {
-        // Attendre que les données soient chargées avant de valider
+        console.log('Lancement de waitForDataAndValidate');
         this.waitForDataAndValidate(dossier, mission, millesime);
       }
     });
