@@ -1280,7 +1280,7 @@ interface TabDiligence {
                                   <input
                                     type="checkbox"
                                     [(ngModel)]="rowDiligence.activation"
-                                    (ngModelChange)="onDiligenceActivationChange()"
+                                    (ngModelChange)="onDiligenceActivationChange(); setChangeIntoDiligance()"
                                     class="toggle-checkbox">
                                   <span class="toggle-slider"></span>
                                 </label>
@@ -1321,6 +1321,7 @@ interface TabDiligence {
                         <input
                           type="checkbox"
                           [(ngModel)]="diligence.activation"
+                          (ngModelChange)="setChangeIntoDiliganceLab()"
                           class="toggle-checkbox">
                         <span class="toggle-slider"></span>
                       </label>
@@ -5094,6 +5095,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     const anyActivated = this.isGroupeActivated(diligence);
     diligence.tabDiligence.forEach(d => d.activation = !anyActivated);
+    this.setChangeIntoDiligance();
   }
 
   onDiligenceActivationChange(): void {
