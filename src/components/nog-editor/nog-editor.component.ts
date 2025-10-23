@@ -3771,6 +3771,20 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       // console.log('Email :', this.userEmail);
       if(this.userEmail) {
         this.setLogConnexion();
+        // Gérer les paramètres URL
+        this.route.queryParams.subscribe(params => {
+          console.log('Query params reçus:', params);
+          const dossier = params['dossier'];
+          const mission = params['mission'];
+          const millesime = params['millesime'];
+
+          console.log('Dossier:', dossier, 'Mission:', mission, 'Millesime:', millesime);
+
+          if (dossier && mission && millesime) {
+            console.log('Lancement de waitForDataAndValidate');
+            this.waitForDataAndValidate(dossier, mission, millesime);
+          }
+        });
       }
     });
 
@@ -3781,21 +3795,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.dossiersLoaded = false;
         this.isLoadingAllDossiers = false;
         this.loadAllDossiers();
-      }
-    });
-
-    // Gérer les paramètres URL
-    this.route.queryParams.subscribe(params => {
-      console.log('Query params reçus:', params);
-      const dossier = params['dossier'];
-      const mission = params['mission'];
-      const millesime = params['millesime'];
-
-      console.log('Dossier:', dossier, 'Mission:', mission, 'Millesime:', millesime);
-
-      if (dossier && mission && millesime) {
-        console.log('Lancement de waitForDataAndValidate');
-        this.waitForDataAndValidate(dossier, mission, millesime);
       }
     });
   }
@@ -4183,45 +4182,19 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private async waitForDataAndValidate(dosPgi: string, mission: string, millesime: string): Promise<void> {
-    // Attendre que les dossiers soient chargés
-    const checkInterval = setInterval(() => {
-      if (this.dossiersLoaded && this.allDossiers.length > 0) {
-        clearInterval(checkInterval);
-
-        // Trouver le dossier correspondant
-        const dossier = this.allDossiers.find(d => d.DOS_PGI === dosPgi);
-
-        if (dossier) {
-          // Sélectionner le dossier
-          this.selectDossier(dossier);
-
-          // Attendre un peu pour que les missions/millésimes se chargent
-          setTimeout(() => {
-            // Sélectionner la mission
+    this.loadAllDossiers().then(() => {
+      this.allMissionsData.forEach(element => {
+        if(element.DOS_PGI == dosPgi && element.MD_MISSION == mission && element.MD_MILLESIME == millesime) {
+            this.selectedDossier = element;
             this.selectedMission = mission;
-            this.onMissionChange();
-
-            // Attendre que les millésimes soient disponibles
-            setTimeout(() => {
-              // Sélectionner le millésime
-              this.selectedMillesime = millesime;
-
-              // Valider la sélection
-              if (this.canValidate()) {
-                this.validateSelection();
-              }
-            }, 100);
-          }, 100);
+            this.selectedMillesime = millesime;
+            this.validateSelection();
         } else {
-          console.error(`Dossier ${dosPgi} introuvable`);
+          console.log('NO ACCESS');
         }
-      }
-    }, 100);
-
-    // Timeout après 10 secondes
-    setTimeout(() => {
-      clearInterval(checkInterval);
-    }, 10000);
+      });
+      console.log('LISTE DOSSIER',this.allMissionsData);
+    });
   }
 
   private searchDossiersInCache(searchTerm: string): Dossier[] {
