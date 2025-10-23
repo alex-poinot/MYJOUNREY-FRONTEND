@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { APP_INITIALIZER } from '@angular/core';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter, Router, Routes } from '@angular/router';
 import { MSAL_INSTANCE, MsalService, MsalBroadcastService } from '@azure/msal-angular';
 import { PublicClientApplication } from '@azure/msal-browser';
 import { msalConfig } from './auth/auth.config';
@@ -86,18 +86,18 @@ export function initializeMsal(msalService: MsalService): () => Promise<void> {
   template: `
     <!-- Page de connexion si non authentifié -->
     <app-login *ngIf="!isAuthenticated && !shouldSkipAuth"></app-login>
-    
+
     <!-- Application principale si authentifié -->
     <div class="app-container" *ngIf="isAuthenticated || shouldSkipAuth">
-      <app-navbar 
+      <app-navbar
         [activeTab]="currentTab"
-        (tabChange)="onTabSelected($event)">
+        (tabChange)="onTabChange($event)">
       </app-navbar>
       <main class="main-content">
         <app-dashboard *ngIf="currentTab === 'dashboard'"></app-dashboard>
-        <app-test-editor *ngIf="currentTab === 'TEST'"></app-test-editor>
-        <app-nog-editor *ngIf="currentTab === 'NOG'"></app-nog-editor>
-        <div *ngIf="currentTab !== 'dashboard' && currentTab !== 'TEST' && currentTab !== 'NOG'" class="coming-soon">
+        <app-test-editor *ngIf="currentTab === 'test'"></app-test-editor>
+        <app-nog-editor *ngIf="currentTab === 'nog'"></app-nog-editor>
+        <div *ngIf="currentTab !== 'dashboard' && currentTab !== 'test' && currentTab !== 'nog'" class="coming-soon">
           <h2>{{ currentTab }}</h2>
           <p>Cette fonctionnalité sera bientôt disponible.</p>
         </div>
@@ -145,35 +145,49 @@ export class AppComponent {
     console.log('🎯 AppComponent - shouldSkipAuth:', this.shouldSkipAuth);
 
     if (this.shouldSkipAuth) {
-      // Mode sans authentification : toujours authentifié
       this.isAuthenticated = true;
     } else {
-      // Mode normal : écouter les changements d'état d'authentification
       this.authService.isAuthenticated$.subscribe(authenticated => {
         this.isAuthenticated = authenticated;
       });
     }
 
-    // Gérer la navigation via URL
-    const path = window.location.pathname;
-    if (path === '/nog') {
-      this.currentTab = 'NOG';
-    } else if (path === '/test') {
-      this.currentTab = 'TEST';
-    } else {
-      this.currentTab = 'dashboard';
-    }
+    this.router.events.subscribe(() => {
+      const path = this.router.url.split('?')[0];
+      if (path === '/nog') {
+        this.currentTab = 'nog';
+      } else if (path === '/test') {
+        this.currentTab = 'test';
+      } else {
+        this.currentTab = 'dashboard';
+      }
+    });
   }
 
-  onTabSelected(tab: string) {
-    this.currentTab = tab;
+  onTabChange(tab: string) {
+    this.currentTab = tab.toLowerCase();
+    if (tab === 'NOG') {
+      this.router.navigate(['/nog']);
+    } else if (tab === 'TEST') {
+      this.router.navigate(['/test']);
+    } else if (tab === 'dashboard') {
+      this.router.navigate(['/']);
+    }
   }
 }
+
+const routes: Routes = [
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: 'dashboard', component: AppComponent },
+  { path: 'nog', component: AppComponent },
+  { path: 'test', component: AppComponent },
+  { path: '**', redirectTo: '/dashboard' }
+];
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(),
-    provideRouter([]),
+    provideRouter(routes),
     ...(environment.features.skipAuthentication || !cryptoAvailable ? [] : [
       {
         provide: MSAL_INSTANCE,
