@@ -3501,6 +3501,12 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   isModuleFELoaded = false;
   isListeBDFELoaded = false;
 
+  isValeurUniqueLoaded = false;
+  isDiligenceLabLoaded = false;
+  isDiligenceAddLoaded = false;
+  isFichiersAnnexeLoaded = false;
+  isFELoaded = false;
+
   private debounceTimers: { [key: string]: any } = {};
 
   filteredDossiers: Dossier[] = [];
@@ -4110,7 +4116,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.isDossierMissionMillesimeSelected = true;
 
     this.verifNogLoad().then(verifNog => {
-      // if(verifNog.length == 0) {
+      if(verifNog.length == 0) {
         this.loadCoordonnees();
         this.loadContacts();
         this.loadChiffresSignificatifs();
@@ -4125,9 +4131,19 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         this.loadListeBDFE();
 
         this.insertNogVigilance();
-      // } else {
-      //   console.log('DONNEE TABLE NOG');
-      // }
+      } else {
+        this.loadContactMJNog();
+        this.loadAssocieMJNog();
+        this.loadPlanningMJNog();
+        this.loadEquipeInterMJNog();
+        this.loadLogicielMJNog();
+        this.loadFEMJNog();
+        this.loadDiligenceMJNog();
+        this.loadDiligenceLabMJNog();
+        this.loadDiligencesBibliothequeMJNog();
+        this.loadValeurUniqueNog();
+        this.loadFichiersAnnexeMJNog();
+      }
     }).catch(error => {
       console.error('Erreur lors de la vérification du NOG:', error);
     });
@@ -4344,7 +4360,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
   loadPlannings(): void {
     this.http.get<Planning[]>(`${environment.apiUrlMyVision}/dossierDetail/getPlanningNogMyJourney/${this.selectedDossier?.DOS_PGI}&${this.selectedMission}&${this.selectedMillesime}`)
     .subscribe(response => {
-      let data = this.transformDataEquipeInter(response);
+      let data = this.transformDataPlanning(response);
       if(response[0].nom != null){
         this.nogPartie2.planning = data;
       }
@@ -4466,6 +4482,15 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNatureLoaded 
       && this.isMontantLogicielLoaded && this.isModuleFELoaded && this.isListeBDFELoaded
       && this.isDiligencesDefaultLoaded && this.isDiligencesBibliothequeLoaded) {
+      this.isAllDataNogLoaded = true;
+    }
+  }
+
+  checkIdAllDataMJLoaded(): void {
+    if(this.isValeurUniqueLoaded && this.isTypeMissionNatureLoaded && this.isPlanningsLoaded && this.isEquipeInterLoaded && this.isContactsLoaded
+      && this.isAssociesLoaded && this.isMontantLogicielLoaded && this.isDiligencesDefaultLoaded && this.isDiligenceLabLoaded && this.isDiligenceAddLoaded
+      && this.isDiligencesBibliothequeLoaded && this.isFichiersAnnexeLoaded && this.isFELoaded
+    ) {
       this.isAllDataNogLoaded = true;
     }
   }
@@ -4666,7 +4691,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onEditorContentChange(event: Event): void {
     const target = event.target as HTMLElement;
-    const newContent = target.textContent || '';
+    const newContent = target.innerHTML || '';
 
     this.nogPartie1.activiteExHisto = newContent;
     this.setChangeIntoActiviteHisto();
@@ -4674,7 +4699,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onEditorContentChangePrecisionTravaux(event: Event): void {
     const target = event.target as HTMLElement;
-    const newContent = target.textContent || '';
+    const newContent = target.innerHTML || '';
 
     this.nogPartie2.precisionTravaux = newContent;
     this.setChangeIntoPrecisionTravaux();
@@ -4682,7 +4707,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onEditorContentChangeOrgaServiceAdmin(event: Event): void {
     const target = event.target as HTMLElement;
-    const newContent = target.textContent || '';
+    const newContent = target.innerHTML || '';
 
     this.nogPartie3.orgaServiceAdmin = newContent;
     this.setChangeIntoOrgaServiceAdmin();
@@ -4690,7 +4715,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onEditorContentChangeSyntheseEntretienDir(event: Event): void {
     const target = event.target as HTMLElement;
-    const newContent = target.textContent || '';
+    const newContent = target.innerHTML || '';
 
     this.nogPartie3.syntheseEntretienDir = newContent;
     this.setChangeIntoSyntheseEntretien();
@@ -4698,7 +4723,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onEditorContentChangeAppreciationRisqueVigilence(event: Event): void {
     const target = event.target as HTMLElement;
-    const newContent = target.textContent || '';
+    const newContent = target.innerHTML || '';
 
     this.nogPartie4.appreciationRisqueVigilence = newContent;
     this.setChangeIntoVigilance();
@@ -4706,7 +4731,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onEditorContentChangeAspectsComptables(event: Event): void {
     const target = event.target as HTMLElement;
-    const newContent = target.textContent || '';
+    const newContent = target.innerHTML || '';
 
     this.nogPartie4.aspectsComptables = newContent;
     this.setChangeIntoPrincipeComp();
@@ -4714,7 +4739,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onEditorContentChangeAspectsFiscaux(event: Event): void {
     const target = event.target as HTMLElement;
-    const newContent = target.textContent || '';
+    const newContent = target.innerHTML || '';
 
     this.nogPartie4.aspectsFiscaux = newContent;
     this.setChangeIntoPrincipeComp();
@@ -4722,7 +4747,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onEditorContentChangeAspectsSociaux(event: Event): void {
     const target = event.target as HTMLElement;
-    const newContent = target.textContent || '';
+    const newContent = target.innerHTML || '';
 
     this.nogPartie4.aspectsSociaux = newContent;
     this.setChangeIntoPrincipeComp();
@@ -4730,7 +4755,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onEditorContentChangeAspectsJuridiques(event: Event): void {
     const target = event.target as HTMLElement;
-    const newContent = target.textContent || '';
+    const newContent = target.innerHTML || '';
 
     this.nogPartie4.aspectsJuridiques = newContent;
     this.setChangeIntoPrincipeComp();
@@ -4738,7 +4763,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
 
   onEditorContentChangeComptesAnnuels(event: Event): void {
     const target = event.target as HTMLElement;
-    const newContent = target.textContent || '';
+    const newContent = target.innerHTML || '';
 
     this.nogPartie4.comptesAnnuels = newContent;
     this.setChangeIntoPrincipeComp();
@@ -5067,7 +5092,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     }
   }
 
-  transformDataEquipeInter(obj: any[]): Planning[] {
+  transformDataPlanning(obj: any[]): Planning[] {
     return obj.map((item, index) => {
         const listeLib = Object.keys(item).filter(key => key !== 'nom' && key !== 'fonction');
         const listeValue = listeLib.map(lib => item[lib]);
@@ -5183,6 +5208,32 @@ export class NogEditorComponent implements OnInit, OnDestroy {
     this.setChangeIntoVigilance();
   }
 
+  formatDateTimeBDD(input: string): string {
+    const date = new Date(input);
+
+    const day = ('0' + date.getUTCDate()).slice(-2);
+    const month = ('0' + (date.getUTCMonth() + 1)).slice(-2); // getUTCMonth() retourne 0 pour janvier, donc on ajoute 1
+    const year = date.getUTCFullYear();
+    
+    const hours = ('0' + date.getUTCHours()).slice(-2);
+    const minutes = ('0' + date.getUTCMinutes()).slice(-2);
+
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  }
+
+  formatDateInput(input: string): string {
+    if(input == null || input == '') {
+      return '';
+    }
+    const date = new Date(input);
+
+    const day = ('0' + date.getUTCDate()).slice(-2);
+    const month = ('0' + (date.getUTCMonth() + 1)).slice(-2); // getUTCMonth() retourne 0 pour janvier, donc on ajoute 1
+    const year = date.getUTCFullYear();
+
+    return `${year}-${month}-${day}`;
+  }
+
   getDateNow(): string {
     const now = new Date();
 
@@ -5225,7 +5276,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
           codeAffaire: this.selectedCodeAffaire,
           prenom: contact.prenom,
           nom: contact.nom,
-          fonction: contact.fonction,
+          fonction: contact.libelle,
           telephone: contact.telephone,
           adresseMail: contact.mail
         })
@@ -5323,7 +5374,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
             fonction: plan.fonction,
             nom: plan.nom,
             periode: plan.listeLib[i],
-            nbHeures: plan.listeValue[i] == "" ? "0" : plan.listeValue[i]
+            nbHeures: plan.listeValue[i] == "" ? "0" : plan.listeValue[i].toString()
           })
         }
       });
@@ -5391,7 +5442,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
           interneClient: 'Interne',
           type: logiciel.type,
           outil: logiciel.logiciel,
-          cout: logiciel.montant
+          cout: logiciel.montant?.toString()
         })
       });
     }
@@ -5424,7 +5475,7 @@ export class NogEditorComponent implements OnInit, OnDestroy {
         obj.tableFE.push({
           codeAffaire: this.selectedCodeAffaire,
           categorie: bd.categorie,
-          mission: bd.logiciel,
+          mission: bd.libelle,
           outil: bd.logiciel,
           bd: this.nogPartie3.businessDev[i]
         });
@@ -5609,4 +5660,317 @@ export class NogEditorComponent implements OnInit, OnDestroy {
       console.log('insertNogDiligenceLab',response);
     });
   }
+
+  loadValeurUniqueNog(): void {
+    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getListeValeurUnique/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      for (let key of response.data) {
+        //PARTIE 1
+        //1.1
+        this.nogPartie1.coordonnees.DOS_NOM = key.MyNogVU_PRESDOSSIER_NomSociete;
+        this.nogPartie1.coordonnees.DOS_ADRESSE = key.MyNogVU_PRESDOSSIER_Adresse;
+        this.nogPartie1.coordonnees.DOS_SIRET = key.MyNogVU_PRESDOSSIER_Siret;
+        this.nogPartie1.coordonnees.NAF_ID = key.MyNogVU_PRESDOSSIER_CodeApe;
+        this.nogPartie1.coordonnees.NAF_LIBELLE = key.MyNogVU_PRESDOSSIER_LibelleApe;
+        this.nogPartie1.dateLastUpdateCoordonnees = this.formatDateTimeBDD(key.MyNogVU_PRESDOSSIER_DateLastModifCoordonnees);
+         
+        //1.4
+        this.nogPartie1.chiffresSignificatifs[0].datePeriode = key.MyNogVU_PRESDOSSIER_LibelleExN1;
+        this.nogPartie1.chiffresSignificatifs[0].dureeExercice = key.MyNogVU_PRESDOSSIER_NbMoisExN1;
+        this.nogPartie1.chiffresSignificatifs[0].effectif = key.MyNogVU_PRESDOSSIER_EffectifN1;
+        this.nogPartie1.chiffresSignificatifs[0].capitauxPropres = key.MyNogVU_PRESDOSSIER_CapitauxPropresN1;
+        this.nogPartie1.chiffresSignificatifs[0].bilanNet = key.MyNogVU_PRESDOSSIER_BilanN1;
+        this.nogPartie1.chiffresSignificatifs[0].ca = key.MyNogVU_PRESDOSSIER_CAN1;
+        this.nogPartie1.chiffresSignificatifs[0].beneficePerte = key.MyNogVU_PRESDOSSIER_ResultatNetN1;
+        this.nogPartie1.chiffresSignificatifs[1].datePeriode = key.MyNogVU_PRESDOSSIER_LibelleExN2;
+        this.nogPartie1.chiffresSignificatifs[1].dureeExercice = key.MyNogVU_PRESDOSSIER_NbMoisExN2;
+        this.nogPartie1.chiffresSignificatifs[1].effectif = key.MyNogVU_PRESDOSSIER_EffectifN2;
+        this.nogPartie1.chiffresSignificatifs[1].capitauxPropres = key.MyNogVU_PRESDOSSIER_CapitauxPropresN2;
+        this.nogPartie1.chiffresSignificatifs[1].bilanNet = key.MyNogVU_PRESDOSSIER_BilanN2;
+        this.nogPartie1.chiffresSignificatifs[1].ca = key.MyNogVU_PRESDOSSIER_CAN2;
+        this.nogPartie1.chiffresSignificatifs[1].beneficePerte = key.MyNogVU_PRESDOSSIER_ResultatNetN2;
+        this.nogPartie1.dateLastUpdateCS = this.formatDateTimeBDD(key.MyNogVU_PRESDOSSIER_DateLastModifChriffresSign);
+         
+        //1.5
+        this.nogPartie1.activiteExHisto = key.MyNogVU_PRESDOSSIER_ActiviteExHisto;
+        this.nogPartie1.dateLastUpdateActiviteExHisto = this.formatDateTimeBDD(key.MyNogVU_PRESDOSSIER_DateLastModifActiviteExHisto);
+
+        //PARTIE 2
+        //2.1
+        this.nogPartie2.dateMiseAJour = this.formatDateInput(key.MyNogVU_PRESMISSION_DateMAJLM);
+        this.nogPartie2.montantHonoraire = key.MyNogVU_PRESMISSION_MontantHonoraires;
+        this.nogPartie2.dateLastUpdateLettreMission = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifLettreMission);
+        
+        //2.2
+        // this.nogPartie2.typeMission = key.MyNogVU_PRESMISSION_TypeMission;
+        this.nogPartie2.dateLastUpdateTypeMission = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifTypeMission);
+
+        //2.3
+        // this.nogPartie2.natureMission = key.MyNogVU_PRESMISSION_NatureMission;
+        this.nogPartie2.dateLastUpdateNatureMission = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifNatureMission);
+        this.loadTypeMissionNatureListeNog(key.MyNogVU_PRESMISSION_TypeMission, key.MyNogVU_PRESMISSION_NatureMission);
+
+        //2.4
+        this.nogPartie2.consultationPro = key.MyNogVU_PRESMISSION_ConsultAutresPro;
+        this.nogPartie2.interim = key.MyNogVU_PRESMISSION_Interim;
+        this.nogPartie2.final = key.MyNogVU_PRESMISSION_Final;
+        this.nogPartie2.delaiRespecter = key.MyNogVU_PRESMISSION_DelaiARespecter;
+        this.nogPartie2.dateLastUpdatePlanning = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifPlanning);
+         
+        //2.6
+        this.nogPartie2.precisionTravaux = key.MyNogVU_PRESMISSION_PrecisionTravaux;
+        this.nogPartie2.dateLastUpdatePrecisionTravaux = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifPrecisionTravaux);
+         
+        //PARTIE 3
+        //3.2
+        this.nogPartie3.orgaServiceAdmin = key.MyNogVU_ORGAADMINCOMPTA_OrgaServiceAdmin;
+        this.nogPartie3.dateLastUpdateOrgaServiceAdmin= this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifOrgaServiceAdmin); 
+
+        //3.3
+        this.nogPartie3.eInvoicing = key.MyNogVU_ORGAADMINCOMPTA_EInvoicing;
+        this.nogPartie3.eReportingTransaction = key.MyNogVU_ORGAADMINCOMPTA_EReportingTransaction;
+        this.nogPartie3.eReportingPaiement = key.MyNogVU_ORGAADMINCOMPTA_EReportingPaiement;
+        this.nogPartie3.casGestion = key.MyNogVU_ORGAADMINCOMPTA_CasGestion;
+        this.nogPartie3.mailEnvoi = key.MyNogVU_ORGAADMINCOMPTA_MailEnvoiClient;
+        this.nogPartie3.signatureMandat = key.MyNogVU_ORGAADMINCOMPTA_SignatureMandat;
+        this.nogPartie3.dateLastUpdateFE = this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifFE);  
+         
+        //3.4
+        this.nogPartie3.syntheseEntretienDir = key.MyNogVU_ORGAADMINCOMPTA_SyntheseEntretien;
+        this.nogPartie3.dateLastUpdateSyntheseEntretien = this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifSyntheseEntretien); 
+
+        //PARTIE 4
+        //4.1
+        this.nogPartie4.checkboxVigilance = key.MyNogVU_ZONERISQUE_Vigilance;
+        this.nogPartie4.dateLastUpdateVigilance = this.formatDateTimeBDD(key.MyNogVU_ZONERISQUE_DateLastModifVigilance); 
+         
+        //4.2
+        this.nogPartie4.aspectsComptables = key.MyNogVU_ZONERISQUE_AspectsComptables;
+        this.nogPartie4.aspectsFiscaux = key.MyNogVU_ZONERISQUE_AspectsFiscaux;
+        this.nogPartie4.aspectsSociaux = key.MyNogVU_ZONERISQUE_AspectsSociaux;
+        this.nogPartie4.aspectsJuridiques = key.MyNogVU_ZONERISQUE_AspectsJuridiques;
+        this.nogPartie4.comptesAnnuels = key.MyNogVU_ZONERISQUE_ComptesAnnuels;
+        this.nogPartie4.dateLastUpdatePrincipeComp = this.formatDateTimeBDD(key.MyNogVU_ZONERISQUE_DateLastModifPrincipeComp); 
+         
+        //4.3
+        this.nogPartie4.seuil = key.MyNogVU_ZONERISQUE_Seuil;
+        this.nogPartie4.dateLastUpdateSeuil = this.formatDateTimeBDD(key.MyNogVU_ZONERISQUE_DateLastModifSeuil); 
+         
+        //PARTIE 6
+        this.nogPartie6.checkboxEtage1 = key.MyNogVU_RESTCLIENT_ChoixRestClient;
+        this.nogPartie6.checkboxEtage2 = key.MyNogVU_RESTCLIENT_ChoixOutil;
+        this.nogPartie6.libelleAutreEtage1 = key.MyNogVU_RESTCLIENT_LibelleAutreRestClient;
+        this.nogPartie6.libelleAutreEtage2 = key.MyNogVU_RESTCLIENT_LibelleAutreOutil;
+        this.nogPartie6.commGeneral = key.MyNogVU_RESTCLIENT_CommGeneral;
+        this.nogPartie6.dateLastUpdateRestitutionClient = this.formatDateTimeBDD(key.MyNogVU_RESTCLIENT_DateLastModifRestClient); 
+         
+        //PARTIE 7
+        this.nogPartie7.checkboxFormInit = key.MyNogVU_DEONTOLOGIE_Coche1 == 'Oui';
+        this.nogPartie7.checkboxFormAnn = key.MyNogVU_DEONTOLOGIE_Coche2 == 'Oui';
+        this.nogPartie7.checkboxConflictCheck = key.MyNogVU_DEONTOLOGIE_Coche3 == 'Oui';
+        this.nogPartie7.dateLastUpdateDeontologie = this.formatDateTimeBDD(key.MyNogVU_DEONTOLOGIE_DateLastModifCoche); 
+      }
+
+      console.log('nogPartie1', this.nogPartie1);
+      console.log('nogPartie2', this.nogPartie2);
+      console.log('nogPartie3', this.nogPartie3);
+      console.log('nogPartie4', this.nogPartie4);
+      console.log('nogPartie6', this.nogPartie6);
+      console.log('nogPartie7', this.nogPartie7);
+      this.isValeurUniqueLoaded = true;
+      this.checkIdAllDataMJLoaded();
+      console.log('response.data',response.data);
+    });
+  }
+
+  loadTypeMissionNatureListeNog(typeMission: string, natureMission: string): void {
+    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getTypeMissionNatureNog`)
+    .subscribe(response => {
+      this.nogPartie2.typeMission = typeMission;
+      this.nogPartie2.natureMission = natureMission;
+      this.objTypeNatureMission = response.data;
+      this.isTypeMissionNatureLoaded = true;
+      this.checkIdAllDataMJLoaded();
+      console.log('response.data',response.data);
+    });
+  }
+
+  loadPlanningMJNog(): void {
+    this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getPlanningMJNog/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      let data = this.transformDataPlanning(response.data.data);
+      if(response.data.data.length != 0){
+        this.nogPartie2.planning = data;
+      }
+      this.isPlanningsLoaded = true;
+      this.nogPartie2.dateLastUpdatePlanning = this.formatDateTimeBDD(response.data.dateUpdate);
+      this.listeLibPlanningSauv = data[0].listeLib;
+      this.checkIdAllDataMJLoaded();
+      console.log('NOG PARTIE 2',this.nogPartie2);
+    });
+  }
+
+  loadEquipeInterMJNog(): void {
+    this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getEquipeInterMJNog/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      let obj = Object(response.data.data);
+      obj.isEditingRespMission = false;
+      obj.isEditingDmcm = false;
+      obj.isEditingFactureur = false;
+
+      let tab : EquipeInter[] = [];
+      tab.push(obj); 
+      this.nogPartie2.equipeInter = tab;
+      this.isEquipeInterLoaded = true;
+      this.nogPartie2.dateLastUpdateEquipeInter = this.formatDateTimeBDD(response.data.dateUpdate);
+      this.checkIdAllDataMJLoaded();
+      console.log('NOG PARTIE 2',this.nogPartie2);
+    });
+  }
+
+  loadContactMJNog(): void {
+    this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getContactMJNog/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      this.nogPartie1.contacts = response.data.data;
+      this.nogPartie1.dateLastUpdateContacts = this.formatDateTimeBDD(response.data.dateUpdate);
+      this.isContactsLoaded = true;
+      this.checkIdAllDataMJLoaded();
+      console.log('NOG PARTIE 1',this.nogPartie1);
+    });
+  }
+
+  loadAssocieMJNog(): void {
+    this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getAssocieMJNog/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      this.nogPartie1.associes = response.data.data;
+      this.nogPartie1.dateLastUpdateAssocies = this.formatDateTimeBDD(response.data.dateUpdate);
+      this.isAssociesLoaded = true;
+      this.checkIdAllDataMJLoaded();
+      console.log('NOG PARTIE 1',this.nogPartie1);
+    });
+  }
+
+  loadLogicielMJNog(): void {
+    this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getLogicielMJNog/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      this.nogPartie3.tabLogicielGT = response.data.logicielGT;
+      this.nogPartie3.tabLogicielClient = response.data.logicielClient;
+      this.isMontantLogicielLoaded = true;
+      this.nogPartie3.dateLastUpdateLogiciel = this.formatDateTimeBDD(response.data.dateUpdate);
+      this.checkIdAllDataMJLoaded();
+      console.log('NOG PARTIE 3',this.nogPartie3);
+    });
+  }
+
+  loadDiligenceMJNog(): void {
+    this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getDiligenceMJNog/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      this.nogPartie5.diligence = response.data.data;
+      this.isDiligencesDefaultLoaded = true;
+      this.nogPartie5.dateLastUpdateDiligence = this.formatDateTimeBDD(response.data.dateUpdate);
+      this.checkIdAllDataMJLoaded();
+      console.log('NOG PARTIE 5',this.nogPartie5);
+    });
+  }
+
+  loadDiligenceLabMJNog(): void {
+    this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getDiligenceLabMJNog/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      this.nogPartie5.diligenceLab = response.data.data;
+      this.isDiligenceLabLoaded = true;
+      this.nogPartie5.dateLastUpdateDiligenceLab = this.formatDateTimeBDD(response.data.dateUpdate);
+      this.checkIdAllDataMJLoaded();
+      console.log('NOG PARTIE 5',this.nogPartie5);
+    });
+  }
+
+  loadDiligencesBibliothequeMJNog(): void {
+    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getListeDiligenceBibliotheque`)
+    .subscribe(response => {
+      let data = this.transformDataDiligenceBibliotheque(response.data);
+      this.isDiligencesBibliothequeLoaded = true;
+      this.checkIdAllDataMJLoaded();
+      this.nogPartie5.diligenceAdd = data;
+      this.loadDiligenceAddMJNog();
+    });
+  }
+
+  loadDiligenceAddMJNog(): void {
+    this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getDiligenceAddMJNog/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      response.data.data.forEach((element: any) => {
+        this.nogPartie5.diligenceAdd.push(element);
+      });
+      this.isDiligenceAddLoaded = true;
+      this.nogPartie5.dateLastUpdateDiligence = this.formatDateTimeBDD(response.data.dateUpdate);
+      this.checkIdAllDataMJLoaded();
+      console.log('NOG PARTIE 5',this.nogPartie5);
+    });
+  }
+
+  loadFichiersAnnexeMJNog(): void {
+    this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getFichiersAnnexeMJNog/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      response.data.data.forEach((element: any) => {
+        this.nogPartieAnnexes.tabFiles.push(this.base64ToFile(element.file, element.titre));
+      });
+      this.isFichiersAnnexeLoaded = true;
+      this.nogPartieAnnexes.dateLastUpdateAnnexe = this.formatDateTimeBDD(response.data.dateUpdate);
+      this.checkIdAllDataMJLoaded();
+      console.log('NOG PARTIE ANNEXE',this.nogPartieAnnexes);
+    });
+  }
+
+  loadFEMJNog(): void {
+    this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getFEMJNog/${this.selectedCodeAffaire}`)
+    .subscribe(response => {
+      this.listeBdFE = response.data.tabMission;
+      this.nogPartie3.businessDev = response.data.tabBD;
+      if(response.data.tabBD.length > 0) {
+        this.nogPartie3.isFEValidate = true;
+      }
+      this.isFELoaded = true;
+      this.nogPartie3.dateLastUpdateFE = this.formatDateTimeBDD(response.data.dateUpdate);
+      this.checkIdAllDataMJLoaded();
+      console.log('NOG PARTIE 3',this.nogPartie3);
+    });
+  }
+
+  base64ToFile(base64String: string, fileName: string): File {
+    const byteCharacters = atob(base64String);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const fileExtension = fileName.split('.').pop();
+    let mimeType = 'application/octet-stream';
+
+    switch (fileExtension) {
+      case 'pdf':
+        mimeType = 'application/pdf';
+        break;
+      case 'jpg':
+      case 'jpeg':
+        mimeType = 'image/jpeg';
+        break;
+      case 'png':
+        mimeType = 'image/png';
+        break;
+      case 'txt':
+        mimeType = 'text/plain';
+        break;
+      case 'xlsx':
+        mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        break;
+      case 'docx':
+        mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        break;
+    }
+
+    const blob = new Blob([byteArray], { type: mimeType });
+    const file = new File([blob], fileName, { type: blob.type });
+    return file;
+  }
+
 }
