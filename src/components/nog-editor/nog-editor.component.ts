@@ -5229,6 +5229,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   formatDateTimeBDD(input: string): string {
+    if(input == null || input == '') {
+      return '';
+    }
     const date = new Date(input);
 
     const day = ('0' + date.getUTCDate()).slice(-2);
