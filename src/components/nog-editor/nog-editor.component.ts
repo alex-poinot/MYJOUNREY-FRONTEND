@@ -330,7 +330,7 @@ interface TabDiligence {
           <div><strong>Millésime :</strong> {{ selectedMillesime }}</div>
         </div>
         <div id="container-bouton-pdf">
-          <div id="btn-apercu-pdf" class="btn-disabled" title="Fonctionnalité à venir"><i class="fa-solid fa-files"></i> Aperçu</div>
+          <div id="btn-apercu-pdf" (click)="openApercuPopup()"><i class="fa-solid fa-files"></i> Aperçu</div>
         </div>
       </div>
       <div id="part-bottom-page-nog">
@@ -1607,7 +1607,7 @@ interface TabDiligence {
       <div class="apercu-popup" (click)="$event.stopPropagation()">
         <div class="apercu-header">
           <h3>Aperçu du document NOG</h3>
-          <button class="download-pdf" (click)="exportToPdf()">
+          <button class="download-pdf btn-disabled" title="Fonctionnalité à venir">
             <i class="fa-solid fa-file-arrow-down"></i> Télecharger PDF
           </button>
           <button class="apercu-close" (click)="closeApercuPopup()">
@@ -3603,7 +3603,7 @@ interface TabDiligence {
       color: white;
     }
 
-    div#btn-apercu-pdf.btn-disabled {
+    .btn-disabled {
       cursor: not-allowed;
     }
   `]
