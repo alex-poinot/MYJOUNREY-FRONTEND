@@ -4501,6 +4501,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       && this.isDiligencesBibliothequeLoaded && this.isFichiersAnnexeLoaded && this.isFELoaded
     ) {
       this.isAllDataNogLoaded = true;
+      setTimeout(() => {
+        this.loadContentIntoEditors();
+      }, 100);
     }
   }
 
@@ -5789,10 +5792,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isValeurUniqueLoaded = true;
       this.checkIdAllDataMJLoaded();
       console.log('response.data',response.data);
-
-      setTimeout(() => {
-        this.loadContentIntoEditors();
-      }, 0);
     });
   }
 
