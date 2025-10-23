@@ -5797,6 +5797,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loadContentIntoEditors(): void {
     const editorContent = document.querySelector('#editorContent') as HTMLElement;
+    console.log('editorContent', editorContent)
+    console.log('this.nogPartie1.activiteExHisto', this.nogPartie1.activiteExHisto)
     if (editorContent && this.nogPartie1.activiteExHisto) {
       editorContent.innerHTML = this.nogPartie1.activiteExHisto;
     }
