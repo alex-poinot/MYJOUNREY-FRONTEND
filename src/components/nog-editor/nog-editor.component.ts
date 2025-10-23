@@ -3789,6 +3789,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       const mission = params['mission'];
       const millesime = params['millesime'];
 
+      console.log('PARAM', dossier);
+
       if (dossier && mission && millesime) {
         // Attendre que les données soient chargées avant de valider
         this.waitForDataAndValidate(dossier, mission, millesime);
