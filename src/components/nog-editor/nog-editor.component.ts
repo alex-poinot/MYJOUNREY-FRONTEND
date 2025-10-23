@@ -4999,6 +4999,12 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.initializePrincipeCompCollapse();
       }, 0);
     }
+
+    if (value === '1' || value === '2' || value === '3' || value === '4') {
+      setTimeout(() => {
+        this.loadContentIntoEditors();
+      }, 0);
+    }
   }
 
   openApercuPopup(): void {
