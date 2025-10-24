@@ -1504,12 +1504,12 @@ interface TabDiligence {
               </div>
               <div id="container-validation-finalisation">
                 <div class="container-validation">
-                  <div class="libelle-validation">Validation collab :</div>
+                  <div class="libelle-validation">Validation collaborateur :</div>
                   <div class="btn-validation"><i class="fa-regular fa-check"></i></div>
                 </div>
                 <div class="container-validation">
                   <div class="libelle-validation">Validation associé :</div>
-                  <div class="btn-validation"><i class="fa-regular fa-check"></i></div>
+                  <div class="btn-validation btn-validation-disabled"><i class="fa-regular fa-check"></i></div>
                 </div>
               </div>
             </div>
@@ -3606,6 +3606,13 @@ interface TabDiligence {
     .btn-disabled {
       cursor: not-allowed;
     }
+
+    .btn-validation.btn-validation-disabled {
+      border-color: var(--gray-400) !important;
+      color: var(--gray-400) !important;
+      background-color: #ededed !important;
+      cursor: not-allowed;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -3887,15 +3894,11 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.setLogConnexion();
         // Gérer les paramètres URL
         this.route.queryParams.subscribe(params => {
-          console.log('Query params reçus:', params);
           const dossier = params['dossier'];
           const mission = params['mission'];
           const millesime = params['millesime'];
 
-          console.log('Dossier:', dossier, 'Mission:', mission, 'Millesime:', millesime);
-
           if (dossier && mission && millesime) {
-            console.log('Lancement de waitForDataAndValidate');
             this.waitForDataAndValidate(dossier, mission, millesime);
           }
         });
@@ -3906,7 +3909,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.authService.impersonatedEmail$.subscribe(() => {
       this.userEmail = this.authService.getEffectiveUserEmail();
       if(this.userEmail) {
-        this.dossiersLoaded = false;
+        this.dossiersLoaded = false
         this.isLoadingAllDossiers = false;
         this.loadAllDossiers();
       }
@@ -4651,26 +4654,24 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkIdAllDataLoaded(): void {
-    // if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded 
-    //   && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNatureLoaded 
-    //   && this.isMontantLogicielLoaded && this.isModuleFELoaded && this.isListeBDFELoaded
-    //   && this.isDiligencesDefaultLoaded && this.isDiligencesBibliothequeLoaded) {
-    //   this.isAllDataNogLoaded = true;
-    // }
-    this.isAllDataNogLoaded = true;
+    if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded 
+      && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNatureLoaded 
+      && this.isMontantLogicielLoaded && this.isModuleFELoaded && this.isListeBDFELoaded
+      && this.isDiligencesDefaultLoaded && this.isDiligencesBibliothequeLoaded) {
+      this.isAllDataNogLoaded = true;
+    }
   }
 
   checkIdAllDataMJLoaded(): void {
-    // if(this.isValeurUniqueLoaded && this.isTypeMissionNatureLoaded && this.isPlanningsLoaded && this.isEquipeInterLoaded && this.isContactsLoaded
-    //   && this.isAssociesLoaded && this.isMontantLogicielLoaded && this.isDiligencesDefaultLoaded && this.isDiligenceLabLoaded && this.isDiligenceAddLoaded
-    //   && this.isDiligencesBibliothequeLoaded && this.isFichiersAnnexeLoaded && this.isFELoaded
-    // ) {
-    //   this.isAllDataNogLoaded = true;
-    //   setTimeout(() => {
-    //     this.loadContentIntoEditors();
-    //   }, 100);
-    // }
-    this.isAllDataNogLoaded = true;
+    if(this.isValeurUniqueLoaded && this.isTypeMissionNatureLoaded && this.isPlanningsLoaded && this.isEquipeInterLoaded && this.isContactsLoaded
+      && this.isAssociesLoaded && this.isMontantLogicielLoaded && this.isDiligencesDefaultLoaded && this.isDiligenceLabLoaded && this.isDiligenceAddLoaded
+      && this.isDiligencesBibliothequeLoaded && this.isFichiersAnnexeLoaded && this.isFELoaded
+    ) {
+      this.isAllDataNogLoaded = true;
+      setTimeout(() => {
+        this.loadContentIntoEditors();
+      }, 100);
+    }
   }
 
   formatNumber(value: number | null | undefined): string {

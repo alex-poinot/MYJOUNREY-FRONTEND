@@ -83,7 +83,7 @@ export interface TabGroup {
           </button>
         </div>
         
-        <img [src]="currentUser?.photoUrl || defaultPhoto" [alt]="currentUser?.displayName || 'Utilisateur'" class="profile-photo">
+        <img [src]="currentUser?.photoUrl" [alt]="currentUser?.displayName || 'Utilisateur'" class="profile-photo">
         <div class="profile-info">
           <span class="profile-name">{{ currentUser?.displayName || 'Utilisateur' }}</span>
           <!-- <span class="profile-email">{{ isImpersonating ? impersonatedEmail : (currentUser?.mail || '') }}</span> -->
