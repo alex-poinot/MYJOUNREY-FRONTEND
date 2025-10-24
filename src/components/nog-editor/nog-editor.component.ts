@@ -123,6 +123,8 @@ interface NogPartie7 {
 interface NogPartieAnnexes {
   tabFiles: File[];
   dateLastUpdateAnnexe?: string;
+  validationCollab: boolean;
+  validationAssocie: boolean;
 }
 
 interface Logiciel {
@@ -956,7 +958,7 @@ interface TabDiligence {
               <div id="container-part-3-3-nog" class="containter-element-nog">
                 <div class="title-element-nog">3.3. Facturation électronique</div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="loadListeBDFE()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" (click)="loadListeBDFE(); loadModuleFE();"><i class="fa-solid fa-rotate-reverse"></i></button>
                 </div>
                 <div *ngIf="this.nogPartie3.isFEValidate" class="body-element-nog">
                   <div class="container-fe-nog">
@@ -1505,11 +1507,21 @@ interface TabDiligence {
               <div id="container-validation-finalisation">
                 <div class="container-validation">
                   <div class="libelle-validation">Validation collaborateur :</div>
-                  <div class="btn-validation"><i class="fa-regular fa-check"></i></div>
+                  <div class="btn-validation"
+                    (click)="validateCollab()"
+                    [class.btn-validation-disabled]="!isNogCanBeValidate"
+                    [class.selected]="nogPartieAnnexes.validationCollab">
+                      <i class="fa-regular fa-check"></i>
+                  </div>
                 </div>
                 <div class="container-validation">
                   <div class="libelle-validation">Validation associé :</div>
-                  <div class="btn-validation btn-validation-disabled"><i class="fa-regular fa-check"></i></div>
+                  <div class="btn-validation"
+                    (click)="validateAssocie()"
+                    [class.btn-validation-disabled]="!isNogCanBeValidate || !nogPartieAnnexes.validationCollab"
+                    [class.selected]="nogPartieAnnexes.validationAssocie">
+                      <i class="fa-regular fa-check"></i>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3638,6 +3650,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   isFichiersAnnexeLoaded = false;
   isFELoaded = false;
 
+  isNogCanBeValidate = false;
+
   private debounceTimers: { [key: string]: any } = {};
 
   filteredDossiers: Dossier[] = [];
@@ -3789,7 +3803,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   nogPartieAnnexes: NogPartieAnnexes = {
-    tabFiles: []
+    tabFiles: [],
+    validationCollab: false,
+    validationAssocie: false
   }
 
   onFilesSelected(event: Event): void {
@@ -4136,6 +4152,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.insertNogValue('MyNogVU_DEONTOLOGIE_Coche2', 'MyNogVU_DEONTOLOGIE_DateLastModifCoche', this.nogPartie7.checkboxFormAnn ? 'Oui' : 'Non');
       this.insertNogValue('MyNogVU_DEONTOLOGIE_Coche3', 'MyNogVU_DEONTOLOGIE_DateLastModifCoche', this.nogPartie7.checkboxConflictCheck ? 'Oui' : 'Non');
       this.nogPartie7.dateLastUpdateDeontologie = this.getDateNow();
+      this.checkConditionValidation();
     });
   }
 
@@ -4189,15 +4206,19 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     
     const listeMission = this.allMissionsData.filter(
       item => item.DOS_PGI === this.selectedDossier!.DOS_PGI &&
-        item.MD_MISSION === this.selectedDossier!.MD_MISSION &&
-        item.MD_MILLESIME === this.selectedDossier!.MD_MILLESIME
+        item.MD_MISSION === this.selectedMission &&
+        item.MD_MILLESIME === this.selectedMillesime
     );
 
     let codeAffaire = '';
 
     listeMission.forEach(item => {
-      console.log('CODE_AFFAIRE', item.CODE_AFFAIRE);
-      codeAffaire = item.CODE_AFFAIRE;
+      if(item.DOS_PGI === this.selectedDossier!.DOS_PGI &&
+        item.MD_MISSION === this.selectedMission &&
+        item.MD_MILLESIME === this.selectedMillesime) {
+          codeAffaire = item.CODE_AFFAIRE;
+          console.log('CODE_AFFAIRE', item.CODE_AFFAIRE);
+        }      
     });
     
     return codeAffaire;
@@ -4275,6 +4296,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.loadListeBDFE();
 
         this.insertNogVigilance();
+        // this.setLog({
+        //   email : this.usrMailCollab,
+        //   dosPgi: '',
+        //   modif: 'Initialisation formulaire',
+        //   typeModif: 'NOG',
+        //   module: '',
+        //   champ: '',
+        //   valeur: '',
+        //   periode: '',
+        //   mailPriseProfil: this.userEmail
+        // });
       } else {
         this.loadContactMJNog();
         this.loadAssocieMJNog();
@@ -4350,6 +4382,15 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         email: this.usrMailCollab,
         page: 'NOG'
     })
+    .subscribe(response => {
+      console.log('Réponse du serveur:', response);
+    });
+  }
+
+  setLog(obj: any) {
+    console.log('Envoi du log:', this.usrMailCollab);
+
+    this.http.post(`${environment.apiUrl}/logs/setLog`, obj)
     .subscribe(response => {
       console.log('Réponse du serveur:', response);
     });
@@ -4592,6 +4633,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       if(this.isListeBDFELoaded && this.isModuleFELoaded) {
         this.insertNogFE();
       }
+      this.checkConditionValidation();
     });
   }
 
@@ -4671,6 +4713,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       setTimeout(() => {
         this.loadContentIntoEditors();
       }, 100);
+    }
+  }
+
+  checkConditionValidation(): void {
+    if(this.nogPartie3.isFEValidate && this.nogPartie7.checkboxFormInit && this.nogPartie7.checkboxFormAnn && this.nogPartie7.checkboxConflictCheck) {
+      this.isNogCanBeValidate = true;
+    } else {
+      this.isNogCanBeValidate = false;
     }
   }
 
@@ -5969,6 +6019,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isValeurUniqueLoaded = true;
       this.checkIdAllDataMJLoaded();
       console.log('response.data',response.data);
+      this.checkConditionValidation();
     });
   }
 
@@ -6171,6 +6222,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.nogPartie3.dateLastUpdateFE = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE 3',this.nogPartie3);
+      this.checkConditionValidation();
     });
   }
 
@@ -6211,4 +6263,71 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     return file;
   }
 
+  validateCollab(): void {
+    if(this.isNogCanBeValidate) {
+      this.nogPartieAnnexes.validationCollab = true;
+       iziToast.success({
+          timeout: 3000, 
+          icon: 'fa-regular fa-thumbs-up', 
+          title: 'Validation effectuée avec succès !', 
+          close: false, 
+          position: 'bottomCenter', 
+          transitionIn: 'flipInX',
+          transitionOut: 'flipOutX'
+        });
+    } else {
+      this.showToastValidationCollab();
+    }
+  }
+
+  showToastValidationCollab(): void {
+    if(!this.nogPartie3.isFEValidate) {
+      iziToast.error({
+        timeout: 3000,
+        icon: 'fa-regular fa-triangle-exclamation', 
+        title: 'Veuillez remplir la partie 3.3. Facturation électronique.', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
+    }
+
+    if(!this.nogPartie7.checkboxFormInit && !this.nogPartie7.checkboxFormAnn && !this.nogPartie7.checkboxConflictCheck) {
+      iziToast.error({
+        timeout: 3000,
+        icon: 'fa-regular fa-triangle-exclamation', 
+        title: 'Veuillez remplir la partie 7. Déontologie.', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
+    }
+  }
+
+  validateAssocie(): void {
+    if(this.isNogCanBeValidate && this.nogPartieAnnexes.validationCollab) {
+      this.nogPartieAnnexes.validationAssocie = true;
+       iziToast.success({
+          timeout: 3000, 
+          icon: 'fa-regular fa-thumbs-up', 
+          title: 'Validation effectuée avec succès !', 
+          close: false, 
+          position: 'bottomCenter', 
+          transitionIn: 'flipInX',
+          transitionOut: 'flipOutX'
+        });
+    } else {
+      iziToast.error({
+        timeout: 3000,
+        icon: 'fa-regular fa-triangle-exclamation', 
+        title: 'Veuillez d\'abord validé la validation collaborateur.', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
+    }
+  }
 }
