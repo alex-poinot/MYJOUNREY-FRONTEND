@@ -956,7 +956,7 @@ interface TabDiligence {
             </div>
             <div class="row-part-nog row-fe-nog">
               <div id="container-part-3-3-nog" class="containter-element-nog">
-                <div class="title-element-nog">3.3. Facturation électronique</div>
+                <div class="title-element-nog">3.3. Facturation électronique<i title="Dernière mise à jour : {{nogPartie3.dateLastUpdateFE}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
                   <button class="btn-reload-data" (click)="loadListeBDFE(); loadModuleFE();"><i class="fa-solid fa-rotate-reverse"></i></button>
                 </div>
@@ -2430,6 +2430,7 @@ interface TabDiligence {
       font-weight: 600;
       height: 4vh;
       padding: 1vh 0;
+      z-index: 1;
     }
 
     .icon-coordonnees-nog {
@@ -4298,12 +4299,12 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.insertNogVigilance();
         // this.setLog({
         //   email : this.usrMailCollab,
-        //   dosPgi: '',
+        //   dosPgi: this.selectedDossier?.DOS_PGI,
         //   modif: 'Initialisation formulaire',
         //   typeModif: 'NOG',
-        //   module: '',
+        //   module: 'NOG',
         //   champ: '',
-        //   valeur: '',
+        //   valeur: this.selectedCodeAffaire,
         //   periode: '',
         //   mailPriseProfil: this.userEmail
         // });
