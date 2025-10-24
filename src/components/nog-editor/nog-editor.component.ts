@@ -2431,6 +2431,7 @@ interface TabDiligence {
       height: 4vh;
       padding: 1vh 0;
       z-index: 1;
+      width: fit-content;
     }
 
     .icon-coordonnees-nog {
@@ -3956,6 +3957,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Contact (partie 1.2):', this.nogPartie1.contacts);
       this.insertNogContacts();
       this.nogPartie1.dateLastUpdateContacts = this.getDateNow();
+      // this.setLog({
+      //   email : this.usrMailCollab,
+      //   dosPgi: this.selectedDossier?.DOS_PGI,
+      //   modif: 'Modification NOG',
+      //   typeModif: 'NOG',
+      //   module: 'NOG',
+      //   champ: 'Contacts',
+      //   valeur: this.selectedCodeAffaire,
+      //   periode: '',
+      //   mailPriseProfil: this.userEmail
+      // });
     });
   }
 
@@ -3964,6 +3976,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Associés (partie 1.3):', this.nogPartie1.associes);
       this.insertNogAssocies();
       this.nogPartie1.dateLastUpdateAssocies = this.getDateNow();
+      // this.setLog({
+      //   email : this.usrMailCollab,
+      //   dosPgi: this.selectedDossier?.DOS_PGI,
+      //   modif: 'Modification NOG',
+      //   typeModif: 'NOG',
+      //   module: 'NOG',
+      //   champ: 'Associes',
+      //   valeur: this.selectedCodeAffaire,
+      //   periode: '',
+      //   mailPriseProfil: this.userEmail
+      // });
     });
   }
 
@@ -3972,6 +3995,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Chiffres Significatifs (partie 1.4):', this.nogPartie1.chiffresSignificatifs);
       this.insertNogCS();
       this.nogPartie1.dateLastUpdateCS = this.getDateNow();
+      // this.setLog({
+      //   email : this.usrMailCollab,
+      //   dosPgi: this.selectedDossier?.DOS_PGI,
+      //   modif: 'Modification NOG',
+      //   typeModif: 'NOG',
+      //   module: 'NOG',
+      //   champ: 'Chiffres significatifs',
+      //   valeur: this.selectedCodeAffaire,
+      //   periode: '',
+      //   mailPriseProfil: this.userEmail
+      // });
     });
   }
 
@@ -3980,6 +4014,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Activité Historique (partie 1.5):', this.nogPartie1.activiteExHisto);
       this.insertNogModuleTexte('MyNogVU_PRESDOSSIER_ActiviteExHisto', 'MyNogVU_PRESDOSSIER_DateLastModifActiviteExHisto', this.nogPartie1.activiteExHisto);
       this.nogPartie1.dateLastUpdateActiviteExHisto = this.getDateNow();
+      // this.setLog({
+      //   email : this.usrMailCollab,
+      //   dosPgi: this.selectedDossier?.DOS_PGI,
+      //   modif: 'Modification NOG',
+      //   typeModif: 'NOG',
+      //   module: 'NOG',
+      //   champ: 'Activite historique',
+      //   valeur: this.selectedCodeAffaire,
+      //   periode: '',
+      //   mailPriseProfil: this.userEmail
+      // });
     });
   }
 
@@ -3992,6 +4037,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.insertNogValue('MyNogVU_PRESMISSION_DateMAJLM', 'MyNogVU_PRESMISSION_DateLastModifLettreMission', this.nogPartie2.dateMiseAJour);
       this.insertNogValue('MyNogVU_PRESMISSION_MontantHonoraires', 'MyNogVU_PRESMISSION_DateLastModifLettreMission', this.nogPartie2.montantHonoraire.toString());
       this.nogPartie2.dateLastUpdateLettreMission = this.getDateNow();
+      // this.setLog({
+      //   email : this.usrMailCollab,
+      //   dosPgi: this.selectedDossier?.DOS_PGI,
+      //   modif: 'Modification NOG',
+      //   typeModif: 'NOG',
+      //   module: 'NOG',
+      //   champ: 'Lettre mission',
+      //   valeur: this.selectedCodeAffaire,
+      //   periode: '',
+      //   mailPriseProfil: this.userEmail
+      // });
     });
   }
 
@@ -4000,6 +4056,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Type de Mission (partie 2.2):', this.nogPartie2.typeMission);
       this.insertNogValue('MyNogVU_PRESMISSION_TypeMission', 'MyNogVU_PRESMISSION_DateLastModifTypeMission', this.nogPartie2.typeMission);
       this.nogPartie2.dateLastUpdateTypeMission = this.getDateNow();
+      // this.setLog({
+      //   email : this.usrMailCollab,
+      //   dosPgi: this.selectedDossier?.DOS_PGI,
+      //   modif: 'Modification NOG',
+      //   typeModif: 'NOG',
+      //   module: 'NOG',
+      //   champ: 'Type mission',
+      //   valeur: this.selectedCodeAffaire,
+      //   periode: '',
+      //   mailPriseProfil: this.userEmail
+      // });
     });
   }
 
@@ -4008,6 +4075,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Nature de Mission (partie 2.3):', this.nogPartie2.natureMission);
       this.insertNogValue('MyNogVU_PRESMISSION_NatureMission', 'MyNogVU_PRESMISSION_DateLastModifNatureMission', this.nogPartie2.natureMission);
       this.nogPartie2.dateLastUpdateNatureMission = this.getDateNow();
+      // this.setLog({
+      //   email : this.usrMailCollab,
+      //   dosPgi: this.selectedDossier?.DOS_PGI,
+      //   modif: 'Modification NOG',
+      //   typeModif: 'NOG',
+      //   module: 'NOG',
+      //   champ: 'Nature mission',
+      //   valeur: this.selectedCodeAffaire,
+      //   periode: '',
+      //   mailPriseProfil: this.userEmail
+      // });
     });
   }
 
@@ -4020,6 +4098,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.insertNogValue('MyNogVU_PRESMISSION_DelaiARespecter', 'MyNogVU_PRESMISSION_DateLastModifPlanning', this.nogPartie2.delaiRespecter);
       this.insertNogPlanning();
       this.nogPartie2.dateLastUpdatePlanning = this.getDateNow();
+      // this.setLog({
+      //   email : this.usrMailCollab,
+      //   dosPgi: this.selectedDossier?.DOS_PGI,
+      //   modif: 'Modification NOG',
+      //   typeModif: 'NOG',
+      //   module: 'NOG',
+      //   champ: 'Contact',
+      //   valeur: this.selectedCodeAffaire,
+      //   periode: '',
+      //   mailPriseProfil: this.userEmail
+      // });
     });
   }
 
