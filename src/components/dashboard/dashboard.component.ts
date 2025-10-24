@@ -735,7 +735,7 @@ interface InsertFile {
             <p>{{ modalData.description }}</p>
             <div class="text-redirection" *ngIf="modalData.modifyMode === true && modalData.urlRedirection != undefined && modalData.mission != undefined && modalData.urlRedirection === true && (modalData.mission.startsWith('21') || modalData.mission.startsWith('22'))">
               Vous pouvez accéder au formulaire en cliquant sur le lien suivant : 
-              <button class="btn-redirection" (click)="redirectNog(modalData.dosPgi || '', modalData.mission || '', modalData.millesime || '')">Lien vers le formulaire</button>
+              <button class="btn-redirection" (click)="redirectNog(modalData.dosPgi || '', modalData.mission || '', modalData.millesime || '')">Accéder au formulaire</button>
             </div>
             <div *ngIf="modalData.modifyMode === true"
               class="file-input-group">

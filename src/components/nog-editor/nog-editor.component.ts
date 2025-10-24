@@ -371,7 +371,7 @@ interface TabDiligence {
           </div>
         </div>
         <div id="part-bottom-right-page-nog">
-          <div *ngIf="this.nogPartieAnnexes.validationAssocie == true" id="read-only-nog">Ce formulaire à été validé par un associé, il est donc disponique qu'en lecture.</div>
+          <div *ngIf="this.nogPartieAnnexes.validationAssocie == true" id="read-only-nog">Ce formulaire à été validé par un associé, il est donc disponible en lecture seule.</div>
           <div *ngIf="selectedPartNog=='1'" id="container-part-1-nog" class="container-part-nog">
             <div class="row-part-nog">
               <div id="container-part-1-1-nog" class="containter-element-nog">
@@ -4087,6 +4087,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4110,6 +4111,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4133,6 +4135,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4156,6 +4159,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4183,6 +4187,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4206,6 +4211,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4229,6 +4235,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4256,6 +4263,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4279,6 +4287,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4302,6 +4311,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4328,6 +4338,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4351,6 +4362,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4374,6 +4386,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4400,6 +4413,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4433,6 +4447,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4456,6 +4471,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4480,6 +4496,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4503,6 +4520,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4537,6 +4555,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4570,6 +4589,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -4593,6 +4613,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
       setTimeout(() => {
         this.isSavingNog = false;
       }, 2000);
@@ -5782,6 +5803,18 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   toggleGroupeActivation(diligence: Diligence): void {
+    if(this.nogPartieAnnexes.validationAssocie) {
+      iziToast.error({
+        timeout: 3000,
+        icon: 'fa-regular fa-triangle-exclamation', 
+        title: 'Impossible de modifier car vous êtes en lecture seule.', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
+      return;
+    }
     if (!diligence.tabDiligence || diligence.tabDiligence.length === 0) {
       return;
     }
@@ -6014,9 +6047,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         obj.push({
           codeAffaire: this.selectedCodeAffaire,
           nom: associe.nom,
-          nbTitres: associe.nbPart,
-          montantCapital: associe.partCapital,
-          pourcDetention: associe.pourcPart
+          nbTitres: associe.nbPart.toString(),
+          montantCapital: associe.partCapital.toString(),
+          pourcDetention: associe.pourcPart.toString()
         })
       });
     }
@@ -6970,6 +7003,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   reloadFE() : void {
     if (this.isReloadingFE) return;
     this.isReloadingFE = true;
+    this.isSavingNog = true;
     this.loadListeBDFE();
     this.loadModuleFE();
     setTimeout(() => {
@@ -6986,11 +7020,16 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       periode: '',
       mailPriseProfil: this.userEmail
     });
+    this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
+    setTimeout(() => {
+      this.isSavingNog = false;
+    }, 2000);
   }
 
   reloadLogiciel() : void {
     if (this.isReloadingLogiciel) return;
     this.isReloadingLogiciel = true;
+    this.isSavingNog = true;
     this.loadMontantLogiciel();
     setTimeout(() => {
       this.isReloadingLogiciel = false;
@@ -7006,11 +7045,16 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       periode: '',
       mailPriseProfil: this.userEmail
     });
+    this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
+    setTimeout(() => {
+      this.isSavingNog = false;
+    }, 2000);
   }
 
   reloadCoordonnee() : void {
     if (this.isReloadingCoordonnees) return;
     this.isReloadingCoordonnees = true;
+    this.isSavingNog = true;
     this.loadCoordonnees();
     setTimeout(() => {
       this.isReloadingCoordonnees = false;
@@ -7026,11 +7070,16 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       periode: '',
       mailPriseProfil: this.userEmail
     });
+    this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
+    setTimeout(() => {
+      this.isSavingNog = false;
+    }, 2000);
   }
 
   reloadContact() : void {
     if (this.isReloadingContacts) return;
     this.isReloadingContacts = true;
+    this.isSavingNog = true;
     this.loadContacts();
     setTimeout(() => {
       this.isReloadingContacts = false;
@@ -7046,12 +7095,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       periode: '',
       mailPriseProfil: this.userEmail
     });
+    this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
+    setTimeout(() => {
+      this.isSavingNog = false;
+    }, 2000);
   }
 
   reloadAssocie() : void {
     if (this.isReloadingAssocies) return;
     this.isReloadingAssocies = true;
-    this.loadContacts();
+    this.isSavingNog = true;
+    this.loadAssocies();
     setTimeout(() => {
       this.isReloadingAssocies = false;
     }, 5000);
@@ -7066,11 +7120,16 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       periode: '',
       mailPriseProfil: this.userEmail
     });
+    this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
+    setTimeout(() => {
+      this.isSavingNog = false;
+    }, 2000);
   }
 
   reloadCS() : void {
     if (this.isReloadingCS) return;
     this.isReloadingCS = true;
+    this.isSavingNog = true;
     this.loadChiffresSignificatifs();
     setTimeout(() => {
       this.isReloadingCS = false;
@@ -7086,11 +7145,16 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       periode: '',
       mailPriseProfil: this.userEmail
     });
+    this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
+    setTimeout(() => {
+      this.isSavingNog = false;
+    }, 2000);
   }
 
   reloadPlanning() : void {
     if (this.isReloadingPlanning) return;
     this.isReloadingPlanning = true;
+    this.isSavingNog = true;
     this.loadPlannings();
     setTimeout(() => {
       this.isReloadingPlanning = false;
@@ -7106,11 +7170,16 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       periode: '',
       mailPriseProfil: this.userEmail
     });
+    this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
+    setTimeout(() => {
+      this.isSavingNog = false;
+    }, 2000);
   }
 
   reloadEquipeInter() : void {
     if (this.isReloadingEquipeInter) return;
     this.isReloadingEquipeInter = true;
+    this.isSavingNog = true;
     this.loadEquipeInter();
     setTimeout(() => {
       this.isReloadingEquipeInter = false;
@@ -7126,15 +7195,21 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       periode: '',
       mailPriseProfil: this.userEmail
     });
+    this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
+    setTimeout(() => {
+      this.isSavingNog = false;
+    }, 2000);
   }
 
   getLaterDate(dateStr1: string, dateStr2: string): string {
+    console.log('dateStr1',dateStr1)
+    console.log('dateStr2',dateStr2)
     if(dateStr2 == '' || dateStr2 == null) {
       return dateStr1;
     }
 
     if(dateStr1 == '' || dateStr1 == null) {
-      return '';
+      return dateStr2;
     }
     // Fonction utilitaire pour parser le format 'dd/MM/yyyy HH:mm'
     const parseDate = (dateStr: string): Date => {
