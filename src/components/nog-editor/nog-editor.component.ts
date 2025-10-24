@@ -5618,7 +5618,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   toggleDiligenceSelection(diligence: TabDiligence): void {
     const index = this.selectedDiligences.findIndex(d => d.diligence === diligence.diligence);
-
+    console.log('diligence', diligence);
     if (index > -1) {
       this.selectedDiligences.splice(index, 1);
       this.removeDiligenceFromNog(diligence);
@@ -5896,6 +5896,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     
     data.forEach(item => {
       obj = {
+        cycle: item.GROUPE,
         diligence: item.DILIGENCE,
         titre: item.TITRE,
         activation: true,
