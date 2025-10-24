@@ -3957,17 +3957,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Contact (partie 1.2):', this.nogPartie1.contacts);
       this.insertNogContacts();
       this.nogPartie1.dateLastUpdateContacts = this.getDateNow();
-      // this.setLog({
-      //   email : this.usrMailCollab,
-      //   dosPgi: this.selectedDossier?.DOS_PGI,
-      //   modif: 'Modification NOG',
-      //   typeModif: 'NOG',
-      //   module: 'NOG',
-      //   champ: 'Contacts',
-      //   valeur: this.selectedCodeAffaire,
-      //   periode: '',
-      //   mailPriseProfil: this.userEmail
-      // });
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Contacts',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -3976,17 +3976,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Associés (partie 1.3):', this.nogPartie1.associes);
       this.insertNogAssocies();
       this.nogPartie1.dateLastUpdateAssocies = this.getDateNow();
-      // this.setLog({
-      //   email : this.usrMailCollab,
-      //   dosPgi: this.selectedDossier?.DOS_PGI,
-      //   modif: 'Modification NOG',
-      //   typeModif: 'NOG',
-      //   module: 'NOG',
-      //   champ: 'Associes',
-      //   valeur: this.selectedCodeAffaire,
-      //   periode: '',
-      //   mailPriseProfil: this.userEmail
-      // });
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Associes',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -3995,17 +3995,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Chiffres Significatifs (partie 1.4):', this.nogPartie1.chiffresSignificatifs);
       this.insertNogCS();
       this.nogPartie1.dateLastUpdateCS = this.getDateNow();
-      // this.setLog({
-      //   email : this.usrMailCollab,
-      //   dosPgi: this.selectedDossier?.DOS_PGI,
-      //   modif: 'Modification NOG',
-      //   typeModif: 'NOG',
-      //   module: 'NOG',
-      //   champ: 'Chiffres significatifs',
-      //   valeur: this.selectedCodeAffaire,
-      //   periode: '',
-      //   mailPriseProfil: this.userEmail
-      // });
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Chiffres significatifs',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4014,17 +4014,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Activité Historique (partie 1.5):', this.nogPartie1.activiteExHisto);
       this.insertNogModuleTexte('MyNogVU_PRESDOSSIER_ActiviteExHisto', 'MyNogVU_PRESDOSSIER_DateLastModifActiviteExHisto', this.nogPartie1.activiteExHisto);
       this.nogPartie1.dateLastUpdateActiviteExHisto = this.getDateNow();
-      // this.setLog({
-      //   email : this.usrMailCollab,
-      //   dosPgi: this.selectedDossier?.DOS_PGI,
-      //   modif: 'Modification NOG',
-      //   typeModif: 'NOG',
-      //   module: 'NOG',
-      //   champ: 'Activite historique',
-      //   valeur: this.selectedCodeAffaire,
-      //   periode: '',
-      //   mailPriseProfil: this.userEmail
-      // });
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Activite historique',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4037,17 +4037,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.insertNogValue('MyNogVU_PRESMISSION_DateMAJLM', 'MyNogVU_PRESMISSION_DateLastModifLettreMission', this.nogPartie2.dateMiseAJour);
       this.insertNogValue('MyNogVU_PRESMISSION_MontantHonoraires', 'MyNogVU_PRESMISSION_DateLastModifLettreMission', this.nogPartie2.montantHonoraire.toString());
       this.nogPartie2.dateLastUpdateLettreMission = this.getDateNow();
-      // this.setLog({
-      //   email : this.usrMailCollab,
-      //   dosPgi: this.selectedDossier?.DOS_PGI,
-      //   modif: 'Modification NOG',
-      //   typeModif: 'NOG',
-      //   module: 'NOG',
-      //   champ: 'Lettre mission',
-      //   valeur: this.selectedCodeAffaire,
-      //   periode: '',
-      //   mailPriseProfil: this.userEmail
-      // });
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Lettre mission',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4056,17 +4056,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Type de Mission (partie 2.2):', this.nogPartie2.typeMission);
       this.insertNogValue('MyNogVU_PRESMISSION_TypeMission', 'MyNogVU_PRESMISSION_DateLastModifTypeMission', this.nogPartie2.typeMission);
       this.nogPartie2.dateLastUpdateTypeMission = this.getDateNow();
-      // this.setLog({
-      //   email : this.usrMailCollab,
-      //   dosPgi: this.selectedDossier?.DOS_PGI,
-      //   modif: 'Modification NOG',
-      //   typeModif: 'NOG',
-      //   module: 'NOG',
-      //   champ: 'Type mission',
-      //   valeur: this.selectedCodeAffaire,
-      //   periode: '',
-      //   mailPriseProfil: this.userEmail
-      // });
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Type mission',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4075,17 +4075,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Nature de Mission (partie 2.3):', this.nogPartie2.natureMission);
       this.insertNogValue('MyNogVU_PRESMISSION_NatureMission', 'MyNogVU_PRESMISSION_DateLastModifNatureMission', this.nogPartie2.natureMission);
       this.nogPartie2.dateLastUpdateNatureMission = this.getDateNow();
-      // this.setLog({
-      //   email : this.usrMailCollab,
-      //   dosPgi: this.selectedDossier?.DOS_PGI,
-      //   modif: 'Modification NOG',
-      //   typeModif: 'NOG',
-      //   module: 'NOG',
-      //   champ: 'Nature mission',
-      //   valeur: this.selectedCodeAffaire,
-      //   periode: '',
-      //   mailPriseProfil: this.userEmail
-      // });
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Nature mission',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4098,17 +4098,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.insertNogValue('MyNogVU_PRESMISSION_DelaiARespecter', 'MyNogVU_PRESMISSION_DateLastModifPlanning', this.nogPartie2.delaiRespecter);
       this.insertNogPlanning();
       this.nogPartie2.dateLastUpdatePlanning = this.getDateNow();
-      // this.setLog({
-      //   email : this.usrMailCollab,
-      //   dosPgi: this.selectedDossier?.DOS_PGI,
-      //   modif: 'Modification NOG',
-      //   typeModif: 'NOG',
-      //   module: 'NOG',
-      //   champ: 'Contact',
-      //   valeur: this.selectedCodeAffaire,
-      //   periode: '',
-      //   mailPriseProfil: this.userEmail
-      // });
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Contact',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4117,6 +4117,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Équipe Intervention (partie 2.5):', this.nogPartie2.equipeInter);
       this.insertNogEquipeInter();
       this.nogPartie2.dateLastUpdateEquipeInter = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Equipe intervention',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4125,6 +4136,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Précision des Travaux (partie 2.6):', this.nogPartie2.precisionTravaux);
       this.insertNogModuleTexte('MyNogVU_PRESMISSION_PrecisionTravaux', 'MyNogVU_PRESMISSION_DateLastModifPrecisionTravaux', this.nogPartie2.precisionTravaux);
       this.nogPartie2.dateLastUpdatePrecisionTravaux = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Precision travaux',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4136,6 +4158,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       this.insertNogLogiciel();
       this.nogPartie3.dateLastUpdateLogiciel = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Logiciel',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4144,14 +4177,36 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Organisation Service Admin (partie 3.2):', this.nogPartie3.orgaServiceAdmin);
       this.insertNogModuleTexte('MyNogVU_ORGAADMINCOMPTA_OrgaServiceAdmin', 'MyNogVU_ORGAADMINCOMPTA_DateLastModifOrgaServiceAdmin', this.nogPartie3.orgaServiceAdmin);
       this.nogPartie3.dateLastUpdateOrgaServiceAdmin = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Organisation service admin',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
   setChangeIntoSyntheseEntretien(): void {
     this.debounceLog('syntheseEntretien', () => {
       console.log('Modification dans Synthèse Entretien (partie 3.4):', this.nogPartie3.syntheseEntretienDir);
-      this.insertNogModuleTexte('MyNogVU_ORGAADMINCOMPTA_SyntheseEntretien', 'MyNogVU_PRESDOSSIER_DateLastModifSyntheseEntretien', this.nogPartie3.syntheseEntretienDir);
+      this.insertNogModuleTexte('MyNogVU_ORGAADMINCOMPTA_SyntheseEntretien', 'MyNogVU_ORGAADMINCOMPTA_DateLastModifSyntheseEntretien', this.nogPartie3.syntheseEntretienDir);
       this.nogPartie3.dateLastUpdateSyntheseEntretien = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Synthese entretien',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4163,6 +4218,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       this.insertNogVigilance();
       this.nogPartie4.dateLastUpdateVigilance = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Vigilance',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4181,6 +4247,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.insertNogModuleTexte('MyNogVU_ZONERISQUE_AspectsJuridiques', 'MyNogVU_ZONERISQUE_DateLastModifPrincipeComp', this.nogPartie4.aspectsJuridiques);
       this.insertNogModuleTexte('MyNogVU_ZONERISQUE_ComptesAnnuels', 'MyNogVU_ZONERISQUE_DateLastModifPrincipeComp', this.nogPartie4.comptesAnnuels);
       this.nogPartie4.dateLastUpdatePrincipeComp = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Principes comptables',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4189,6 +4266,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Seuil (partie 4.3):', this.nogPartie4.seuil);
       this.insertNogValue('MyNogVU_ZONERISQUE_Seuil', 'MyNogVU_ZONERISQUE_DateLastModifSeuil', this.nogPartie4.seuil.toString());
       this.nogPartie4.dateLastUpdateSeuil = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Seuil',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4198,6 +4286,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.insertNogDiligence();
       this.insertNogDiligenceAdd();
       this.nogPartie5.dateLastUpdateDiligence = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Diligence',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4206,6 +4305,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Diligences LAB (partie 5):', this.nogPartie5.diligenceLab);
       this.insertNogDiligenceLab();
       this.nogPartie5.dateLastUpdateDiligenceLab = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Diligence lab',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4225,6 +4335,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.insertNogValue('MyNogVU_RESTCLIENT_LibelleAutreRestClient', 'MyNogVU_RESTCLIENT_DateLastModifRestClient', this.nogPartie6.libelleAutreEtage1 ?? '');
       this.insertNogModuleTexte('MyNogVU_RESTCLIENT_CommGeneral', 'MyNogVU_RESTCLIENT_DateLastModifRestClient', this.nogPartie6.commGeneral);
       this.nogPartie6.dateLastUpdateRestitutionClient = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Restitution client',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4243,6 +4364,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.insertNogValue('MyNogVU_DEONTOLOGIE_Coche3', 'MyNogVU_DEONTOLOGIE_DateLastModifCoche', this.nogPartie7.checkboxConflictCheck ? 'Oui' : 'Non');
       this.nogPartie7.dateLastUpdateDeontologie = this.getDateNow();
       this.checkConditionValidation();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Deontologie',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4251,6 +4383,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       console.log('Modification dans Annexes:', this.nogPartieAnnexes.tabFiles);
       this.insertNogFileAnnexe();
       this.nogPartieAnnexes.dateLastUpdateAnnexe = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Fichiers annexes',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     });
   }
 
@@ -4386,17 +4529,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.loadListeBDFE();
 
         this.insertNogVigilance();
-        // this.setLog({
-        //   email : this.usrMailCollab,
-        //   dosPgi: this.selectedDossier?.DOS_PGI,
-        //   modif: 'Initialisation formulaire',
-        //   typeModif: 'NOG',
-        //   module: 'NOG',
-        //   champ: '',
-        //   valeur: this.selectedCodeAffaire,
-        //   periode: '',
-        //   mailPriseProfil: this.userEmail
-        // });
+        this.setLog({
+          email : this.usrMailCollab,
+          dosPgi: this.selectedDossier?.DOS_PGI,
+          modif: 'Initialisation formulaire',
+          typeModif: 'NOG',
+          module: 'NOG',
+          champ: '',
+          valeur: this.selectedCodeAffaire,
+          periode: '',
+          mailPriseProfil: this.userEmail
+        });
       } else {
         this.loadContactMJNog();
         this.loadAssocieMJNog();
@@ -4767,6 +4910,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.http.get<any>(`${environment.apiUrlMyVision}/dossierDetail/getMontantLogicielNogMyJourney/${this.selectedDossier?.DOS_PGI}&${this.selectedMission}&${this.selectedMillesime}`)
     .subscribe(response => {
       let listeLogiciel = Object.keys(response);
+      this.nogPartie3.tabLogicielGT = [];
       listeLogiciel.forEach(element => {
         this.nogPartie3.tabLogicielGT.push(
           {
@@ -6354,6 +6498,10 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   validateCollab(): void {
+    if(this.nogPartieAnnexes.validationCollab) {
+      return;
+    }
+
     if(this.isNogCanBeValidate) {
       this.nogPartieAnnexes.validationCollab = true;
        iziToast.success({
@@ -6364,6 +6512,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           position: 'bottomCenter', 
           transitionIn: 'flipInX',
           transitionOut: 'flipOutX'
+        });
+        this.setLog({
+          email : this.usrMailCollab,
+          dosPgi: this.selectedDossier?.DOS_PGI,
+          modif: 'Modification NOG',
+          typeModif: 'NOG',
+          module: 'NOG',
+          champ: 'Validation collab',
+          valeur: this.selectedCodeAffaire,
+          periode: '',
+          mailPriseProfil: this.userEmail
         });
     } else {
       this.showToastValidationCollab();
@@ -6397,6 +6556,10 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   validateAssocie(): void {
+    if(this.nogPartieAnnexes.validationAssocie) {
+      return;
+    }
+
     if(this.isNogCanBeValidate && this.nogPartieAnnexes.validationCollab) {
       this.nogPartieAnnexes.validationAssocie = true;
        iziToast.success({
@@ -6407,6 +6570,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           position: 'bottomCenter', 
           transitionIn: 'flipInX',
           transitionOut: 'flipOutX'
+        });
+        this.setLog({
+          email : this.usrMailCollab,
+          dosPgi: this.selectedDossier?.DOS_PGI,
+          modif: 'Modification NOG',
+          typeModif: 'NOG',
+          module: 'NOG',
+          champ: 'Validation associe',
+          valeur: this.selectedCodeAffaire,
+          periode: '',
+          mailPriseProfil: this.userEmail
         });
     } else {
       iziToast.error({
