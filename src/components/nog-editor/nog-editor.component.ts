@@ -16,6 +16,7 @@ interface Dossier {
   MD_MILLESIME: string;
   LIBELLE_MISSIONS: string;
   CODE_AFFAIRE: string;
+  PROFIL: string;
 }
 
 interface Mission {
@@ -365,12 +366,13 @@ interface TabDiligence {
           </div>
         </div>
         <div id="part-bottom-right-page-nog">
+          <div *ngIf="this.nogPartieAnnexes.validationAssocie == true" id="read-only-nog">Ce formulaire à été validé par un associé, il est donc disponique qu'en lecture.</div>
           <div *ngIf="selectedPartNog=='1'" id="container-part-1-nog" class="container-part-nog">
             <div class="row-part-nog">
               <div id="container-part-1-1-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.1. Coordonnées<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateCoordonnees}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="loadCoordonnees()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" (click)="reloadCoordonnee()"><i class="fa-solid fa-rotate-reverse"></i></button>
                 </div>
                 <div class="body-element-nog">
                   <div class="row-coordonnees-nog">
@@ -405,7 +407,7 @@ interface TabDiligence {
               <div id="container-part-1-2-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.2. Contacts<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateContacts}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="loadContacts()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" (click)="reloadContact()"><i class="fa-solid fa-rotate-reverse"></i></button>
                   <button class="btn-add-row" (click)="addContact()"><i class="fa-solid fa-plus"></i> Ajouter un contact</button>
                 </div>
                 <div class="body-element-nog">
@@ -462,7 +464,7 @@ interface TabDiligence {
               <div id="container-part-1-3-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.3. Associés<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateAssocies}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="loadAssocies()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" (click)="reloadAssocie()"><i class="fa-solid fa-rotate-reverse"></i></button>
                   <button class="btn-add-row" (click)="addAssocie()"><i class="fa-solid fa-plus"></i> Ajouter un associé</button>
                 </div>
                 <div class="body-element-nog">
@@ -514,7 +516,7 @@ interface TabDiligence {
               <div id="container-part-1-4-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.4. Chiffres significatifs<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateCS}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="loadChiffresSignificatifs()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" (click)="reloadCS()"><i class="fa-solid fa-rotate-reverse"></i></button>
                 </div>
                 <div class="body-element-nog">
                   <div id="container-chiffres-sign-nog">
@@ -687,7 +689,7 @@ interface TabDiligence {
                     <div class="container-input-title-nog">
                         <div class="title-bloc-nog">Planning</div>
                         <div class="liste-btn-absolute"> 
-                          <button class="btn-reload-data" (click)="loadPlannings()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                          <button class="btn-reload-data" (click)="reloadPlanning()"><i class="fa-solid fa-rotate-reverse"></i></button>
                           <button class="btn-add-row" (click)="addPlanning()"><i class="fa-solid fa-plus"></i> Ajouter un planning</button>
                         </div>
                         <div class="input-bloc-nog">
@@ -744,7 +746,7 @@ interface TabDiligence {
               <div id="container-part-2-5-nog" class="containter-element-nog">
                 <div class="title-element-nog">2.5. Equipe d'intervention<i title="Dernière mise à jour : {{nogPartie2.dateLastUpdateEquipeInter}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="loadEquipeInter()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" (click)="reloadEquipeInter()"><i class="fa-solid fa-rotate-reverse"></i></button>
                 </div>
                 <div class="body-element-nog">
                   <table class="table-nog">
@@ -848,7 +850,7 @@ interface TabDiligence {
                   <div id="container-tab-logiciel-gt">
                     <div class="titre-tab-logiciel">Outils environnement GT</div>
                     <div class="liste-btn-absolute">
-                      <button class="btn-reload-data" (click)="loadMontantLogiciel()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                      <button class="btn-reload-data" (click)="reloadLogiciel()"><i class="fa-solid fa-rotate-reverse"></i></button>
                       <button class="btn-add-row" (click)="addLogicielGT()"><i class="fa-solid fa-plus"></i> Ajouter un logiciel</button>
                     </div>
                     <div class="container-table-logiciel-nog">
@@ -958,11 +960,47 @@ interface TabDiligence {
               <div id="container-part-3-3-nog" class="containter-element-nog">
                 <div class="title-element-nog">3.3. Facturation électronique<i title="Dernière mise à jour : {{nogPartie3.dateLastUpdateFE}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="loadListeBDFE(); loadModuleFE();"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" (click)="reloadFE()"><i class="fa-solid fa-rotate-reverse"></i></button>
                 </div>
                 <div *ngIf="this.nogPartie3.isFEValidate" class="body-element-nog">
                   <div class="container-fe-nog">
+                    <div class="container-table-obligation-mail-fe-nog">
+                      <div class="container-table-obligation-fe-nog">
+                        <div class="titre-tab-fe">Obligation FE</div>
+                        <table class="table-nog">
+                          <thead>
+                            <tr>
+                              <th>E-Invoicing</th>
+                              <th>E-Reporting transaction</th>
+                              <th>E-Reporting paiement</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>{{ this.nogPartie3.eInvoicing }}</td>
+                              <td>{{ this.nogPartie3.eReportingTransaction }}</td>
+                              <td>{{ this.nogPartie3.eReportingPaiement }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="container-mail-mandat-fe">
+                        <div class="element-fe-title-value">
+                          <div class="title-fe">Cas de gestion :</div>
+                          <div class="value-fe">{{ this.nogPartie3.casGestion }}</div>
+                        </div>
+                        <div class="element-fe-title-value">
+                          <div class="title-fe">Mail envoyé au client :</div>
+                          <div class="value-fe">{{ this.nogPartie3.mailEnvoi }}</div>
+                        </div>
+                        <div class="element-fe-title-value">
+                          <div class="title-fe">Mandat signé :</div>
+                          <div class="value-fe">{{ this.nogPartie3.signatureMandat }}</div>
+                        </div>
+                      </div>
+                    </div>
                     <div class="container-table-fe-nog">
+                      <div class="titre-tab-fe">Mission FE</div>
                       <table class="table-nog">
                         <thead>
                           <tr>
@@ -981,36 +1019,6 @@ interface TabDiligence {
                           </tr>
                         </tbody>
                       </table>
-                    </div>
-                  </div>
-                  <div class="container-fe-nog">
-                    <div class="container-impact-fe">
-                      <div class="element-fe-title-value">
-                        <div class="title-fe">E-Invoicing :</div>
-                        <div class="value-fe">{{ this.nogPartie3.eInvoicing }}</div>
-                      </div>
-                      <div class="element-fe-title-value">
-                        <div class="title-fe">E-Reporting Transaction :</div>
-                        <div class="value-fe">{{ this.nogPartie3.eReportingTransaction }}</div>
-                      </div>
-                      <div class="element-fe-title-value">
-                        <div class="title-fe">E-Reporting Paiement :</div>
-                        <div class="value-fe">{{ this.nogPartie3.eReportingPaiement }}</div>
-                      </div>
-                    </div>
-                    <div class="container-mail-mandat-fe">
-                      <div class="element-fe-title-value">
-                        <div class="title-fe">Cas de gestion :</div>
-                        <div class="value-fe">{{ this.nogPartie3.casGestion }}</div>
-                      </div>
-                      <div class="element-fe-title-value">
-                        <div class="title-fe">Mail envoyé au client :</div>
-                        <div class="value-fe">{{ this.nogPartie3.mailEnvoi }}</div>
-                      </div>
-                      <div class="element-fe-title-value">
-                        <div class="title-fe">Mandat signé :</div>
-                        <div class="value-fe">{{ this.nogPartie3.signatureMandat }}</div>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -1515,7 +1523,7 @@ interface TabDiligence {
                 </div>
                 <div class="container-validation">
                   <div class="libelle-validation">Validation associé :</div>
-                  <div class="btn-validation"
+                  <div class="btn-validation btn-validation-associe"
                     (click)="validateAssocie()"
                     [class.btn-validation-disabled]="!nogPartieAnnexes.validationCollab"
                     [class.selected]="nogPartieAnnexes.validationAssocie">
@@ -2429,7 +2437,7 @@ interface TabDiligence {
       font-weight: 600;
       height: 4vh;
       padding: 1vh 0;
-      z-index: 1;
+      z-index: 101;
       width: fit-content;
     }
 
@@ -3409,7 +3417,7 @@ interface TabDiligence {
     }
 
     .row-part-nog.row-fe-nog {
-      height: 42vh !important;
+      height: 61vh !important;
     }
 
     div#container-part-3-3-nog .body-element-nog {
@@ -3432,10 +3440,6 @@ interface TabDiligence {
       flex-direction: column;
       gap: 1vh;
       padding: 1vh 1vw;
-    }
-
-    .container-mail-mandat-fe {
-      margin-top: 4vh;
     }
 
     div#container-part-3-3-nog {
@@ -3626,6 +3630,64 @@ interface TabDiligence {
       background-color: #ededed !important;
       cursor: not-allowed;
     }
+
+    .container-fe-nog {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding: 0.5vh 1vw;
+    }
+
+    .container-table-obligation-mail-fe-nog {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .container-table-obligation-fe-nog {
+      width: 30vw;
+    }
+
+    .container-mail-mandat-fe {
+      width: 25vw;
+    }
+
+    .titre-tab-fe {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      padding: 0.5vh 0vw;
+    }
+
+    .container-table-fe-nog {
+      margin-top: 2vh;
+    }
+
+    div#read-only-nog {
+      width: 85vw;
+      height: 100%;
+      position: fixed;
+      top: 14vh;
+      right: 0.3vw;
+      z-index: 100;
+      cursor: not-allowed;
+      background-color: #80808047;
+      font-size: var(--font-size-lg);
+      text-align: center;
+      color: red;
+    }
+
+    div#part-bottom-right-page-nog {
+      position: relative;
+    }
+
+    .btn-validation-associe {
+      z-index: 101;
+    }
+
+    i.fa-solid.fa-circle-info.icon-date-last-modif {
+      z-index: 102;
+      position: relative;
+}
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -3682,7 +3744,11 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   showAddDiligenceModal: boolean = false;
   showAddDiligenceLabModal: boolean = false;
 
+  isProfilAssocie: boolean = false;
+
   isCollabHasMissions: boolean = true;
+
+  dateLastUpdateNog: string = '';
 
   newDiligence: TabDiligence = {
     cycle: '',
@@ -4405,6 +4471,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // Réinitialiser les sélections suivantes
     this.selectedMission = '';
     this.selectedMillesime = '';
+    this.isProfilAssocie = false;
     this.availableMillesimes = [];
     
     // Charger les missions pour ce dossier
@@ -4449,6 +4516,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         item.MD_MISSION === this.selectedMission &&
         item.MD_MILLESIME === this.selectedMillesime) {
           codeAffaire = item.CODE_AFFAIRE;
+          this.isProfilAssocie = item.PROFIL == '1';
           console.log('CODE_AFFAIRE', item.CODE_AFFAIRE);
         }      
     });
@@ -4459,6 +4527,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   onMissionChange(): void {
     // Réinitialiser le millésime
     this.selectedMillesime = '';
+    this.isProfilAssocie = false;
     
     if (this.selectedMission) {
       this.loadMillesimesForMission();
@@ -4528,6 +4597,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.loadListeBDFE();
 
         this.insertNogVigilance();
+
+        this.dateLastUpdateNog = this.getDateNow();
+
         this.setLog({
           email : this.usrMailCollab,
           dosPgi: this.selectedDossier?.DOS_PGI,
@@ -4571,6 +4643,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
             this.selectedDossierDisplay = dosPgi;
             this.selectedMission = mission;
             this.selectedMillesime = millesime;
+            this.isProfilAssocie = element.PROFIL == '1';
             this.validateSelection();
             verif = true;
         }
@@ -4644,6 +4717,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.selectedDossier = null;
       this.selectedMission = '';
       this.selectedMillesime = '';
+      this.isProfilAssocie = false;
       this.availableMissions = [];
       this.availableMillesimes = [];
     }
@@ -6241,6 +6315,10 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.nogPartie7.checkboxFormAnn = key.MyNogVU_DEONTOLOGIE_Coche2 == 'Oui';
         this.nogPartie7.checkboxConflictCheck = key.MyNogVU_DEONTOLOGIE_Coche3 == 'Oui';
         this.nogPartie7.dateLastUpdateDeontologie = this.formatDateTimeBDD(key.MyNogVU_DEONTOLOGIE_DateLastModifCoche); 
+
+        //PARTIE ANNEXE
+        this.nogPartieAnnexes.validationCollab = key.MyNogVU_ANNEXE_ValidationCollab == 'Oui';
+        this.nogPartieAnnexes.validationAssocie = key.MyNogVU_ANNEXE_ValidationAssocie == 'Oui';
       }
 
       console.log('nogPartie1', this.nogPartie1);
@@ -6498,10 +6576,44 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   validateCollab(): void {
     if(this.nogPartieAnnexes.validationCollab) {
+      this.nogPartieAnnexes.validationCollab = false;
+      this.nogPartieAnnexes.validationAssocie = false;
+      iziToast.success({
+        timeout: 3000, 
+        icon: 'fa-regular fa-thumbs-up', 
+        title: 'Dévalidé avec succès !', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
+      this.http.post(`${environment.apiUrl}/nogs/updateValidationCollab`, {validation: 'Non', codeAffaire: this.selectedCodeAffaire})
+        .subscribe(response => {
+          console.log('updateValidationCollab',response);
+        });
+      this.http.post(`${environment.apiUrl}/nogs/updateValidationAssocie`, {validation: 'Non', codeAffaire: this.selectedCodeAffaire})
+        .subscribe(response => {
+          console.log('updateValidationAssocie',response);
+        });
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Devalide collab',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
       return;
     }
 
     this.nogPartieAnnexes.validationCollab = true;
+    this.http.post(`${environment.apiUrl}/nogs/updateValidationCollab`, {validation: 'Oui', codeAffaire: this.selectedCodeAffaire})
+        .subscribe(response => {
+          console.log('updateValidationCollab',response);
+        });
     iziToast.success({
       timeout: 3000, 
       icon: 'fa-regular fa-thumbs-up', 
@@ -6577,32 +6689,74 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   validateAssocie(): void {
+    if(!this.isProfilAssocie) {
+      iziToast.error({
+        timeout: 3000,
+        icon: 'fa-regular fa-triangle-exclamation', 
+        title: 'Vous n\'avez pas le profil d\'associé sur cette mission.', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
+      return;
+    }
+
     if(this.nogPartieAnnexes.validationAssocie) {
+      this.nogPartieAnnexes.validationAssocie = false;
+      iziToast.success({
+        timeout: 3000, 
+        icon: 'fa-regular fa-thumbs-up', 
+        title: 'Dévalidé avec succès !', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
+      this.http.post(`${environment.apiUrl}/nogs/updateValidationAssocie`, {validation: 'Non', codeAffaire: this.selectedCodeAffaire})
+        .subscribe(response => {
+          console.log('updateValidationAssocie',response);
+        });
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Devalide associe',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
       return;
     }
 
     if(this.nogPartieAnnexes.validationCollab) {
       this.nogPartieAnnexes.validationAssocie = true;
-       iziToast.success({
-          timeout: 3000, 
-          icon: 'fa-regular fa-thumbs-up', 
-          title: 'Validation effectuée avec succès !', 
-          close: false, 
-          position: 'bottomCenter', 
-          transitionIn: 'flipInX',
-          transitionOut: 'flipOutX'
+      this.http.post(`${environment.apiUrl}/nogs/updateValidationAssocie`, {validation: 'Oui', codeAffaire: this.selectedCodeAffaire})
+        .subscribe(response => {
+          console.log('updateValidationAssocie',response);
         });
-        this.setLog({
-          email : this.usrMailCollab,
-          dosPgi: this.selectedDossier?.DOS_PGI,
-          modif: 'Modification NOG',
-          typeModif: 'NOG',
-          module: 'NOG',
-          champ: 'Validation associe',
-          valeur: this.selectedCodeAffaire,
-          periode: '',
-          mailPriseProfil: this.userEmail
-        });
+      iziToast.success({
+        timeout: 3000, 
+        icon: 'fa-regular fa-thumbs-up', 
+        title: 'Validation effectuée avec succès !', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'Validation associe',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
     } else {
       iziToast.error({
         timeout: 3000,
@@ -6614,5 +6768,126 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         transitionOut: 'flipOutX'
       });
     }
+  }
+
+  reloadFE() : void {
+    this.loadListeBDFE(); 
+    this.loadModuleFE();
+    this.setLog({
+      email : this.usrMailCollab,
+      dosPgi: this.selectedDossier?.DOS_PGI,
+      modif: 'Modification NOG',
+      typeModif: 'NOG',
+      module: 'NOG',
+      champ: 'Reload FE',
+      valeur: this.selectedCodeAffaire,
+      periode: '',
+      mailPriseProfil: this.userEmail
+    });
+  }
+
+  reloadLogiciel() : void {
+    this.loadMontantLogiciel();
+    this.setLog({
+      email : this.usrMailCollab,
+      dosPgi: this.selectedDossier?.DOS_PGI,
+      modif: 'Modification NOG',
+      typeModif: 'NOG',
+      module: 'NOG',
+      champ: 'Reload logiciel',
+      valeur: this.selectedCodeAffaire,
+      periode: '',
+      mailPriseProfil: this.userEmail
+    });
+  }
+
+  reloadCoordonnee() : void {
+    this.loadCoordonnees();
+    this.setLog({
+      email : this.usrMailCollab,
+      dosPgi: this.selectedDossier?.DOS_PGI,
+      modif: 'Modification NOG',
+      typeModif: 'NOG',
+      module: 'NOG',
+      champ: 'Reload coordonnees',
+      valeur: this.selectedCodeAffaire,
+      periode: '',
+      mailPriseProfil: this.userEmail
+    });
+  }
+
+  reloadContact() : void {
+    this.loadContacts();
+    this.setLog({
+      email : this.usrMailCollab,
+      dosPgi: this.selectedDossier?.DOS_PGI,
+      modif: 'Modification NOG',
+      typeModif: 'NOG',
+      module: 'NOG',
+      champ: 'Reload contacts',
+      valeur: this.selectedCodeAffaire,
+      periode: '',
+      mailPriseProfil: this.userEmail
+    });
+  }
+
+  reloadAssocie() : void {
+    this.loadContacts();
+    this.setLog({
+      email : this.usrMailCollab,
+      dosPgi: this.selectedDossier?.DOS_PGI,
+      modif: 'Modification NOG',
+      typeModif: 'NOG',
+      module: 'NOG',
+      champ: 'Reload associes',
+      valeur: this.selectedCodeAffaire,
+      periode: '',
+      mailPriseProfil: this.userEmail
+    });
+  }
+
+  reloadCS() : void {
+    this.loadChiffresSignificatifs();
+    this.setLog({
+      email : this.usrMailCollab,
+      dosPgi: this.selectedDossier?.DOS_PGI,
+      modif: 'Modification NOG',
+      typeModif: 'NOG',
+      module: 'NOG',
+      champ: 'Reload chiffres significatifs',
+      valeur: this.selectedCodeAffaire,
+      periode: '',
+      mailPriseProfil: this.userEmail
+    });
+  }
+
+  reloadPlanning() : void {
+    this.loadPlannings();
+    this.setLog({
+      email : this.usrMailCollab,
+      dosPgi: this.selectedDossier?.DOS_PGI,
+      modif: 'Modification NOG',
+      typeModif: 'NOG',
+      module: 'NOG',
+      champ: 'Reload planning',
+      valeur: this.selectedCodeAffaire,
+      periode: '',
+      mailPriseProfil: this.userEmail
+    });
+  }
+
+  reloadEquipeInter() : void {
+    this.loadEquipeInter();
+    this.setLog({
+      email : this.usrMailCollab,
+      dosPgi: this.selectedDossier?.DOS_PGI,
+      modif: 'Modification NOG',
+      typeModif: 'NOG',
+      module: 'NOG',
+      champ: 'Reload equipe intervention',
+      valeur: this.selectedCodeAffaire,
+      periode: '',
+      mailPriseProfil: this.userEmail
+    });
   }
 }
