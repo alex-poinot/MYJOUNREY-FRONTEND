@@ -6049,6 +6049,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   insertNogFE(): void {
+    this.isListeBDFELoaded = false;
+    this.isModuleFELoaded = false;
     let obj: { tableFE: Array<any>; uniqueFE: { codeAffaire: string, eInvoicing: string, eReportingPaiement: string, eReportingTransaction: string, casGestion: string, envoiMail: string, signatureMandat: string } } = {
       tableFE: [],
       uniqueFE: {
