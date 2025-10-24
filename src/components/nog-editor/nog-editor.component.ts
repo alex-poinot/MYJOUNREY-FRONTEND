@@ -372,7 +372,7 @@ interface TabDiligence {
               <div id="container-part-1-1-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.1. Coordonnées<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateCoordonnees}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="reloadCoordonnee()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" [disabled]="isReloadingCoordonnees" (click)="reloadCoordonnee()"><i class="fa-solid fa-rotate-reverse"></i></button>
                 </div>
                 <div class="body-element-nog">
                   <div class="row-coordonnees-nog">
@@ -407,7 +407,7 @@ interface TabDiligence {
               <div id="container-part-1-2-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.2. Contacts<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateContacts}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="reloadContact()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" [disabled]="isReloadingContacts" (click)="reloadContact()"><i class="fa-solid fa-rotate-reverse"></i></button>
                   <button class="btn-add-row" (click)="addContact()"><i class="fa-solid fa-plus"></i> Ajouter un contact</button>
                 </div>
                 <div class="body-element-nog">
@@ -464,7 +464,7 @@ interface TabDiligence {
               <div id="container-part-1-3-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.3. Associés<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateAssocies}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="reloadAssocie()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" [disabled]="isReloadingAssocies" (click)="reloadAssocie()"><i class="fa-solid fa-rotate-reverse"></i></button>
                   <button class="btn-add-row" (click)="addAssocie()"><i class="fa-solid fa-plus"></i> Ajouter un associé</button>
                 </div>
                 <div class="body-element-nog">
@@ -516,7 +516,7 @@ interface TabDiligence {
               <div id="container-part-1-4-nog" class="containter-element-nog">
                 <div class="title-element-nog">1.4. Chiffres significatifs<i title="Dernière mise à jour : {{nogPartie1.dateLastUpdateCS}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="reloadCS()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" [disabled]="isReloadingCS" (click)="reloadCS()"><i class="fa-solid fa-rotate-reverse"></i></button>
                 </div>
                 <div class="body-element-nog">
                   <div id="container-chiffres-sign-nog">
@@ -689,7 +689,7 @@ interface TabDiligence {
                     <div class="container-input-title-nog">
                         <div class="title-bloc-nog">Planning</div>
                         <div class="liste-btn-absolute"> 
-                          <button class="btn-reload-data" (click)="reloadPlanning()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                          <button class="btn-reload-data" [disabled]="isReloadingPlanning" (click)="reloadPlanning()"><i class="fa-solid fa-rotate-reverse"></i></button>
                           <button class="btn-add-row" (click)="addPlanning()"><i class="fa-solid fa-plus"></i> Ajouter un planning</button>
                         </div>
                         <div class="input-bloc-nog">
@@ -746,7 +746,7 @@ interface TabDiligence {
               <div id="container-part-2-5-nog" class="containter-element-nog">
                 <div class="title-element-nog">2.5. Equipe d'intervention<i title="Dernière mise à jour : {{nogPartie2.dateLastUpdateEquipeInter}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="reloadEquipeInter()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" [disabled]="isReloadingEquipeInter" (click)="reloadEquipeInter()"><i class="fa-solid fa-rotate-reverse"></i></button>
                 </div>
                 <div class="body-element-nog">
                   <table class="table-nog">
@@ -850,7 +850,7 @@ interface TabDiligence {
                   <div id="container-tab-logiciel-gt">
                     <div class="titre-tab-logiciel">Outils environnement GT</div>
                     <div class="liste-btn-absolute">
-                      <button class="btn-reload-data" (click)="reloadLogiciel()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                      <button class="btn-reload-data" [disabled]="isReloadingLogiciel" (click)="reloadLogiciel()"><i class="fa-solid fa-rotate-reverse"></i></button>
                       <button class="btn-add-row" (click)="addLogicielGT()"><i class="fa-solid fa-plus"></i> Ajouter un logiciel</button>
                     </div>
                     <div class="container-table-logiciel-nog">
@@ -960,7 +960,7 @@ interface TabDiligence {
               <div id="container-part-3-3-nog" class="containter-element-nog">
                 <div class="title-element-nog">3.3. Facturation électronique<i title="Dernière mise à jour : {{nogPartie3.dateLastUpdateFE}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
                 <div class="liste-btn-absolute">
-                  <button class="btn-reload-data" (click)="reloadFE()"><i class="fa-solid fa-rotate-reverse"></i></button>
+                  <button class="btn-reload-data" [disabled]="isReloadingFE" (click)="reloadFE()"><i class="fa-solid fa-rotate-reverse"></i></button>
                 </div>
                 <div *ngIf="this.nogPartie3.isFEValidate" class="body-element-nog">
                   <div class="container-fe-nog">
@@ -3615,9 +3615,17 @@ interface TabDiligence {
       border: 0.1vh solid var(--primary-color);
     }
 
-    .btn-reload-data:hover {
+    .btn-reload-data:hover:not(:disabled) {
       background-color: var(--primary-color);
       color: white;
+    }
+
+    .btn-reload-data:disabled {
+      background-color: #f5f5f5;
+      color: #999;
+      border-color: #ddd;
+      cursor: not-allowed;
+      opacity: 0.6;
     }
 
     .btn-disabled {
@@ -3714,6 +3722,15 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   isFELoaded = false;
 
   isNogCanBeValidate = false;
+
+  isReloadingCoordonnees = false;
+  isReloadingContacts = false;
+  isReloadingAssocies = false;
+  isReloadingCS = false;
+  isReloadingPlanning = false;
+  isReloadingEquipeInter = false;
+  isReloadingLogiciel = false;
+  isReloadingFE = false;
 
   private debounceTimers: { [key: string]: any } = {};
 
@@ -4791,59 +4808,79 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loadCoordonnees(): void {
     this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getCoordonneesNog/${this.selectedDossier?.DOS_PGI}`)
-    .subscribe(response => {
-      this.nogPartie1.coordonnees.DOS_PGI = response.data[0].DOS_PGI;
-      this.nogPartie1.coordonnees.DOS_NOM = response.data[0].DOS_NOM;
-      this.nogPartie1.coordonnees.DOS_SIRET = response.data[0].DOS_SIRET;
-      this.nogPartie1.coordonnees.DOS_ADRESSE = response.data[0].DOS_ADRESSE + ' ' + response.data[0].DOS_CP + ' ' + response.data[0].DOS_VILLE;
-      this.nogPartie1.coordonnees.NAF_LIBELLE = response.data[0].NAF_LIBELLE;
-      this.nogPartie1.coordonnees.NAF_ID = response.data[0].NAF_ID;
-      this.nogPartie1.dateLastUpdateCoordonnees = this.getDateNow();
-      this.isCoordonneesLoaded = true;
-      this.checkIdAllDataLoaded();
-      console.log('NOG PARTIE 1',this.nogPartie1);
-      this.insertNogCoordonnees();
+    .subscribe({
+      next: (response) => {
+        this.nogPartie1.coordonnees.DOS_PGI = response.data[0].DOS_PGI;
+        this.nogPartie1.coordonnees.DOS_NOM = response.data[0].DOS_NOM;
+        this.nogPartie1.coordonnees.DOS_SIRET = response.data[0].DOS_SIRET;
+        this.nogPartie1.coordonnees.DOS_ADRESSE = response.data[0].DOS_ADRESSE + ' ' + response.data[0].DOS_CP + ' ' + response.data[0].DOS_VILLE;
+        this.nogPartie1.coordonnees.NAF_LIBELLE = response.data[0].NAF_LIBELLE;
+        this.nogPartie1.coordonnees.NAF_ID = response.data[0].NAF_ID;
+        this.nogPartie1.dateLastUpdateCoordonnees = this.getDateNow();
+        this.isCoordonneesLoaded = true;
+        this.checkIdAllDataLoaded();
+        console.log('NOG PARTIE 1',this.nogPartie1);
+        this.insertNogCoordonnees();
+        this.isReloadingCoordonnees = false;
+      },
+      error: () => {
+        this.isReloadingCoordonnees = false;
+      }
     });
   }
 
   loadContacts(): void {
     this.http.get<Contacts[]>(`${environment.apiUrlMyVision}/dossierDetail/getContactDossierForMyJourney/${this.selectedDossier?.DOS_PGI}`)
-    .subscribe(response => {
-      this.nogPartie1.contacts = response;
-      this.nogPartie1.dateLastUpdateContacts = this.getDateNow();
-      this.isContactsLoaded = true;
-      this.checkIdAllDataLoaded();
-      console.log('NOG PARTIE 1',this.nogPartie1);
-      this.insertNogContacts();
+    .subscribe({
+      next: (response) => {
+        this.nogPartie1.contacts = response;
+        this.nogPartie1.dateLastUpdateContacts = this.getDateNow();
+        this.isContactsLoaded = true;
+        this.checkIdAllDataLoaded();
+        console.log('NOG PARTIE 1',this.nogPartie1);
+        this.insertNogContacts();
+        this.isReloadingContacts = false;
+        this.isReloadingAssocies = false;
+      },
+      error: () => {
+        this.isReloadingContacts = false;
+        this.isReloadingAssocies = false;
+      }
     });
   }
 
   loadChiffresSignificatifs(): void {
     this.http.get<ChiffresSignificatifs[]>(`${environment.apiUrlMyVision}/dossierDetail/getChiffresSignificatifsNogMyJourney/${this.selectedDossier?.DOS_PGI}`)
-    .subscribe(response => {
-      if(response.length == 0) {
-        this.nogPartie1.chiffresSignificatifs[0].dosPgi = this.selectedDossier?.DOS_PGI ?? '';
-        this.nogPartie1.chiffresSignificatifs[1].dosPgi = this.selectedDossier?.DOS_PGI ?? '';
-      } else {
-        let index = 0;
-        response.forEach(element => {
-          this.nogPartie1.chiffresSignificatifs[index].dosPgi = element.dosPgi;
-          this.nogPartie1.chiffresSignificatifs[index].datePeriode = this.formatDate(element.datePeriode);
-          this.nogPartie1.chiffresSignificatifs[index].dureeExercice = element.dureeExercice;
-          this.nogPartie1.chiffresSignificatifs[index].effectif = element.effectif;
-          this.nogPartie1.chiffresSignificatifs[index].capitauxPropres = element.capitauxPropres;
-          this.nogPartie1.chiffresSignificatifs[index].bilanNet = element.bilanNet;
-          this.nogPartie1.chiffresSignificatifs[index].ca = element.ca;
-          this.nogPartie1.chiffresSignificatifs[index].beneficePerte = element.beneficePerte;
-          index++;
-        });
-        // this.nogPartie1.chiffresSignificatifs = response;
+    .subscribe({
+      next: (response) => {
+        if(response.length == 0) {
+          this.nogPartie1.chiffresSignificatifs[0].dosPgi = this.selectedDossier?.DOS_PGI ?? '';
+          this.nogPartie1.chiffresSignificatifs[1].dosPgi = this.selectedDossier?.DOS_PGI ?? '';
+        } else {
+          let index = 0;
+          response.forEach(element => {
+            this.nogPartie1.chiffresSignificatifs[index].dosPgi = element.dosPgi;
+            this.nogPartie1.chiffresSignificatifs[index].datePeriode = this.formatDate(element.datePeriode);
+            this.nogPartie1.chiffresSignificatifs[index].dureeExercice = element.dureeExercice;
+            this.nogPartie1.chiffresSignificatifs[index].effectif = element.effectif;
+            this.nogPartie1.chiffresSignificatifs[index].capitauxPropres = element.capitauxPropres;
+            this.nogPartie1.chiffresSignificatifs[index].bilanNet = element.bilanNet;
+            this.nogPartie1.chiffresSignificatifs[index].ca = element.ca;
+            this.nogPartie1.chiffresSignificatifs[index].beneficePerte = element.beneficePerte;
+            index++;
+          });
+          // this.nogPartie1.chiffresSignificatifs = response;
+        }
+        this.nogPartie1.dateLastUpdateCS = this.getDateNow();
+        this.isChiffresSignificatifsLoaded = true;
+        this.checkIdAllDataLoaded();
+        console.log('NOG PARTIE 1',this.nogPartie1);
+        this.insertNogCS();
+        this.isReloadingCS = false;
+      },
+      error: () => {
+        this.isReloadingCS = false;
       }
-      this.nogPartie1.dateLastUpdateCS = this.getDateNow();
-      this.isChiffresSignificatifsLoaded = true;
-      this.checkIdAllDataLoaded();
-      console.log('NOG PARTIE 1',this.nogPartie1);
-      this.insertNogCS();
     });
   }
 
@@ -4882,76 +4919,99 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loadPlannings(): void {
     this.http.get<Planning[]>(`${environment.apiUrlMyVision}/dossierDetail/getPlanningNogMyJourney/${this.selectedDossier?.DOS_PGI}&${this.selectedMission}&${this.selectedMillesime}`)
-    .subscribe(response => {
-      let data = this.transformDataPlanning(response);
-      if(response[0].nom != null){
-        this.nogPartie2.planning = data;
+    .subscribe({
+      next: (response) => {
+        let data = this.transformDataPlanning(response);
+        if(response[0].nom != null){
+          this.nogPartie2.planning = data;
+        }
+        this.isPlanningsLoaded = true;
+        this.nogPartie2.dateLastUpdatePlanning = this.getDateNow();
+        this.listeLibPlanningSauv = data[0].listeLib;
+        this.checkIdAllDataLoaded();
+        console.log('NOG PARTIE 2',this.nogPartie2);
+        this.insertNogPlanning();
+        this.isReloadingPlanning = false;
+      },
+      error: () => {
+        this.isReloadingPlanning = false;
       }
-      this.isPlanningsLoaded = true;
-      this.nogPartie2.dateLastUpdatePlanning = this.getDateNow();
-      this.listeLibPlanningSauv = data[0].listeLib;
-      this.checkIdAllDataLoaded();
-      console.log('NOG PARTIE 2',this.nogPartie2);
-      this.insertNogPlanning();
     });
   }
 
   loadEquipeInter(): void {
     this.http.get<EquipeInter>(`${environment.apiUrlMyVision}/dossierDetail/getEquipeInterNogMyJourney/${this.selectedDossier?.DOS_PGI}&${this.selectedMission}&${this.selectedMillesime}`)
-    .subscribe(response => {
-      let obj = Object(response);
-      obj.isEditingRespMission = false;
-      obj.isEditingDmcm = false;
-      obj.isEditingFactureur = false;
+    .subscribe({
+      next: (response) => {
+        let obj = Object(response);
+        obj.isEditingRespMission = false;
+        obj.isEditingDmcm = false;
+        obj.isEditingFactureur = false;
 
-      let tab : EquipeInter[] = [];
-      tab.push(obj); 
-      this.nogPartie2.equipeInter = tab;
-      this.isEquipeInterLoaded = true;
-      this.nogPartie2.dateLastUpdateEquipeInter = this.getDateNow();
-      this.checkIdAllDataLoaded();
-      console.log('NOG PARTIE 2',this.nogPartie2);
-      this.insertNogEquipeInter();
+        let tab : EquipeInter[] = [];
+        tab.push(obj);
+        this.nogPartie2.equipeInter = tab;
+        this.isEquipeInterLoaded = true;
+        this.nogPartie2.dateLastUpdateEquipeInter = this.getDateNow();
+        this.checkIdAllDataLoaded();
+        console.log('NOG PARTIE 2',this.nogPartie2);
+        this.insertNogEquipeInter();
+        this.isReloadingEquipeInter = false;
+      },
+      error: () => {
+        this.isReloadingEquipeInter = false;
+      }
     });
   }
 
   loadModuleFE(): void {
     this.http.get<any>(`${environment.apiUrlMyVision}/dossierDetail/getModuleFENog/${this.selectedDossier?.DOS_PGI}`)
-    .subscribe(response => {
-      if(response.nonValide == 'nonValide') {
-        this.nogPartie3.isFEValidate = false;
-      } else {
-        this.nogPartie3.eInvoicing = response.eInvoicing;
-        this.nogPartie3.eReportingPaiement = response.eReportingPaiement;
-        this.nogPartie3.eReportingTransaction = response.eReportingTransaction;
-        this.nogPartie3.casGestion = response.casGestion;
-        this.nogPartie3.mailEnvoi = response.envoiMail;
-        this.nogPartie3.signatureMandat = response.signatureMandat;
-        this.nogPartie3.businessDev = [response.bd1, response.bd2, response.bd3, response.bd4, response.bd5,
-          response.bd6, response.bd7, response.bd8, response.bd9, response.bd10
-        ];
-        this.nogPartie3.isFEValidate = true;
+    .subscribe({
+      next: (response) => {
+        if(response.nonValide == 'nonValide') {
+          this.nogPartie3.isFEValidate = false;
+        } else {
+          this.nogPartie3.eInvoicing = response.eInvoicing;
+          this.nogPartie3.eReportingPaiement = response.eReportingPaiement;
+          this.nogPartie3.eReportingTransaction = response.eReportingTransaction;
+          this.nogPartie3.casGestion = response.casGestion;
+          this.nogPartie3.mailEnvoi = response.envoiMail;
+          this.nogPartie3.signatureMandat = response.signatureMandat;
+          this.nogPartie3.businessDev = [response.bd1, response.bd2, response.bd3, response.bd4, response.bd5,
+            response.bd6, response.bd7, response.bd8, response.bd9, response.bd10
+          ];
+          this.nogPartie3.isFEValidate = true;
+        }
+        this.isModuleFELoaded = true;
+        this.nogPartie3.dateLastUpdateFE = this.getDateNow();
+        this.checkIdAllDataLoaded();
+        console.log('response',response);
+        if(this.isListeBDFELoaded && this.isModuleFELoaded) {
+          this.insertNogFE();
+        }
+        this.checkConditionValidation();
+        this.isReloadingFE = false;
+      },
+      error: () => {
+        this.isReloadingFE = false;
       }
-      this.isModuleFELoaded = true;
-      this.nogPartie3.dateLastUpdateFE = this.getDateNow();
-      this.checkIdAllDataLoaded();
-      console.log('response',response);
-      if(this.isListeBDFELoaded && this.isModuleFELoaded) {
-        this.insertNogFE();
-      }
-      this.checkConditionValidation();
     });
   }
 
   loadListeBDFE(): void {
     this.http.get<any>(`${environment.apiUrlMyVision}/dossierDetail/getListeBDNogFE`)
-    .subscribe(response => {
-      this.listeBdFE = response;
-      this.isListeBDFELoaded = true;
-      this.checkIdAllDataLoaded();
-      console.log('response',response);
-      if(this.isListeBDFELoaded && this.isModuleFELoaded) {
-        this.insertNogFE();
+    .subscribe({
+      next: (response) => {
+        this.listeBdFE = response;
+        this.isListeBDFELoaded = true;
+        this.checkIdAllDataLoaded();
+        console.log('response',response);
+        if(this.isListeBDFELoaded && this.isModuleFELoaded) {
+          this.insertNogFE();
+        }
+      },
+      error: () => {
+        this.isReloadingFE = false;
       }
     });
   }
@@ -4981,24 +5041,30 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loadMontantLogiciel(): void {
     this.http.get<any>(`${environment.apiUrlMyVision}/dossierDetail/getMontantLogicielNogMyJourney/${this.selectedDossier?.DOS_PGI}&${this.selectedMission}&${this.selectedMillesime}`)
-    .subscribe(response => {
-      let listeLogiciel = Object.keys(response);
-      this.nogPartie3.tabLogicielGT = [];
-      listeLogiciel.forEach(element => {
-        this.nogPartie3.tabLogicielGT.push(
-          {
-            type: '',
-            logiciel: element,
-            montant: response[element],
-            isEditing: false
-          }
-        )
-      });
-      this.isMontantLogicielLoaded = true;
-      this.nogPartie3.dateLastUpdateLogiciel = this.getDateNow();
-      this.checkIdAllDataLoaded();
-      console.log('NOG PARTIE 3',this.nogPartie3);
-      this.insertNogLogiciel();
+    .subscribe({
+      next: (response) => {
+        let listeLogiciel = Object.keys(response);
+        this.nogPartie3.tabLogicielGT = [];
+        listeLogiciel.forEach(element => {
+          this.nogPartie3.tabLogicielGT.push(
+            {
+              type: '',
+              logiciel: element,
+              montant: response[element],
+              isEditing: false
+            }
+          )
+        });
+        this.isMontantLogicielLoaded = true;
+        this.nogPartie3.dateLastUpdateLogiciel = this.getDateNow();
+        this.checkIdAllDataLoaded();
+        console.log('NOG PARTIE 3',this.nogPartie3);
+        this.insertNogLogiciel();
+        this.isReloadingLogiciel = false;
+      },
+      error: () => {
+        this.isReloadingLogiciel = false;
+      }
     });
   }
 
@@ -6771,7 +6837,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   reloadFE() : void {
-    this.loadListeBDFE(); 
+    if (this.isReloadingFE) return;
+    this.isReloadingFE = true;
+    this.loadListeBDFE();
     this.loadModuleFE();
     this.setLog({
       email : this.usrMailCollab,
@@ -6787,6 +6855,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   reloadLogiciel() : void {
+    if (this.isReloadingLogiciel) return;
+    this.isReloadingLogiciel = true;
     this.loadMontantLogiciel();
     this.setLog({
       email : this.usrMailCollab,
@@ -6802,6 +6872,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   reloadCoordonnee() : void {
+    if (this.isReloadingCoordonnees) return;
+    this.isReloadingCoordonnees = true;
     this.loadCoordonnees();
     this.setLog({
       email : this.usrMailCollab,
@@ -6817,6 +6889,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   reloadContact() : void {
+    if (this.isReloadingContacts) return;
+    this.isReloadingContacts = true;
     this.loadContacts();
     this.setLog({
       email : this.usrMailCollab,
@@ -6832,6 +6906,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   reloadAssocie() : void {
+    if (this.isReloadingAssocies) return;
+    this.isReloadingAssocies = true;
     this.loadContacts();
     this.setLog({
       email : this.usrMailCollab,
@@ -6847,6 +6923,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   reloadCS() : void {
+    if (this.isReloadingCS) return;
+    this.isReloadingCS = true;
     this.loadChiffresSignificatifs();
     this.setLog({
       email : this.usrMailCollab,
@@ -6862,6 +6940,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   reloadPlanning() : void {
+    if (this.isReloadingPlanning) return;
+    this.isReloadingPlanning = true;
     this.loadPlannings();
     this.setLog({
       email : this.usrMailCollab,
@@ -6877,6 +6957,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   reloadEquipeInter() : void {
+    if (this.isReloadingEquipeInter) return;
+    this.isReloadingEquipeInter = true;
     this.loadEquipeInter();
     this.setLog({
       email : this.usrMailCollab,
