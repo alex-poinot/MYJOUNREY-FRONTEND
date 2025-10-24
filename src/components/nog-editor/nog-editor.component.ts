@@ -6824,9 +6824,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   reloadFE() : void {
     if (this.isReloadingFE) return;
     this.isReloadingFE = true;
+    this.loadListeBDFE();
+    this.loadModuleFE();
     setTimeout(() => {
-      this.loadListeBDFE();
-      this.loadModuleFE();
       this.isReloadingFE = false;
     }, 5000);
     this.setLog({
@@ -6845,8 +6845,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   reloadLogiciel() : void {
     if (this.isReloadingLogiciel) return;
     this.isReloadingLogiciel = true;
+    this.loadMontantLogiciel();
     setTimeout(() => {
-      this.loadMontantLogiciel();
       this.isReloadingLogiciel = false;
     }, 5000);
     this.setLog({
@@ -6865,8 +6865,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   reloadCoordonnee() : void {
     if (this.isReloadingCoordonnees) return;
     this.isReloadingCoordonnees = true;
+    this.loadCoordonnees();
     setTimeout(() => {
-      this.loadCoordonnees();
       this.isReloadingCoordonnees = false;
     }, 5000);
     this.setLog({
@@ -6885,8 +6885,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   reloadContact() : void {
     if (this.isReloadingContacts) return;
     this.isReloadingContacts = true;
+    this.loadContacts();
     setTimeout(() => {
-      this.loadContacts();
       this.isReloadingContacts = false;
     }, 5000);
     this.setLog({
@@ -6905,8 +6905,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   reloadAssocie() : void {
     if (this.isReloadingAssocies) return;
     this.isReloadingAssocies = true;
+    this.loadContacts();
     setTimeout(() => {
-      this.loadContacts();
       this.isReloadingAssocies = false;
     }, 5000);
     this.setLog({
@@ -6925,8 +6925,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   reloadCS() : void {
     if (this.isReloadingCS) return;
     this.isReloadingCS = true;
+    this.loadChiffresSignificatifs();
     setTimeout(() => {
-      this.loadChiffresSignificatifs();
       this.isReloadingCS = false;
     }, 5000);
     this.setLog({
@@ -6945,8 +6945,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   reloadPlanning() : void {
     if (this.isReloadingPlanning) return;
     this.isReloadingPlanning = true;
+    this.loadPlannings();
     setTimeout(() => {
-      this.loadPlannings();
       this.isReloadingPlanning = false;
     }, 5000);
     this.setLog({
@@ -6965,8 +6965,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   reloadEquipeInter() : void {
     if (this.isReloadingEquipeInter) return;
     this.isReloadingEquipeInter = true;
+    this.loadEquipeInter();
     setTimeout(() => {
-      this.loadEquipeInter();
       this.isReloadingEquipeInter = false;
     }, 5000);
     this.setLog({
