@@ -1304,7 +1304,7 @@ interface TabDiligence {
                           <input
                             type="checkbox"
                             [checked]="isGroupeActivated(diligence)"
-                            (change)="toggleGroupeActivation(diligence)"
+                            (click)="toggleGroupeActivation(diligence, $event)"
                             class="toggle-checkbox">
                           <span class="toggle-slider"></span>
                         </label>
@@ -5802,20 +5802,22 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     return diligence.tabDiligence.some(d => d.activation);
   }
 
-  toggleGroupeActivation(diligence: Diligence): void {
+  toggleGroupeActivation(diligence: Diligence, event: Event): void {
     if(this.nogPartieAnnexes.validationAssocie) {
+      event.preventDefault();
       iziToast.error({
         timeout: 3000,
-        icon: 'fa-regular fa-triangle-exclamation', 
-        title: 'Impossible de modifier car vous êtes en lecture seule.', 
-        close: false, 
-        position: 'bottomCenter', 
+        icon: 'fa-regular fa-triangle-exclamation',
+        title: 'Impossible de modifier car vous êtes en lecture seule.',
+        close: false,
+        position: 'bottomCenter',
         transitionIn: 'flipInX',
         transitionOut: 'flipOutX'
       });
       return;
     }
     if (!diligence.tabDiligence || diligence.tabDiligence.length === 0) {
+      event.preventDefault();
       return;
     }
     const anyActivated = this.isGroupeActivated(diligence);
