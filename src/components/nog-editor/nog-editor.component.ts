@@ -333,6 +333,11 @@ interface TabDiligence {
           <div><strong>Millésime :</strong> {{ selectedMillesime }}</div>
         </div>
         <div id="container-bouton-pdf">
+          <div id="container-save-nog">
+            <div class="date-last-save-nog">{{ dateLastUpdateNog }}</div>
+            <div class="load-save-nog"><i class="fa-solid fa-spinner-scale fa-spin-pulse" aria-hidden="true"></i></div>
+            <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i>
+          </div>
           <div id="btn-apercu-pdf" (click)="openApercuPopup()"><i class="fa-solid fa-files"></i> Aperçu</div>
         </div>
       </div>
@@ -3695,7 +3700,37 @@ interface TabDiligence {
     i.fa-solid.fa-circle-info.icon-date-last-modif {
       z-index: 102;
       position: relative;
-}
+    }
+
+    div#container-bouton-pdf {
+      display: flex;
+      align-items: center;
+      gap: 1vw;
+    }
+
+    div#container-save-nog {
+      display: flex;
+      align-items: center;
+      background-color: #ffffff63;
+      padding: 1vh 1vw;
+      border-radius: 0.5vw;
+      transition: all 0.2s ease;
+      font-size: var(--font-size-md);
+      gap: 0.3vw;
+      color: white;
+    }
+
+    #container-save-nog i.fa-regular.fa-floppy-disk {
+      font-size: 1vw;
+    }
+
+    .date-last-save-nog {
+      font-size: var(--font-size-md);
+    }
+
+    .load-save-nog {
+      font-size: 0.7vw;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -6270,6 +6305,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.nogPartie1.coordonnees.NAF_ID = key.MyNogVU_PRESDOSSIER_CodeApe;
         this.nogPartie1.coordonnees.NAF_LIBELLE = key.MyNogVU_PRESDOSSIER_LibelleApe;
         this.nogPartie1.dateLastUpdateCoordonnees = this.formatDateTimeBDD(key.MyNogVU_PRESDOSSIER_DateLastModifCoordonnees);
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_PRESDOSSIER_DateLastModifCoordonnees), this.dateLastUpdateNog);
          
         //1.4
         this.nogPartie1.chiffresSignificatifs[0].datePeriode = key.MyNogVU_PRESDOSSIER_LibelleExN1;
@@ -6287,25 +6323,30 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.nogPartie1.chiffresSignificatifs[1].ca = key.MyNogVU_PRESDOSSIER_CAN2;
         this.nogPartie1.chiffresSignificatifs[1].beneficePerte = key.MyNogVU_PRESDOSSIER_ResultatNetN2;
         this.nogPartie1.dateLastUpdateCS = this.formatDateTimeBDD(key.MyNogVU_PRESDOSSIER_DateLastModifChriffresSign);
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_PRESDOSSIER_DateLastModifChriffresSign), this.dateLastUpdateNog);
          
         //1.5
         this.nogPartie1.activiteExHisto = key.MyNogVU_PRESDOSSIER_ActiviteExHisto; //load dans l'editeur #editorContent
         this.nogPartie1.dateLastUpdateActiviteExHisto = this.formatDateTimeBDD(key.MyNogVU_PRESDOSSIER_DateLastModifActiviteExHisto);
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_PRESDOSSIER_DateLastModifActiviteExHisto), this.dateLastUpdateNog);
 
         //PARTIE 2
         //2.1
         this.nogPartie2.dateMiseAJour = this.formatDateInput(key.MyNogVU_PRESMISSION_DateMAJLM);
         this.nogPartie2.montantHonoraire = key.MyNogVU_PRESMISSION_MontantHonoraires;
         this.nogPartie2.dateLastUpdateLettreMission = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifLettreMission);
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifLettreMission), this.dateLastUpdateNog);
         
         //2.2
         // this.nogPartie2.typeMission = key.MyNogVU_PRESMISSION_TypeMission;
         this.nogPartie2.dateLastUpdateTypeMission = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifTypeMission);
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifTypeMission), this.dateLastUpdateNog);
 
         //2.3
         // this.nogPartie2.natureMission = key.MyNogVU_PRESMISSION_NatureMission;
         this.nogPartie2.dateLastUpdateNatureMission = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifNatureMission);
         this.loadTypeMissionNatureListeNog(key.MyNogVU_PRESMISSION_TypeMission, key.MyNogVU_PRESMISSION_NatureMission);
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifNatureMission), this.dateLastUpdateNog);
 
         //2.4
         this.nogPartie2.consultationPro = key.MyNogVU_PRESMISSION_ConsultAutresPro;
@@ -6313,15 +6354,18 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.nogPartie2.final = key.MyNogVU_PRESMISSION_Final;
         this.nogPartie2.delaiRespecter = key.MyNogVU_PRESMISSION_DelaiARespecter;
         this.nogPartie2.dateLastUpdatePlanning = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifPlanning);
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifPlanning), this.dateLastUpdateNog);
          
         //2.6
         this.nogPartie2.precisionTravaux = key.MyNogVU_PRESMISSION_PrecisionTravaux; //load dans l'editeur #editorContentPrecisionTravaux
         this.nogPartie2.dateLastUpdatePrecisionTravaux = this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifPrecisionTravaux);
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_PRESMISSION_DateLastModifPrecisionTravaux), this.dateLastUpdateNog);
          
         //PARTIE 3
         //3.2
         this.nogPartie3.orgaServiceAdmin = key.MyNogVU_ORGAADMINCOMPTA_OrgaServiceAdmin; //load dans l'editeur #editorContentOrgaServiceAdmin
         this.nogPartie3.dateLastUpdateOrgaServiceAdmin= this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifOrgaServiceAdmin); 
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifOrgaServiceAdmin), this.dateLastUpdateNog);
 
         //3.3
         this.nogPartie3.eInvoicing = key.MyNogVU_ORGAADMINCOMPTA_EInvoicing;
@@ -6331,15 +6375,18 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.nogPartie3.mailEnvoi = key.MyNogVU_ORGAADMINCOMPTA_MailEnvoiClient;
         this.nogPartie3.signatureMandat = key.MyNogVU_ORGAADMINCOMPTA_SignatureMandat;
         this.nogPartie3.dateLastUpdateFE = this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifFE);  
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifFE), this.dateLastUpdateNog);
          
         //3.4
         this.nogPartie3.syntheseEntretienDir = key.MyNogVU_ORGAADMINCOMPTA_SyntheseEntretien; //load dans l'editeur #editorContentSyntheseEntretienDir
         this.nogPartie3.dateLastUpdateSyntheseEntretien = this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifSyntheseEntretien); 
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifSyntheseEntretien), this.dateLastUpdateNog);
 
         //PARTIE 4
         //4.1
         this.nogPartie4.checkboxVigilance = key.MyNogVU_ZONERISQUE_Vigilance;
         this.nogPartie4.dateLastUpdateVigilance = this.formatDateTimeBDD(key.MyNogVU_ZONERISQUE_DateLastModifVigilance); 
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_ZONERISQUE_DateLastModifVigilance), this.dateLastUpdateNog);
          
         //4.2
         this.nogPartie4.aspectsComptables = key.MyNogVU_ZONERISQUE_AspectsComptables; //load dans l'editeur #editorContentAspectsComptables
@@ -6348,10 +6395,12 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.nogPartie4.aspectsJuridiques = key.MyNogVU_ZONERISQUE_AspectsJuridiques; //load dans l'editeur #editorContentAspectsJuridiques
         this.nogPartie4.comptesAnnuels = key.MyNogVU_ZONERISQUE_ComptesAnnuels; //load dans l'editeur #editorContentComptesAnnuels
         this.nogPartie4.dateLastUpdatePrincipeComp = this.formatDateTimeBDD(key.MyNogVU_ZONERISQUE_DateLastModifPrincipeComp); 
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_ZONERISQUE_DateLastModifPrincipeComp), this.dateLastUpdateNog);
          
         //4.3
         this.nogPartie4.seuil = key.MyNogVU_ZONERISQUE_Seuil;
         this.nogPartie4.dateLastUpdateSeuil = this.formatDateTimeBDD(key.MyNogVU_ZONERISQUE_DateLastModifSeuil); 
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_ZONERISQUE_DateLastModifSeuil), this.dateLastUpdateNog);
          
         //PARTIE 6
         this.nogPartie6.checkboxEtage1 = key.MyNogVU_RESTCLIENT_ChoixRestClient;
@@ -6359,13 +6408,15 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.nogPartie6.libelleAutreEtage1 = key.MyNogVU_RESTCLIENT_LibelleAutreRestClient;
         this.nogPartie6.libelleAutreEtage2 = key.MyNogVU_RESTCLIENT_LibelleAutreOutil;
         this.nogPartie6.commGeneral = key.MyNogVU_RESTCLIENT_CommGeneral;
-        this.nogPartie6.dateLastUpdateRestitutionClient = this.formatDateTimeBDD(key.MyNogVU_RESTCLIENT_DateLastModifRestClient); 
+        this.nogPartie6.dateLastUpdateRestitutionClient = this.formatDateTimeBDD(key.MyNogVU_RESTCLIENT_DateLastModifRestClient);
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_RESTCLIENT_DateLastModifRestClient), this.dateLastUpdateNog); 
          
         //PARTIE 7
         this.nogPartie7.checkboxFormInit = key.MyNogVU_DEONTOLOGIE_Coche1 == 'Oui';
         this.nogPartie7.checkboxFormAnn = key.MyNogVU_DEONTOLOGIE_Coche2 == 'Oui';
         this.nogPartie7.checkboxConflictCheck = key.MyNogVU_DEONTOLOGIE_Coche3 == 'Oui';
         this.nogPartie7.dateLastUpdateDeontologie = this.formatDateTimeBDD(key.MyNogVU_DEONTOLOGIE_DateLastModifCoche); 
+        this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_DEONTOLOGIE_DateLastModifCoche), this.dateLastUpdateNog);
 
         //PARTIE ANNEXE
         this.nogPartieAnnexes.validationCollab = key.MyNogVU_ANNEXE_ValidationCollab == 'Oui';
@@ -6458,6 +6509,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.listeLibPlanningSauv = data[0].listeLib;
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE 2',this.nogPartie2);
+      this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
     });
   }
 
@@ -6476,6 +6528,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.nogPartie2.dateLastUpdateEquipeInter = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE 2',this.nogPartie2);
+      this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
     });
   }
 
@@ -6487,6 +6540,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isContactsLoaded = true;
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE 1',this.nogPartie1);
+      this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
     });
   }
 
@@ -6498,6 +6552,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isAssociesLoaded = true;
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE 1',this.nogPartie1);
+      this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
     });
   }
 
@@ -6510,6 +6565,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.nogPartie3.dateLastUpdateLogiciel = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE 3',this.nogPartie3);
+      this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
     });
   }
 
@@ -6521,6 +6577,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.nogPartie5.dateLastUpdateDiligence = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE 5',this.nogPartie5);
+      this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
     });
   }
 
@@ -6532,6 +6589,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.nogPartie5.dateLastUpdateDiligenceLab = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE 5',this.nogPartie5);
+      this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
     });
   }
 
@@ -6556,6 +6614,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.nogPartie5.dateLastUpdateDiligence = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE 5',this.nogPartie5);
+      this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
     });
   }
 
@@ -6569,6 +6628,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.nogPartieAnnexes.dateLastUpdateAnnexe = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE ANNEXE',this.nogPartieAnnexes);
+      this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
     });
   }
 
@@ -6585,6 +6645,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE 3',this.nogPartie3);
       this.checkConditionValidation();
+      this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
     });
   }
 
@@ -6980,5 +7041,34 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       periode: '',
       mailPriseProfil: this.userEmail
     });
+  }
+
+  getLaterDate(dateStr1: string, dateStr2: string): string {
+    if(dateStr2 == '' || dateStr2 == null) {
+      return dateStr1;
+    }
+
+    if(dateStr1 == '' || dateStr1 == null) {
+      return '';
+    }
+    // Fonction utilitaire pour parser le format 'dd/MM/yyyy HH:mm'
+    const parseDate = (dateStr: string): Date => {
+      const [datePart, timePart] = dateStr.split(" ");
+      const [day, month, year] = datePart.split("/").map(Number);
+      const [hours, minutes] = timePart.split(":").map(Number);
+      return new Date(year, month - 1, day, hours, minutes);
+    };
+
+    // Fonction utilitaire pour reformater une Date en 'dd/MM/yyyy HH:mm'
+    const formatDate = (date: Date): string => {
+      const pad = (n: number) => n.toString().padStart(2, "0");
+      return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    };
+
+    const d1 = parseDate(dateStr1);
+    const d2 = parseDate(dateStr2);
+
+    // Retourne la date la plus grande
+    return formatDate(d1 > d2 ? d1 : d2);
   }
 }
