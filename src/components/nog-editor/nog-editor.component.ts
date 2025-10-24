@@ -1509,7 +1509,6 @@ interface TabDiligence {
                   <div class="libelle-validation">Validation collaborateur :</div>
                   <div class="btn-validation"
                     (click)="validateCollab()"
-                    [class.btn-validation-disabled]="!isNogCanBeValidate"
                     [class.selected]="nogPartieAnnexes.validationCollab">
                       <i class="fa-regular fa-check"></i>
                   </div>
@@ -1518,7 +1517,7 @@ interface TabDiligence {
                   <div class="libelle-validation">Validation associé :</div>
                   <div class="btn-validation"
                     (click)="validateAssocie()"
-                    [class.btn-validation-disabled]="!isNogCanBeValidate || !nogPartieAnnexes.validationCollab"
+                    [class.btn-validation-disabled]="!nogPartieAnnexes.validationCollab"
                     [class.selected]="nogPartieAnnexes.validationAssocie">
                       <i class="fa-regular fa-check"></i>
                   </div>
@@ -6502,31 +6501,53 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    if(this.isNogCanBeValidate) {
-      this.nogPartieAnnexes.validationCollab = true;
-       iziToast.success({
-          timeout: 3000, 
-          icon: 'fa-regular fa-thumbs-up', 
-          title: 'Validation effectuée avec succès !', 
-          close: false, 
-          position: 'bottomCenter', 
-          transitionIn: 'flipInX',
-          transitionOut: 'flipOutX'
-        });
-        this.setLog({
-          email : this.usrMailCollab,
-          dosPgi: this.selectedDossier?.DOS_PGI,
-          modif: 'Modification NOG',
-          typeModif: 'NOG',
-          module: 'NOG',
-          champ: 'Validation collab',
-          valeur: this.selectedCodeAffaire,
-          periode: '',
-          mailPriseProfil: this.userEmail
-        });
-    } else {
-      this.showToastValidationCollab();
-    }
+    this.nogPartieAnnexes.validationCollab = true;
+    iziToast.success({
+      timeout: 3000, 
+      icon: 'fa-regular fa-thumbs-up', 
+      title: 'Validation effectuée avec succès !', 
+      close: false, 
+      position: 'bottomCenter', 
+      transitionIn: 'flipInX',
+      transitionOut: 'flipOutX'
+    });
+    this.setLog({
+      email : this.usrMailCollab,
+      dosPgi: this.selectedDossier?.DOS_PGI,
+      modif: 'Modification NOG',
+      typeModif: 'NOG',
+      module: 'NOG',
+      champ: 'Validation collab',
+      valeur: this.selectedCodeAffaire,
+      periode: '',
+      mailPriseProfil: this.userEmail
+    });
+
+    // if(this.isNogCanBeValidate) {
+    //   this.nogPartieAnnexes.validationCollab = true;
+    //    iziToast.success({
+    //       timeout: 3000, 
+    //       icon: 'fa-regular fa-thumbs-up', 
+    //       title: 'Validation effectuée avec succès !', 
+    //       close: false, 
+    //       position: 'bottomCenter', 
+    //       transitionIn: 'flipInX',
+    //       transitionOut: 'flipOutX'
+    //     });
+    //     this.setLog({
+    //       email : this.usrMailCollab,
+    //       dosPgi: this.selectedDossier?.DOS_PGI,
+    //       modif: 'Modification NOG',
+    //       typeModif: 'NOG',
+    //       module: 'NOG',
+    //       champ: 'Validation collab',
+    //       valeur: this.selectedCodeAffaire,
+    //       periode: '',
+    //       mailPriseProfil: this.userEmail
+    //     });
+    // } else {
+    //   this.showToastValidationCollab();
+    // }
   }
 
   showToastValidationCollab(): void {
@@ -6560,7 +6581,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    if(this.isNogCanBeValidate && this.nogPartieAnnexes.validationCollab) {
+    if(this.nogPartieAnnexes.validationCollab) {
       this.nogPartieAnnexes.validationAssocie = true;
        iziToast.success({
           timeout: 3000, 
