@@ -6841,6 +6841,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isReloadingFE = true;
     this.loadListeBDFE();
     this.loadModuleFE();
+    setTimeout(() => {
+      this.isReloadingFE = false;
+    }, 5000);
     this.setLog({
       email : this.usrMailCollab,
       dosPgi: this.selectedDossier?.DOS_PGI,
@@ -6858,6 +6861,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isReloadingLogiciel) return;
     this.isReloadingLogiciel = true;
     this.loadMontantLogiciel();
+    setTimeout(() => {
+      this.isReloadingLogiciel = false;
+    }, 5000);
     this.setLog({
       email : this.usrMailCollab,
       dosPgi: this.selectedDossier?.DOS_PGI,
@@ -6875,6 +6881,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isReloadingCoordonnees) return;
     this.isReloadingCoordonnees = true;
     this.loadCoordonnees();
+    setTimeout(() => {
+      this.isReloadingCoordonnees = false;
+    }, 5000);
     this.setLog({
       email : this.usrMailCollab,
       dosPgi: this.selectedDossier?.DOS_PGI,
@@ -6892,6 +6901,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isReloadingContacts) return;
     this.isReloadingContacts = true;
     this.loadContacts();
+    setTimeout(() => {
+      this.isReloadingContacts = false;
+    }, 5000);
     this.setLog({
       email : this.usrMailCollab,
       dosPgi: this.selectedDossier?.DOS_PGI,
@@ -6909,6 +6921,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isReloadingAssocies) return;
     this.isReloadingAssocies = true;
     this.loadContacts();
+    setTimeout(() => {
+      this.isReloadingAssocies = false;
+    }, 5000);
     this.setLog({
       email : this.usrMailCollab,
       dosPgi: this.selectedDossier?.DOS_PGI,
@@ -6926,6 +6941,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isReloadingCS) return;
     this.isReloadingCS = true;
     this.loadChiffresSignificatifs();
+    setTimeout(() => {
+      this.isReloadingCS = false;
+    }, 5000);
     this.setLog({
       email : this.usrMailCollab,
       dosPgi: this.selectedDossier?.DOS_PGI,
@@ -6943,6 +6961,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isReloadingPlanning) return;
     this.isReloadingPlanning = true;
     this.loadPlannings();
+    setTimeout(() => {
+      this.isReloadingPlanning = false;
+    }, 5000);
     this.setLog({
       email : this.usrMailCollab,
       dosPgi: this.selectedDossier?.DOS_PGI,
@@ -6960,6 +6981,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isReloadingEquipeInter) return;
     this.isReloadingEquipeInter = true;
     this.loadEquipeInter();
+    setTimeout(() => {
+      this.isReloadingEquipeInter = false;
+    }, 5000);
     this.setLog({
       email : this.usrMailCollab,
       dosPgi: this.selectedDossier?.DOS_PGI,
