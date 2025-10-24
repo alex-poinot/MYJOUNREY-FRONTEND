@@ -334,8 +334,8 @@ interface TabDiligence {
         </div>
         <div id="container-bouton-pdf">
           <div id="container-save-nog">
-            <div class="date-last-save-nog">{{ dateLastUpdateNog }}</div>
-            <div class="load-save-nog"><i class="fa-solid fa-spinner-scale fa-spin-pulse" aria-hidden="true"></i></div>
+            <div class="date-last-save-nog" [style.display]="isSavingNog ? 'none' : 'block'">{{ dateLastUpdateNog }}</div>
+            <div class="load-save-nog" [style.display]="isSavingNog ? 'block' : 'none'"><i class="fa-solid fa-spinner-scale fa-spin-pulse" aria-hidden="true"></i></div>
             <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i>
           </div>
           <div id="btn-apercu-pdf" (click)="openApercuPopup()"><i class="fa-solid fa-files"></i> Aperçu</div>
@@ -3801,6 +3801,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   isCollabHasMissions: boolean = true;
 
   dateLastUpdateNog: string = '';
+  isSavingNog: boolean = false;
 
   newDiligence: TabDiligence = {
     cycle: '',
@@ -4070,6 +4071,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setChangeIntoContact(): void {
+    this.isSavingNog = true;
     this.debounceLog('contact', () => {
       console.log('Modification dans Contact (partie 1.2):', this.nogPartie1.contacts);
       this.insertNogContacts();
@@ -4085,10 +4087,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoAssocie(): void {
+    this.isSavingNog = true;
     this.debounceLog('associe', () => {
       console.log('Modification dans Associés (partie 1.3):', this.nogPartie1.associes);
       this.insertNogAssocies();
@@ -4104,10 +4110,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoCS(): void {
+    this.isSavingNog = true;
     this.debounceLog('cs', () => {
       console.log('Modification dans Chiffres Significatifs (partie 1.4):', this.nogPartie1.chiffresSignificatifs);
       this.insertNogCS();
@@ -4123,10 +4133,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoActiviteHisto(): void {
+    this.isSavingNog = true;
     this.debounceLog('activiteHisto', () => {
       console.log('Modification dans Activité Historique (partie 1.5):', this.nogPartie1.activiteExHisto);
       this.insertNogModuleTexte('MyNogVU_PRESDOSSIER_ActiviteExHisto', 'MyNogVU_PRESDOSSIER_DateLastModifActiviteExHisto', this.nogPartie1.activiteExHisto);
@@ -4142,10 +4156,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoLettreMission(): void {
+    this.isSavingNog = true;
     this.debounceLog('lettreMission', () => {
       console.log('Modification dans Lettre de Mission (partie 2.1):', {
         dateMiseAJour: this.nogPartie2.dateMiseAJour,
@@ -4165,10 +4183,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoTypeMission(): void {
+    this.isSavingNog = true;
     this.debounceLog('typeMission', () => {
       console.log('Modification dans Type de Mission (partie 2.2):', this.nogPartie2.typeMission);
       this.insertNogValue('MyNogVU_PRESMISSION_TypeMission', 'MyNogVU_PRESMISSION_DateLastModifTypeMission', this.nogPartie2.typeMission);
@@ -4184,10 +4206,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoNatureMission(): void {
+    this.isSavingNog = true;
     this.debounceLog('natureMission', () => {
       console.log('Modification dans Nature de Mission (partie 2.3):', this.nogPartie2.natureMission);
       this.insertNogValue('MyNogVU_PRESMISSION_NatureMission', 'MyNogVU_PRESMISSION_DateLastModifNatureMission', this.nogPartie2.natureMission);
@@ -4203,10 +4229,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoPlanning(): void {
+    this.isSavingNog = true;
     this.debounceLog('planning', () => {
       console.log('Modification dans Planning (partie 2.4):', this.nogPartie2.planning);
       this.insertNogValue('MyNogVU_PRESMISSION_ConsultAutresPro', 'MyNogVU_PRESMISSION_DateLastModifPlanning', this.nogPartie2.consultationPro);
@@ -4226,10 +4256,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoEquipeInter(): void {
+    this.isSavingNog = true;
     this.debounceLog('equipeInter', () => {
       console.log('Modification dans Équipe Intervention (partie 2.5):', this.nogPartie2.equipeInter);
       this.insertNogEquipeInter();
@@ -4245,10 +4279,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoPrecisionTravaux(): void {
+    this.isSavingNog = true;
     this.debounceLog('precisionTravaux', () => {
       console.log('Modification dans Précision des Travaux (partie 2.6):', this.nogPartie2.precisionTravaux);
       this.insertNogModuleTexte('MyNogVU_PRESMISSION_PrecisionTravaux', 'MyNogVU_PRESMISSION_DateLastModifPrecisionTravaux', this.nogPartie2.precisionTravaux);
@@ -4264,10 +4302,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoLogiciel(): void {
+    this.isSavingNog = true;
     this.debounceLog('logiciel', () => {
       console.log('Modification dans Logiciels (partie 3.1):', {
         tabLogicielGT: this.nogPartie3.tabLogicielGT,
@@ -4286,10 +4328,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoOrgaServiceAdmin(): void {
+    this.isSavingNog = true;
     this.debounceLog('orgaServiceAdmin', () => {
       console.log('Modification dans Organisation Service Admin (partie 3.2):', this.nogPartie3.orgaServiceAdmin);
       this.insertNogModuleTexte('MyNogVU_ORGAADMINCOMPTA_OrgaServiceAdmin', 'MyNogVU_ORGAADMINCOMPTA_DateLastModifOrgaServiceAdmin', this.nogPartie3.orgaServiceAdmin);
@@ -4305,10 +4351,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoSyntheseEntretien(): void {
+    this.isSavingNog = true;
     this.debounceLog('syntheseEntretien', () => {
       console.log('Modification dans Synthèse Entretien (partie 3.4):', this.nogPartie3.syntheseEntretienDir);
       this.insertNogModuleTexte('MyNogVU_ORGAADMINCOMPTA_SyntheseEntretien', 'MyNogVU_ORGAADMINCOMPTA_DateLastModifSyntheseEntretien', this.nogPartie3.syntheseEntretienDir);
@@ -4324,10 +4374,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoVigilance(): void {
+    this.isSavingNog = true;
     this.debounceLog('vigilance', () => {
       console.log('Modification dans Vigilance (partie 4.1):', {
         checkboxVigilance: this.nogPartie4.checkboxVigilance,
@@ -4346,10 +4400,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoPrincipeComp(): void {
+    this.isSavingNog = true;
     this.debounceLog('principeComp', () => {
       console.log('Modification dans Principes Comptables (partie 4.2):', {
         aspectsComptables: this.nogPartie4.aspectsComptables,
@@ -4375,10 +4433,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoSeuil(): void {
+    this.isSavingNog = true;
     this.debounceLog('seuil', () => {
       console.log('Modification dans Seuil (partie 4.3):', this.nogPartie4.seuil);
       this.insertNogValue('MyNogVU_ZONERISQUE_Seuil', 'MyNogVU_ZONERISQUE_DateLastModifSeuil', this.nogPartie4.seuil.toString());
@@ -4394,10 +4456,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoDiligance(): void {
+    this.isSavingNog = true;
     this.debounceLog('diligance', () => {
       console.log('Modification dans Diligences (partie 5):', this.nogPartie5.diligence);
       this.insertNogDiligence();
@@ -4414,10 +4480,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoDiliganceLab(): void {
+    this.isSavingNog = true;
     this.debounceLog('diliganceLab', () => {
       console.log('Modification dans Diligences LAB (partie 5):', this.nogPartie5.diligenceLab);
       this.insertNogDiligenceLab();
@@ -4433,10 +4503,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoRestitutionClient(): void {
+    this.isSavingNog = true;
     this.debounceLog('restitutionClient', () => {
       console.log('Modification dans Restitution Client (partie 6):', {
         checkboxEtage1: this.nogPartie6.checkboxEtage1,
@@ -4463,10 +4537,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoDeontologie(): void {
+    this.isSavingNog = true;
     this.debounceLog('deontologie', () => {
       console.log('Modification dans Déontologie (partie 7):', {
         checkboxFormInit: this.nogPartie7.checkboxFormInit,
@@ -4492,10 +4570,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
   setChangeIntoAnnexe(): void {
+    this.isSavingNog = true;
     this.debounceLog('annexe', () => {
       console.log('Modification dans Annexes:', this.nogPartieAnnexes.tabFiles);
       this.insertNogFileAnnexe();
@@ -4511,6 +4593,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         periode: '',
         mailPriseProfil: this.userEmail
       });
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
     });
   }
 
