@@ -5517,7 +5517,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   validateNewDiligenceLab(): void {
-    if (!this.newDiligenceLab.cycle || !this.newDiligenceLab.diligence || !this.newDiligenceLab.titre) {
+    if (!this.newDiligenceLab.diligence || !this.newDiligenceLab.titre) {
       alert('Veuillez remplir au minimum les champs "Cycle", "Diligence" et "Titre"');
       return;
     }
