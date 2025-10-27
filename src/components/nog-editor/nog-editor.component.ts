@@ -334,14 +334,14 @@ interface TabDiligence {
                 <i class="fas fa-download"></i>
               </button>
 
-              <button *ngIf="modalData.modifyMode === true"
+              <button *ngIf="isProfilAssocie"
                       class="remove-file"
-                      (click)="removeFileNog(selectedFileNogId)">
+                      (click)="removeFileNog(selectedFileNogId.toString())">
                 <i class="fas fa-times"></i>
               </button>
             </div>
           </div>
-          <div *ngIf="modalData.selectedFile == null"
+          <div *ngIf="selectedFileNog == null"
             class="no-file-modal">
               Aucun fichier
           </div>
