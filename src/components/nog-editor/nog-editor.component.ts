@@ -1139,7 +1139,7 @@ interface TabDiligence {
                     </div>
                     <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee'" class="texte-appreciation-risque-vigilance">
                       <p>En cas de vigilance renforcée, compléter les contrôles à effectuer en s’appuyant entre autres sur « l’ARPEC » </p>
-                      <a href="https://grantthorntonfrance.sharepoint.com/sites/EC-ExpertiseConseil/Normes_pro_EC/Forms/AllItems.aspx?id=%2Fsites%2FEC%2DExpertiseConseil%2FNormes%5Fpro%5FEC%2FB1%20Proc%C3%A9dures%20Lutte%20anti%20Blanchiment%2FAnalyse%5Fdes%5Frisques%5Fde%5Fla%5Fprofession%5Fd%5Fexpert%2Dcomptable%5F%2D%5FARPEC%20%285%29%2Epdf&parent=%2Fsites%2FEC%2DExpertiseConseil%2FNormes%5Fpro%5FEC%2FB1%20Proc%C3%A9dures%20Lutte%20anti%20Blanchiment">Lien de la documentation ARPEC sur la DWP</a>
+                      <a href="https://grantthorntonfrance.sharepoint.com/sites/EC-ExpertiseConseil/Normes_pro_EC/Forms/AllItems.aspx?id=%2Fsites%2FEC%2DExpertiseConseil%2FNormes%5Fpro%5FEC%2FB1%20Proc%C3%A9dures%20Lutte%20anti%20Blanchiment%2FAnalyse%5Fdes%5Frisques%5Fde%5Fla%5Fprofession%5Fd%5Fexpert%2Dcomptable%5F%2D%5FARPEC%20%285%29%2Epdf&parent=%2Fsites%2FEC%2DExpertiseConseil%2FNormes%5Fpro%5FEC%2FB1%20Proc%C3%A9dures%20Lutte%20anti%20Blanchiment" target="blank_">Lien de la documentation ARPEC sur la DWP</a>
                     </div>
                   </div>
                 </div>
@@ -1339,6 +1339,7 @@ interface TabDiligence {
                 </div>
               </div>
             </div>
+             <div class="legende-partie-nog">Les diligences sélectionnées de la bibliothèque s'ajoutent en fin de cycle.</div>
             <div id="part-bottom-diligence">
               <div id="container-liste-diligence">
                 <ng-container *ngFor="let diligence of nogPartie5.diligence">
@@ -1403,6 +1404,7 @@ interface TabDiligence {
               <table class="table-diligence">
                 <thead>
                   <tr>
+                    <th>Cycle</th>
                     <th>Code</th>
                     <th>Libelle</th>
                     <th>Activation</th>
@@ -1415,6 +1417,7 @@ interface TabDiligence {
                     <td colspan="100%">Aucune diligence LAB ajoutée</td>
                   </tr>
                   <tr *ngFor="let diligence of nogPartie5.diligenceLab">
+                    <td>{{ diligence.cycle }}</td>
                     <td>{{ diligence.diligence }}</td>
                     <td>{{ diligence.titre }}</td>
                     <td>
@@ -1488,9 +1491,29 @@ interface TabDiligence {
                 </div>
               </div>
               <div id="container-commentaire-general">
-                <div class="container-element-deontologie">
+                <div class="container-element-deontologie-comm-general">
                   <div class="libelle-deontologie">Commentaire général : </div>
-                  <input type="text" [(ngModel)]="nogPartie6.commGeneral" (ngModelChange)="setChangeIntoRestitutionClient()" class="input-text"/>
+                  <div id="editeur-texte-comm-general">
+                    <div class="toolbar-editor">
+                      <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                      <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                      <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                      <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                      <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                      <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                      <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                      <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                      <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                    </div>
+                    <div
+                      contenteditable="true"
+                      class="editor-content"
+                      id="editorContentCommGeneral"
+                      #editorContentCommGeneral
+                      (input)="onEditorContentChangeCommGeneral($event)"
+                      (keyup)="onEditorContentChangeCommGeneral($event)"
+                      (paste)="onEditorContentChangeCommGeneral($event)"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1521,7 +1544,7 @@ interface TabDiligence {
           <div *ngIf="selectedPartNog=='annexes'" id="container-part-annexes-nog" class="container-part-nog">
             <div class="title-element-nog">Annexes<i title="Dernière mise à jour : {{nogPartieAnnexes.dateLastUpdateAnnexe}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
             <div class="body-element-nog">
-              <div class="legende-partie-nog">Joindre les notes ou études d’avocats fiscaux, juridiques et sociaux, rescrits fiscaux ainsi que les garanties fiscales obtenues mais également toute note technique rédigée au client</div>
+              <div class="legende-partie-nog">Joindre les notes ou études d’avocats fiscaux, juridiques et sociaux, rescrits fiscaux, les garanties fiscales obtenues mais également toute note technique rédigée au client ainsi que la dernière note de synthèse.</div>
               <div class="container-annexes">
                 <div class="section-upload-annexes">
                   <label for="file-input-annexes" class="btn-upload-annexes">
@@ -1648,6 +1671,22 @@ interface TabDiligence {
           </button>
         </div>
         <div class="diligence-modal-content">
+          <div class="form-group">
+            <label for="diligence-cycle">Cycle</label>
+            <select id="diligence-cycle" [(ngModel)]="newDiligenceLab.cycle">
+              <option value="">Sélectionner un cycle</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+              <option value="G">G</option>
+              <option value="H">H</option>
+              <option value="I">I</option>
+              <option value="J">J</option>
+            </select>
+          </div>
           <div class="form-group">
             <label for="diligence-lab-code">Diligence *</label>
             <input id="diligence-lab-code" type="text" [(ngModel)]="newDiligenceLab.diligence" placeholder="Code ou identifiant de la diligence">
@@ -3235,22 +3274,27 @@ interface TabDiligence {
 
     table.table-diligence th:nth-child(2),
     table.table-diligence td:nth-child(2) {
-      width: 10vw;
+      width: 3.5vw;
     }
 
     table.table-diligence th:nth-child(3),
-    table.table-diligence td:nth-child(3) {
-      width: 4vw;
-      text-align: center;
+    table.table-diligence td:nth-child(4) {
+      width: 10vw;
     }
 
     table.table-diligence th:nth-child(4),
     table.table-diligence td:nth-child(4) {
-      width: 27vw;
+      width: 4vw;
+      text-align: center;
     }
 
     table.table-diligence th:nth-child(5),
     table.table-diligence td:nth-child(5) {
+      width: 27vw;
+    }
+
+    table.table-diligence th:nth-child(6),
+    table.table-diligence td:nth-child(6) {
       width: 27vw;
     }
 
@@ -3826,6 +3870,74 @@ interface TabDiligence {
 
     .load-save-nog {
       font-size: 0.7vw;
+    }
+
+    .no-file-modal {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gray-300);
+      color: var(--gray-300);
+      padding: 1vh 1vw;
+      margin-top: 1vh;
+      border-radius: 8px;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: var(--gray-100);
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+
+    .file-info {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      font-size: var(--font-size-sm);
+      color: var(--gray-600);
+    }
+
+    .file-name {
+      font-size: var(--font-size-md);
+      color: var(--gray-700);
+      max-width: 16vw;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 0.5vw;
+      align-items: center;
+    }
+
+    .remove-file {
+      background: var(--error-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .remove-file:hover {
+      background: #dc2626;
+    }
+
+    div#editeur-texte-comm-general {
+      height: 24vh;
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+      margin-top: 0.5vh;
     }
   `]
 })
@@ -4822,7 +4934,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onMillesimeChange(): void {
     this.selectedCodeAffaire = this.getCodeAffaireSelected();
-    
+
     this.getModuleFiles(this.selectedCodeAffaire, this.selectedProfilId.toString());
   }
 
@@ -4907,6 +5019,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.loadListeBDFE();
 
         this.insertNogVigilance();
+
+        this.sendModuleStatus('NOG', this.usrMailCollab, this.selectedCodeAffaire, 'Mission', 'editing');
 
         this.dateLastUpdateNog = this.getDateNow();
 
@@ -5648,6 +5762,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.nogPartie4.comptesAnnuels = newContent;
     this.setChangeIntoPrincipeComp();
   }
+  
+  onEditorContentChangeCommGeneral(event: Event): void {
+    const target = event.target as HTMLElement;
+    const newContent = target.innerHTML || '';
+
+    this.nogPartie6.commGeneral = newContent;
+    this.setChangeIntoRestitutionClient();
+  }
 
   ngAfterViewInit(): void {
     // Initialiser le contenu de l'éditeur après le rendu
@@ -5868,7 +5990,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }, 0);
     }
 
-    if (value === '1' || value === '2' || value === '3' || value === '4') {
+    if (value === '1' || value === '2' || value === '3' || value === '4' || value === '6') {
       setTimeout(() => {
         this.loadContentIntoEditors();
       }, 0);
@@ -5934,8 +6056,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   validateNewDiligenceLab(): void {
-    if (!this.newDiligenceLab.diligence || !this.newDiligenceLab.titre) {
-      alert('Veuillez remplir au minimum les champs "Diligence" et "Titre"');
+    if (!this.newDiligenceLab.cycle || !this.newDiligenceLab.diligence || !this.newDiligenceLab.titre) {
+      alert('Veuillez remplir au minimum les champs "Cycle", "Diligence" et "Titre"');
       return;
     }
 
@@ -6758,6 +6880,11 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (editorContentComptesAnnuels && this.nogPartie4.comptesAnnuels) {
       editorContentComptesAnnuels.innerHTML = this.nogPartie4.comptesAnnuels;
     }
+
+    const editorContentCommGeneral = document.querySelector('#editorContentCommGeneral') as HTMLElement;
+    if (editorContentCommGeneral && this.nogPartie6.commGeneral) {
+      editorContentCommGeneral.innerHTML = this.nogPartie6.commGeneral;
+    }
   }
 
   loadTypeMissionNatureListeNog(typeMission: string, natureMission: string): void {
@@ -6982,6 +7109,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         .subscribe(response => {
           console.log('updateValidationAssocie',response);
         });
+      this.sendModuleStatus('NOG', this.usrMailCollab, this.selectedCodeAffaire, 'Mission', 'editing');
       this.setLog({
         email : this.usrMailCollab,
         dosPgi: this.selectedDossier?.DOS_PGI,
@@ -7010,6 +7138,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       transitionIn: 'flipInX',
       transitionOut: 'flipOutX'
     });
+    this.sendModuleStatus('NOG', this.usrMailCollab, this.selectedCodeAffaire, 'Mission', 'collab');
     this.setLog({
       email : this.usrMailCollab,
       dosPgi: this.selectedDossier?.DOS_PGI,
@@ -7021,32 +7150,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       periode: '',
       mailPriseProfil: this.userEmail
     });
-
-    // if(this.isNogCanBeValidate) {
-    //   this.nogPartieAnnexes.validationCollab = true;
-    //    iziToast.success({
-    //       timeout: 3000, 
-    //       icon: 'fa-regular fa-thumbs-up', 
-    //       title: 'Validation effectuée avec succès !', 
-    //       close: false, 
-    //       position: 'bottomCenter', 
-    //       transitionIn: 'flipInX',
-    //       transitionOut: 'flipOutX'
-    //     });
-    //     this.setLog({
-    //       email : this.usrMailCollab,
-    //       dosPgi: this.selectedDossier?.DOS_PGI,
-    //       modif: 'Modification NOG',
-    //       typeModif: 'NOG',
-    //       module: 'NOG',
-    //       champ: 'Validation collab',
-    //       valeur: this.selectedCodeAffaire,
-    //       periode: '',
-    //       mailPriseProfil: this.userEmail
-    //     });
-    // } else {
-    //   this.showToastValidationCollab();
-    // }
   }
 
   showToastValidationCollab(): void {
@@ -7104,6 +7207,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         .subscribe(response => {
           console.log('updateValidationAssocie',response);
         });
+      this.sendModuleStatus('NOG', this.usrMailCollab, this.selectedCodeAffaire, 'Mission', 'collab');
       this.setLog({
         email : this.usrMailCollab,
         dosPgi: this.selectedDossier?.DOS_PGI,
@@ -7133,6 +7237,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         transitionIn: 'flipInX',
         transitionOut: 'flipOutX'
       });
+      this.sendModuleStatus('NOG', this.usrMailCollab, this.selectedCodeAffaire, 'Mission', 'associe');
       this.setLog({
         email : this.usrMailCollab,
         dosPgi: this.selectedDossier?.DOS_PGI,

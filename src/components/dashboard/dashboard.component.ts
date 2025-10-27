@@ -564,8 +564,8 @@ interface InsertFile {
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('NOG', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.MD_MISSION, mission.pendantMission.nog, mission.missionId, mission.profilId, 'Mission', mission.MD_MILLESIME, mission.MD_MISSION, mission.numeroClient)">
                     <i class="fas status-icon" 
-                       [ngClass]="mission.pendantMission.nog == 'oui' ? 'fa-check-circle' : mission.pendantMission.nog == 'encours' ? 'fa-hourglass' : 'fa-pen'"
-                       [class.completed]="mission.pendantMission.nog == 'oui'"></i>
+                       [ngClass]="mission.pendantMission.nog == 'oui' ? 'fa-check-circle' : mission.pendantMission.nog == 'encours' ? 'fa-hourglass' : mission.pendantMission.nog == 'collab' ? 'fa-users' : mission.pendantMission.nog == 'associe' ? 'fa-user-check' : mission.pendantMission.nog == 'editing' ? 'fa-list-check' :'fa-pen'"
+                       [class.completed]="mission.pendantMission.nog == 'oui' || mission.pendantMission.nog == 'associe'"></i>
                     <i *ngIf="mission.pendantMission.nogAccess != 'modif'" class="icon-access-module fa-regular"
                       [ngClass]="mission.pendantMission.nogAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
                   </td>
@@ -733,7 +733,7 @@ interface InsertFile {
           <!-- Modal Upload (PDF/Document simple) -->
           <div *ngIf="modalData.type === 'document'" class="upload-section">
             <p>{{ modalData.description }}</p>
-            <div class="text-redirection" *ngIf="modalData.modifyMode === true && modalData.urlRedirection != undefined && modalData.mission != undefined && modalData.urlRedirection === true && (modalData.mission.startsWith('21') || modalData.mission.startsWith('22'))">
+            <div class="text-redirection" *ngIf="modalData.modifyMode === true && modalData.urlRedirection != undefined && modalData.mission != undefined && modalData.millesime != undefined && modalData.urlRedirection === true && (modalData.mission.startsWith('21') || modalData.mission.startsWith('22')) && convertToNumber(modalData.millesime) >= getActualYear()">
               Vous pouvez accéder au formulaire en cliquant sur le lien suivant : 
               <button class="btn-redirection" (click)="redirectNog(modalData.dosPgi || '', modalData.mission || '', modalData.millesime || '')">Accéder au formulaire</button>
             </div>
@@ -2002,6 +2002,14 @@ interface InsertFile {
         border-radius: 0.3vw;
         font-size: var(--font-size-md);
     }
+
+    i.fas.status-icon.fa-list-check {
+      color: var(--warning-color);
+    }
+
+    i.fas.status-icon.fa-users {
+      color: #1074b9;
+    }      
   `]
 })
 export class DashboardComponent implements OnInit {
@@ -3960,5 +3968,13 @@ export class DashboardComponent implements OnInit {
 
     // Ouvrir l'URL dans un nouvel onglet
     window.open(url, '_blank');
+  }
+
+  getActualYear(): number {
+    return new Date().getFullYear();
+  }
+
+  convertToNumber(value: string): number {
+    return Number(value);
   }
 }
