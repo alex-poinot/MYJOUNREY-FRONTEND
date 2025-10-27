@@ -5889,7 +5889,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isDiligenceSelected(diligence: TabDiligence): boolean {
-    return this.selectedDiligences.some(d => d.diligence === diligence.diligence);
+    if (this.selectedDiligences.some(d => d.diligence === diligence.diligence)) {
+      return true;
+    }
+
+    return this.nogPartie5.diligence.some(groupe => {
+      return groupe.groupe === diligence.cycle &&
+             groupe.tabDiligence.some(d => d.diligence === diligence.diligence);
+    });
   }
 
   toggleDiligenceSelection(diligence: TabDiligence): void {
