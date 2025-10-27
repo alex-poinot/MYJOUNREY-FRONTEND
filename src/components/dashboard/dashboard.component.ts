@@ -113,20 +113,20 @@ interface ModalData {
   selectedFileLab5?: Array<File>;
   selectedFileLab6?: Array<File>;
   selectedFileLab7?: Array<File>;
-  selectedFileLabId1?: Array<String>;
-  selectedFileLabId2?: Array<String>;
-  selectedFileLabId3?: Array<String>;
-  selectedFileLabId4?: Array<String>;
-  selectedFileLabId5?: Array<String>;
-  selectedFileLabId6?: Array<String>;
-  selectedFileLabId7?: Array<String>;
-  selectedFileLabDate1?: Array<String>;
-  selectedFileLabDate2?: Array<String>;
-  selectedFileLabDate3?: Array<String>;
-  selectedFileLabDate4?: Array<String>;
-  selectedFileLabDate5?: Array<String>;
-  selectedFileLabDate6?: Array<String>;
-  selectedFileLabDate7?: Array<String>;
+  selectedFileLabId1?: string[];
+  selectedFileLabId2?: string[];
+  selectedFileLabId3?: string[];
+  selectedFileLabId4?: string[];
+  selectedFileLabId5?: string[];
+  selectedFileLabId6?: string[];
+  selectedFileLabId7?: string[];
+  selectedFileLabDate1?: string[];
+  selectedFileLabDate2?: string[];
+  selectedFileLabDate3?: string[];
+  selectedFileLabDate4?: string[];
+  selectedFileLabDate5?: string[];
+  selectedFileLabDate6?: string[];
+  selectedFileLabDate7?: string[];
   selectedFile3?: File | null;
   selectedFile4?: File | null;
   selectedFile5?: File | null;
@@ -779,8 +779,10 @@ interface InsertFile {
               <div *ngIf="modalData.columnName == 'NDS' || modalData.columnName == 'NOG' || modalData.columnName == 'LDM' || modalData.columnName == 'QAM'" class="container-date-modal">
                 <div *ngIf="modalData.columnName == 'NDS' || modalData.columnName == 'NOG' || modalData.columnName == 'LDM'" class="libelle-date-modal">Date de signature : </div>
                 <div *ngIf="modalData.columnName == 'QAM'" class="libelle-date-modal">Date de génération : </div>
-                <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"/>
-                <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">JJ/MM/AAAA</div>
+                <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal" 
+                  [(ngModel)]="modalData.selectedFileDate"
+                  (change)="changeDateFichier($event, modalData.selectedFileId)"/>
+                <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">{{ formatDate(modalData.selectedFileDate) }}</div>
               </div>
             </div>
             <div *ngIf="modalData.selectedFile == null"
@@ -875,8 +877,10 @@ interface InsertFile {
               </div>
               <div class="container-date-modal">
                 <div class="libelle-date-modal">Date de signature : </div>
-                <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"/>
-                <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">JJ/MM/AAAA</div>
+                <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"
+                  [(ngModel)]="modalData.selectedFileDate"
+                  (change)="changeDateFichier($event, modalData.selectedFileId)"/>
+                <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">{{ formatDate(modalData.selectedFileDate) }}</div>
               </div>
             </div>
             <div *ngIf="modalData.selectedFile == null"
@@ -976,8 +980,10 @@ interface InsertFile {
                       </div>
                       <div *ngIf="n != 5" class="container-date-modal">
                         <div class="libelle-date-modal">{{ labDateTitles[n] }} : </div>
-                        <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"/>
-                        <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">JJ/MM/AAAA</div>
+                        <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"
+                          [ngModel]="getFileLabDate(n, i)"
+                          (change)="changeDateFichier($event, getFileLabId(n, i))"/>
+                        <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">{{ formatDate(getFileLabDate(n , i)) }}</div>
                       </div>
                     </div>
                   </div>
@@ -2475,7 +2481,7 @@ export class DashboardComponent implements OnInit {
 
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
-          nbValide += mission[phase].nog == 'oui' ? 1 : 0;
+          nbValide += mission[phase].nog == 'oui' || mission[phase].nog == 'associe' ? 1 : 0;
           // nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
           nbValide += mission[phase].revision == 'oui' ? 1 : 0;
           nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
@@ -2539,7 +2545,7 @@ export class DashboardComponent implements OnInit {
 
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
-          nbValide += mission[phase].nog == 'oui' ? 1 : 0;
+          nbValide += mission[phase].nog == 'oui' || mission[phase].nog == 'associe' ? 1 : 0;
           // nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
           nbValide += mission[phase].revision == 'oui' ? 1 : 0;
           nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
@@ -2582,7 +2588,7 @@ export class DashboardComponent implements OnInit {
       total = 2;
       countV = missionCount;
     } else if(phase == 'pendantMission') {
-      const missionCount = (mission[phase].nog == 'oui' ? 1 : 0) +
+      const missionCount = (mission[phase].nog == 'oui' || mission[phase].nog == 'associe' ? 1 : 0) +
         // (mission[phase].checklist == 'oui' ? 1 : 0) + 
         (mission[phase].revision == 'oui' ? 1 : 0) +
         (mission[phase].supervision == 'oui' ? 1 : 0);
@@ -2615,7 +2621,7 @@ export class DashboardComponent implements OnInit {
       total = 2;
       countV = missionCount;
     } else if(phase == 'pendantMission') {
-      const missionCount = (mission[phase].nog == 'oui' ? 1 : 0) +
+      const missionCount = (mission[phase].nog == 'oui' || mission[phase].nog == 'associe' ? 1 : 0) +
         // (mission[phase].checklist == 'oui' ? 1 : 0) + 
         (mission[phase].revision == 'oui' ? 1 : 0) +
         (mission[phase].supervision == 'oui' ? 1 : 0);
@@ -2743,7 +2749,7 @@ export class DashboardComponent implements OnInit {
 
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
-          nbValide += mission[phase].nog == 'oui' ? 1 : 0;
+          nbValide += mission[phase].nog == 'oui' || mission[phase].nog == 'associe' ? 1 : 0;
           // nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
           nbValide += mission[phase].revision == 'oui' ? 1 : 0;
           nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
@@ -2818,7 +2824,7 @@ export class DashboardComponent implements OnInit {
 
       const missionCount = allMissions.reduce((sum, mission) => {
         let nbValide = sum;
-          nbValide += mission[phase].nog == 'oui' ? 1 : 0;
+          nbValide += mission[phase].nog == 'oui' || mission[phase].nog == 'associe' ? 1 : 0;
           // nbValide += mission[phase].checklist == 'oui' ? 1 : 0;
           nbValide += mission[phase].revision == 'oui' ? 1 : 0;
           nbValide += mission[phase].supervision == 'oui' ? 1 : 0;
@@ -2902,13 +2908,13 @@ export class DashboardComponent implements OnInit {
             if(module.Base64_File) {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFileId = element.MODFILE_Id;
-              modFileDate = module.MODFILE_DateFichier;
+              modFileDate = this.formatDateInput(module.MODFILE_DateFichier);
             }
           } else if(element.MODFILE_FileCategorie == 'mail') {
             if(module.Base64_File) {
               file2 = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFileId2 = element.MODFILE_Id;
-              modFileDate2 = module.MODFILE_DateFichier;
+              modFileDate2 = this.formatDateInput(module.MODFILE_DateFichier);
             }
           }
         });
@@ -2959,7 +2965,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile.push(file);
               modFileId.push(element.MODFILE_Id);
-              modFileDate.push(element.MODFILE_DateFichier);
+              modFileDate.push(this.formatDateInput(element.MODFILE_DateFichier));
               this.fileInputsLab[0].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(2)) {
@@ -2967,7 +2973,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile2.push(file);
               modFileId2.push(element.MODFILE_Id);
-              modFileDate2.push(element.MODFILE_DateFichier);
+              modFileDate2.push(this.formatDateInput(element.MODFILE_DateFichier));
               this.fileInputsLab[1].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(3)) {
@@ -2975,7 +2981,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile3.push(file);
               modFileId3.push(element.MODFILE_Id);
-              modFileDate3.push(element.MODFILE_DateFichier);
+              modFileDate3.push(this.formatDateInput(element.MODFILE_DateFichier));
               this.fileInputsLab[2].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(4)) {
@@ -2983,7 +2989,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile4.push(file);
               modFileId4.push(element.MODFILE_Id);
-              modFileDate4.push(element.MODFILE_DateFichier);
+              modFileDate4.push(this.formatDateInput(element.MODFILE_DateFichier));
               this.fileInputsLab[3].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(5)) {
@@ -2991,7 +2997,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile5.push(file);
               modFileId5.push(element.MODFILE_Id);
-              modFileDate5.push(element.MODFILE_DateFichier);
+              modFileDate5.push(this.formatDateInput(element.MODFILE_DateFichier));
               this.fileInputsLab[4].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(6)) {
@@ -2999,7 +3005,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile6.push(file);
               modFileId6.push(element.MODFILE_Id);
-              modFileDate6.push(element.MODFILE_DateFichier);
+              modFileDate6.push(this.formatDateInput(element.MODFILE_DateFichier));
               this.fileInputsLab[5].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(7)) {
@@ -3007,7 +3013,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile7.push(file);
               modFileId7.push(element.MODFILE_Id);
-              modFileDate7.push(element.MODFILE_DateFichier);
+              modFileDate7.push(this.formatDateInput(element.MODFILE_DateFichier));
               this.fileInputsLab[6].push({});
             }
           }
@@ -3057,7 +3063,7 @@ export class DashboardComponent implements OnInit {
           currentStatus: currentStatus,
           selectedFile: file,
           selectedFileId: module.MODFILE_Id,
-          selectedFileDate: module.MODFILE_DateFichier,
+          selectedFileDate:  this.formatDateInput(module.MODFILE_DateFichier),
           selectedFile2: null,
           selectedFileId2: '',
           selectedFileDate2: '',
@@ -3594,6 +3600,36 @@ export class DashboardComponent implements OnInit {
     return file ? file.name : '';
   }
 
+  public getFileLabDate(n: number, index: number): string {
+    if (n === 1) {
+      return this.modalData.selectedFileLabDate1?.[index-1] ?? '';
+    } else if (n === 2) {
+      return this.modalData.selectedFileLabDate2?.[index-1] ?? '';
+    } else if (n === 3) {
+      return this.modalData.selectedFileLabDate3?.[index-1] ?? '';
+    } else if (n === 4) {
+      return this.modalData.selectedFileLabDate4?.[index-1] ?? '';
+    } else if (n === 5) {
+      return this.modalData.selectedFileLabDate5?.[index-1] ?? '';
+    }
+    return '';
+  }
+
+  public getFileLabId(n: number, index: number): string {
+    if (n === 1) {
+      return this.modalData.selectedFileLabId1?.[index-1] ?? '';
+    } else if (n === 2) {
+      return this.modalData.selectedFileLabId2?.[index-1] ?? '';
+    } else if (n === 3) {
+      return this.modalData.selectedFileLabId3?.[index-1] ?? '';
+    } else if (n === 4) {
+      return this.modalData.selectedFileLabId4?.[index-1] ?? '';
+    } else if (n === 5) {
+      return this.modalData.selectedFileLabId5?.[index-1] ?? '';
+    }
+    return '';
+  }
+
   public getFileType(index: number): string {
     const file = this.getFile(index);
     return file ? file.type : '';
@@ -4055,5 +4091,32 @@ export class DashboardComponent implements OnInit {
 
   convertToNumber(value: string): number {
     return Number(value);
+  }
+
+  changeDateFichier(event: Event, fileId: string): void {
+    const input = event.target as HTMLInputElement;
+    console.log('input value', input.value);
+    console.log('fileId', fileId);
+    this.updateDateFichier(fileId, input.value, this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+  }
+
+  formatDateInput(input: string): string {
+    if(input == null || input == '') {
+      return '';
+    }
+    const date = new Date(input);
+
+    const day = ('0' + date.getUTCDate()).slice(-2);
+    const month = ('0' + (date.getUTCMonth() + 1)).slice(-2); // getUTCMonth() retourne 0 pour janvier, donc on ajoute 1
+    const year = date.getUTCFullYear();
+
+    return `${year}-${month}-${day}`;
+  }
+
+  formatDate(value: string): string {
+    if (!value) return '';
+    const [year, month, day] = value.split('-');
+    if (!year || !month || !day) return value;
+    return `${day}/${month}/${year}`;
   }
 }

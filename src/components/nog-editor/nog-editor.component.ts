@@ -1332,14 +1332,14 @@ interface TabDiligence {
                     <div class="multiselect-options" *ngIf="showDiligenceDropdown">
                       <div class="multiselect-option" *ngFor="let diligence of nogPartie5.diligenceAdd" (click)="toggleDiligenceSelection(diligence)">
                         <input type="checkbox" [checked]="isDiligenceSelected(diligence)" (click)="$event.stopPropagation()">
-                        <label>{{ diligence.diligence }} - {{ diligence.titre }}</label>
+                        <label>({{ diligence.cycle }} - {{ getCycleNameDiligence(diligence.cycle) }}) {{ diligence.diligence }} - {{ diligence.titre }}</label>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-             <div class="legende-partie-nog">Les diligences sélectionnées de la bibliothèque s'ajoutent en fin de cycle.</div>
+            <div class="legende-partie-nog">Les diligences sélectionnées de la bibliothèque s'ajoutent en fin de cycle.</div>
             <div id="part-bottom-diligence">
               <div id="container-liste-diligence">
                 <ng-container *ngFor="let diligence of nogPartie5.diligence">
@@ -1625,16 +1625,16 @@ interface TabDiligence {
             <label for="diligence-cycle">Cycle</label>
             <select id="diligence-cycle" [(ngModel)]="newDiligence.cycle">
               <option value="">Sélectionner un cycle</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-              <option value="D">D</option>
-              <option value="E">E</option>
-              <option value="F">F</option>
-              <option value="G">G</option>
-              <option value="H">H</option>
-              <option value="I">I</option>
-              <option value="J">J</option>
+              <option value="A">A - {{ getCycleNameDiligence('A') }}</option>
+              <option value="B">B - {{ getCycleNameDiligence('B') }}</option>
+              <option value="C">C - {{ getCycleNameDiligence('C') }}</option>
+              <option value="D">D - {{ getCycleNameDiligence('D') }}</option>
+              <option value="E">E - {{ getCycleNameDiligence('E') }}</option>
+              <option value="F">F - {{ getCycleNameDiligence('F') }}</option>
+              <option value="G">G - {{ getCycleNameDiligence('G') }}</option>
+              <option value="H">H - {{ getCycleNameDiligence('H') }}</option>
+              <option value="I">I - {{ getCycleNameDiligence('I') }}</option>
+              <option value="J">J - {{ getCycleNameDiligence('J') }}</option>
             </select>
           </div>
           <div class="form-group">
@@ -1675,16 +1675,16 @@ interface TabDiligence {
             <label for="diligence-cycle">Cycle</label>
             <select id="diligence-cycle" [(ngModel)]="newDiligenceLab.cycle">
               <option value="">Sélectionner un cycle</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-              <option value="D">D</option>
-              <option value="E">E</option>
-              <option value="F">F</option>
-              <option value="G">G</option>
-              <option value="H">H</option>
-              <option value="I">I</option>
-              <option value="J">J</option>
+              <option value="A">A - {{ getCycleNameDiligence('A') }}</option>
+              <option value="B">B - {{ getCycleNameDiligence('B') }}</option>
+              <option value="C">C - {{ getCycleNameDiligence('C') }}</option>
+              <option value="D">D - {{ getCycleNameDiligence('D') }}</option>
+              <option value="E">E - {{ getCycleNameDiligence('E') }}</option>
+              <option value="F">F - {{ getCycleNameDiligence('F') }}</option>
+              <option value="G">G - {{ getCycleNameDiligence('G') }}</option>
+              <option value="H">H - {{ getCycleNameDiligence('H') }}</option>
+              <option value="I">I - {{ getCycleNameDiligence('I') }}</option>
+              <option value="J">J - {{ getCycleNameDiligence('J') }}</option>
             </select>
           </div>
           <div class="form-group">
@@ -5889,14 +5889,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isDiligenceSelected(diligence: TabDiligence): boolean {
-    if (this.selectedDiligences.some(d => d.diligence === diligence.diligence)) {
-      return true;
-    }
-
-    return this.nogPartie5.diligence.some(groupe => {
-      return groupe.groupe === diligence.cycle &&
-             groupe.tabDiligence.some(d => d.diligence === diligence.diligence);
-    });
+    return this.selectedDiligences.some(d => d.diligence === diligence.diligence);
   }
 
   toggleDiligenceSelection(diligence: TabDiligence): void {
@@ -7616,5 +7609,32 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           console.log('Réponse du serveur:', response);
         });
     };
+  }
+
+  getCycleNameDiligence(cycle: string): string {
+    switch (cycle) {
+      case 'A':
+        return 'Préparation et finalisation de la mission';
+      case 'B':
+        return 'Trésorerie / Financement';
+      case 'C':
+        return 'Fournisseurs - Achats et charges externes';
+      case 'D':
+        return 'Immobilisations';
+      case 'E':
+        return 'Clients - Produits';
+      case 'F':
+        return 'Stocks';
+      case 'G':
+        return 'Personnel';
+      case 'H':
+        return 'Etat - Tiers et charges';
+      case 'I':
+        return 'Capitaux propres - Provisions, et comptes courants';
+      case 'J':
+        return 'Autres comptes';
+      default: 
+        return '';
+    }
   }
 }
