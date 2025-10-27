@@ -8,6 +8,9 @@ import { AuthService, UserProfile } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { debounceTime, distinctUntilChanged, switchMap, of, Subject } from 'rxjs';
 import iziToast from 'izitoast';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
+import { tap } from 'rxjs/internal/operators/tap';
 
 interface Dossier {
   DOS_PGI: string;
@@ -317,10 +320,34 @@ interface TabDiligence {
             (change)="onFileSelect($event)"
             accept=".pdf,.doc,.docx"
             class="file-upload-input">
-          <div *ngIf="selectedFileName" class="selected-file-name">
-            <i class="fa-solid fa-file"></i> {{ selectedFileName }}
+          <div *ngIf="selectedFileNog" class="file-info">
+            <span class="file-name">{{ selectedFileNog.name }}</span>
+            <div class="file-actions">
+              <button *ngIf="selectedFileNog.type === 'application/pdf'"
+                      class="preview-file"
+                      (click)="previewFile(selectedFileNog)">
+                <i class="fas fa-eye"></i>
+              </button>
+
+              <button class="download-file"
+                      (click)="downloadFile(selectedFileNog)">
+                <i class="fas fa-download"></i>
+              </button>
+
+              <button *ngIf="modalData.modifyMode === true"
+                      class="remove-file"
+                      (click)="removeFileNog(selectedFileNogId)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div *ngIf="modalData.selectedFile == null"
+            class="no-file-modal">
+              Aucun fichier
           </div>
         </div>
+
+        
       </div>
 
       <!-- Affichage de la sélection -->
@@ -3872,6 +3899,10 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   dateLastUpdateNog: string = '';
   isSavingNog: boolean = false;
 
+  selectedFileNog: File | null = null;
+  selectedFileNogId: number = 0;
+  selectedProfilId: number = 0;
+
   newDiligence: TabDiligence = {
     cycle: '',
     diligence: '',
@@ -4699,6 +4730,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectedMission = '';
     this.selectedMillesime = '';
     this.isProfilAssocie = false;
+    this.selectedProfilId = 0;
     this.availableMillesimes = [];
     
     // Charger les missions pour ce dossier
@@ -4744,6 +4776,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         item.MD_MILLESIME === this.selectedMillesime) {
           codeAffaire = item.CODE_AFFAIRE;
           this.isProfilAssocie = item.PROFIL == '1';
+          this.selectedProfilId = parseInt(item.PROFIL);
           console.log('CODE_AFFAIRE', item.CODE_AFFAIRE);
         }      
     });
@@ -4755,6 +4788,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     // Réinitialiser le millésime
     this.selectedMillesime = '';
     this.isProfilAssocie = false;
+    this.selectedProfilId = 0;
     
     if (this.selectedMission) {
       this.loadMillesimesForMission();
@@ -4787,7 +4821,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onMillesimeChange(): void {
-    // Rien de spécial à faire pour l'instant
+    this.selectedCodeAffaire = this.getCodeAffaireSelected();
+    
+    this.getModuleFiles(this.selectedCodeAffaire, this.selectedProfilId.toString());
   }
 
   canValidate(): boolean {
@@ -4818,36 +4854,10 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       this.selectedFileName = file.name;
+      this.selectedFileNog = file;
 
-      const reader = new FileReader();
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        try {
-          const content = e.target?.result as string;
-          const nogData = JSON.parse(content);
-          this.loadNogDataFromFile(nogData);
-          iziToast.success({
-            timeout: 3000,
-            icon: 'fa-solid fa-circle-check',
-            title: 'Fichier NOG importé avec succès',
-            close: false,
-            position: 'bottomCenter',
-            transitionIn: 'flipInX',
-            transitionOut: 'flipOutX'
-          });
-        } catch (error) {
-          console.error('Erreur lors de la lecture du fichier:', error);
-          iziToast.error({
-            timeout: 3000,
-            icon: 'fa-regular fa-triangle-exclamation',
-            title: 'Erreur lors de l\'importation du fichier',
-            close: false,
-            position: 'bottomCenter',
-            transitionIn: 'flipInX',
-            transitionOut: 'flipOutX'
-          });
-        }
-      };
-      reader.readAsText(file);
+      this.sendModuleFile('NOG', this.usrMailCollab, file, this.selectedCodeAffaire, 'Mission');
+      this.sendModuleStatus('NOG', this.usrMailCollab, this.selectedCodeAffaire, 'Mission', 'oui');
     }
   }
 
@@ -4944,6 +4954,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
             this.selectedMission = mission;
             this.selectedMillesime = millesime;
             this.isProfilAssocie = element.PROFIL == '1';
+            this.selectedProfilId = parseInt(element.PROFIL);
             this.validateSelection();
             verif = true;
         }
@@ -5018,6 +5029,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.selectedMission = '';
       this.selectedMillesime = '';
       this.isProfilAssocie = false;
+      this.selectedProfilId = 0;
       this.availableMissions = [];
       this.availableMillesimes = [];
     }
@@ -7375,5 +7387,122 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Retourne la date la plus grande
     return formatDate(d1 > d2 ? d1 : d2);
+  }
+
+  public previewFile(file: File | null): void {
+    if (file) {
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL, '_blank');
+    }
+  }
+
+  public downloadFile(file: File | null): void {
+    if (file) {
+      const fileURL = URL.createObjectURL(file);
+      const a = document.createElement('a');
+      a.href = fileURL;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(fileURL);
+    }
+  }
+
+  removeFileNog(fileNumber: string): void {
+    this.selectedFileNog = null;
+    this.deleteModuleFile(fileNumber, this.usrMailCollab, 'Mission', this.selectedCodeAffaire, 'NOG');
+    this.sendModuleStatus('NOG', this.usrMailCollab, this.selectedCodeAffaire, 'Mission', 'non');
+  }
+
+  deleteModuleFile(fileId: String, email: String, source: String, missionIdDosPgiDosGroupe: String, module: String) {
+    console.log('Suppression du fichier du module:', fileId);
+
+    this.http.post(`${environment.apiUrl}/files/deleteModuleFile`, {
+        fileId,
+        email,
+        source,
+        missionIdDosPgiDosGroupe,
+        module
+    })
+    .subscribe(response => {
+      console.log('Réponse du serveur:', response);
+      iziToast.success({
+        timeout: 3000, 
+        icon: 'fa-regular fa-thumbs-up', 
+        title: 'Fichier supprimé avec succès !', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
+    });
+  }
+
+  sendModuleStatus(module: String, email: String, missionIdDosPgiDosGroupe: String, source: String, status: String) {
+    console.log('Envoi du status du module:', module);
+
+    const moduleStatus = {
+      module,
+      email,
+      status,
+      missionIdDosPgiDosGroupe: missionIdDosPgiDosGroupe + "",
+      source,
+      mailPriseProfil: this.userEmail
+    };
+
+    this.http.post(`${environment.apiUrl}/modules/setModuleStatus`, moduleStatus)
+      .subscribe(response => {
+        console.log('Réponse du serveur:', response);
+      });
+  }
+
+  getModuleFiles(missionId: String, profilId: String): void {
+    this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/files/getModuleFiles/${missionId}&NOG&${profilId}&Mission`)
+      .subscribe(response => {
+        console.log('getModuleFiles',response);
+        this.selectedFileNog = this.base64ToFile(response.data[0].Base64_File, response.data[0].MODFILE_TITLE);
+        this.selectedFileNogId = response.data[0].MODFILE_Id;
+      });
+  }
+
+  sendModuleFile(module: String, email: String, file: File, missionIdDosPgiDosGroupe: String, source: String, categorie?: string | ''): void {
+    console.log('Envoi du fichier du module:', module);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      let base64File = '';
+      let fileName = '';
+      if (reader.result) {
+        base64File = (reader.result as string).split(',')[1];
+        fileName = file.name;
+      }
+      const moduleFile = {
+        module,
+        email,
+        file: base64File,
+        missionIdDosPgiDosGroupe: missionIdDosPgiDosGroupe + "",
+        title: fileName,
+        source,
+        categorie: categorie || '',
+        mailPriseProfil: this.userEmail
+      };
+
+      this.http.post<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/files/setModuleFile`, moduleFile)
+        .subscribe(response => {
+         
+          this.selectedFileNogId = response.data[0].MODFILE_Id;
+          iziToast.success({
+            timeout: 3000, 
+            icon: 'fa-regular fa-thumbs-up', 
+            title: 'Fichier ajouté avec succès !', 
+            close: false, 
+            position: 'bottomCenter', 
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+          });
+          console.log('Réponse du serveur:', response);
+        });
+    };
   }
 }
