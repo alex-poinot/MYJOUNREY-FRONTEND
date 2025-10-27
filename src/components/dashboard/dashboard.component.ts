@@ -102,8 +102,10 @@ interface ModalData {
   isOpen: boolean;
   selectedFile: File | null;
   selectedFileId: string;
+  selectedFileDate: string;
   selectedFile2?: File | null;
   selectedFileId2?: string | '';
+  selectedFileDate2?: string;
   selectedFileLab1?: Array<File>;
   selectedFileLab2?: Array<File>;
   selectedFileLab3?: Array<File>;
@@ -118,6 +120,13 @@ interface ModalData {
   selectedFileLabId5?: Array<String>;
   selectedFileLabId6?: Array<String>;
   selectedFileLabId7?: Array<String>;
+  selectedFileLabDate1?: Array<String>;
+  selectedFileLabDate2?: Array<String>;
+  selectedFileLabDate3?: Array<String>;
+  selectedFileLabDate4?: Array<String>;
+  selectedFileLabDate5?: Array<String>;
+  selectedFileLabDate6?: Array<String>;
+  selectedFileLabDate7?: Array<String>;
   selectedFile3?: File | null;
   selectedFile4?: File | null;
   selectedFile5?: File | null;
@@ -745,31 +754,33 @@ interface InsertFile {
                     [accept]="modalData.acceptedTypes"
                     class="file-input">
             </div>
-            <div *ngIf="modalData.columnName == 'NDS' || modalData.columnName == 'NOG' || modalData.columnName == 'LDM' || modalData.columnName == 'QAM'" class="container-date-modal">
-              <div *ngIf="modalData.columnName == 'NDS' || modalData.columnName == 'NOG' || modalData.columnName == 'LDM'" class="libelle-date-modal">Date de signature : </div>
-              <div *ngIf="modalData.columnName == 'QAM'" class="libelle-date-modal">Date de génération : </div>
-              <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"/>
-              <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">JJ/MM/AAAA</div>
-            </div>
             <div *ngIf="modalData.selectedFile" class="file-info">
-              <span class="file-name">{{ modalData.selectedFile.name }}</span>
-              <div class="file-actions">
-                <button *ngIf="modalData.selectedFile.type === 'application/pdf'"
-                        class="preview-file"
-                        (click)="previewFile(modalData.selectedFile)">
-                  <i class="fas fa-eye"></i>
-                </button>
+              <div class="row-info-file">
+                <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                <div class="file-actions">
+                  <button *ngIf="modalData.selectedFile.type === 'application/pdf'"
+                          class="preview-file"
+                          (click)="previewFile(modalData.selectedFile)">
+                    <i class="fas fa-eye"></i>
+                  </button>
 
-                <button class="download-file"
-                        (click)="downloadFile(modalData.selectedFile)">
-                  <i class="fas fa-download"></i>
-                </button>
+                  <button class="download-file"
+                          (click)="downloadFile(modalData.selectedFile)">
+                    <i class="fas fa-download"></i>
+                  </button>
 
-                <button *ngIf="modalData.modifyMode === true"
-                        class="remove-file"
-                        (click)="removeFile(modalData.selectedFileId)">
-                  <i class="fas fa-times"></i>
-                </button>
+                  <button *ngIf="modalData.modifyMode === true"
+                          class="remove-file"
+                          (click)="removeFile(modalData.selectedFileId)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div *ngIf="modalData.columnName == 'NDS' || modalData.columnName == 'NOG' || modalData.columnName == 'LDM' || modalData.columnName == 'QAM'" class="container-date-modal">
+                <div *ngIf="modalData.columnName == 'NDS' || modalData.columnName == 'NOG' || modalData.columnName == 'LDM'" class="libelle-date-modal">Date de signature : </div>
+                <div *ngIf="modalData.columnName == 'QAM'" class="libelle-date-modal">Date de génération : </div>
+                <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"/>
+                <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">JJ/MM/AAAA</div>
               </div>
             </div>
             <div *ngIf="modalData.selectedFile == null"
@@ -840,30 +851,32 @@ interface InsertFile {
                     [accept]="modalData.acceptedTypes"
                     class="file-input">
             </div>
-            <div class="container-date-modal">
-              <div class="libelle-date-modal">Date de signature : </div>
-              <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"/>
-              <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">JJ/MM/AAAA</div>
-            </div>
             <div *ngIf="modalData.selectedFile" class="file-info">
-              <span class="file-name">{{ modalData.selectedFile.name }}</span>
-              <div class="file-actions">
-                <button *ngIf="modalData.selectedFile.type === 'application/pdf'"
-                        class="preview-file"
-                        (click)="previewFile(modalData.selectedFile)">
-                  <i class="fas fa-eye"></i>
-                </button>
+              <div class="row-info-file">
+                <span class="file-name">{{ modalData.selectedFile.name }}</span>
+                <div class="file-actions">
+                  <button *ngIf="modalData.selectedFile.type === 'application/pdf'"
+                          class="preview-file"
+                          (click)="previewFile(modalData.selectedFile)">
+                    <i class="fas fa-eye"></i>
+                  </button>
 
-                <button class="download-file"
-                        (click)="downloadFile(modalData.selectedFile)">
-                  <i class="fas fa-download"></i>
-                </button>
+                  <button class="download-file"
+                          (click)="downloadFile(modalData.selectedFile)">
+                    <i class="fas fa-download"></i>
+                  </button>
 
-                <button *ngIf="modalData.modifyMode === true"
-                        class="remove-file"
-                        (click)="removeFileDouble(modalData.selectedFileId, 'plaquette')">
-                  <i class="fas fa-times"></i>
-                </button>
+                  <button *ngIf="modalData.modifyMode === true"
+                          class="remove-file"
+                          (click)="removeFileDouble(modalData.selectedFileId, 'plaquette')">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="container-date-modal">
+                <div class="libelle-date-modal">Date de signature : </div>
+                <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"/>
+                <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">JJ/MM/AAAA</div>
               </div>
             </div>
             <div *ngIf="modalData.selectedFile == null"
@@ -884,24 +897,26 @@ interface InsertFile {
                     class="file-input">
             </div>
             <div *ngIf="modalData.selectedFile2" class="file-info">
-              <span class="file-name">{{ modalData.selectedFile2.name }}</span>
-              <div class="file-actions">
-                <button *ngIf="modalData.selectedFile2.type === 'application/pdf'"
-                        class="preview-file"
-                        (click)="previewFile(modalData.selectedFile2)">
-                  <i class="fas fa-eye"></i>
-                </button>
+              <div class="row-info-file">
+                <span class="file-name">{{ modalData.selectedFile2.name }}</span>
+                <div class="file-actions">
+                  <button *ngIf="modalData.selectedFile2.type === 'application/pdf'"
+                          class="preview-file"
+                          (click)="previewFile(modalData.selectedFile2)">
+                    <i class="fas fa-eye"></i>
+                  </button>
 
-                <button class="download-file"
-                        (click)="downloadFile(modalData.selectedFile2)">
-                  <i class="fas fa-download"></i>
-                </button>
+                  <button class="download-file"
+                          (click)="downloadFile(modalData.selectedFile2)">
+                    <i class="fas fa-download"></i>
+                  </button>
 
-                <button *ngIf="modalData.modifyMode === true"
-                        class="remove-file"
-                        (click)="removeFileDouble(modalData.selectedFileId2 || '', 'mail')">
-                  <i class="fas fa-times"></i>
-                </button>
+                  <button *ngIf="modalData.modifyMode === true"
+                          class="remove-file"
+                          (click)="removeFileDouble(modalData.selectedFileId2 || '', 'mail')">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
               </div>
             </div>
             <div *ngIf="modalData.selectedFile2 == null"
@@ -935,33 +950,34 @@ interface InsertFile {
                   </div>
                 </div>
 
-                <div *ngIf="n != 5" class="container-date-modal">
-                  <div class="libelle-date-modal">{{ labDateTitles[n] }} : </div>
-                  <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"/>
-                  <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">JJ/MM/AAAA</div>
-                </div>
-
                 <div *ngIf="getAllFilesLabStatus(n)">
                   <div *ngFor="let input of fileInputsLab[n-1]; let i = index">
                     <div *ngIf="getFileLab(n, i)" class="file-info">
-                      <span class="file-name">{{ getFileLabName(n, i) }}</span>
-                      <div class="file-actions">
-                        <button *ngIf="getFileLabType(n, i) === 'application/pdf'"
-                                class="preview-file"
-                                (click)="previewFile(getFileLab(n, i))">
-                          <i class="fas fa-eye"></i>
-                        </button>
+                      <div class="row-info-file">
+                        <span class="file-name">{{ getFileLabName(n, i) }}</span>
+                        <div class="file-actions">
+                          <button *ngIf="getFileLabType(n, i) === 'application/pdf'"
+                                  class="preview-file"
+                                  (click)="previewFile(getFileLab(n, i))">
+                            <i class="fas fa-eye"></i>
+                          </button>
 
-                        <button class="download-file"
-                                (click)="downloadFile(getFileLab(n, i))">
-                          <i class="fas fa-download"></i>
-                        </button>
+                          <button class="download-file"
+                                  (click)="downloadFile(getFileLab(n, i))">
+                            <i class="fas fa-download"></i>
+                          </button>
 
-                        <button *ngIf="modalData.modifyMode === true"
-                                class="remove-file"
-                                (click)="removeFileLab(n, i)">
-                          <i class="fas fa-times"></i>
-                        </button>
+                          <button *ngIf="modalData.modifyMode === true"
+                                  class="remove-file"
+                                  (click)="removeFileLab(n, i)">
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div *ngIf="n != 5" class="container-date-modal">
+                        <div class="libelle-date-modal">{{ labDateTitles[n] }} : </div>
+                        <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"/>
+                        <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">JJ/MM/AAAA</div>
                       </div>
                     </div>
                   </div>
@@ -1714,8 +1730,8 @@ interface InsertFile {
 
     .file-info {
       display: flex;
-      gap: 16px;
-      margin-top: 8px;
+      gap: 0.5vh;
+      margin-top: 0.5vh;
       font-size: var(--font-size-sm);
       color: var(--gray-600);
     }
@@ -1817,12 +1833,11 @@ interface InsertFile {
 
     .file-info {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
+      padding: 0.5vh 0.5vw;
       background: var(--gray-100);
-      border-radius: 6px;
-      margin-top: 8px;
+      border-radius: 0.5vw;
+      flex-direction: column;
+      width: 100%;
     }
 
     .file-name {
@@ -2009,7 +2024,13 @@ interface InsertFile {
 
     i.fas.status-icon.fa-users {
       color: #1074b9;
-    }      
+    }    
+      
+    .row-info-file {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
   `]
 })
 export class DashboardComponent implements OnInit {
@@ -2045,6 +2066,7 @@ export class DashboardComponent implements OnInit {
     currentStatus: '',
     selectedFile: null,
     selectedFileId: '',
+    selectedFileDate: '',
     modifyMode: false,
     hasAccess: false
   };
@@ -2871,6 +2893,8 @@ export class DashboardComponent implements OnInit {
         console.log(moduleData.data);
         let modFileId = '';
         let modFileId2 = '';
+        let modFileDate = '';
+        let modFileDate2 = '';
         //ecris moi une boucle for qui parcours moduleData.data
         let modData = moduleData.data;
         modData.forEach((element: any) => {
@@ -2878,11 +2902,13 @@ export class DashboardComponent implements OnInit {
             if(module.Base64_File) {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFileId = element.MODFILE_Id;
+              modFileDate = module.MODFILE_DateFichier;
             }
           } else if(element.MODFILE_FileCategorie == 'mail') {
             if(module.Base64_File) {
               file2 = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFileId2 = element.MODFILE_Id;
+              modFileDate2 = module.MODFILE_DateFichier;
             }
           }
         });
@@ -2894,8 +2920,10 @@ export class DashboardComponent implements OnInit {
           currentStatus: currentStatus,
           selectedFile: file,
           selectedFileId: modFileId,
+          selectedFileDate: modFileDate,
           selectedFile2: file2,
           selectedFileId2: modFileId2,
+          selectedFileDate2: modFileDate2,
           modifyMode: modifyMode,
           hasAccess: hasAccess
         };
@@ -2916,6 +2944,13 @@ export class DashboardComponent implements OnInit {
         let modFileId5: string[] = [];
         let modFileId6: string[] = [];
         let modFileId7: string[] = [];
+        let modFileDate: string[] = [];
+        let modFileDate2: string[] = [];
+        let modFileDate3: string[] = [];
+        let modFileDate4: string[] = [];
+        let modFileDate5: string[] = [];
+        let modFileDate6: string[] = [];
+        let modFileDate7: string[] = [];
         //ecris moi une boucle for qui parcours moduleData.data
         let modData = moduleData.data;
         modData.forEach((element: any) => {
@@ -2924,6 +2959,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile.push(file);
               modFileId.push(element.MODFILE_Id);
+              modFileDate.push(element.MODFILE_DateFichier);
               this.fileInputsLab[0].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(2)) {
@@ -2931,6 +2967,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile2.push(file);
               modFileId2.push(element.MODFILE_Id);
+              modFileDate2.push(element.MODFILE_DateFichier);
               this.fileInputsLab[1].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(3)) {
@@ -2938,6 +2975,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile3.push(file);
               modFileId3.push(element.MODFILE_Id);
+              modFileDate3.push(element.MODFILE_DateFichier);
               this.fileInputsLab[2].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(4)) {
@@ -2945,6 +2983,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile4.push(file);
               modFileId4.push(element.MODFILE_Id);
+              modFileDate4.push(element.MODFILE_DateFichier);
               this.fileInputsLab[3].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(5)) {
@@ -2952,6 +2991,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile5.push(file);
               modFileId5.push(element.MODFILE_Id);
+              modFileDate5.push(element.MODFILE_DateFichier);
               this.fileInputsLab[4].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(6)) {
@@ -2959,6 +2999,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile6.push(file);
               modFileId6.push(element.MODFILE_Id);
+              modFileDate6.push(element.MODFILE_DateFichier);
               this.fileInputsLab[5].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(7)) {
@@ -2966,6 +3007,7 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile7.push(file);
               modFileId7.push(element.MODFILE_Id);
+              modFileDate7.push(element.MODFILE_DateFichier);
               this.fileInputsLab[6].push({});
             }
           }
@@ -2978,6 +3020,7 @@ export class DashboardComponent implements OnInit {
           currentStatus: currentStatus,
           selectedFile: null,
           selectedFileId: '',
+          selectedFileDate: '',
           selectedFileLab1: modFile,
           selectedFileLab2: modFile2,
           selectedFileLab3: modFile3,
@@ -2992,6 +3035,13 @@ export class DashboardComponent implements OnInit {
           selectedFileLabId5: modFileId5,
           selectedFileLabId6: modFileId6,
           selectedFileLabId7: modFileId7,
+          selectedFileLabDate1: modFileDate,
+          selectedFileLabDate2: modFileDate2,
+          selectedFileLabDate3: modFileDate3,
+          selectedFileLabDate4: modFileDate4,
+          selectedFileLabDate5: modFileDate5,
+          selectedFileLabDate6: modFileDate6,
+          selectedFileLabDate7: modFileDate7,
           modifyMode: modifyMode,
           hasAccess: hasAccess
         };
@@ -3007,8 +3057,10 @@ export class DashboardComponent implements OnInit {
           currentStatus: currentStatus,
           selectedFile: file,
           selectedFileId: module.MODFILE_Id,
+          selectedFileDate: module.MODFILE_DateFichier,
           selectedFile2: null,
           selectedFileId2: '',
+          selectedFileDate2: '',
           modifyMode: modifyMode,
           hasAccess: hasAccess
         };
@@ -3750,6 +3802,33 @@ export class DashboardComponent implements OnInit {
         timeout: 3000, 
         icon: 'fa-regular fa-thumbs-up', 
         title: 'Fichier supprimé avec succès !', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
+    });
+  }
+
+  updateDateFichier(fileId: String, dateFichier: string, email: String, source: String, missionIdDosPgiDosGroupe: String, module: String) {
+    console.log('Update date du fichier du module:', fileId);
+
+    console.log(this.modalData.selectedFileLabId1);
+
+    this.http.post(`${environment.apiUrl}/files/setDateFichierModuleFile`, {
+        fileId,
+        dateFichier,
+        email,
+        source,
+        missionIdDosPgiDosGroupe,
+        module
+    })
+    .subscribe(response => {
+      console.log('Réponse du serveur:', response);
+      iziToast.success({
+        timeout: 3000, 
+        icon: 'fa-regular fa-thumbs-up', 
+        title: 'Date mise à jour avec succès !', 
         close: false, 
         position: 'bottomCenter', 
         transitionIn: 'flipInX',
