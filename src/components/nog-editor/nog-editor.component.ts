@@ -294,14 +294,33 @@ interface TabDiligence {
         </select>
       </div>
 
-      <!-- Bouton de validation -->
+      <!-- Bouton de validation ou Input fichier -->
       <div class="form-group" *ngIf="selectedDossier && selectedMission && selectedMillesime">
-        <button 
+        <!-- Bouton de validation si la mission commence par 21 ou 22 ET millésime >= année actuelle -->
+        <button
+          *ngIf="shouldShowValidateButton()"
           class="validate-btn"
           (click)="validateSelection()"
           [disabled]="!canValidate()">
           Valider la sélection
         </button>
+
+        <!-- Input fichier pour les autres cas -->
+        <div *ngIf="!shouldShowValidateButton()" class="file-upload-container">
+          <label for="nog-file-upload" class="file-upload-label">
+            <i class="fa-solid fa-file-arrow-up"></i>
+            Importer un fichier NOG
+          </label>
+          <input
+            type="file"
+            id="nog-file-upload"
+            (change)="onFileSelect($event)"
+            accept=".json,.nog"
+            class="file-upload-input">
+          <div *ngIf="selectedFileName" class="selected-file-name">
+            <i class="fa-solid fa-file"></i> {{ selectedFileName }}
+          </div>
+        </div>
       </div>
 
       <!-- Affichage de la sélection -->
@@ -1852,6 +1871,56 @@ interface TabDiligence {
       background: var(--gray-400);
       cursor: not-allowed;
       transform: none;
+    }
+
+    .file-upload-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1vh;
+    }
+
+    .file-upload-label {
+      background: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 1.5vh 2vw;
+      border-radius: 0.5vw;
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5vw;
+    }
+
+    .file-upload-label:hover {
+      background: #4fb3ab;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .file-upload-input {
+      display: none;
+    }
+
+    .selected-file-name {
+      background: var(--gray-50);
+      border: 0.1vh solid var(--gray-200);
+      border-radius: 0.5vw;
+      padding: 1vh 1vw;
+      font-size: var(--font-size-md);
+      color: var(--gray-700);
+      display: flex;
+      align-items: center;
+      gap: 0.5vw;
+    }
+
+    .selected-file-name i {
+      color: var(--secondary-color);
     }
 
     .selection-summary {
@@ -4723,6 +4792,79 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   canValidate(): boolean {
     return !!(this.selectedDossier && this.selectedMission && this.selectedMillesime);
+  }
+
+  shouldShowValidateButton(): boolean {
+    if (!this.selectedMission || !this.selectedMillesime) {
+      return false;
+    }
+
+    const missionStartsWith21Or22 = this.selectedMission.startsWith('21') || this.selectedMission.startsWith('22');
+
+    if (!missionStartsWith21Or22) {
+      return false;
+    }
+
+    const currentYear = new Date().getFullYear();
+    const millesimeYear = parseInt(this.selectedMillesime, 10);
+
+    return millesimeYear >= currentYear;
+  }
+
+  selectedFileName: string = '';
+
+  onFileSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.selectedFileName = file.name;
+
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        try {
+          const content = e.target?.result as string;
+          const nogData = JSON.parse(content);
+          this.loadNogDataFromFile(nogData);
+          iziToast.success({
+            timeout: 3000,
+            icon: 'fa-solid fa-circle-check',
+            title: 'Fichier NOG importé avec succès',
+            close: false,
+            position: 'bottomCenter',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+          });
+        } catch (error) {
+          console.error('Erreur lors de la lecture du fichier:', error);
+          iziToast.error({
+            timeout: 3000,
+            icon: 'fa-regular fa-triangle-exclamation',
+            title: 'Erreur lors de l\'importation du fichier',
+            close: false,
+            position: 'bottomCenter',
+            transitionIn: 'flipInX',
+            transitionOut: 'flipOutX'
+          });
+        }
+      };
+      reader.readAsText(file);
+    }
+  }
+
+  loadNogDataFromFile(nogData: any): void {
+    this.isDossierMissionMillesimeSelected = true;
+    this.isAllDataNogLoaded = false;
+
+    setTimeout(() => {
+      if (nogData.partie1) this.nogPartie1 = nogData.partie1;
+      if (nogData.partie2) this.nogPartie2 = nogData.partie2;
+      if (nogData.partie3) this.nogPartie3 = nogData.partie3;
+      if (nogData.partie4) this.nogPartie4 = nogData.partie4;
+      if (nogData.partie5) this.nogPartie5 = nogData.partie5;
+      if (nogData.partieAnnexes) this.nogPartieAnnexes = nogData.partieAnnexes;
+
+      this.isAllDataNogLoaded = true;
+    }, 500);
   }
 
   validateSelection(): void {
