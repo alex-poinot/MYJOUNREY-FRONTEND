@@ -315,7 +315,7 @@ interface TabDiligence {
             type="file"
             id="nog-file-upload"
             (change)="onFileSelect($event)"
-            accept=".json,.nog"
+            accept=".pdf,.doc,.docx"
             class="file-upload-input">
           <div *ngIf="selectedFileName" class="selected-file-name">
             <i class="fa-solid fa-file"></i> {{ selectedFileName }}
