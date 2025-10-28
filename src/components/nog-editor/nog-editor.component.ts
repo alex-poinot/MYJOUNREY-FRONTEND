@@ -8,9 +8,6 @@ import { AuthService, UserProfile } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { debounceTime, distinctUntilChanged, switchMap, of, Subject } from 'rxjs';
 import iziToast from 'izitoast';
-import { catchError } from 'rxjs/internal/operators/catchError';
-import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
-import { tap } from 'rxjs/internal/operators/tap';
 
 interface Dossier {
   DOS_PGI: string;
@@ -3878,7 +3875,7 @@ interface TabDiligence {
     }
 
     div#container-part-4-nog .row-part-nog {
-      height: 34vh;
+      height: 40vh;
     }
 
     div#container-checkbox-vigilance {
@@ -3943,6 +3940,7 @@ interface TabDiligence {
     div#container-part-3-3-nog .body-element-nog {
       display: flex;
       gap: 1vw;
+      font-size: var(--font-size-md);
     }
 
     .element-fe-title-value {
@@ -3994,6 +3992,7 @@ interface TabDiligence {
       z-index: 100;
       background-color: #fff;
       border-radius: .5vw;
+      font-size: var(--font-size-lg);
     }
 
     .container-content-principe-comp {
