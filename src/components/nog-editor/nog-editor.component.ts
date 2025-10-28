@@ -2182,6 +2182,38 @@ interface TabDiligence {
             </table>
           </div>
 
+          <div data-module-type="title" class="titre-nog-apercu"><h3>6. Restitution client</h3></div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p *ngIf="nogPartie6.checkboxEtage1 == 'PPT'"><strong>Type de restitution :</strong> Présentation PPT</p>
+            <p *ngIf="nogPartie6.checkboxEtage1 == 'OutilReport'">
+              <strong>Type de restitution :</strong> Présentation via un outil de reporting
+              <span *ngIf="nogPartie6.checkboxEtage2 == 'Emasphere'"> - Emasphère</span>
+              <span *ngIf="nogPartie6.checkboxEtage2 == 'PowerBI'"> - PowerBI</span>
+              <span *ngIf="nogPartie6.checkboxEtage2 == 'Autre'"> - {{ nogPartie6.libelleAutreEtage2 }}</span>
+            </p>
+            <p *ngIf="nogPartie6.checkboxEtage1 == 'Autre'"><strong>Type de restitution :</strong> {{ nogPartie6.libelleAutreEtage1 }}</p>
+          </div>
+          <div *ngIf="nogPartie6.commGeneral" data-module-type="text" class="contenu-nog-apercu">
+            <p><strong>Commentaire général :</strong></p>
+            <div [innerHTML]="nogPartie6.commGeneral"></div>
+          </div>
+
+          <div data-module-type="title" class="titre-nog-apercu"><h3>7. Déontologie</h3></div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <div class="checkbox-preview-item">
+              <i class="fa-solid" [class.fa-square-check]="nogPartie7.checkboxFormInit" [class.fa-square]="!nogPartie7.checkboxFormInit"></i>
+              <span>{{ nogPartie7.libelleFormInit }}</span>
+            </div>
+            <div class="checkbox-preview-item">
+              <i class="fa-solid" [class.fa-square-check]="nogPartie7.checkboxFormAnn" [class.fa-square]="!nogPartie7.checkboxFormAnn"></i>
+              <span>{{ nogPartie7.libelleFormAnn }}</span>
+            </div>
+            <div class="checkbox-preview-item">
+              <i class="fa-solid" [class.fa-square-check]="nogPartie7.checkboxConflictCheck" [class.fa-square]="!nogPartie7.checkboxConflictCheck"></i>
+              <span>{{ nogPartie7.libelleConflictCheck }}</span>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -3214,6 +3246,23 @@ interface TabDiligence {
 
     .contenu-nog-apercu .colonne-chiffres-sign-nog div {
       width: 11vw !important;
+    }
+
+    .checkbox-preview-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .checkbox-preview-item i {
+      font-size: 16px;
+      color: var(--primary-color);
+    }
+
+    .groupe-diligence-preview {
+      margin-bottom: 20px;
     }
 
     .download-pdf {
