@@ -6221,6 +6221,12 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  sortAllDiligenceGroups(): void {
+    this.nogPartie5.diligence.forEach(groupe => {
+      this.sortDiligenceTabDiligence(groupe);
+    });
+  }
+
   sortDiligenceLab(): void {
     this.nogPartie5.diligenceLab.sort((a, b) => {
       return a.diligence.localeCompare(b.diligence);
@@ -7122,6 +7128,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getDiligenceMJNog/${this.selectedCodeAffaire}`)
     .subscribe(response => {
       this.nogPartie5.diligence = response.data.data;
+      this.sortAllDiligenceGroups();
       this.isDiligencesDefaultLoaded = true;
       this.nogPartie5.dateLastUpdateDiligence = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
@@ -7134,6 +7141,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getDiligenceLabMJNog/${this.selectedCodeAffaire}`)
     .subscribe(response => {
       this.nogPartie5.diligenceLab = response.data.data;
+      this.sortDiligenceLab();
       this.isDiligenceLabLoaded = true;
       this.nogPartie5.dateLastUpdateDiligenceLab = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
