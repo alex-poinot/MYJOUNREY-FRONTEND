@@ -3453,8 +3453,10 @@ interface TabDiligence {
     .toggle-switch {
       position: relative;
       display: inline-block;
-      width: 50px;
-      height: 24px;
+      width: 2.6vw;
+      min-width: 50px;
+      height: 1.25vw;
+      min-height: 24px;
     }
 
     .toggle-switch .toggle-checkbox {
@@ -3472,16 +3474,18 @@ interface TabDiligence {
       bottom: 0;
       background-color: #ccc;
       transition: 0.4s;
-      border-radius: 24px;
+      border-radius: 1.25vw;
     }
 
     .toggle-slider:before {
       position: absolute;
       content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
+      height: 0.94vw;
+      min-height: 18px;
+      width: 0.94vw;
+      min-width: 18px;
+      left: 0.16vw;
+      bottom: 0.16vw;
       background-color: white;
       transition: 0.4s;
       border-radius: 50%;
@@ -3492,11 +3496,11 @@ interface TabDiligence {
     }
 
     .toggle-checkbox:checked + .toggle-slider:before {
-      transform: translateX(26px);
+      transform: translateX(1.35vw);
     }
 
     .toggle-checkbox:focus + .toggle-slider {
-      box-shadow: 0 0 1px #4CAF50;
+      box-shadow: 0 0 0.05vw #4CAF50;
     }
 
     .multiselect-diligence {
