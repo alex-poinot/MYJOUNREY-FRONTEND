@@ -3271,10 +3271,14 @@ export class DashboardComponent implements OnInit {
       this.modalData.selectedFile = input.files[0];
       console.log('Fichier sélectionné:', this.modalData.selectedFile);
       this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal);
-      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
 
-      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
-
+      if(this.moduleGlobal == 'NDS' || this.moduleGlobal == 'NOG' || this.moduleGlobal == 'LDM' || this.moduleGlobal == 'QAM') {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+      } else {
+        this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+        this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+      }
     }
   }
 
@@ -3284,9 +3288,7 @@ export class DashboardComponent implements OnInit {
       case 2: return 'piece identite';
       case 3: return 'statuts';
       case 4: return 'extrait kbis';
-      case 5: return 'declaration conflit interet';
-      case 6: return 'qam';
-      case 7: return 'note travail et autre';
+      case 5: return 'note travail et autre';
       default: return '';
     }
   }
@@ -3298,72 +3300,72 @@ export class DashboardComponent implements OnInit {
       if(n == 1) {
         this.modalData.selectedFileLab1?.push(input.files[0]);
         this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
-        if((this.modalData.selectedFileLab2?.length ?? 0) > 0 && (this.modalData.selectedFileLab3?.length ?? 0) > 0 &&
-        (this.modalData.selectedFileLab4?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
-        (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
-          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
-          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
-        } else {
+        // if((this.modalData.selectedFileLab2?.length ?? 0) > 0 && (this.modalData.selectedFileLab3?.length ?? 0) > 0 &&
+        // (this.modalData.selectedFileLab4?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
+        // (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
+        //   this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+        //   this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        // } else {
           this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
           this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
-        }
+        // }
         this.fileInputsLab[0].push({});
       } else if(n == 2) {
         this.modalData.selectedFileLab2?.push(input.files[0]);
         console.log('Fichier sélectionné:', this.modalData.selectedFileLab2?.[fileNumber-1]);
         this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
-        if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab3?.length ?? 0) > 0 &&
-        (this.modalData.selectedFileLab4?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
-        (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
-          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
-          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
-        } else {
+        // if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab3?.length ?? 0) > 0 &&
+        // (this.modalData.selectedFileLab4?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
+        // (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
+        //   this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+        //   this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        // } else {
           this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
           this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
-        }
+        // }
         this.fileInputsLab[1].push({});
       } else if(n == 3) {
         this.modalData.selectedFileLab3?.push(input.files[0]);
         console.log('Fichier sélectionné:', this.modalData.selectedFileLab3?.[fileNumber-1]);
         this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
-        if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab2?.length ?? 0) > 0 &&
-        (this.modalData.selectedFileLab4?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
-        (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
-          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
-          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
-        } else {
+        // if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab2?.length ?? 0) > 0 &&
+        // (this.modalData.selectedFileLab4?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
+        // (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
+        //   this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+        //   this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        // } else {
           this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
           this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
-        }
+        // }
         this.fileInputsLab[2].push({});
       } else if(n == 4) {
         this.modalData.selectedFileLab4?.push(input.files[0]);
         console.log('Fichier sélectionné:', this.modalData.selectedFileLab4?.[fileNumber-1]);
         this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
-        if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab2?.length ?? 0) > 0 &&
-        (this.modalData.selectedFileLab3?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
-        (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
-          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
-          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
-        } else {
+        // if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab2?.length ?? 0) > 0 &&
+        // (this.modalData.selectedFileLab3?.length ?? 0) > 0 && (this.modalData.selectedFileLab5?.length ?? 0) > 0 &&
+        // (this.modalData.selectedFileLab6?.length ?? 0) > 0 && (this.modalData.selectedFileLab7?.length ?? 0) > 0) {
+        //   this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+        //   this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        // } else {
           this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
           this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
-        }
+        // }
         this.fileInputsLab[3].push({});
       } else if(n == 5) {
-        this.modalData.selectedFileLab7?.push(input.files[0]);
-        console.log('Fichier sélectionné:', this.modalData.selectedFileLab7?.[fileNumber-1]);
+        this.modalData.selectedFileLab5?.push(input.files[0]);
+        console.log('Fichier sélectionné:', this.modalData.selectedFileLab5?.[fileNumber-1]);
         this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
-        if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab2?.length ?? 0) > 0 &&
-        (this.modalData.selectedFileLab3?.length ?? 0) > 0 && (this.modalData.selectedFileLab4?.length ?? 0) > 0 &&
-        (this.modalData.selectedFileLab5?.length ?? 0) > 0 && (this.modalData.selectedFileLab6?.length ?? 0) > 0) {
-          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
-          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
-        } else {
+        // if((this.modalData.selectedFileLab1?.length ?? 0) > 0 && (this.modalData.selectedFileLab2?.length ?? 0) > 0 &&
+        // (this.modalData.selectedFileLab3?.length ?? 0) > 0 && (this.modalData.selectedFileLab4?.length ?? 0) > 0 &&
+        // (this.modalData.selectedFileLab5?.length ?? 0) > 0 && (this.modalData.selectedFileLab6?.length ?? 0) > 0) {
+        //   this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+        //   this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        // } else {
           this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
           this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
-        }
-        this.fileInputsLab[6].push({});
+        // }
+        this.fileInputsLab[4].push({});
       }
       this.fileInputsLab = [...this.fileInputsLab];
       this.changeDetectorRef.detectChanges();
@@ -3377,24 +3379,24 @@ export class DashboardComponent implements OnInit {
         this.modalData.selectedFile = input.files[0];
         console.log('Fichier sélectionné:', this.modalData.selectedFile);
         this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
-        if(this.modalData.selectedFile2) {
-          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
-          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
-        } else {
+        // if(this.modalData.selectedFile2) {
+        //   this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+        //   this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        // } else {
           this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
           this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
-        }
+        // }
       } else if(categorie === 'mail') {
         this.modalData.selectedFile2 = input.files[0];
         console.log('Fichier sélectionné:', this.modalData.selectedFile2);
         this.sendModuleFile(this.moduleGlobal, this.usrMailCollab, input.files[0], this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, categorie);
-        if(this.modalData.selectedFile) {
-          this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
-          this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
-        } else {
+        // if(this.modalData.selectedFile) {
+        //   this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+        //   this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+        // } else {
           this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
           this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
-        }
+        // }
       }
     }
   }
@@ -3443,8 +3445,7 @@ export class DashboardComponent implements OnInit {
       this.deleteModuleFile(this.modalData.selectedFileLabId1?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
       this.modalData.selectedFileLabId1?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab2?.length ?? 0) > 0) || ((this.modalData.selectedFileLab3?.length ?? 0) > 0) ||
-      ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
-      ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
+      ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0)) {
         this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
         this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
       } else {
@@ -3457,8 +3458,7 @@ export class DashboardComponent implements OnInit {
       this.deleteModuleFile(this.modalData.selectedFileLabId2?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
       this.modalData.selectedFileLabId2?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab3?.length ?? 0) > 0) ||
-      ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
-      ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
+      ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0)) {
         this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
         this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
       } else {
@@ -3471,8 +3471,7 @@ export class DashboardComponent implements OnInit {
       this.deleteModuleFile(this.modalData.selectedFileLabId3?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
       this.modalData.selectedFileLabId3?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
-      ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
-      ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
+      ((this.modalData.selectedFileLab4?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0)) {
         this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
         this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
       } else {
@@ -3485,8 +3484,7 @@ export class DashboardComponent implements OnInit {
       this.deleteModuleFile(this.modalData.selectedFileLabId4?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
       this.modalData.selectedFileLabId4?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
-      ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0) ||
-      ((this.modalData.selectedFileLab6?.length ?? 0) > 0) || ((this.modalData.selectedFileLab7?.length ?? 0) > 0)) {
+      ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab5?.length ?? 0) > 0)) {
         this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
         this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
       } else {
@@ -3495,19 +3493,18 @@ export class DashboardComponent implements OnInit {
       }
       this.fileInputsLab[3].pop();
     } else if(n == 5) {
-      this.modalData.selectedFileLab7?.splice(fileNumber - 1, 1);
-      this.deleteModuleFile(this.modalData.selectedFileLabId7?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
-      this.modalData.selectedFileLabId7?.splice(fileNumber - 1, 1);
+      this.modalData.selectedFileLab5?.splice(fileNumber - 1, 1);
+      this.deleteModuleFile(this.modalData.selectedFileLabId5?.[fileNumber-1] ?? '', this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
+      this.modalData.selectedFileLabId5?.splice(fileNumber - 1, 1);
       if(((this.modalData.selectedFileLab1?.length ?? 0) > 0) || ((this.modalData.selectedFileLab2?.length ?? 0) > 0) ||
-      ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab4?.length ?? 0) > 0) ||
-      ((this.modalData.selectedFileLab5?.length ?? 0) > 0) || ((this.modalData.selectedFileLab6?.length ?? 0) > 0)) {
+      ((this.modalData.selectedFileLab3?.length ?? 0) > 0) || ((this.modalData.selectedFileLab4?.length ?? 0) > 0)) {
         this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
         this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
       } else {
         this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'non');
         this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'non', this.missionIdDosPgiDosGroupeGlobal);
       }
-      this.fileInputsLab[6].pop();
+      this.fileInputsLab[4].pop();
     }
     this.fileInputsLab = [...this.fileInputsLab];
     this.changeDetectorRef.detectChanges();
@@ -3662,7 +3659,7 @@ export class DashboardComponent implements OnInit {
       case 2: return this.modalData.selectedFileLab2?.[index-1] ?? null;
       case 3: return this.modalData.selectedFileLab3?.[index-1] ?? null;
       case 4: return this.modalData.selectedFileLab4?.[index-1] ?? null;
-      case 5: return this.modalData.selectedFileLab7?.[index-1] ?? null;
+      case 5: return this.modalData.selectedFileLab5?.[index-1] ?? null;
       default: return null;
     }
   }
@@ -3685,7 +3682,7 @@ export class DashboardComponent implements OnInit {
       case 2: return (this.modalData.selectedFileLab2?.length ?? 0) > 0;
       case 3: return (this.modalData.selectedFileLab3?.length ?? 0) > 0;
       case 4: return (this.modalData.selectedFileLab4?.length ?? 0) > 0;
-      case 5: return (this.modalData.selectedFileLab7?.length ?? 0) > 0;
+      case 5: return (this.modalData.selectedFileLab5?.length ?? 0) > 0;
       default: return null;
     }
   }
@@ -3729,10 +3726,6 @@ export class DashboardComponent implements OnInit {
             this.modalData.selectedFileLabId4?.push(response.data[0].MODFILE_Id);
           } else if(categorie == this.getCategorieLab(5)) {
             this.modalData.selectedFileLabId5?.push(response.data[0].MODFILE_Id);
-          } else if(categorie == this.getCategorieLab(6)) {
-            this.modalData.selectedFileLabId6?.push(response.data[0].MODFILE_Id);
-          } else if(categorie == this.getCategorieLab(7)) {
-            this.modalData.selectedFileLabId7?.push(response.data[0].MODFILE_Id);
           } else {
             this.modalData.selectedFileId = response.data[0].MODFILE_Id;
           }
@@ -4097,6 +4090,25 @@ export class DashboardComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     console.log('input value', input.value);
     console.log('fileId', fileId);
+    if(this.moduleGlobal == 'NDS' || this.moduleGlobal == 'NOG' || this.moduleGlobal == 'LDM' || this.moduleGlobal == 'QAM') {
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+    } else if(this.moduleGlobal == 'Plaquette' && this.modalData.selectedFileDate != '' && this.modalData.selectedFileDate2 != '') {
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+    } else if(this.moduleGlobal == 'LAB documentaire' && 
+        this.modalData.selectedFileLab1 != undefined && this.modalData.selectedFileLab1?.length > 0 && this.modalData.selectedFileLabDate1?.length == this.modalData.selectedFileLab1?.length &&
+        this.modalData.selectedFileLab2 != undefined && this.modalData.selectedFileLab2?.length > 0 && this.modalData.selectedFileLabDate2?.length == this.modalData.selectedFileLab2?.length &&
+        this.modalData.selectedFileLab3 != undefined && this.modalData.selectedFileLab3?.length > 0 && this.modalData.selectedFileLabDate3?.length == this.modalData.selectedFileLab3?.length &&
+        this.modalData.selectedFileLab4 != undefined && this.modalData.selectedFileLab4?.length > 0 && this.modalData.selectedFileLabDate4?.length == this.modalData.selectedFileLab4?.length &&
+        this.modalData.selectedFileLab5 != undefined && this.modalData.selectedFileLab5?.length > 0 && this.modalData.selectedFileLabDate5?.length == this.modalData.selectedFileLab5?.length) {
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+    } else {
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+    }
+
     this.updateDateFichier(fileId, input.value, this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
   }
 

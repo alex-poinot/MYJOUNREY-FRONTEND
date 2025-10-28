@@ -321,24 +321,32 @@ interface TabDiligence {
             accept=".pdf,.doc,.docx"
             class="file-upload-input">
           <div *ngIf="selectedFileNog" class="file-info">
-            <span class="file-name">{{ selectedFileNog.name }}</span>
-            <div class="file-actions">
-              <button *ngIf="selectedFileNog.type === 'application/pdf'"
-                      class="preview-file"
-                      (click)="previewFile(selectedFileNog)">
-                <i class="fas fa-eye"></i>
-              </button>
+            <div class="row-info-file">
+              <span class="file-name">{{ selectedFileNog.name }}</span>
+              <div class="file-actions">
+                <button *ngIf="selectedFileNog.type === 'application/pdf'"
+                        class="preview-file"
+                        (click)="previewFile(selectedFileNog)">
+                  <i class="fas fa-eye"></i>
+                </button>
 
-              <button class="download-file"
-                      (click)="downloadFile(selectedFileNog)">
-                <i class="fas fa-download"></i>
-              </button>
+                <button class="download-file"
+                        (click)="downloadFile(selectedFileNog)">
+                  <i class="fas fa-download"></i>
+                </button>
 
-              <button *ngIf="isProfilAssocie"
-                      class="remove-file"
-                      (click)="removeFileNog(selectedFileNogId.toString())">
-                <i class="fas fa-times"></i>
-              </button>
+                <button *ngIf="isProfilAssocie"
+                        class="remove-file"
+                        (click)="removeFileNog(selectedFileNogId.toString())">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div class="container-date-modal">
+              <div class="libelle-date-modal">Date de signature : </div>
+              <input type="date" class="input-date-modal" 
+                [(ngModel)]="selectedFileNogDate"
+                (change)="changeDateFichier($event, selectedFileNogId.toString())"/>
             </div>
           </div>
           <div *ngIf="selectedFileNog == null"
@@ -1727,8 +1735,6 @@ interface TabDiligence {
           <div data-module-type="title" class="titre-nog-apercu"><h3>1. Présentation de la société</h3></div>
           <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>1.1. Coordonnées</h4></div>
           <div data-module-type="table" class="contenu-nog-apercu">
-
-
             <table class="table-nog preview-table">
               <tbody>
                 <tr>
@@ -1854,7 +1860,26 @@ interface TabDiligence {
           </div>
 
           <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>1.5. Activité exercée et historique</h4></div>
-          <div data-module-type="text" class="contenu-nog-apercu"><p>{{ nogPartie1.activiteExHisto }}</p></div>
+          <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie1.activiteExHisto"></div>
+
+          <div data-module-type="title" class="titre-nog-apercu"><h3>2. Présentation de la mission</h3></div>
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.1. Lettre de mission</h4></div>
+
+
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.2. Type de la mission</h4></div>
+
+
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.3. Nature de la mission</h4></div>
+
+
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.4. Planning d'intervention</h4></div>
+
+
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.5. Equipe d'intervention</h4></div>
+
+
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.6. Précision sur les travaux à réaliser en interim</h4></div>
+          <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie2.precisionTravaux"></div>
 
         </div>
       </div>
@@ -3886,20 +3911,25 @@ interface TabDiligence {
 
     .file-info {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
+      padding: 0.5vh 0.5vw;
       background: var(--gray-100);
-      border-radius: 6px;
-      margin-top: 8px;
+      border-radius: 0.5vw;
+      flex-direction: column;
+      width: 100%;
     }
 
     .file-info {
       display: flex;
-      gap: 16px;
-      margin-top: 8px;
+      gap: 0.5vh;
+      margin-top: 0.5vh;
       font-size: var(--font-size-sm);
       color: var(--gray-600);
+    }
+
+    .row-info-file {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .file-name {
@@ -3938,6 +3968,21 @@ interface TabDiligence {
       flex-direction: column;
       background-color: white;
       margin-top: 0.5vh;
+    }
+
+    .container-date-modal {
+      display: flex;
+      align-items: center;
+      font-size: var(--font-size-md);
+      gap: 0.5vw;
+      padding: 0.5vh 0vw;
+    }
+
+    input.input-date-modal {
+      padding: 0.3vh 0.3vw;
+      border: 0.1vh solid var(--gray-300);
+      border-radius: 0.3vw;
+      font-size: var(--font-size-md);
     }
   `]
 })
@@ -4014,6 +4059,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedFileNog: File | null = null;
   selectedFileNogId: number = 0;
   selectedProfilId: number = 0;
+  selectedFileNogDate: string = '';
 
   newDiligence: TabDiligence = {
     cycle: '',
@@ -5434,29 +5480,24 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loadMontantLogiciel(): void {
-    this.http.get<any>(`${environment.apiUrlMyVision}/dossierDetail/getMontantLogicielNogMyJourney/${this.selectedDossier?.DOS_PGI}&${this.selectedMission}&${this.selectedMillesime}`)
-    .subscribe({
-      next: (response) => {
-        let listeLogiciel = Object.keys(response);
-        this.nogPartie3.tabLogicielGT = [];
-        listeLogiciel.forEach(element => {
-          this.nogPartie3.tabLogicielGT.push(
-            {
-              type: '',
-              logiciel: element,
-              montant: response[element],
-              isEditing: false
-            }
-          )
-        });
-        this.isMontantLogicielLoaded = true;
-        this.nogPartie3.dateLastUpdateLogiciel = this.getDateNow();
-        this.checkIdAllDataLoaded();
-        console.log('NOG PARTIE 3',this.nogPartie3);
-        this.insertNogLogiciel();
-      },
-      error: () => {
-      }
+    this.http.get<any[]>(`${environment.apiUrlMyVision}/dossierDetail/getMontantLogicielNogMyJourney/${this.selectedDossier?.DOS_PGI}&${this.selectedMission}&${this.selectedMillesime}`)
+    .subscribe(response => {
+      this.nogPartie3.tabLogicielGT = [];
+      response.forEach(element => {
+        this.nogPartie3.tabLogicielGT.push(
+          {
+            type: element.type,
+            logiciel: element.logiciel,
+            montant: element.cout,
+            isEditing: false
+          }
+        )
+      });
+      this.isMontantLogicielLoaded = true;
+      this.nogPartie3.dateLastUpdateLogiciel = this.getDateNow();
+      this.checkIdAllDataLoaded();
+      console.log('NOG PARTIE 3',this.nogPartie3);
+      this.insertNogLogiciel();
     });
   }
 
@@ -5466,6 +5507,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       && this.isMontantLogicielLoaded && this.isModuleFELoaded && this.isListeBDFELoaded
       && this.isDiligencesDefaultLoaded && this.isDiligencesBibliothequeLoaded) {
       this.isAllDataNogLoaded = true;
+      this.isListeBDFELoaded = false;
+      this.isModuleFELoaded = false;
     }
   }
 
@@ -6481,8 +6524,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   insertNogFE(): void {
-    this.isListeBDFELoaded = false;
-    this.isModuleFELoaded = false;
     let obj: { tableFE: Array<any>; uniqueFE: { codeAffaire: string, eInvoicing: string, eReportingPaiement: string, eReportingTransaction: string, casGestion: string, envoiMail: string, signatureMandat: string } } = {
       tableFE: [],
       uniqueFE: {
@@ -7565,9 +7606,12 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   getModuleFiles(missionId: String, profilId: String): void {
     this.http.get<{ success: boolean; data: any[]; count: number; timestamp: string }>(`${environment.apiUrl}/files/getModuleFiles/${missionId}&NOG&${profilId}&Mission`)
       .subscribe(response => {
-        console.log('getModuleFiles',response);
-        this.selectedFileNog = this.base64ToFile(response.data[0].Base64_File, response.data[0].MODFILE_TITLE);
-        this.selectedFileNogId = response.data[0].MODFILE_Id;
+        if(response.data[0].Base64_File != null) {
+          console.log('getModuleFiles',response);
+          this.selectedFileNog = this.base64ToFile(response.data[0].Base64_File, response.data[0].MODFILE_TITLE);
+          this.selectedFileNogId = response.data[0].MODFILE_Id;
+          this.selectedFileNogDate = this.formatDateInput(response.data[0].MODFILE_DateFichier);
+        }
       });
   }
 
@@ -7636,5 +7680,37 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       default: 
         return '';
     }
+  }
+
+  changeDateFichier(event: Event, fileId: string): void {
+    const input = event.target as HTMLInputElement;
+    console.log('input value', input.value);
+    console.log('fileId', fileId);
+    this.updateDateFichier(fileId, input.value, this.usrMailCollab, 'Mission', this.selectedCodeAffaire, 'NOG');
+  }
+
+  updateDateFichier(fileId: String, dateFichier: string, email: String, source: String, missionIdDosPgiDosGroupe: String, module: String) {
+    console.log('Update date du fichier du module:', fileId);
+
+    this.http.post(`${environment.apiUrl}/files/setDateFichierModuleFile`, {
+        fileId,
+        dateFichier,
+        email,
+        source,
+        missionIdDosPgiDosGroupe,
+        module
+    })
+    .subscribe(response => {
+      console.log('Réponse du serveur:', response);
+      iziToast.success({
+        timeout: 3000, 
+        icon: 'fa-regular fa-thumbs-up', 
+        title: 'Date mise à jour avec succès !', 
+        close: false, 
+        position: 'bottomCenter', 
+        transitionIn: 'flipInX',
+        transitionOut: 'flipOutX'
+      });
+    });
   }
 }
