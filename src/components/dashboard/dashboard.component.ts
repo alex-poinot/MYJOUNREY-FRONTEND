@@ -573,7 +573,7 @@ interface InsertFile {
                   </td>
                   <td *ngIf="!pendantMissionCollapsed" class="status-cell" (click)="openStatusModal('NOG', mission.numeroGroupe + '-' + mission.numeroClient + '-' + mission.MD_MISSION, mission.pendantMission.nog, mission.missionId, mission.profilId, 'Mission', mission.MD_MILLESIME, mission.MD_MISSION, mission.numeroClient)">
                     <i class="status-icon" 
-                       [ngClass]="mission.pendantMission.nog == 'oui' ? 'fa-solid fa-check-circle' : mission.pendantMission.nog == 'encours' ? 'fa-solid fa-hourglass' : mission.pendantMission.nog == 'collab' ? 'fa-regular fa-circle-check' : mission.pendantMission.nog == 'associe' ? 'fa-solid fa-user-check' : mission.pendantMission.nog == 'editing' ? 'fa-solid fa-hourglass' :'fa-pen'"
+                       [ngClass]="mission.pendantMission.nog == 'oui' ? 'fa-solid fa-check-circle' : mission.pendantMission.nog == 'encours' ? 'fa-solid fa-hourglass' : mission.pendantMission.nog == 'collab' ? 'fa-regular fa-circle-check' : mission.pendantMission.nog == 'associe' ? 'fa-solid fa-user-check' : mission.pendantMission.nog == 'editing' ? 'fa-solid fa-hourglass' :'fa-solid fa-pen'"
                        [class.completed]="mission.pendantMission.nog == 'oui' || mission.pendantMission.nog == 'associe'"></i>
                     <i *ngIf="mission.pendantMission.nogAccess != 'modif'" class="icon-access-module fa-regular"
                       [ngClass]="mission.pendantMission.nogAccess == 'noaccess' ? 'fa-lock' : 'fa-eye'"></i>
