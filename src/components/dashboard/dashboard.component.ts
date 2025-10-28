@@ -781,7 +781,7 @@ interface InsertFile {
                 <div *ngIf="modalData.columnName == 'QAM'" class="libelle-date-modal">Date de génération : </div>
                 <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal" 
                   [(ngModel)]="modalData.selectedFileDate"
-                  (change)="changeDateFichier($event, modalData.selectedFileId)"/>
+                  (change)="changeDateFichier($event, modalData.selectedFileId, null)"/>
                 <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">{{ formatDate(modalData.selectedFileDate) }}</div>
               </div>
             </div>
@@ -879,7 +879,7 @@ interface InsertFile {
                 <div class="libelle-date-modal">Date de signature : </div>
                 <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"
                   [(ngModel)]="modalData.selectedFileDate"
-                  (change)="changeDateFichier($event, modalData.selectedFileId)"/>
+                  (change)="changeDateFichier($event, modalData.selectedFileId, null)"/>
                 <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">{{ formatDate(modalData.selectedFileDate) }}</div>
               </div>
             </div>
@@ -982,7 +982,7 @@ interface InsertFile {
                         <div class="libelle-date-modal">{{ labDateTitles[n] }} : </div>
                         <input *ngIf="modalData.modifyMode === true" type="date" class="input-date-modal"
                           [ngModel]="getFileLabDate(n, i)"
-                          (change)="changeDateFichier($event, getFileLabId(n, i))"/>
+                          (change)="changeDateFichier($event, getFileLabId(n, i), n)"/>
                         <div *ngIf="modalData.modifyMode === false" class="date-modal-nomodify">{{ formatDate(getFileLabDate(n , i)) }}</div>
                       </div>
                     </div>
@@ -2908,13 +2908,17 @@ export class DashboardComponent implements OnInit {
             if(module.Base64_File) {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFileId = element.MODFILE_Id;
-              modFileDate = this.formatDateInput(module.MODFILE_DateFichier);
+              if(this.formatDateInput(module.MODFILE_DateFichier) != '') {
+                modFileDate = this.formatDateInput(module.MODFILE_DateFichier);
+              }
             }
           } else if(element.MODFILE_FileCategorie == 'mail') {
             if(module.Base64_File) {
               file2 = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFileId2 = element.MODFILE_Id;
-              modFileDate2 = this.formatDateInput(module.MODFILE_DateFichier);
+              if(this.formatDateInput(module.MODFILE_DateFichier) != '') {
+                modFileDate2 = this.formatDateInput(module.MODFILE_DateFichier);
+              }
             }
           }
         });
@@ -2965,7 +2969,9 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile.push(file);
               modFileId.push(element.MODFILE_Id);
-              modFileDate.push(this.formatDateInput(element.MODFILE_DateFichier));
+              if(this.formatDateInput(element.MODFILE_DateFichier) != '') {
+                modFileDate.push(this.formatDateInput(element.MODFILE_DateFichier));
+              }
               this.fileInputsLab[0].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(2)) {
@@ -2973,7 +2979,9 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile2.push(file);
               modFileId2.push(element.MODFILE_Id);
-              modFileDate2.push(this.formatDateInput(element.MODFILE_DateFichier));
+              if(this.formatDateInput(element.MODFILE_DateFichier) != '') {
+                modFileDate2.push(this.formatDateInput(element.MODFILE_DateFichier));
+              }
               this.fileInputsLab[1].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(3)) {
@@ -2981,7 +2989,9 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile3.push(file);
               modFileId3.push(element.MODFILE_Id);
-              modFileDate3.push(this.formatDateInput(element.MODFILE_DateFichier));
+              if(this.formatDateInput(element.MODFILE_DateFichier) != '') {
+                modFileDate3.push(this.formatDateInput(element.MODFILE_DateFichier));
+              }
               this.fileInputsLab[2].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(4)) {
@@ -2989,7 +2999,9 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile4.push(file);
               modFileId4.push(element.MODFILE_Id);
-              modFileDate4.push(this.formatDateInput(element.MODFILE_DateFichier));
+              if(this.formatDateInput(element.MODFILE_DateFichier) != '') {
+                modFileDate4.push(this.formatDateInput(element.MODFILE_DateFichier));
+              }
               this.fileInputsLab[3].push({});
             }
           } else if(element.MODFILE_FileCategorie == this.getCategorieLab(5)) {
@@ -2997,24 +3009,10 @@ export class DashboardComponent implements OnInit {
               file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
               modFile5.push(file);
               modFileId5.push(element.MODFILE_Id);
-              modFileDate5.push(this.formatDateInput(element.MODFILE_DateFichier));
+              if(this.formatDateInput(element.MODFILE_DateFichier) != '') {
+                modFileDate5.push(this.formatDateInput(element.MODFILE_DateFichier));
+              }
               this.fileInputsLab[4].push({});
-            }
-          } else if(element.MODFILE_FileCategorie == this.getCategorieLab(6)) {
-            if(module.Base64_File) {
-              file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
-              modFile6.push(file);
-              modFileId6.push(element.MODFILE_Id);
-              modFileDate6.push(this.formatDateInput(element.MODFILE_DateFichier));
-              this.fileInputsLab[5].push({});
-            }
-          } else if(element.MODFILE_FileCategorie == this.getCategorieLab(7)) {
-            if(module.Base64_File) {
-              file = this.base64ToFile(element.Base64_File, element.MODFILE_TITLE);
-              modFile7.push(file);
-              modFileId7.push(element.MODFILE_Id);
-              modFileDate7.push(this.formatDateInput(element.MODFILE_DateFichier));
-              this.fileInputsLab[6].push({});
             }
           }
         });
@@ -3425,7 +3423,12 @@ export class DashboardComponent implements OnInit {
   }
 
   removeFileDouble(fileNumber: string, categorie: string): void {
-    this.modalData.selectedFile = null;
+    if(categorie == 'plaquette') {
+      this.modalData.selectedFile = null;
+    } else if(categorie == 'mail') {
+      this.modalData.selectedFile2 = null;
+    }
+    
     this.deleteModuleFile(fileNumber, this.usrMailCollab, this.sourceGlobal, this.missionIdDosPgiDosGroupeGlobal, this.moduleGlobal);
     if(categorie == 'plaquette' && this.modalData.selectedFile2) {
       this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
@@ -4086,10 +4089,17 @@ export class DashboardComponent implements OnInit {
     return Number(value);
   }
 
-  changeDateFichier(event: Event, fileId: string): void {
+  changeDateFichier(event: Event, fileId: string, labIndex: any): void {
     const input = event.target as HTMLInputElement;
     console.log('input value', input.value);
     console.log('fileId', fileId);
+    console.log('labIndex', labIndex);
+    console.log('LAB 1', this.modalData.selectedFileLab1 != undefined && this.modalData.selectedFileLab1?.length > 0 && this.modalData.selectedFileLabDate1?.length == this.modalData.selectedFileLab1?.length)
+    console.log('LAB 2', this.modalData.selectedFileLab2 != undefined && this.modalData.selectedFileLab2?.length > 0 && this.modalData.selectedFileLabDate2?.length == this.modalData.selectedFileLab2?.length)
+    console.log('LAB 3', this.modalData.selectedFileLab3 != undefined && this.modalData.selectedFileLab3?.length > 0 && this.modalData.selectedFileLabDate3?.length == this.modalData.selectedFileLab3?.length)
+    console.log('LAB 4', this.modalData.selectedFileLab4 != undefined && this.modalData.selectedFileLab4?.length > 0 && this.modalData.selectedFileLabDate4?.length == this.modalData.selectedFileLab4?.length)
+    console.log('LAB 5', this.modalData.selectedFileLab5 != undefined && this.modalData.selectedFileLab5?.length > 0)
+    console.log('modalData', this.modalData)
     if(input.value == '') {
       this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
       this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
@@ -4099,11 +4109,35 @@ export class DashboardComponent implements OnInit {
     } else if(this.moduleGlobal == 'Plaquette' && this.modalData.selectedFileDate != '' && this.modalData.selectedFile2 != null) {
       this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
       this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
-    } else if(this.moduleGlobal == 'LAB documentaire' && 
-        this.modalData.selectedFileLab1 != undefined && this.modalData.selectedFileLab1?.length > 0 && this.modalData.selectedFileLabDate1?.length == this.modalData.selectedFileLab1?.length &&
+    } else if(this.moduleGlobal == 'LAB documentaire' && labIndex == 1 &&
+        this.modalData.selectedFileLab1 != undefined && this.modalData.selectedFileLab1?.length > 0 && this.modalData.selectedFileLabDate1 != undefined && this.modalData.selectedFileLabDate1?.length+1 == this.modalData.selectedFileLab1?.length &&
         this.modalData.selectedFileLab2 != undefined && this.modalData.selectedFileLab2?.length > 0 && this.modalData.selectedFileLabDate2?.length == this.modalData.selectedFileLab2?.length &&
         this.modalData.selectedFileLab3 != undefined && this.modalData.selectedFileLab3?.length > 0 && this.modalData.selectedFileLabDate3?.length == this.modalData.selectedFileLab3?.length &&
         this.modalData.selectedFileLab4 != undefined && this.modalData.selectedFileLab4?.length > 0 && this.modalData.selectedFileLabDate4?.length == this.modalData.selectedFileLab4?.length &&
+        this.modalData.selectedFileLab5 != undefined && this.modalData.selectedFileLab5?.length > 0) {
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+    } else if(this.moduleGlobal == 'LAB documentaire' && labIndex == 2 &&
+        this.modalData.selectedFileLab1 != undefined && this.modalData.selectedFileLab1?.length > 0 && this.modalData.selectedFileLabDate1?.length == this.modalData.selectedFileLab1?.length &&
+        this.modalData.selectedFileLab2 != undefined && this.modalData.selectedFileLab2?.length > 0 && this.modalData.selectedFileLabDate2 != undefined && this.modalData.selectedFileLabDate2?.length+1 == this.modalData.selectedFileLab2?.length &&
+        this.modalData.selectedFileLab3 != undefined && this.modalData.selectedFileLab3?.length > 0 && this.modalData.selectedFileLabDate3?.length == this.modalData.selectedFileLab3?.length &&
+        this.modalData.selectedFileLab4 != undefined && this.modalData.selectedFileLab4?.length > 0 && this.modalData.selectedFileLabDate4?.length == this.modalData.selectedFileLab4?.length &&
+        this.modalData.selectedFileLab5 != undefined && this.modalData.selectedFileLab5?.length > 0) {
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+    } else if(this.moduleGlobal == 'LAB documentaire' && labIndex == 3 &&
+        this.modalData.selectedFileLab1 != undefined && this.modalData.selectedFileLab1?.length > 0 && this.modalData.selectedFileLabDate1?.length == this.modalData.selectedFileLab1?.length &&
+        this.modalData.selectedFileLab2 != undefined && this.modalData.selectedFileLab2?.length > 0 && this.modalData.selectedFileLabDate2?.length == this.modalData.selectedFileLab2?.length &&
+        this.modalData.selectedFileLab3 != undefined && this.modalData.selectedFileLab3?.length > 0 && this.modalData.selectedFileLabDate3 != undefined && this.modalData.selectedFileLabDate3?.length+1 == this.modalData.selectedFileLab3?.length &&
+        this.modalData.selectedFileLab4 != undefined && this.modalData.selectedFileLab4?.length > 0 && this.modalData.selectedFileLabDate4?.length == this.modalData.selectedFileLab4?.length &&
+        this.modalData.selectedFileLab5 != undefined && this.modalData.selectedFileLab5?.length > 0) {
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
+    } else if(this.moduleGlobal == 'LAB documentaire' && labIndex == 4 &&
+        this.modalData.selectedFileLab1 != undefined && this.modalData.selectedFileLab1?.length > 0 && this.modalData.selectedFileLabDate1?.length == this.modalData.selectedFileLab1?.length &&
+        this.modalData.selectedFileLab2 != undefined && this.modalData.selectedFileLab2?.length > 0 && this.modalData.selectedFileLabDate2?.length == this.modalData.selectedFileLab2?.length &&
+        this.modalData.selectedFileLab3 != undefined && this.modalData.selectedFileLab3?.length > 0 && this.modalData.selectedFileLabDate3?.length == this.modalData.selectedFileLab3?.length &&
+        this.modalData.selectedFileLab4 != undefined && this.modalData.selectedFileLab4?.length > 0 && this.modalData.selectedFileLabDate4 != undefined && this.modalData.selectedFileLabDate4?.length+1 == this.modalData.selectedFileLab4?.length &&
         this.modalData.selectedFileLab5 != undefined && this.modalData.selectedFileLab5?.length > 0) {
       this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
       this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);

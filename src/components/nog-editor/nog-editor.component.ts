@@ -7792,6 +7792,11 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     const input = event.target as HTMLInputElement;
     console.log('input value', input.value);
     console.log('fileId', fileId);
+    if(input.value == '') {
+      this.sendModuleStatus('NOG', this.usrMailCollab, this.selectedCodeAffaire, 'Mission', 'encours');
+    } else {
+      this.sendModuleStatus('NOG', this.usrMailCollab, this.selectedCodeAffaire, 'Mission', 'oui');
+    }
     this.updateDateFichier(fileId, input.value, this.usrMailCollab, 'Mission', this.selectedCodeAffaire, 'NOG');
   }
 
