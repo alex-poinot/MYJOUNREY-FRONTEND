@@ -1327,13 +1327,13 @@ interface TabDiligence {
             <div id="part-top-diligence">
               <div id="container-add-diligence">
                 <div class="multiselect-diligence">
-                  <div class="multiselect-label">Bibliothèque des diligences :</div>
+                  <div class="multiselect-label">Ajouter des diligences de la biliothèque :</div>
                   <div class="liste-btn-absolute">
                     <button class="btn-add-row" (click)="addDiligenceManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence</button>
                   </div>
                   <div class="multiselect-wrapper">
                     <div class="multiselect-dropdown" (click)="toggleDiligenceDropdown()">
-                      <span *ngIf="selectedDiligences.length === 0" class="placeholder">Sélectionner des diligences...</span>
+                      <span *ngIf="selectedDiligences.length === 0" class="placeholder">Sélectionner des diligences complémentaires...</span>
                       <span *ngIf="selectedDiligences.length > 0" class="selected-count">{{ selectedDiligences.length }} diligence(s) sélectionnée(s)</span>
                       <i class="fa-solid" [class.fa-chevron-down]="!showDiligenceDropdown" [class.fa-chevron-up]="showDiligenceDropdown"></i>
                     </div>
