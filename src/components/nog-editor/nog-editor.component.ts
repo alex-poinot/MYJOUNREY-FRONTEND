@@ -6051,6 +6051,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (!groupeObj.tabDiligence.some(d => d.diligence === diligence.diligence)) {
       groupeObj.tabDiligence.push({ ...diligence });
+      this.sortDiligenceTabDiligence(groupeObj);
     }
     this.setChangeIntoDiligance();
   }
@@ -6063,6 +6064,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       const index = groupeObj.tabDiligence.findIndex(d => d.diligence === diligence.diligence);
       if (index > -1) {
         groupeObj.tabDiligence.splice(index, 1);
+        if (groupeObj.tabDiligence.length > 0) {
+          this.sortDiligenceTabDiligence(groupeObj);
+        }
       }
 
       if (groupeObj.tabDiligence.length === 0) {
@@ -6199,6 +6203,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       controle: this.newDiligenceLab.controle.replace(/\n/g, '<br>')
     };
     this.nogPartie5.diligenceLab.push(newDiligenceLabCopy);
+    this.sortDiligenceLab();
     this.showAddDiligenceLabModal = false;
     this.setChangeIntoDiliganceLab();
   }
@@ -6208,6 +6213,18 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       return true;
     }
     return diligence.tabDiligence.some(d => d.activation);
+  }
+
+  sortDiligenceTabDiligence(groupeObj: Diligence): void {
+    groupeObj.tabDiligence.sort((a, b) => {
+      return a.diligence.localeCompare(b.diligence);
+    });
+  }
+
+  sortDiligenceLab(): void {
+    this.nogPartie5.diligenceLab.sort((a, b) => {
+      return a.diligence.localeCompare(b.diligence);
+    });
   }
 
   toggleGroupeActivation(diligence: Diligence, event: Event): void {
