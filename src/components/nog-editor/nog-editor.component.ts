@@ -1970,6 +1970,116 @@ interface TabDiligence {
           <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.6. Précision sur les travaux à réaliser en interim</h4></div>
           <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie2.precisionTravaux"></div>
 
+          <div data-module-type="title" class="titre-nog-apercu"><h3>3. Connaissance du client et de son environnement</h3></div>
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>3.1. Logiciels utilisés</h4></div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p><strong>Outils environnement GT</strong></p>
+          </div>
+          <div data-module-type="table" class="contenu-nog-apercu">
+            <table class="table-nog preview-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Outil</th>
+                  <th>Coût</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let logiciel of nogPartie3.tabLogicielGT">
+                  <td>{{ logiciel.type }}</td>
+                  <td>{{ logiciel.logiciel }}</td>
+                  <td>{{ formatNumber(logiciel.montant) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p><strong>Outils environnement client</strong></p>
+          </div>
+          <div data-module-type="table" class="contenu-nog-apercu">
+            <table class="table-nog preview-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Outil</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let logiciel of nogPartie3.tabLogicielClient">
+                  <td>{{ logiciel.type }}</td>
+                  <td>{{ logiciel.logiciel }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>3.2. Organisation du service administratif</h4></div>
+          <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie3.orgaServiceAdmin"></div>
+
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>3.3. Facturation électronique</h4></div>
+          <div *ngIf="nogPartie3.isFEValidate" data-module-type="table" class="contenu-nog-apercu">
+            <p><strong>Obligation FE</strong></p>
+            <table class="table-nog preview-table">
+              <thead>
+                <tr>
+                  <th>E-Invoicing</th>
+                  <th>E-Reporting transaction</th>
+                  <th>E-Reporting paiement</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ nogPartie3.eInvoicing }}</td>
+                  <td>{{ nogPartie3.eReportingTransaction }}</td>
+                  <td>{{ nogPartie3.eReportingPaiement }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <br>
+            <table class="table-nog preview-table">
+              <tbody>
+                <tr>
+                  <td><strong>Cas de gestion</strong></td>
+                  <td>{{ nogPartie3.casGestion }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Mail envoyé au client</strong></td>
+                  <td>{{ nogPartie3.mailEnvoi }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Mandat signé</strong></td>
+                  <td>{{ nogPartie3.signatureMandat }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <br>
+            <p><strong>Mission FE</strong></p>
+            <table class="table-nog preview-table">
+              <thead>
+                <tr>
+                  <th>Catégorie</th>
+                  <th>Mission</th>
+                  <th>Outil</th>
+                  <th>BD</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let mission of listeBdFE; let i = index;">
+                  <td>{{ mission.categorie }}</td>
+                  <td>{{ mission.libelle }}</td>
+                  <td>{{ mission.logiciel }}</td>
+                  <td>{{ nogPartie3.businessDev[i] }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div *ngIf="!nogPartie3.isFEValidate" data-module-type="text" class="contenu-nog-apercu">
+            <p>Merci de bien vouloir remplir la facturation électronique dans MyVision.</p>
+          </div>
+
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>3.4. Synthèse de l'entretien avec la direction (faits marquants)</h4></div>
+          <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie3.syntheseEntretienDir"></div>
+
         </div>
       </div>
     </div>
