@@ -2080,6 +2080,108 @@ interface TabDiligence {
           <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>3.4. Synthèse de l'entretien avec la direction (faits marquants)</h4></div>
           <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie3.syntheseEntretienDir"></div>
 
+          <div data-module-type="title" class="titre-nog-apercu"><h3>4. Principes à mettre en œuvre lors de l'exécution de la mission</h3></div>
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>4.1. Appréciation des risques et du niveau de vigilance à appliquer</h4></div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p><em>En application de la norme anti-blanchiment, le niveau de vigilance retenu à la suite de l'acceptation de la mission (nouveau client) ou de la synthèse de l'exercice précédent. Si dans les évènements marquants de l'exercice il a été observé des opérations atypiques ou complexes ou si l'entreprise a réalisé des montages fiscaux, sociaux ou juridiques complexes, il conviendra de revoir le cas échéant le niveau de vigilance</em></p>
+            <p><strong>Niveau de vigilance : {{ nogPartie4.checkboxVigilance == 'Normal' ? 'Vigilance normale' : 'Vigilance renforcée' }}</strong></p>
+          </div>
+          <div *ngIf="nogPartie4.checkboxVigilance == 'Normal'" data-module-type="text" class="contenu-nog-apercu">
+            <p>En cas de vigilance normale :</p>
+            <p>Les diligences accomplies dans le cadre des missions normées correspondent normalement à un niveau de vigilance standard, cependant, l'équipe affectée à la mission effectue un examen renforcé de toute opération particulièrement complexe ou d'un montant inhabituellement élevé ou ne paraissant pas avoir de justification économique ou d'objet licite.</p>
+            <p>Dans ce cas, elle se renseigne auprès du client sur :</p>
+            <ul>
+              <li>l'origine et la destination des fonds</li>
+              <li>ainsi que sur l'objet de l'opération et l'identité de la personne qui en bénéficie.</li>
+            </ul>
+          </div>
+          <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee'" data-module-type="text" class="contenu-nog-apercu">
+            <p>En cas de vigilance renforcée, compléter les contrôles à effectuer en s'appuyant entre autres sur « l'ARPEC »</p>
+          </div>
+
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>4.2. Principes comptables, régime fiscal ou social particuliers</h4></div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p><strong>Aspects comptables</strong></p>
+          </div>
+          <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie4.aspectsComptables"></div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p><strong>Aspects fiscaux</strong></p>
+          </div>
+          <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie4.aspectsFiscaux"></div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p><strong>Aspects sociaux</strong></p>
+          </div>
+          <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie4.aspectsSociaux"></div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p><strong>Aspects juridiques</strong></p>
+          </div>
+          <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie4.aspectsJuridiques"></div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p><strong>Comptes annuels</strong></p>
+          </div>
+          <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie4.comptesAnnuels"></div>
+
+          <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>4.3. Seuil de signification</h4></div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p>Selon la norme de présentation « l'expert-comptable prend en considération le caractère significatif, ce qui peut le conduire à simplifier certaines opérations d'inventaire »</p>
+            <p><strong>Seuil de signification retenu pour les opérations d'inventaire : {{ formatNumber(nogPartie4.seuil) }}</strong></p>
+          </div>
+
+          <div data-module-type="title" class="titre-nog-apercu"><h3>5. Diligences</h3></div>
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <ng-container *ngFor="let diligence of nogPartie5.diligence">
+              <div *ngIf="isGroupeActivated(diligence)" class="groupe-diligence-preview">
+                <p><strong>{{ diligence.groupe }} - {{ diligence.libelleGroupe }}</strong></p>
+                <table class="table-diligence preview-table">
+                  <thead>
+                    <tr>
+                      <th>Diligence</th>
+                      <th>Titre</th>
+                      <th>Objectif</th>
+                      <th>Contrôle</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let rowDiligence of diligence.tabDiligence">
+                      <ng-container *ngIf="rowDiligence.activation">
+                        <td>{{ rowDiligence.diligence }}</td>
+                        <td>{{ rowDiligence.titre }}</td>
+                        <td [innerHTML]="rowDiligence.objectif"></td>
+                        <td [innerHTML]="rowDiligence.controle"></td>
+                      </ng-container>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </ng-container>
+          </div>
+
+          <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee' && nogPartie5.diligenceLab.length > 0" data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>Diligences LAB</h4></div>
+          <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee' && nogPartie5.diligenceLab.length > 0" data-module-type="table" class="contenu-nog-apercu">
+            <table class="table-diligence preview-table">
+              <thead>
+                <tr>
+                  <th>Cycle</th>
+                  <th>Code</th>
+                  <th>Libelle</th>
+                  <th>Objectif</th>
+                  <th>Contrôle</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let diligence of nogPartie5.diligenceLab">
+                  <ng-container *ngIf="diligence.activation">
+                    <td>{{ diligence.cycle }}</td>
+                    <td>{{ diligence.diligence }}</td>
+                    <td>{{ diligence.titre }}</td>
+                    <td [innerHTML]="diligence.objectif"></td>
+                    <td [innerHTML]="diligence.controle"></td>
+                  </ng-container>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
         </div>
       </div>
     </div>
