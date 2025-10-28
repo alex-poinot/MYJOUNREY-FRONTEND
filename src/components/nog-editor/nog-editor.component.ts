@@ -3454,9 +3454,7 @@ interface TabDiligence {
       position: relative;
       display: inline-block;
       width: 2.6vw;
-      min-width: 50px;
       height: 1.25vw;
-      min-height: 24px;
     }
 
     .toggle-switch .toggle-checkbox {
@@ -3481,9 +3479,7 @@ interface TabDiligence {
       position: absolute;
       content: "";
       height: 0.94vw;
-      min-height: 18px;
       width: 0.94vw;
-      min-width: 18px;
       left: 0.16vw;
       bottom: 0.16vw;
       background-color: white;
