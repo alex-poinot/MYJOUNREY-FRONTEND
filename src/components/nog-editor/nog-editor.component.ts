@@ -1864,19 +1864,108 @@ interface TabDiligence {
 
           <div data-module-type="title" class="titre-nog-apercu"><h3>2. Présentation de la mission</h3></div>
           <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.1. Lettre de mission</h4></div>
-
+          <div data-module-type="table" class="contenu-nog-apercu">
+            <table class="table-nog preview-table">
+              <tbody>
+                <tr>
+                  <td>Date de mise à jour</td>
+                  <td>{{ formatDate(nogPartie2.dateMiseAJour) }}</td>
+                </tr>
+                <tr>
+                  <td>Montant des honoraires pour la mission</td>
+                  <td>{{ formatNumber(nogPartie2.montantHonoraire) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.2. Type de la mission</h4></div>
-
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p>{{ nogPartie2.typeMission }}</p>
+          </div>
 
           <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.3. Nature de la mission</h4></div>
-
+          <div data-module-type="text" class="contenu-nog-apercu">
+            <p>{{ nogPartie2.natureMission }}</p>
+          </div>
 
           <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.4. Planning d'intervention</h4></div>
-
+          <div data-module-type="table" class="contenu-nog-apercu">
+            <table class="table-nog preview-table">
+              <tbody>
+                <tr>
+                  <td>Consultations d'autres professionnels à prévoir</td>
+                  <td>{{ nogPartie2.consultationPro }}</td>
+                </tr>
+                <tr>
+                  <td>Interim</td>
+                  <td>{{ nogPartie2.interim }}</td>
+                </tr>
+                <tr>
+                  <td>Final</td>
+                  <td>{{ nogPartie2.final }}</td>
+                </tr>
+                <tr>
+                  <td>Délai à respecter</td>
+                  <td>{{ nogPartie2.delaiRespecter }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div data-module-type="table" class="contenu-nog-apercu">
+            <table class="table-nog preview-table">
+              <thead>
+                <tr>
+                  <th>Fonction</th>
+                  <th>Nom</th>
+                  <th>Total</th>
+                  <ng-container *ngFor="let column of nogPartie2.planning[0]?.listeLib">
+                    <th>{{ replaceNameLibelleListeLib(column) }}</th>
+                  </ng-container>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of nogPartie2.planning">
+                  <td>{{ row.fonction }}</td>
+                  <td>{{ row.nom }}</td>
+                  <td>{{ mathCeil(row.totalCollab) }}</td>
+                  <ng-container *ngFor="let value of row.listeValue">
+                    <td>{{ mathCeil(value) }}</td>
+                  </ng-container>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.5. Equipe d'intervention</h4></div>
-
+          <div data-module-type="table" class="contenu-nog-apercu">
+            <table class="table-nog preview-table">
+              <thead>
+                <tr>
+                  <th>Fonction</th>
+                  <th>Nom</th>
+                  <th>Actif</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Responsable mission</td>
+                  <td>{{ nogPartie2.equipeInter[0].respMission }}</td>
+                  <td>{{ nogPartie2.equipeInter[0].respMissionStatut }}</td>
+                </tr>
+                <tr>
+                  <td>DMCM</td>
+                  <td>{{ nogPartie2.equipeInter[0].dmcm }}</td>
+                  <td>{{ nogPartie2.equipeInter[0].dmcmStatut }}</td>
+                </tr>
+                <tr>
+                  <td>Factureur</td>
+                  <td>{{ nogPartie2.equipeInter[0].factureur }}</td>
+                  <td>{{ nogPartie2.equipeInter[0].factureurStatut }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <div data-module-type="subtitle" class="sous-titre-nog-apercu"><h4>2.6. Précision sur les travaux à réaliser en interim</h4></div>
           <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie2.precisionTravaux"></div>
