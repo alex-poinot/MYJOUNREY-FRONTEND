@@ -4090,10 +4090,13 @@ export class DashboardComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     console.log('input value', input.value);
     console.log('fileId', fileId);
-    if(this.moduleGlobal == 'NDS' || this.moduleGlobal == 'NOG' || this.moduleGlobal == 'LDM' || this.moduleGlobal == 'QAM') {
+    if(input.value == '') {
+      this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'encours');
+      this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'encours', this.missionIdDosPgiDosGroupeGlobal);
+    } else if(this.moduleGlobal == 'NDS' || this.moduleGlobal == 'NOG' || this.moduleGlobal == 'LDM' || this.moduleGlobal == 'QAM') {
       this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
       this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
-    } else if(this.moduleGlobal == 'Plaquette' && this.modalData.selectedFileDate != '' && this.modalData.selectedFileDate2 != '') {
+    } else if(this.moduleGlobal == 'Plaquette' && this.modalData.selectedFileDate != '' && this.modalData.selectedFile2 != null) {
       this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
       this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
     } else if(this.moduleGlobal == 'LAB documentaire' && 
@@ -4101,7 +4104,7 @@ export class DashboardComponent implements OnInit {
         this.modalData.selectedFileLab2 != undefined && this.modalData.selectedFileLab2?.length > 0 && this.modalData.selectedFileLabDate2?.length == this.modalData.selectedFileLab2?.length &&
         this.modalData.selectedFileLab3 != undefined && this.modalData.selectedFileLab3?.length > 0 && this.modalData.selectedFileLabDate3?.length == this.modalData.selectedFileLab3?.length &&
         this.modalData.selectedFileLab4 != undefined && this.modalData.selectedFileLab4?.length > 0 && this.modalData.selectedFileLabDate4?.length == this.modalData.selectedFileLab4?.length &&
-        this.modalData.selectedFileLab5 != undefined && this.modalData.selectedFileLab5?.length > 0 && this.modalData.selectedFileLabDate5?.length == this.modalData.selectedFileLab5?.length) {
+        this.modalData.selectedFileLab5 != undefined && this.modalData.selectedFileLab5?.length > 0) {
       this.sendModuleStatus(this.moduleGlobal, this.usrMailCollab, this.missionIdDosPgiDosGroupeGlobal, this.sourceGlobal, 'oui');
       this.updateStatusTable(this.sourceGlobal, this.moduleGlobal, 'oui', this.missionIdDosPgiDosGroupeGlobal);
     } else {
