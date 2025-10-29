@@ -6489,6 +6489,12 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
+    const existsInAdd = this.nogPartie5.diligenceAdd.some(d => d.diligence === this.newDiligence.diligence);
+    if (existsInAdd) {
+      alert('Cette diligence existe déjà dans la liste');
+      return;
+    }
+
     const newDiligenceCopy = {
       ...this.newDiligence,
       objectif: this.newDiligence.objectif.replace(/\n/g, '<br>')
@@ -7498,7 +7504,10 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getDiligenceAddMJNog/${this.selectedCodeAffaire}`)
     .subscribe(response => {
       response.data.data.forEach((element: any) => {
-        this.nogPartie5.diligenceAdd.push(element);
+        const existsInAdd = this.nogPartie5.diligenceAdd.some(d => d.diligence === element.diligence);
+        if (!existsInAdd) {
+          this.nogPartie5.diligenceAdd.push(element);
+        }
         this.diligenceAddMan.push(element);
       });
       this.isDiligenceAddLoaded = true;
