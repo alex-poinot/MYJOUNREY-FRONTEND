@@ -72,6 +72,7 @@ interface NogPartie3 {
   businessDev: string[];
   mailEnvoi: string;
   signatureMandat: string;
+  commentaireFE: string;
   casGestion: string;
   isFEValidate: boolean;
   dateLastUpdateLogiciel?: string;
@@ -1056,25 +1057,28 @@ interface TabDiligence {
                       </div>
                     </div>
                     <div class="container-table-fe-nog">
-                      <div class="titre-tab-fe">Mission FE</div>
-                      <table class="table-nog">
-                        <thead>
-                          <tr>
-                            <th>Catégorie</th>
-                            <th>Mission</th>
-                            <th>Outil</th>
-                            <th>BD</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let mission of listeBdFE; let i = index;">
-                            <td>{{ mission.categorie }}</td>
-                            <td>{{ mission.libelle }}</td>
-                            <td>{{ mission.logiciel }}</td>
-                            <td>{{ nogPartie3.businessDev[i] }}</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      <div class="titre-tab-fe">Commentaire FE</div>
+                      <div id="editeur-commentaire-fe">
+                        <div class="toolbar-editor">
+                          <button (click)="execCommand('bold')" class="btn-toolbar" title="Gras"><i class="fa-solid fa-bold"></i></button>
+                          <button (click)="execCommand('italic')" class="btn-toolbar" title="Italique"><i class="fa-solid fa-italic"></i></button>
+                          <button (click)="execCommand('underline')" class="btn-toolbar" title="Souligné"><i class="fa-solid fa-underline"></i></button>
+                          <button (click)="execCommand('insertUnorderedList')" class="btn-toolbar" title="Liste à puces"><i class="fa-solid fa-list-ul"></i></button>
+                          <button (click)="execCommand('insertOrderedList')" class="btn-toolbar" title="Liste numérotée"><i class="fa-solid fa-list-ol"></i></button>
+                          <input type="color" (change)="changeColor($event)" class="color-picker" title="Couleur du texte">
+                          <button (click)="execCommand('justifyLeft')" class="btn-toolbar" title="Aligner à gauche"><i class="fa-solid fa-align-left"></i></button>
+                          <button (click)="execCommand('justifyCenter')" class="btn-toolbar" title="Centrer"><i class="fa-solid fa-align-center"></i></button>
+                          <button (click)="execCommand('justifyRight')" class="btn-toolbar" title="Aligner à droite"><i class="fa-solid fa-align-right"></i></button>
+                        </div>
+                        <div
+                          contenteditable="true"
+                          class="editor-content"
+                          id="editorContentCommentaireFE"
+                          #editorContentCommentaireFE
+                          (input)="onEditorContentChangeCommentaireFE($event)"
+                          (keyup)="onEditorContentChangeCommentaireFE($event)"
+                          (paste)="onEditorContentChangeCommentaireFE($event)"></div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1326,7 +1330,7 @@ interface TabDiligence {
                 <div class="multiselect-diligence">
                   <div class="multiselect-label">Ajouter des diligences de la biliothèque :</div>
                   <div class="liste-btn-absolute">
-                    <button class="btn-add-row" (click)="addDiligenceManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence</button>
+                    <button class="btn-add-row" (click)="addDiligenceManuelle()"><i class="fa-solid fa-plus"></i> Créer des diligences</button>
                   </div>
                   <div class="multiselect-wrapper">
                     <div class="multiselect-dropdown" (click)="toggleDiligenceDropdown()">
@@ -1371,7 +1375,6 @@ interface TabDiligence {
                             <th>Titre</th>
                             <th>Activation</th>
                             <th>Objectif</th>
-                            <th>Contrôle</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1391,7 +1394,6 @@ interface TabDiligence {
                                 </label>
                               </td>
                               <td [innerHTML]="rowDiligence.objectif"></td>
-                              <td [innerHTML]="rowDiligence.controle"></td>
                             </tr>
                           </ng-container>
                         </tbody>
@@ -1404,17 +1406,17 @@ interface TabDiligence {
             <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee'" id="part-bottom-diligence-lab">
               <div class="title-element-nog">Diligences LAB<i title="Dernière mise à jour : {{nogPartie5.dateLastUpdateDiligenceLab}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
               <div class="liste-btn-absolute">
-                <button class="btn-add-row" (click)="addDiligenceLabManuelle()"><i class="fa-solid fa-plus"></i> Ajouter une diligence LAB</button>
+                <button class="btn-add-row" (click)="addDiligenceLabManuelle()"><i class="fa-solid fa-plus"></i> Créer des diligences LAB</button>
               </div>
               <table class="table-diligence">
                 <thead>
                   <tr>
                     <th>Cycle</th>
+                    <th>Cycle libelle</th>
                     <th>Code</th>
                     <th>Libelle</th>
                     <th>Activation</th>
                     <th>Objectif</th>
-                    <th>Contrôle</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1423,6 +1425,7 @@ interface TabDiligence {
                   </tr>
                   <tr *ngFor="let diligence of nogPartie5.diligenceLab">
                     <td>{{ diligence.cycle }}</td>
+                    <td>{{ getCycleNameDiligence(diligence.cycle) }}</td>
                     <td>{{ diligence.diligence }}</td>
                     <td>{{ diligence.titre }}</td>
                     <td>
@@ -1436,7 +1439,6 @@ interface TabDiligence {
                       </label>
                     </td>
                     <td [innerHTML]="diligence.objectif"></td>
-                    <td [innerHTML]="diligence.controle"></td>
                   </tr>
                 </tbody>
               </table>
@@ -2050,25 +2052,8 @@ interface TabDiligence {
               </tbody>
             </table>
             <br>
-            <p><strong>Mission FE</strong></p>
-            <table class="table-nog preview-table">
-              <thead>
-                <tr>
-                  <th>Catégorie</th>
-                  <th>Mission</th>
-                  <th>Outil</th>
-                  <th>BD</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let mission of listeBdFE; let i = index;">
-                  <td>{{ mission.categorie }}</td>
-                  <td>{{ mission.libelle }}</td>
-                  <td>{{ mission.logiciel }}</td>
-                  <td>{{ nogPartie3.businessDev[i] }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <p><strong>Commentaire FE</strong></p>
+            <div data-module-type="text" class="contenu-nog-apercu" [innerHTML]="nogPartie3.commentaireFE"></div>
           </div>
           <div *ngIf="!nogPartie3.isFEValidate" data-module-type="text" class="contenu-nog-apercu">
             <p>Merci de bien vouloir remplir la facturation électronique dans MyVision.</p>
@@ -2135,7 +2120,6 @@ interface TabDiligence {
                       <th>Diligence</th>
                       <th>Titre</th>
                       <th>Objectif</th>
-                      <th>Contrôle</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -2144,7 +2128,6 @@ interface TabDiligence {
                         <td>{{ rowDiligence.diligence }}</td>
                         <td>{{ rowDiligence.titre }}</td>
                         <td [innerHTML]="rowDiligence.objectif"></td>
-                        <td [innerHTML]="rowDiligence.controle"></td>
                       </ng-container>
                     </tr>
                   </tbody>
@@ -3372,7 +3355,7 @@ interface TabDiligence {
       overflow: auto;
     }
 
-    table.table-nog thead {
+    table:not(.preview-table).table-nog thead {
       position: sticky;
       top: 0;
     }
@@ -3639,35 +3622,61 @@ interface TabDiligence {
       border-radius: 0.5vw;
     }
 
-    table.table-diligence th:nth-child(1),
-    table.table-diligence td:nth-child(1) {
+    #part-bottom-diligence table.table-diligence th:nth-child(1),
+    #part-bottom-diligence table.table-diligence td:nth-child(1) {
       width: 3.5vw;
     }
 
-    table.table-diligence th:nth-child(2),
-    table.table-diligence td:nth-child(2) {
-      width: 3.5vw;
-    }
-
-    table.table-diligence th:nth-child(3),
-    table.table-diligence td:nth-child(4) {
+    #part-bottom-diligence table.table-diligence th:nth-child(2),
+    #part-bottom-diligence table.table-diligence td:nth-child(2) {
       width: 10vw;
     }
 
-    table.table-diligence th:nth-child(4),
-    table.table-diligence td:nth-child(4) {
+    #part-bottom-diligence table.table-diligence th:nth-child(3),
+    #part-bottom-diligence table.table-diligence td:nth-child(3) {
       width: 4vw;
       text-align: center;
     }
 
-    table.table-diligence th:nth-child(5),
-    table.table-diligence td:nth-child(5) {
+    #part-bottom-diligence table.table-diligence th:nth-child(4),
+    #part-bottom-diligence table.table-diligence td:nth-child(4) {
       width: 27vw;
     }
 
-    table.table-diligence th:nth-child(6),
-    table.table-diligence td:nth-child(6) {
+    #part-bottom-diligence table.table-diligence th:nth-child(5),
+    #part-bottom-diligence table.table-diligence td:nth-child(5) {
       width: 27vw;
+    }
+
+    #part-bottom-diligence-lab table.table-diligence th:nth-child(1),
+    #part-bottom-diligence-lab table.table-diligence td:nth-child(1) {
+      width: 3.5vw;
+    }
+
+    #part-bottom-diligence-lab table.table-diligence th:nth-child(2),
+    #part-bottom-diligence-lab table.table-diligence td:nth-child(2) {
+      width: 10vw;
+    }
+
+    #part-bottom-diligence-lab table.table-diligence th:nth-child(3),
+    #part-bottom-diligence-lab table.table-diligence td:nth-child(3) {
+      width: 3vw;
+    }
+
+    #part-bottom-diligence-lab table.table-diligence th:nth-child(4),
+    #part-bottom-diligence-lab table.table-diligence td:nth-child(4) {
+      width: 10vw;
+    }
+
+    #part-bottom-diligence-lab table.table-diligence th:nth-child(5),
+    #part-bottom-diligence-lab table.table-diligence td:nth-child(5) {
+      width: 4vw;
+      text-align: center;
+    }
+
+    #part-bottom-diligence-lab table.table-diligence th:nth-child(6),
+    #part-bottom-diligence-lab table.table-diligence td:nth-child(6) {
+      width: 22vw;
     }
 
     .row-table-diligence {
@@ -4333,6 +4342,16 @@ interface TabDiligence {
       border-radius: 0.3vw;
       font-size: var(--font-size-md);
     }
+
+    div#editeur-commentaire-fe {
+      height: 34vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    div#editorContentCommentaireFE {
+      background-color: var(--gray-100);
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -4493,6 +4512,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     businessDev: ['','','','','','','','','',''],
     mailEnvoi: '',
     signatureMandat: '',
+    commentaireFE: '',
     casGestion: '',
     isFEValidate: false
   }
@@ -5169,6 +5189,33 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  setChangeIntoFE(): void {
+    this.isSavingNog = true;
+    this.debounceLog('fe', () => {
+      console.log('Modification dans FE (partie 3):', {
+        commentaireFE: this.nogPartie3.commentaireFE
+      });
+
+      this.insertNogModuleTexte('MyNogVU_ORGAADMINCOMPTA_CommentaireFE', 'MyNogVU_ORGAADMINCOMPTA_DateLastModifFE', this.nogPartie3.commentaireFE);
+      this.nogPartie3.dateLastUpdateFE = this.getDateNow();
+      this.setLog({
+        email : this.usrMailCollab,
+        dosPgi: this.selectedDossier?.DOS_PGI,
+        modif: 'Modification NOG',
+        typeModif: 'NOG',
+        module: 'NOG',
+        champ: 'FE',
+        valeur: this.selectedCodeAffaire,
+        periode: '',
+        mailPriseProfil: this.userEmail
+      });
+      this.dateLastUpdateNog = this.getLaterDate(this.getDateNow(), this.dateLastUpdateNog);
+      setTimeout(() => {
+        this.isSavingNog = false;
+      }, 2000);
+    });
+  }
+
   setChangeIntoDeontologie(): void {
     this.isSavingNog = true;
     this.debounceLog('deontologie', () => {
@@ -5411,7 +5458,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.loadDiligencesBibliotheque();
         this.loadMontantLogiciel();
         this.loadModuleFE();
-        this.loadListeBDFE();
 
         this.insertNogVigilance();
 
@@ -5436,7 +5482,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.loadPlanningMJNog();
         this.loadEquipeInterMJNog();
         this.loadLogicielMJNog();
-        this.loadFEMJNog();
         this.loadDiligenceMJNog();
         this.loadDiligenceLabMJNog();
         this.loadDiligencesBibliothequeMJNog();
@@ -5769,36 +5814,17 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           this.nogPartie3.casGestion = response.casGestion;
           this.nogPartie3.mailEnvoi = response.envoiMail;
           this.nogPartie3.signatureMandat = response.signatureMandat;
-          this.nogPartie3.businessDev = [response.bd1, response.bd2, response.bd3, response.bd4, response.bd5,
-            response.bd6, response.bd7, response.bd8, response.bd9, response.bd10
-          ];
+          // this.nogPartie3.businessDev = [response.bd1, response.bd2, response.bd3, response.bd4, response.bd5,
+          //   response.bd6, response.bd7, response.bd8, response.bd9, response.bd10
+          // ];
           this.nogPartie3.isFEValidate = true;
         }
         this.isModuleFELoaded = true;
         this.nogPartie3.dateLastUpdateFE = this.getDateNow();
         this.checkIdAllDataLoaded();
         console.log('response',response);
-        if(this.isListeBDFELoaded && this.isModuleFELoaded) {
-          this.insertNogFE();
-        }
+        this.insertNogFE();
         this.checkConditionValidation();
-      },
-      error: () => {
-      }
-    });
-  }
-
-  loadListeBDFE(): void {
-    this.http.get<any>(`${environment.apiUrlMyVision}/dossierDetail/getListeBDNogFE`)
-    .subscribe({
-      next: (response) => {
-        this.listeBdFE = response;
-        this.isListeBDFELoaded = true;
-        this.checkIdAllDataLoaded();
-        console.log('response',response);
-        if(this.isListeBDFELoaded && this.isModuleFELoaded) {
-          this.insertNogFE();
-        }
       },
       error: () => {
       }
@@ -5853,18 +5879,16 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   checkIdAllDataLoaded(): void {
     if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded 
       && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNatureLoaded 
-      && this.isMontantLogicielLoaded && this.isModuleFELoaded && this.isListeBDFELoaded
+      && this.isMontantLogicielLoaded && this.isModuleFELoaded
       && this.isDiligencesDefaultLoaded && this.isDiligencesBibliothequeLoaded) {
       this.isAllDataNogLoaded = true;
-      this.isListeBDFELoaded = false;
-      this.isModuleFELoaded = false;
     }
   }
 
   checkIdAllDataMJLoaded(): void {
     if(this.isValeurUniqueLoaded && this.isTypeMissionNatureLoaded && this.isPlanningsLoaded && this.isEquipeInterLoaded && this.isContactsLoaded
       && this.isAssociesLoaded && this.isMontantLogicielLoaded && this.isDiligencesDefaultLoaded && this.isDiligenceLabLoaded && this.isDiligenceAddLoaded
-      && this.isDiligencesBibliothequeLoaded && this.isFichiersAnnexeLoaded && this.isFELoaded
+      && this.isDiligencesBibliothequeLoaded && this.isFichiersAnnexeLoaded
     ) {
       this.isAllDataNogLoaded = true;
       setTimeout(() => {
@@ -6161,6 +6185,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.nogPartie6.commGeneral = newContent;
     this.setChangeIntoRestitutionClient();
+  }
+
+  onEditorContentChangeCommentaireFE(event: Event): void {
+    const target = event.target as HTMLElement;
+    const newContent = target.innerHTML || '';
+
+    this.nogPartie3.commentaireFE = newContent;
+    this.setChangeIntoFE();
   }
 
   ngAfterViewInit(): void {
@@ -6896,7 +6928,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   insertNogFE(): void {
-    let obj: { tableFE: Array<any>; uniqueFE: { codeAffaire: string, eInvoicing: string, eReportingPaiement: string, eReportingTransaction: string, casGestion: string, envoiMail: string, signatureMandat: string } } = {
+    let obj: { tableFE: Array<any>; uniqueFE: { codeAffaire: string, eInvoicing: string, eReportingPaiement: string, eReportingTransaction: string, casGestion: string, envoiMail: string, signatureMandat: string, commentaireFE: string } } = {
       tableFE: [],
       uniqueFE: {
         codeAffaire: this.selectedCodeAffaire,
@@ -6905,7 +6937,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         eReportingTransaction: '',
         casGestion: '',
         envoiMail: '',
-        signatureMandat: ''
+        signatureMandat: '',
+        commentaireFE: ''
       }
     };
 
@@ -6930,6 +6963,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       obj.uniqueFE.casGestion = this.nogPartie3.casGestion;
       obj.uniqueFE.envoiMail = this.nogPartie3.mailEnvoi;
       obj.uniqueFE.signatureMandat = this.nogPartie3.signatureMandat;
+      obj.uniqueFE.commentaireFE = this.nogPartie3.commentaireFE;
     }
     this.http.post(`${environment.apiUrl}/nogs/insertNogFE`, obj)
     .subscribe(response => {
@@ -7184,6 +7218,10 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.nogPartie3.casGestion = key.MyNogVU_ORGAADMINCOMPTA_CasGestion;
         this.nogPartie3.mailEnvoi = key.MyNogVU_ORGAADMINCOMPTA_MailEnvoiClient;
         this.nogPartie3.signatureMandat = key.MyNogVU_ORGAADMINCOMPTA_SignatureMandat;
+        this.nogPartie3.commentaireFE = key.MyNogVU_ORGAADMINCOMPTA_CommentaireFE;
+        if(key.MyNogVU_ORGAADMINCOMPTA_EInvoicing != '' || key.MyNogVU_ORGAADMINCOMPTA_EReportingTransaction != '' || key.MyNogVU_ORGAADMINCOMPTA_EReportingPaiement != '') {
+          this.nogPartie3.isFEValidate = true;
+        }
         this.nogPartie3.dateLastUpdateFE = this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifFE);  
         this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(key.MyNogVU_ORGAADMINCOMPTA_DateLastModifFE), this.dateLastUpdateNog);
          
@@ -7297,6 +7335,11 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     const editorContentCommGeneral = document.querySelector('#editorContentCommGeneral') as HTMLElement;
     if (editorContentCommGeneral && this.nogPartie6.commGeneral) {
       editorContentCommGeneral.innerHTML = this.nogPartie6.commGeneral;
+    }
+
+    const editorContentCommentaireFE = document.querySelector('#editorContentCommentaireFE') as HTMLElement;
+    if (editorContentCommentaireFE && this.nogPartie3.commentaireFE) {
+      editorContentCommentaireFE.innerHTML = this.nogPartie3.commentaireFE;
     }
   }
 
@@ -7445,23 +7488,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.nogPartieAnnexes.dateLastUpdateAnnexe = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
       console.log('NOG PARTIE ANNEXE',this.nogPartieAnnexes);
-      this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
-    });
-  }
-
-  loadFEMJNog(): void {
-    this.http.get<{ success: boolean; data: any; count: number; timestamp: string }>(`${environment.apiUrl}/nogs/getFEMJNog/${this.selectedCodeAffaire}`)
-    .subscribe(response => {
-      this.listeBdFE = response.data.tabMission;
-      this.nogPartie3.businessDev = response.data.tabBD;
-      if(response.data.tabBD.length > 0) {
-        this.nogPartie3.isFEValidate = true;
-      }
-      this.isFELoaded = true;
-      this.nogPartie3.dateLastUpdateFE = this.formatDateTimeBDD(response.data.dateUpdate);
-      this.checkIdAllDataMJLoaded();
-      console.log('NOG PARTIE 3',this.nogPartie3);
-      this.checkConditionValidation();
       this.dateLastUpdateNog = this.getLaterDate(this.formatDateTimeBDD(response.data.dateUpdate), this.dateLastUpdateNog);
     });
   }
@@ -7681,7 +7707,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isReloadingFE) return;
     this.isReloadingFE = true;
     this.isSavingNog = true;
-    this.loadListeBDFE();
     this.loadModuleFE();
     setTimeout(() => {
       this.isReloadingFE = false;
