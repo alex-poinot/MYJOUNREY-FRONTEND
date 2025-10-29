@@ -1383,7 +1383,7 @@ interface TabDiligence {
                               <td>{{ rowDiligence.diligence }}</td>
                               <td>{{ rowDiligence.titre }}</td>
                               <td>
-                                <label class="toggle-switch">
+                                <label class="toggle-switch" [class.toggle-switch-orange]="isManualDiligence(rowDiligence.diligence)">
                                   <input
                                     type="checkbox"
                                     [(ngModel)]="rowDiligence.activation"
@@ -1428,7 +1428,7 @@ interface TabDiligence {
                     <td>{{ diligence.diligence }}</td>
                     <td>{{ diligence.titre }}</td>
                     <td>
-                      <label class="toggle-switch">
+                      <label class="toggle-switch toggle-switch-orange">
                         <input
                           type="checkbox"
                           [(ngModel)]="diligence.activation"
@@ -3471,6 +3471,14 @@ interface TabDiligence {
 
     .toggle-checkbox:focus + .toggle-slider {
       box-shadow: 0 0 0.05vw #4CAF50;
+    }
+
+    .toggle-switch-orange .toggle-checkbox:checked + .toggle-slider {
+      background-color: #FF9800;
+    }
+
+    .toggle-switch-orange .toggle-checkbox:focus + .toggle-slider {
+      box-shadow: 0 0 0.05vw #FF9800;
     }
 
     .multiselect-diligence {
@@ -6327,6 +6335,10 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   isDiligenceSelected(diligence: TabDiligence): boolean {
     return this.selectedDiligences.some(d => d.diligence === diligence.diligence);
+  }
+
+  isManualDiligence(diligenceCode: string): boolean {
+    return this.diligenceAddMan.some(d => d.diligence === diligenceCode);
   }
 
   toggleDiligenceSelection(diligence: TabDiligence): void {
