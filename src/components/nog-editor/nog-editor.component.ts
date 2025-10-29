@@ -215,7 +215,6 @@ interface TabDiligence {
   titre: string;
   activation: boolean;
   objectif: string;
-  controle: string;
 }
 
 @Component({
@@ -1330,7 +1329,7 @@ interface TabDiligence {
                 <div class="multiselect-diligence">
                   <div class="multiselect-label">Ajouter des diligences de la biliothèque :</div>
                   <div class="liste-btn-absolute">
-                    <button class="btn-add-row" (click)="addDiligenceManuelle()"><i class="fa-solid fa-plus"></i> Créer des diligences</button>
+                    <button class="btn-add-row" (click)="addDiligenceManuelle()"><i class="fa-solid fa-plus"></i> Créer une diligence</button>
                   </div>
                   <div class="multiselect-wrapper">
                     <div class="multiselect-dropdown" (click)="toggleDiligenceDropdown()">
@@ -1406,7 +1405,7 @@ interface TabDiligence {
             <div *ngIf="nogPartie4.checkboxVigilance == 'Renforcee'" id="part-bottom-diligence-lab">
               <div class="title-element-nog">Diligences LAB<i title="Dernière mise à jour : {{nogPartie5.dateLastUpdateDiligenceLab}}" class="fa-solid fa-circle-info icon-date-last-modif"></i></div>
               <div class="liste-btn-absolute">
-                <button class="btn-add-row" (click)="addDiligenceLabManuelle()"><i class="fa-solid fa-plus"></i> Créer des diligences LAB</button>
+                <button class="btn-add-row" (click)="addDiligenceLabManuelle()"><i class="fa-solid fa-plus"></i> Créer une diligence LAB</button>
               </div>
               <table class="table-diligence">
                 <thead>
@@ -1622,7 +1621,7 @@ interface TabDiligence {
     <div *ngIf="showAddDiligenceModal" class="apercu-overlay" (click)="closeAddDiligenceModal()">
       <div class="diligence-modal" (click)="$event.stopPropagation()">
         <div class="diligence-modal-header">
-          <h3>Ajouter une diligence manuelle</h3>
+          <h3>Créer une diligence manuellement</h3>
           <button class="apercu-close" (click)="closeAddDiligenceModal()">
             <i class="fas fa-times"></i>
           </button>
@@ -1645,20 +1644,16 @@ interface TabDiligence {
             </select>
           </div>
           <div class="form-group">
-            <label for="diligence-code">Diligence *</label>
+            <label for="diligence-code">Code diligence *</label>
             <input id="diligence-code" type="text" [(ngModel)]="newDiligence.diligence" placeholder="Code ou identifiant de la diligence">
           </div>
           <div class="form-group">
-            <label for="diligence-titre">Titre *</label>
+            <label for="diligence-titre">Titre diligence *</label>
             <input id="diligence-titre" type="text" [(ngModel)]="newDiligence.titre" placeholder="Titre de la diligence">
           </div>
           <div class="form-group">
             <label for="diligence-objectif">Objectif</label>
             <textarea id="diligence-objectif" [(ngModel)]="newDiligence.objectif" placeholder="Objectif de la diligence" rows="4"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="diligence-controle">Contrôle</label>
-            <textarea id="diligence-controle" [(ngModel)]="newDiligence.controle" placeholder="Contrôle de la diligence" rows="4"></textarea>
           </div>
         </div>
         <div class="diligence-modal-footer">
@@ -1672,7 +1667,7 @@ interface TabDiligence {
     <div *ngIf="showAddDiligenceLabModal" class="apercu-overlay" (click)="closeAddDiligenceLabModal()">
       <div class="diligence-modal" (click)="$event.stopPropagation()">
         <div class="diligence-modal-header">
-          <h3>Ajouter une diligence LAB</h3>
+          <h3>Créer une diligence manuellement LAB</h3>
           <button class="apercu-close" (click)="closeAddDiligenceLabModal()">
             <i class="fas fa-times"></i>
           </button>
@@ -1695,20 +1690,16 @@ interface TabDiligence {
             </select>
           </div>
           <div class="form-group">
-            <label for="diligence-lab-code">Diligence *</label>
+            <label for="diligence-lab-code">Code diligence *</label>
             <input id="diligence-lab-code" type="text" [(ngModel)]="newDiligenceLab.diligence" placeholder="Code ou identifiant de la diligence">
           </div>
           <div class="form-group">
-            <label for="diligence-lab-titre">Titre *</label>
+            <label for="diligence-lab-titre">Titre diligence *</label>
             <input id="diligence-lab-titre" type="text" [(ngModel)]="newDiligenceLab.titre" placeholder="Titre de la diligence">
           </div>
           <div class="form-group">
             <label for="diligence-lab-objectif">Objectif</label>
             <textarea id="diligence-lab-objectif" [(ngModel)]="newDiligenceLab.objectif" placeholder="Objectif de la diligence" rows="4"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="diligence-lab-controle">Contrôle</label>
-            <textarea id="diligence-lab-controle" [(ngModel)]="newDiligenceLab.controle" placeholder="Contrôle de la diligence" rows="4"></textarea>
           </div>
         </div>
         <div class="diligence-modal-footer">
@@ -2155,7 +2146,6 @@ interface TabDiligence {
                     <td>{{ diligence.diligence }}</td>
                     <td>{{ diligence.titre }}</td>
                     <td [innerHTML]="diligence.objectif"></td>
-                    <td [innerHTML]="diligence.controle"></td>
                   </ng-container>
                 </tr>
               </tbody>
@@ -4434,7 +4424,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     diligence: '',
     titre: '',
     objectif: '',
-    controle: '',
     activation: true
   };
 
@@ -4443,7 +4432,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     diligence: '',
     titre: '',
     objectif: '',
-    controle: '',
     activation: true
   };
   
@@ -6439,7 +6427,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       diligence: '',
       titre: '',
       objectif: '',
-      controle: '',
       activation: true
     };
     this.showAddDiligenceModal = true;
@@ -6457,8 +6444,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const newDiligenceCopy = {
       ...this.newDiligence,
-      objectif: this.newDiligence.objectif.replace(/\n/g, '<br>'),
-      controle: this.newDiligence.controle.replace(/\n/g, '<br>')
+      objectif: this.newDiligence.objectif.replace(/\n/g, '<br>')
     };
     this.nogPartie5.diligenceAdd.push(newDiligenceCopy);
     this.selectedDiligences.push(newDiligenceCopy);
@@ -6473,7 +6459,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       diligence: '',
       titre: '',
       objectif: '',
-      controle: '',
       activation: true
     };
     this.showAddDiligenceLabModal = true;
@@ -6491,8 +6476,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const newDiligenceLabCopy = {
       ...this.newDiligenceLab,
-      objectif: this.newDiligenceLab.objectif.replace(/\n/g, '<br>'),
-      controle: this.newDiligenceLab.controle.replace(/\n/g, '<br>')
+      objectif: this.newDiligenceLab.objectif.replace(/\n/g, '<br>')
     };
     this.nogPartie5.diligenceLab.push(newDiligenceLabCopy);
     this.sortDiligenceLab();
@@ -6607,8 +6591,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         diligence: item.DILIGENCE,
         titre: item.TITRE,
         activation: true,
-        objectif: item.OBJECTIF,
-        controle: item.CONTROLE
+        objectif: item.OBJECTIF
       });
     });
 
@@ -6625,8 +6608,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         diligence: item.DILIGENCE,
         titre: item.TITRE,
         activation: true,
-        objectif: item.OBJECTIF,
-        controle: item.CONTROLE
+        objectif: item.OBJECTIF
       }
       objReturn.push(obj);
     });
@@ -6998,8 +6980,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
             codeDiligence: d.diligence,
             titreDiligence: d.titre,
             activation: d.activation ? 'Oui' : 'Non',
-            objectif: d.objectif,
-            controle: d.controle
+            objectif: d.objectif
           })
         });
       });
@@ -7099,8 +7080,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
             cycle: dili.cycle,
             codeDiligence: dili.diligence,
             titreDiligence: dili.titre,
-            objectif: dili.objectif,
-            controle: dili.controle
+            objectif: dili.objectif
           })
       });
     }
@@ -7125,8 +7105,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
             codeDiligence: dili.diligence,
             titreDiligence: dili.titre,
             activation: dili.activation ? 'Oui' : 'Non',
-            objectif: dili.objectif,
-            controle: dili.controle
+            objectif: dili.objectif
           })
       });
     }
