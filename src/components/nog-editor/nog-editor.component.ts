@@ -6494,6 +6494,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       objectif: this.newDiligence.objectif.replace(/\n/g, '<br>')
     };
     this.nogPartie5.diligenceAdd.push(newDiligenceCopy);
+    this.diligenceAddMan.push(newDiligenceCopy);
     this.selectedDiligences.push(newDiligenceCopy);
     this.addDiligenceToNog(newDiligenceCopy);
     this.showAddDiligenceModal = false;
