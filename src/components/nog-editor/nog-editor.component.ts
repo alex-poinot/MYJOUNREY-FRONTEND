@@ -6339,7 +6339,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isManualDiligence(diligenceCode: string): boolean {
-    return this.diligenceAddMan.some(d => d.diligence === diligenceCode);
+    const isInAddMan = this.diligenceAddMan.some(d => d.diligence === diligenceCode);
+    const isInBib = this.diligenceBib.some(d => d.diligence === diligenceCode);
+    return isInAddMan && !isInBib;
   }
 
   toggleDiligenceSelection(diligence: TabDiligence): void {
