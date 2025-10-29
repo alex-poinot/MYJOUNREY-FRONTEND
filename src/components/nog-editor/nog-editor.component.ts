@@ -4435,6 +4435,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     objectif: '',
     activation: true
   };
+
+  diligenceAddMan: TabDiligence[] = [];
   
   // Listes filtrées
   availableMissions: Mission[] = [];
@@ -7450,6 +7452,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       response.data.data.forEach((element: any) => {
         this.nogPartie5.diligenceAdd.push(element);
       });
+
+      this.diligenceAddMan = response.data.data;
       this.isDiligenceAddLoaded = true;
       this.nogPartie5.dateLastUpdateDiligence = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
