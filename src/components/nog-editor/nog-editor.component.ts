@@ -6339,9 +6339,16 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isManualDiligence(diligenceCode: string): boolean {
+    // console.log('diligenceCode', diligenceCode)
     const isInAddMan = this.diligenceAddMan.some(d => d.diligence === diligenceCode);
+    
     const isInBib = this.diligenceBib.some(d => d.diligence === diligenceCode);
+    // console.log('isInAddMan', isInAddMan)
+    // console.log('isInBib', isInBib)
+    // console.log('return', isInAddMan && !isInBib)
+    // console.log('--------------------------------')
     return isInAddMan && !isInBib;
+    // return this.diligenceAddMan.some(d => d.diligence === diligenceCode);
   }
 
   toggleDiligenceSelection(diligence: TabDiligence): void {
@@ -7478,7 +7485,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       let data = this.transformDataDiligenceBibliotheque(response.data);
       this.isDiligencesBibliothequeLoaded = true;
       this.checkIdAllDataMJLoaded();
-      this.diligenceBib = data;
+      response.data.forEach((element: any) => {
+        this.diligenceBib.push(element);
+      });
       this.nogPartie5.diligenceAdd = data;
       this.loadDiligenceAddMJNog();
     });
@@ -7489,9 +7498,8 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     .subscribe(response => {
       response.data.data.forEach((element: any) => {
         this.nogPartie5.diligenceAdd.push(element);
+        this.diligenceAddMan.push(element);
       });
-
-      this.diligenceAddMan = response.data.data;
       this.isDiligenceAddLoaded = true;
       this.nogPartie5.dateLastUpdateDiligence = this.formatDateTimeBDD(response.data.dateUpdate);
       this.checkIdAllDataMJLoaded();
