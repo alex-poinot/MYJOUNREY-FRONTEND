@@ -4445,6 +4445,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   diligenceAddMan: TabDiligence[] = [];
+  diligenceBib: TabDiligence[] = [];
   
   // Listes filtrées
   availableMissions: Mission[] = [];
@@ -7475,6 +7476,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       let data = this.transformDataDiligenceBibliotheque(response.data);
       this.isDiligencesBibliothequeLoaded = true;
       this.checkIdAllDataMJLoaded();
+      this.diligenceBib = data;
       this.nogPartie5.diligenceAdd = data;
       this.loadDiligenceAddMJNog();
     });
