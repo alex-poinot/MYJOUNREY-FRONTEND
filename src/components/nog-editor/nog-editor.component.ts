@@ -5866,11 +5866,14 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkIdAllDataLoaded(): void {
-    if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded 
-      && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNatureLoaded 
+    if(this.isCoordonneesLoaded && this.isContactsLoaded && this.isChiffresSignificatifsLoaded && this.isAssociesLoaded
+      && this.isEquipeInterLoaded && this.isPlanningsLoaded && this.isTypeMissionNatureLoaded
       && this.isMontantLogicielLoaded && this.isModuleFELoaded
       && this.isDiligencesDefaultLoaded && this.isDiligencesBibliothequeLoaded) {
       this.isAllDataNogLoaded = true;
+      setTimeout(() => {
+        this.initializeSelectedDiligences();
+      }, 100);
     }
   }
 
@@ -5882,8 +5885,27 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.isAllDataNogLoaded = true;
       setTimeout(() => {
         this.loadContentIntoEditors();
+        this.initializeSelectedDiligences();
       }, 100);
     }
+  }
+
+  initializeSelectedDiligences(): void {
+    this.selectedDiligences = [];
+
+    if (!this.nogPartie5.diligenceAdd || !this.nogPartie5.diligence) {
+      return;
+    }
+
+    this.nogPartie5.diligenceAdd.forEach(diligenceAdd => {
+      const existsInDiligence = this.nogPartie5.diligence.some(groupe =>
+        groupe.tabDiligence.some(dil => dil.diligence === diligenceAdd.diligence)
+      );
+
+      if (existsInDiligence) {
+        this.selectedDiligences.push(diligenceAdd);
+      }
+    });
   }
 
   checkConditionValidation(): void {
