@@ -2108,8 +2108,8 @@ interface TabDiligence {
                 <table class="table-diligence preview-table">
                   <thead>
                     <tr>
-                      <th>Diligence</th>
-                      <th>Titre</th>
+                      <th>Code diligence</th>
+                      <th>Libelle diligence</th>
                       <th>Objectif</th>
                     </tr>
                   </thead>
@@ -2133,16 +2133,17 @@ interface TabDiligence {
               <thead>
                 <tr>
                   <th>Cycle</th>
-                  <th>Code</th>
-                  <th>Libelle</th>
+                  <th>Cycle libelle</th>
+                  <th>Code diligence</th>
+                  <th>Libelle diligence</th>
                   <th>Objectif</th>
-                  <th>Contrôle</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let diligence of nogPartie5.diligenceLab">
                   <ng-container *ngIf="diligence.activation">
                     <td>{{ diligence.cycle }}</td>
+                    <td>{{ getCycleNameDiligence(diligence.cycle) }}</td>
                     <td>{{ diligence.diligence }}</td>
                     <td>{{ diligence.titre }}</td>
                     <td [innerHTML]="diligence.objectif"></td>
@@ -3485,7 +3486,7 @@ interface TabDiligence {
 
     .multiselect-wrapper {
       position: relative;
-      width: 100%;
+      width: 85%;
     }
 
     .multiselect-dropdown {
