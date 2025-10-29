@@ -5411,7 +5411,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.selectedFileNog = file;
 
       this.sendModuleFile('NOG', this.usrMailCollab, file, this.selectedCodeAffaire, 'Mission');
-      this.sendModuleStatus('NOG', this.usrMailCollab, this.selectedCodeAffaire, 'Mission', 'oui');
+      this.sendModuleStatus('NOG', this.usrMailCollab, this.selectedCodeAffaire, 'Mission', 'encours');
     }
   }
 
