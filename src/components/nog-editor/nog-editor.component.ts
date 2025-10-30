@@ -1795,9 +1795,9 @@ interface TabDiligence {
                 <ng-container *ngFor="let associe of nogPartie1.associes; let i = index">
                   <tr>
                     <td>{{ associe.nom }}</td>
-                    <td>{{ formatNumber(associe.nbPart) }}</td>
-                    <td>{{ formatNumber(associe.partCapital) }}</td>
-                    <td>{{ formatNumber(associe.pourcPart) }}</td>
+                    <td class="align-right">{{ formatNumber(associe.nbPart) }}</td>
+                    <td class="align-right">{{ formatNumber(associe.partCapital) }}</td>
+                    <td class="align-right">{{ formatNumber(associe.pourcPart) }}</td>
                   </tr>
                 </ng-container>
               </tbody>
@@ -1821,42 +1821,42 @@ interface TabDiligence {
                 <tr>
                   <td>Effectif</td>
                   <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
-                    <td>{{ formatNumber(cs.effectif) }}</td>
+                    <td class="align-right">{{ formatNumber(cs.effectif) }}</td>
                   </ng-container>
-                  <td>{{ calculateVariation('effectif') }}</td>
-                  <td>{{ calculatePourcVariation('effectif') }}%</td>
+                  <td class="align-right">{{ calculateVariation('effectif') }}</td>
+                  <td class="align-right">{{ calculatePourcVariation('effectif') }}%</td>
                 </tr>
                 <tr>
                   <td>Capitaux propres</td>
                   <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
-                    <td>{{ formatNumber(cs.capitauxPropres) }}</td>
+                    <td class="align-right">{{ formatNumber(cs.capitauxPropres) }}</td>
                   </ng-container>
-                  <td>{{ calculateVariation('capitauxPropres') }}</td>
-                  <td>{{ calculatePourcVariation('capitauxPropres') }}%</td>
+                  <td class="align-right">{{ calculateVariation('capitauxPropres') }}</td>
+                  <td class="align-right">{{ calculatePourcVariation('capitauxPropres') }}%</td>
                 </tr>
                 <tr>
                   <td>Total bilan</td>
                   <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
-                    <td>{{ formatNumber(cs.bilanNet) }}</td>
+                    <td class="align-right">{{ formatNumber(cs.bilanNet) }}</td>
                   </ng-container>
-                  <td>{{ calculateVariation('bilanNet') }}</td>
-                  <td>{{ calculatePourcVariation('bilanNet') }}%</td>
+                  <td class="align-right">{{ calculateVariation('bilanNet') }}</td>
+                  <td class="align-right">{{ calculatePourcVariation('bilanNet') }}%</td>
                 </tr>
                 <tr>
                   <td>Chiffres d'affaires</td>
                   <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
-                    <td>{{ formatNumber(cs.ca) }}</td>
+                    <td class="align-right">{{ formatNumber(cs.ca) }}</td>
                   </ng-container>
-                  <td>{{ calculateVariation('ca') }}</td>
-                  <td>{{ calculatePourcVariation('ca') }}%</td>
+                  <td class="align-right">{{ calculateVariation('ca') }}</td>
+                  <td class="align-right">{{ calculatePourcVariation('ca') }}%</td>
                 </tr>
                 <tr>
                   <td>Résultat net (ou avant impôt)</td>
                   <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
-                    <td>{{ formatNumber(cs.beneficePerte) }}</td>
+                    <td class="align-right">{{ formatNumber(cs.beneficePerte) }}</td>
                   </ng-container>
-                  <td>{{ calculateVariation('beneficePerte') }}</td>
-                  <td>{{ calculatePourcVariation('beneficePerte') }}%</td>
+                  <td class="align-right">{{ calculateVariation('beneficePerte') }}</td>
+                  <td class="align-right">{{ calculatePourcVariation('beneficePerte') }}%</td>
                 </tr>
               </tbody>
             </table>
@@ -1876,7 +1876,7 @@ interface TabDiligence {
                 </tr>
                 <tr>
                   <td>Montant des honoraires pour la mission</td>
-                  <td>{{ formatNumber(nogPartie2.montantHonoraire) }}</td>
+                  <td class="align-right">{{ formatNumber(nogPartie2.montantHonoraire) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -1931,9 +1931,9 @@ interface TabDiligence {
                 <tr *ngFor="let row of nogPartie2.planning">
                   <td>{{ row.fonction }}</td>
                   <td>{{ row.nom }}</td>
-                  <td>{{ mathCeil(row.totalCollab) }}</td>
+                  <td class="align-right">{{ mathCeil(row.totalCollab) }}</td>
                   <ng-container *ngFor="let value of row.listeValue">
-                    <td>{{ mathCeil(value) }}</td>
+                    <td class="align-right">{{ mathCeil(value) }}</td>
                   </ng-container>
                 </tr>
               </tbody>
@@ -1991,7 +1991,7 @@ interface TabDiligence {
                 <tr *ngFor="let logiciel of nogPartie3.tabLogicielGT">
                   <td>{{ logiciel.type }}</td>
                   <td>{{ logiciel.logiciel }}</td>
-                  <td>{{ formatNumber(logiciel.montant) }}</td>
+                  <td class="align-right">{{ formatNumber(logiciel.montant) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -4368,6 +4368,18 @@ interface TabDiligence {
     div#container-tab-logiciel-gt .table-nog th i {
       margin-left: 0.5vw;
     }
+
+    div#container-part-1-3-nog td:nth-child(n+2) {
+      text-align: right;
+    }
+
+    div#part-bottom-planning-inter-nog td:nth-child(n+3) {
+      text-align: right;
+    }
+
+    table.table-nog.preview-table td.align-right {
+      text-align: right;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -5975,27 +5987,29 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   formatNumber(value: number | null | undefined): string {
     if (value === null || value === undefined || isNaN(value)) return '';
 
-    // Rounding to 2 decimal places
-    const roundedValue = Math.round(value * 100) / 100;
+    // // Rounding to 2 decimal places
+    // const roundedValue = Math.round(value * 100) / 100;
 
-    // Split integer and decimal parts
-    let parts = roundedValue.toString().split('.');
+    // // Split integer and decimal parts
+    // let parts = roundedValue.toString().split('.');
 
-    // Format integer part with thousand separators
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    // // Format integer part with thousand separators
+    // parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
-    // Combine the parts back with a comma separator for the decimal part
-    let formattedValue = parts.join(',');
+    // // Combine the parts back with a comma separator for the decimal part
+    // let formattedValue = parts.join(',');
 
-    // Ensure two decimals: add zeros if necessary
-    if (parts.length > 1 && parts[1].length < 2) {
-      formattedValue += '0';
-    } else if (parts.length === 1) {
-      // If there is no decimal part, add ",00"
-      formattedValue += ',00';
-    }
+    // // Ensure two decimals: add zeros if necessary
+    // if (parts.length > 1 && parts[1].length < 2) {
+    //   formattedValue += '0';
+    // } else if (parts.length === 1) {
+    //   // If there is no decimal part, add ",00"
+    //   formattedValue += ',00';
+    // }
 
-    return formattedValue;
+    const formattedValue = Math.ceil(value).toString();
+
+    return formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');;
   }
 
   formatDate(value: string): string {
