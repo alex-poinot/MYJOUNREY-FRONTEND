@@ -1631,7 +1631,6 @@ interface TabDiligence {
             <label for="diligence-cycle">Cycle</label>
             <select id="diligence-cycle" [(ngModel)]="newDiligence.cycle">
               <option value="">Sélectionner un cycle</option>
-              <option value="A">A - {{ getCycleNameDiligence('A') }}</option>
               <option value="B">B - {{ getCycleNameDiligence('B') }}</option>
               <option value="C">C - {{ getCycleNameDiligence('C') }}</option>
               <option value="D">D - {{ getCycleNameDiligence('D') }}</option>
@@ -1677,7 +1676,6 @@ interface TabDiligence {
             <label for="diligence-cycle">Cycle</label>
             <select id="diligence-cycle" [(ngModel)]="newDiligenceLab.cycle">
               <option value="">Sélectionner un cycle</option>
-              <option value="A">A - {{ getCycleNameDiligence('A') }}</option>
               <option value="B">B - {{ getCycleNameDiligence('B') }}</option>
               <option value="C">C - {{ getCycleNameDiligence('C') }}</option>
               <option value="D">D - {{ getCycleNameDiligence('D') }}</option>
@@ -5825,7 +5823,9 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           // this.nogPartie3.businessDev = [response.bd1, response.bd2, response.bd3, response.bd4, response.bd5,
           //   response.bd6, response.bd7, response.bd8, response.bd9, response.bd10
           // ];
-          this.nogPartie3.isFEValidate = true;
+          if(response.eInvoicing != '' || response.eReportingPaiement != '' || response.eReportingTransaction != '') {
+            this.nogPartie3.isFEValidate = true;
+          }
         }
         this.isModuleFELoaded = true;
         this.nogPartie3.dateLastUpdateFE = this.getDateNow();
@@ -8130,8 +8130,6 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getCycleNameDiligence(cycle: string): string {
     switch (cycle) {
-      case 'A':
-        return 'Préparation et finalisation de la mission';
       case 'B':
         return 'Trésorerie / Financement';
       case 'C':
