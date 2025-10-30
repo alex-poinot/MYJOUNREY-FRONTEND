@@ -616,6 +616,15 @@ interface TabDiligence {
                       <div class="montant-chiffres-sign-nog">{{ calculateVariation('ca') }}</div>
                       <div class="montant-chiffres-sign-nog">{{ calculateVariation('beneficePerte') }}</div>
                     </div>
+
+                    <div class="colonne-chiffres-sign-nog" id="colonne-variation-pourc-cs">
+                      <div class="titre-colonne-chiffres-sign-nog">% Variation</div>
+                      <div class="montant-chiffres-sign-nog">{{ calculatePourcVariation('effectif') }}%</div>
+                      <div class="montant-chiffres-sign-nog">{{ calculatePourcVariation('capitauxPropres') }}%</div>
+                      <div class="montant-chiffres-sign-nog">{{ calculatePourcVariation('bilanNet') }}%</div>
+                      <div class="montant-chiffres-sign-nog">{{ calculatePourcVariation('ca') }}%</div>
+                      <div class="montant-chiffres-sign-nog">{{ calculatePourcVariation('beneficePerte') }}%</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1805,6 +1814,7 @@ interface TabDiligence {
                     <th>{{ formatDate(cs.datePeriode) }} ({{ cs.dureeExercice }} mois)</th>
                   </ng-container>
                   <th>Variation</th>
+                  <th>% Variation</th>
                 </tr>
               </thead>
               <tbody>
@@ -1814,6 +1824,7 @@ interface TabDiligence {
                     <td>{{ formatNumber(cs.effectif) }}</td>
                   </ng-container>
                   <td>{{ calculateVariation('effectif') }}</td>
+                  <td>{{ calculatePourcVariation('effectif') }}%</td>
                 </tr>
                 <tr>
                   <td>Capitaux propres</td>
@@ -1821,6 +1832,7 @@ interface TabDiligence {
                     <td>{{ formatNumber(cs.capitauxPropres) }}</td>
                   </ng-container>
                   <td>{{ calculateVariation('capitauxPropres') }}</td>
+                  <td>{{ calculatePourcVariation('capitauxPropres') }}%</td>
                 </tr>
                 <tr>
                   <td>Total bilan</td>
@@ -1828,6 +1840,7 @@ interface TabDiligence {
                     <td>{{ formatNumber(cs.bilanNet) }}</td>
                   </ng-container>
                   <td>{{ calculateVariation('bilanNet') }}</td>
+                  <td>{{ calculatePourcVariation('bilanNet') }}%</td>
                 </tr>
                 <tr>
                   <td>Chiffres d'affaires</td>
@@ -1835,6 +1848,7 @@ interface TabDiligence {
                     <td>{{ formatNumber(cs.ca) }}</td>
                   </ng-container>
                   <td>{{ calculateVariation('ca') }}</td>
+                  <td>{{ calculatePourcVariation('ca') }}%</td>
                 </tr>
                 <tr>
                   <td>Résultat net (ou avant impôt)</td>
@@ -1842,6 +1856,7 @@ interface TabDiligence {
                     <td>{{ formatNumber(cs.beneficePerte) }}</td>
                   </ng-container>
                   <td>{{ calculateVariation('beneficePerte') }}</td>
+                  <td>{{ calculatePourcVariation('beneficePerte') }}%</td>
                 </tr>
               </tbody>
             </table>
@@ -3062,7 +3077,7 @@ interface TabDiligence {
 
     .colonne-chiffres-sign-nog div {
       height: 3.5vh;
-      width: 18vw;
+      width: 14vw;
     }
 
     .libelle-chiffres-sign-nog, .titre-colonne-chiffres-sign-nog {
@@ -5702,6 +5717,28 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     this.http.get<ChiffresSignificatifs[]>(`${environment.apiUrlMyVision}/dossierDetail/getChiffresSignificatifsNogMyJourney/${this.selectedDossier?.DOS_PGI}`)
     .subscribe({
       next: (response) => {
+        this.nogPartie1.chiffresSignificatifs = [
+          {
+            dosPgi: '',
+            datePeriode: '',
+            dureeExercice: '',
+            effectif: 0,
+            capitauxPropres: 0,
+            bilanNet: 0,
+            ca: 0,
+            beneficePerte: 0
+          },
+          {
+            dosPgi: '',
+            datePeriode: '',
+            dureeExercice: '',
+            effectif: 0,
+            capitauxPropres: 0,
+            bilanNet: 0,
+            ca: 0,
+            beneficePerte: 0
+          }
+        ];
         if(response.length == 0) {
           this.nogPartie1.chiffresSignificatifs[0].dosPgi = this.selectedDossier?.DOS_PGI ?? '';
           this.nogPartie1.chiffresSignificatifs[1].dosPgi = this.selectedDossier?.DOS_PGI ?? '';
@@ -6118,6 +6155,25 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const difference = val0 - val1;
     return this.formatNumber(difference);
+  }
+
+  calculatePourcVariation(field: keyof ChiffresSignificatifs): string {
+    if (this.nogPartie1.chiffresSignificatifs.length < 2) return '';
+    const cs0 = this.nogPartie1.chiffresSignificatifs[0];
+    const cs1 = this.nogPartie1.chiffresSignificatifs[1];
+
+    const val0 = cs0[field] as number;
+    const val1 = cs1[field] as number;
+
+    if (val0 === null || val0 === undefined || val1 === null || val1 === undefined) return '';
+
+    const difference = val0 - val1;
+    if(val1 == 0) {
+      return '0';
+    }
+
+    const pourc = (difference / val1) * 100;
+    return this.formatNumber(pourc);
   }
 
   execCommand(command: string): void {
