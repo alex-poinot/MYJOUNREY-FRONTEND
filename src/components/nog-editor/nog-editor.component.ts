@@ -913,7 +913,7 @@ interface TabDiligence {
                       <table class="table-nog">
                         <thead>
                           <tr>
-                            <th>Type</th>
+                            <th>Type<i class="fa-solid fa-circle-info" title="Liste des types : Banque, Compliance, Comptabilité, Dématérialisation, Divers, Juridique, Note de frais, Paie, Pré-comptabilité, Reporting"></i></th>
                             <th>Outil</th>
                             <th>Coût</th>
                             <th></th>
@@ -1327,7 +1327,7 @@ interface TabDiligence {
             <div id="part-top-diligence">
               <div id="container-add-diligence">
                 <div class="multiselect-diligence">
-                  <div class="multiselect-label">Ajouter des diligences de la biliothèque :</div>
+                  <div class="multiselect-label">Ajouter des diligences de la bibliothèque :</div>
                   <div class="liste-btn-absolute">
                     <button class="btn-add-row" (click)="addDiligenceManuelle()"><i class="fa-solid fa-plus"></i> Créer une diligence</button>
                   </div>
@@ -1813,35 +1813,35 @@ interface TabDiligence {
                 <tr>
                   <td>Effectif</td>
                   <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
-                    <td>{{ cs.effectif }}</td>
+                    <td>{{ formatNumber(cs.effectif) }}</td>
                   </ng-container>
                   <td>{{ calculateVariation('effectif') }}</td>
                 </tr>
                 <tr>
                   <td>Capitaux propres</td>
                   <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
-                    <td>{{ cs.capitauxPropres }}</td>
+                    <td>{{ formatNumber(cs.capitauxPropres) }}</td>
                   </ng-container>
                   <td>{{ calculateVariation('capitauxPropres') }}</td>
                 </tr>
                 <tr>
                   <td>Total bilan</td>
                   <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
-                    <td>{{ cs.bilanNet }}</td>
+                    <td>{{ formatNumber(cs.bilanNet) }}</td>
                   </ng-container>
                   <td>{{ calculateVariation('bilanNet') }}</td>
                 </tr>
                 <tr>
                   <td>Chiffres d'affaires</td>
                   <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
-                    <td>{{ cs.ca }}</td>
+                    <td>{{ formatNumber(cs.ca) }}</td>
                   </ng-container>
                   <td>{{ calculateVariation('ca') }}</td>
                 </tr>
                 <tr>
                   <td>Résultat net (ou avant impôt)</td>
                   <ng-container *ngFor="let cs of nogPartie1.chiffresSignificatifs; let i = index">
-                    <td>{{ cs.beneficePerte }}</td>
+                    <td>{{ formatNumber(cs.beneficePerte) }}</td>
                   </ng-container>
                   <td>{{ calculateVariation('beneficePerte') }}</td>
                 </tr>
@@ -4351,6 +4351,10 @@ interface TabDiligence {
     div#editorContentCommentaireFE {
       background-color: var(--gray-100);
     }
+
+    div#container-tab-logiciel-gt .table-nog th i {
+      margin-left: 0.5vw;
+    }
   `]
 })
 export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -5311,6 +5315,7 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     
     this.availableMissions = Array.from(uniqueMissions.values());
+    console.log('1', this.availableMissions);
   }
 
   getCodeAffaireSelected(): string {
@@ -5494,21 +5499,24 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getSelectedMissionLabel(): string {
+    console.log('2', this.availableMissions);
     const mission = this.availableMissions.find(m => m.MD_MISSION === this.selectedMission);
     return mission ? mission.LIBELLE_MISSIONS : '';
   }
 
   private async waitForDataAndValidate(dosPgi: string, mission: string, millesime: string): Promise<void> {
+    console.log('0', this.availableMissions);
     let verif = false;
     this.loadAllDossiers().then(() => {
       this.allMissionsData.forEach(element => {
         if(element.DOS_PGI == dosPgi && element.MD_MISSION == mission && element.MD_MILLESIME == millesime) {
             this.selectedDossier = element;
-            this.selectedDossierDisplay = dosPgi;
+            this.selectedDossierDisplay = `${element.DOS_PGI.trim()} - ${element.DOS_NOM.trim()}`;
             this.selectedMission = mission;
             this.selectedMillesime = millesime;
             this.isProfilAssocie = element.PROFIL == '1';
             this.selectedProfilId = parseInt(element.PROFIL);
+            this.loadMissionsForDossier();
             this.validateSelection();
             verif = true;
         }
@@ -6415,7 +6423,33 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   deletePlanning(index: number): void {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette ligne de planning ?')) {
-      this.nogPartie2.planning.splice(index, 1);
+      if(this.nogPartie2.planning.length == 1) {
+        this.nogPartie2.planning = [{
+          id: 0,
+          nom: '',
+          fonction: '',
+          totalCollab: 0,
+          listeLib: [
+              '-T1',
+              '-T2',
+              '-T3',
+              '-T4',
+              '-T5',
+              '-T6'
+          ],
+          listeValue: [
+              '0',
+              '0',
+              '0',
+              '0',
+              '0',
+              '0'
+          ],
+          isEditing: false
+        }]
+      } else {
+        this.nogPartie2.planning.splice(index, 1);
+      }
       this.setChangeIntoPlanning();
     }
   }
