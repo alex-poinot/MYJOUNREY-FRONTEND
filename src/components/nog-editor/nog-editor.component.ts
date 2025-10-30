@@ -6168,7 +6168,10 @@ export class NogEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     if (val0 === null || val0 === undefined || val1 === null || val1 === undefined) return '';
 
     const difference = val0 - val1;
-    if(val1 == 0) {
+    if(val1 == 0 && val0 != 0) {
+      const pourc0 = val0 * 100;
+      return this.formatNumber(pourc0);
+    } else if(val1 == 0 && val0 == 0) {
       return '0';
     }
 
