@@ -1348,7 +1348,7 @@ interface TabDiligence {
                     </div>
                     <div class="multiselect-options" *ngIf="showDiligenceDropdown">
                       <div class="multiselect-option" *ngFor="let diligence of nogPartie5.diligenceAdd" (click)="toggleDiligenceSelection(diligence)">
-                        <input type="checkbox" [checked]="isDiligenceSelected(diligence)" (click)="$event.stopPropagation()">
+                        <input type="checkbox" [checked]="isDiligenceSelected(diligence)" readonly>
                         <label>({{ diligence.cycle }} - {{ getCycleNameDiligence(diligence.cycle) }}) {{ diligence.diligence }} - {{ diligence.titre }}</label>
                       </div>
                     </div>
